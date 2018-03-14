@@ -2,30 +2,51 @@ package com.github.polimi_mt_acg.back2school.model;
 
 import javax.persistence.*;
 
+@Entity
+@Table(name = "user")
 public class User {
 
+    @Id
+    @GeneratedValue
+    @Column(name = "id")
     private int id;
+
+    //TODO: Add @ManyToOne association to Role table
     private int roleId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type")
+    private Type type;
+
+    @Column(name = "name")
     private String name;
+
+    @Column(name = "surname")
     private String surname;
+
+    @Column(name = "email")
     private String email;
+
+    @Column(name = "password")
     private String password;
+
+    @Column(name = "salt")
     private String salt;
 
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public int getRoleId() {
         return roleId;
     }
 
-    public void setRoleId(int roleId) {
-        this.roleId = roleId;
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
     }
 
     public String getName() {
@@ -66,5 +87,9 @@ public class User {
 
     public void setSalt(String salt) {
         this.salt = salt;
+    }
+
+    public enum Type {
+        STUDENT, PARENT, TEACHER, ADMINISTRATOR
     }
 }

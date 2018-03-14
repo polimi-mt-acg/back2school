@@ -1,46 +1,67 @@
 package com.github.polimi_mt_acg.back2school.model;
 
+import javax.persistence.*;
 import java.time.LocalDate;
 
+@Entity
+@Table(name = "grade")
 public class Grade {
+
+    @Id
+    @GeneratedValue
+    @Column(name = "id")
     private int id;
-    private int subjectId;
-    private int teacherId;
-    private int studentId;
+
+    @ManyToOne
+    @JoinColumn(name = "subject_id",
+            foreignKey = @ForeignKey(name = "SUBJECT_ID_FK"))
+    private Subject subject;
+
+    @ManyToOne
+    @JoinColumn(name = "teacher_id",
+            foreignKey = @ForeignKey(name = "TEACHER_ID_FK"))
+    private User teacher;
+
+    @ManyToOne
+    @JoinColumn(name = "student_id",
+            foreignKey = @ForeignKey(name = "STUDENT_ID_FK"))
+    private User student;
+
+    @Column(name = "date")
     private LocalDate date;
+
+    @Column(name = "title")
     private String title;
+
+    @Column(name = "grade")
     private double grade;
 
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public Subject getSubject() {
+        return subject;
     }
 
-    public int getSubjectId() {
-        return subjectId;
+    public void setSubject(Subject subject) {
+        this.subject = subject;
     }
 
-    public void setSubjectId(int subjectId) {
-        this.subjectId = subjectId;
+    public User getTeacher() {
+        return teacher;
     }
 
-    public int getTeacherId() {
-        return teacherId;
+    public void setTeacher(User teacher) {
+        this.teacher = teacher;
     }
 
-    public void setTeacherId(int teacherId) {
-        this.teacherId = teacherId;
+    public User getStudent() {
+        return student;
     }
 
-    public int getStudentId() {
-        return studentId;
-    }
-
-    public void setStudentId(int studentId) {
-        this.studentId = studentId;
+    public void setStudent(User student) {
+        this.student = student;
     }
 
     public LocalDate getDate() {

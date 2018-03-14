@@ -1,16 +1,24 @@
 package com.github.polimi_mt_acg.back2school.model;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "subject")
 public class Subject {
+
+    @Id
+    @GeneratedValue
+    @Column(name = "id")
     private int id;
+
+    @Column(name = "name")
     private String name;
+
+    @Column(name = "description")
     private String description;
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getName() {
