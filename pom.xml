@@ -88,6 +88,21 @@
             <scope>test</scope>
         </dependency>
 
+
+        <!-- JAXB to parse hibernate.cfg.xml for non-deployed tests-->
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>2.3.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-core</artifactId>
+            <version>2.3.0</version>
+            <scope>test</scope>
+        </dependency>
+
         <!-- Arquillian -->
         <dependency>
             <groupId>org.jboss.arquillian</groupId>
