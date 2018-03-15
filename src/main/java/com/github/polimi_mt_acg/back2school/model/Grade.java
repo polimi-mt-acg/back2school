@@ -14,17 +14,17 @@ public class Grade {
 
     @ManyToOne
     @JoinColumn(name = "subject_id",
-            foreignKey = @ForeignKey(name = "SUBJECT_ID_FK"))
+            foreignKey = @ForeignKey(name = "GRADE_SUBJECT_ID_FK"))
     private Subject subject;
 
     @ManyToOne
     @JoinColumn(name = "teacher_id",
-            foreignKey = @ForeignKey(name = "TEACHER_ID_FK"))
+            foreignKey = @ForeignKey(name = "GRADE_TEACHER_ID_FK"))
     private User teacher;
 
     @ManyToOne
     @JoinColumn(name = "student_id",
-            foreignKey = @ForeignKey(name = "STUDENT_ID_FK"))
+            foreignKey = @ForeignKey(name = "GRADE_STUDENT_ID_FK"))
     private User student;
 
     @Column(name = "date")

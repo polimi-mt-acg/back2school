@@ -1,5 +1,6 @@
 package com.github.polimi_mt_acg.back2school.model;
 
+import com.github.polimi_mt_acg.utils.TestEntitiesFactory;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
@@ -9,26 +10,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.time.LocalDate;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class GradeTest {
-    // testStudent data
-    private final String studentName = "testStudentName";
-    private final String studentSurname = "testStudentSurname";
-    private final String studentEmail = "testStudent@email.com";
-    private final String studentPassword = "testStudentPassword";
-    private final String studentSalt = "testStudentSalt";
-    private final User.Type studentType = User.Type.STUDENT;
-    // testTeacher data
-    private final String teacherName = "testTeacherName";
-    private final String teacherSurname = "testTeacherSurname";
-    private final String teacherEmail = "testTeacher@email.com";
-    private final String teacherPassword = "testTeacherPassword";
-    private final String teacherSalt = "testTeacherSalt";
-    private final User.Type teacherType = User.Type.TEACHER;
     // Test members
     private SessionFactory sessionFactory;
     private Grade testGrade;
@@ -52,10 +37,10 @@ public class GradeTest {
         }
 
         // Then create fictitious Entities
-        buildTestGrade();
-        buildTestStudent();
-        buildTestTeacher();
-        buildTestSubject();
+        testGrade = TestEntitiesFactory.buildGrade();
+        testStudent = TestEntitiesFactory.buildStudent();
+        testTeacher = TestEntitiesFactory.buildTeacher();
+        testSubject = TestEntitiesFactory.buildSubject();
     }
 
     @After
@@ -115,38 +100,5 @@ public class GradeTest {
         assertEquals(g.getSubject().getName(), testSubject.getName());
         assertEquals(g.getSubject().getDescription(), testSubject.getDescription());
 
-    }
-
-    private void buildTestGrade() {
-        testGrade = new Grade();
-        testGrade.setDate(LocalDate.now());
-        testGrade.setGrade(7.5);
-        testGrade.setTitle("Midterm Latin exam");
-    }
-
-    private void buildTestStudent() {
-        testStudent = new User();
-        testStudent.setType(studentType);
-        testStudent.setName(studentName);
-        testStudent.setSurname(studentSurname);
-        testStudent.setEmail(studentEmail);
-        testStudent.setPassword(studentPassword);
-        testStudent.setSalt(studentSalt);
-    }
-
-    private void buildTestTeacher() {
-        testTeacher = new User();
-        testTeacher.setType(teacherType);
-        testTeacher.setName(teacherName);
-        testTeacher.setSurname(teacherSurname);
-        testTeacher.setEmail(teacherEmail);
-        testTeacher.setPassword(teacherPassword);
-        testTeacher.setSalt(teacherSalt);
-    }
-
-    private void buildTestSubject() {
-        testSubject = new Subject();
-        testSubject.setName("Latin");
-        testSubject.setDescription("Rosa, rosae, rosae, rosam, rosa, rosa");
     }
 }
