@@ -1,54 +1,67 @@
 package com.github.polimi_mt_acg.back2school.model;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "lecture")
 public class Lecture {
+
+    @Id
+    @GeneratedValue
+    @Column(name = "id")
     private int id;
-    private int subjectId;
-    private int teacherId;
-    private int classroomId;
+
+    @ManyToOne
+    @JoinColumn(name = "subject_id",
+            foreignKey = @ForeignKey(name = "LECTURE_SUBJECT_ID_FK"))
+    private Subject subject;
+
+    @ManyToOne
+    @JoinColumn(name = "teacher_id",
+            foreignKey = @ForeignKey(name = "LECTURE_TEACHER_ID_FK"))
+    private User teacher;
+
+    @ManyToOne
+    @JoinColumn(name = "classroom_id",
+            foreignKey = @ForeignKey(name = "LECTURE_CLASSROOM_ID_FK"))
+    private Classroom classroom;
+
+    // TODO: Add @ManyToOne association to Class
     private int classId;
+
+    @Column(name = "datetime_start")
     private LocalDateTime datetimeStart;
+
+    @Column(name = "datetime_end")
     private LocalDateTime datetimeEnd;
 
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public Subject getSubject() {
+        return subject;
     }
 
-    public int getSubjectId() {
-        return subjectId;
+    public void setSubject(Subject subject) {
+        this.subject = subject;
     }
 
-    public void setSubjectId(int subjectId) {
-        this.subjectId = subjectId;
+    public User getTeacher() {
+        return teacher;
     }
 
-    public int getTeacherId() {
-        return teacherId;
+    public void setTeacher(User teacher) {
+        this.teacher = teacher;
     }
 
-    public void setTeacherId(int teacherId) {
-        this.teacherId = teacherId;
+    public Classroom getClassroom() {
+        return classroom;
     }
 
-    public int getClassroomId() {
-        return classroomId;
-    }
-
-    public void setClassroomId(int classroomId) {
-        this.classroomId = classroomId;
-    }
-
-    public int getClassId() {
-        return classId;
-    }
-
-    public void setClassId(int classId) {
-        this.classId = classId;
+    public void setClassroom(Classroom classroom) {
+        this.classroom = classroom;
     }
 
     public LocalDateTime getDatetimeStart() {
