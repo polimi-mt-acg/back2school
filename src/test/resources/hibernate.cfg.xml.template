@@ -15,6 +15,18 @@
         <property name="hibernate.hbm2ddl.auto">update</property>
         <property name="show_sql">false</property>
 
-        <mapping class="com.github.polimi_mt_acg.back2school.model.implementation.User"/>
+        <mapping class="com.github.polimi_mt_acg.back2school.model.Appointment"/>
+        <mapping class="com.github.polimi_mt_acg.back2school.model.Class"/>
+        <mapping class="com.github.polimi_mt_acg.back2school.model.Classroom"/>
+        <mapping class="com.github.polimi_mt_acg.back2school.model.Grade"/>
+        <mapping class="com.github.polimi_mt_acg.back2school.model.Lecture"/>
+        <mapping class="com.github.polimi_mt_acg.back2school.model.Notification"/>
+        <mapping class="com.github.polimi_mt_acg.back2school.model.NotificationRead"/>
+        <mapping class="com.github.polimi_mt_acg.back2school.model.Payment"/>
+        <mapping class="com.github.polimi_mt_acg.back2school.model.Role"/>
+        <mapping class="com.github.polimi_mt_acg.back2school.model.Session"/>
+        <mapping class="com.github.polimi_mt_acg.back2school.model.StudentClass"/>
+        <mapping class="com.github.polimi_mt_acg.back2school.model.Subject"/>
+        <mapping class="com.github.polimi_mt_acg.back2school.model.User"/>
     </session-factory>
 </hibernate-configuration>
