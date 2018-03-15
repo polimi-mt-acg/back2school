@@ -11,12 +11,10 @@ public class User {
     @Column(name = "id")
     private int id;
 
-    //TODO: Add @ManyToOne association to Role table
-    private int roleId;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "type")
-    private Type type;
+    @ManyToOne
+    @JoinColumn(name = "role_id",
+            foreignKey = @ForeignKey(name = "ROLE_ID_FK"))
+    private Role role;
 
     @Column(name = "name")
     private String name;
@@ -37,16 +35,16 @@ public class User {
         return id;
     }
 
-    public int getRoleId() {
-        return roleId;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public Type getType() {
-        return type;
+    public Role getRole() {
+        return role;
     }
 
-    public void setType(Type type) {
-        this.type = type;
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public String getName() {
@@ -87,9 +85,5 @@ public class User {
 
     public void setSalt(String salt) {
         this.salt = salt;
-    }
-
-    public enum Type {
-        STUDENT, PARENT, TEACHER, ADMINISTRATOR
     }
 }

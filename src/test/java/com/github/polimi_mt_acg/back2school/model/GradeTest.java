@@ -85,7 +85,7 @@ public class GradeTest {
         assertEquals(g.getStudent().getSurname(), testStudent.getSurname());
         assertEquals(g.getStudent().getPassword(), testStudent.getPassword());
         assertEquals(g.getStudent().getSalt(), testStudent.getSalt());
-        assertEquals(g.getStudent().getType(), testStudent.getType());
+//        assertEquals(g.getStudent().getType(), testStudent.getType());
 
         // Teacher data
         assertEquals(g.getTeacher().getId(), testTeacher.getId());
@@ -93,7 +93,7 @@ public class GradeTest {
         assertEquals(g.getTeacher().getSurname(), testTeacher.getSurname());
         assertEquals(g.getTeacher().getPassword(), testTeacher.getPassword());
         assertEquals(g.getTeacher().getSalt(), testTeacher.getSalt());
-        assertEquals(g.getTeacher().getType(), testTeacher.getType());
+//        assertEquals(g.getTeacher().getType(), testTeacher.getType());
 
         // Subject data
         assertEquals(g.getSubject().getId(), testSubject.getId());

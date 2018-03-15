@@ -107,14 +107,14 @@ public class PaymentTest {// Test members
             assertEquals(p.getPlacedBy().getSurname(), testAdministrator.getSurname());
             assertEquals(p.getPlacedBy().getPassword(), testAdministrator.getPassword());
             assertEquals(p.getPlacedBy().getSalt(), testAdministrator.getSalt());
-            assertEquals(p.getPlacedBy().getType(), testAdministrator.getType());
+//            assertEquals(p.getPlacedBy().getType(), testAdministrator.getType());
 
             assertEquals(p.getAssignedTo().getId(), testParent.getId());
             assertEquals(p.getAssignedTo().getName(), testParent.getName());
             assertEquals(p.getAssignedTo().getSurname(), testParent.getSurname());
             assertEquals(p.getAssignedTo().getPassword(), testParent.getPassword());
             assertEquals(p.getAssignedTo().getSalt(), testParent.getSalt());
-            assertEquals(p.getAssignedTo().getType(), testParent.getType());
+//            assertEquals(p.getAssignedTo().getType(), testParent.getType());
         }
 
         // Payment Material data

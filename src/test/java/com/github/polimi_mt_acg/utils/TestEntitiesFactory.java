@@ -6,13 +6,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class TestEntitiesFactory {
+
     // testStudent data
     private static final String studentName = "testStudentName";
     private static final String studentSurname = "testStudentSurname";
     private static final String studentEmail = "testStudent@email.com";
     private static final String studentPassword = "testStudentPassword";
     private static final String studentSalt = "testStudentSalt";
-    private static final User.Type studentType = User.Type.STUDENT;
 
     // testParent data
     private static final String parentName = "testParentName";
@@ -20,7 +20,6 @@ public class TestEntitiesFactory {
     private static final String parentEmail = "testParent@email.com";
     private static final String parentPassword = "testParentPassword";
     private static final String parentSalt = "testParentSalt";
-    private static final User.Type parentType = User.Type.PARENT;
 
     // testTeacher data
     private static final String teacherName = "testTeacherName";
@@ -28,7 +27,6 @@ public class TestEntitiesFactory {
     private static final String teacherEmail = "testTeacher@email.com";
     private static final String teacherPassword = "testTeacherPassword";
     private static final String teacherSalt = "testTeacherSalt";
-    private static final User.Type teacherType = User.Type.TEACHER;
 
     // testAdministrator data
     private static final String administratorName = "testAdministratorName";
@@ -36,7 +34,6 @@ public class TestEntitiesFactory {
     private static final String administratorEmail = "testAdministrator@email.com";
     private static final String administratorPassword = "testAdministratorPassword";
     private static final String administratorSalt = "testAdministratorSalt";
-    private static final User.Type administratorType = User.Type.ADMINISTRATOR;
 
     // testSubject data
     private static final String subjectName = "Latin";
@@ -61,9 +58,15 @@ public class TestEntitiesFactory {
     private static final String paymentDescription = "Fees and costs for the trip";
     private static final double paymentAmount = 450.42;
 
+    public static Role buildRole(Role.RoleName roleName) {
+        Role testEntity = new Role();
+        testEntity.setRole(roleName);
+        return testEntity;
+    }
+
     public static User buildStudent() {
         User testStudent = new User();
-        testStudent.setType(studentType);
+        // TODO set role
         testStudent.setName(studentName);
         testStudent.setSurname(studentSurname);
         testStudent.setEmail(studentEmail);
@@ -75,7 +78,7 @@ public class TestEntitiesFactory {
 
     public static User buildParent() {
         User testEntity = new User();
-        testEntity.setType(parentType);
+        // TODO set role
         testEntity.setName(parentName);
         testEntity.setSurname(parentSurname);
         testEntity.setEmail(parentEmail);
@@ -87,7 +90,7 @@ public class TestEntitiesFactory {
 
     public static User buildTeacher() {
         User testTeacher = new User();
-        testTeacher.setType(teacherType);
+        // TODO set role
         testTeacher.setName(teacherName);
         testTeacher.setSurname(teacherSurname);
         testTeacher.setEmail(teacherEmail);
@@ -99,7 +102,7 @@ public class TestEntitiesFactory {
 
     public static User buildAdministrator() {
         User testEntity = new User();
-        testEntity.setType(administratorType);
+        // TODO set role
         testEntity.setName(administratorName);
         testEntity.setSurname(administratorSurname);
         testEntity.setEmail(administratorEmail);
