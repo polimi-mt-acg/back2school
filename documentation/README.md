@@ -17,3 +17,8 @@
 - [phpMyAdmin](https://www.phpmyadmin.net/) (administration of the database)
 - [Docker](https://www.docker.com/) (containerization of services)
 
+
+## Get started
+
+Go through the [initial project setup](initial-project-setup.md) and then follow
+the [run the project](run-the-project.md) document.
