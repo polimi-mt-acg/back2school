@@ -1,6 +1,8 @@
 package com.github.polimi_mt_acg.back2school.model;
 
 
+import java.time.LocalDateTime;
+
 public class Session {
 
     private int id;
