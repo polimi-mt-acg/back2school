@@ -14,6 +14,14 @@ public class TestEntitiesFactory {
     private static final String studentSalt = "testStudentSalt";
     private static final User.Type studentType = User.Type.STUDENT;
 
+    // testParent data
+    private static final String parentName = "testParentName";
+    private static final String parentSurname = "testParentSurname";
+    private static final String parentEmail = "testParent@email.com";
+    private static final String parentPassword = "testParentPassword";
+    private static final String parentSalt = "testParentSalt";
+    private static final User.Type parentType = User.Type.PARENT;
+
     // testTeacher data
     private static final String teacherName = "testTeacherName";
     private static final String teacherSurname = "testTeacherSurname";
@@ -21,6 +29,14 @@ public class TestEntitiesFactory {
     private static final String teacherPassword = "testTeacherPassword";
     private static final String teacherSalt = "testTeacherSalt";
     private static final User.Type teacherType = User.Type.TEACHER;
+
+    // testAdministrator data
+    private static final String administratorName = "testAdministratorName";
+    private static final String administratorSurname = "testAdministratorSurname";
+    private static final String administratorEmail = "testAdministrator@email.com";
+    private static final String administratorPassword = "testAdministratorPassword";
+    private static final String administratorSalt = "testAdministratorSalt";
+    private static final User.Type administratorType = User.Type.ADMINISTRATOR;
 
     // testSubject data
     private static final String subjectName = "Latin";
@@ -36,6 +52,39 @@ public class TestEntitiesFactory {
     private static final double gradeGrade = 7.5;
     private static final String gradeTitle = "Midterm Latin exam";
 
+    // testPayment data
+    private static final LocalDateTime paymentDatetimeRequested = LocalDateTime.of(2018, 3, 15, 8, 0);
+    private static final LocalDateTime paymentDatetimeDone = LocalDateTime.of(2018, 3, 15, 10, 0);
+    private static final LocalDateTime paymentDatetimeDeadline = LocalDateTime.of(2018, 3, 15, 12, 0);
+    private static final boolean paymentDone = true;
+    private static final String paymentSubject = "School trip to Berlin";
+    private static final String paymentDescription = "Fees and costs for the trip";
+    private static final double paymentAmount = 450.42;
+
+    public static User buildStudent() {
+        User testStudent = new User();
+        testStudent.setType(studentType);
+        testStudent.setName(studentName);
+        testStudent.setSurname(studentSurname);
+        testStudent.setEmail(studentEmail);
+        testStudent.setPassword(studentPassword);
+        testStudent.setSalt(studentSalt);
+
+        return testStudent;
+    }
+
+    public static User buildParent() {
+        User testEntity = new User();
+        testEntity.setType(parentType);
+        testEntity.setName(parentName);
+        testEntity.setSurname(parentSurname);
+        testEntity.setEmail(parentEmail);
+        testEntity.setPassword(parentPassword);
+        testEntity.setSalt(parentSalt);
+
+        return testEntity;
+    }
+
     public static User buildTeacher() {
         User testTeacher = new User();
         testTeacher.setType(teacherType);
@@ -48,16 +97,16 @@ public class TestEntitiesFactory {
         return testTeacher;
     }
 
-    public static User buildStudent() {
-        User testStudent = new User();
-        testStudent.setType(studentType);
-        testStudent.setName(studentName);
-        testStudent.setSurname(studentSurname);
-        testStudent.setEmail(studentEmail);
-        testStudent.setPassword(studentPassword);
-        testStudent.setSalt(studentSalt);
+    public static User buildAdministrator() {
+        User testEntity = new User();
+        testEntity.setType(administratorType);
+        testEntity.setName(administratorName);
+        testEntity.setSurname(administratorSurname);
+        testEntity.setEmail(administratorEmail);
+        testEntity.setPassword(administratorPassword);
+        testEntity.setSalt(administratorSalt);
 
-        return testStudent;
+        return testEntity;
     }
 
     public static Subject buildSubject() {
@@ -92,6 +141,19 @@ public class TestEntitiesFactory {
         testGrade.setTitle(gradeTitle);
 
         return testGrade;
+    }
+
+    public static Payment buildPayment(Payment.Type type) {
+        Payment testEntity = new Payment();
+        testEntity.setType(type);
+        testEntity.setDatetimeRequested(paymentDatetimeRequested);
+        testEntity.setDatetimeDone(paymentDatetimeDone);
+        testEntity.setDatetimeDeadline(paymentDatetimeDeadline);
+        testEntity.setDone(paymentDone);
+        testEntity.setSubject(paymentSubject);
+        testEntity.setDescription(paymentDescription);
+        testEntity.setAmount(paymentAmount);
+        return testEntity;
     }
 
 }

@@ -1,22 +1,58 @@
 package com.github.polimi_mt_acg.back2school.model;
 
 
-import java.time.LocalDate;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "payment")
 public class Payment {
 
+    @Id
+    @GeneratedValue
+    @Column(name = "id")
     private int id;
-    private int placedBy;
-    private int assignedBy;
-    private int type;
+
+    @ManyToOne
+    @JoinColumn(name = "placed_by_id",
+            foreignKey = @ForeignKey(name = "PLACED_BY_USER_ID_FK")
+    )
+    private User placedBy;
+
+    @ManyToOne
+    @JoinColumn(name = "assigned_to_id",
+            foreignKey = @ForeignKey(name = "ASSIGNED_TO_USER_ID_FK")
+    )
+    private User assignedTo;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type")
+    private Type type = Type.MATERIAL;
+
+    @Column(name = "datetime_requested")
     private LocalDateTime datetimeRequested;
+
+    @Column(name = "datetime_done")
     private LocalDateTime datetimeDone;
+
+    @Column(name = "datetime_deadline")
     private LocalDateTime datetimeDeadline;
+
+    @Column(name = "done")
     private boolean done;
+
+    @Column(name = "subject")
     private String subject;
+
+    @Column(name = "description")
     private String description;
-    private double amout;
+
+    @Column(name = "amount")
+    private double amount;
+
+    public enum Type {
+        MATERIAL, MONTHLY, TRIP
+    }
 
     public int getId() {
         return id;
@@ -26,27 +62,27 @@ public class Payment {
         this.id = id;
     }
 
-    public int getPlacedBy() {
+    public User getPlacedBy() {
         return placedBy;
     }
 
-    public void setPlacedBy(int placedBy) {
+    public void setPlacedBy(User placedBy) {
         this.placedBy = placedBy;
     }
 
-    public int getAssignedBy() {
-        return assignedBy;
+    public User getAssignedTo() {
+        return assignedTo;
     }
 
-    public void setAssignedBy(int assignedBy) {
-        this.assignedBy = assignedBy;
+    public void setAssignedTo(User assignedTo) {
+        this.assignedTo = assignedTo;
     }
 
-    public int getType() {
+    public Type getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(Type type) {
         this.type = type;
     }
 
@@ -98,11 +134,11 @@ public class Payment {
         this.description = description;
     }
 
-    public double getAmout() {
-        return amout;
+    public double getAmount() {
+        return amount;
     }
 
-    public void setAmout(double amout) {
-        this.amout = amout;
+    public void setAmount(double amount) {
+        this.amount = amount;
     }
 }
