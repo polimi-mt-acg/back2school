@@ -1,16 +1,33 @@
 package com.github.polimi_mt_acg.back2school.model;
 
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@MappedSuperclass
 public class Notification {
 
+    @Id
+    @GeneratedValue
+    @Column(name = "id")
     private int id;
+
+    @ManyToOne
+    @JoinColumn(name = "creator_id",
+            foreignKey = @ForeignKey(name = "CREATOR_ID_FK"))
     private int creatorId;
-    private int targetId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type")
     private String type;
+
+    @Column(name = "date")
     private LocalDateTime datatime;
+
+    @Column(name = "subject")
     private String subject;
+
+    @Column(name = "text")
     private String text;
 
 
@@ -28,22 +45,6 @@ public class Notification {
 
     public void setCreatorId(int creatorId) {
         this.creatorId = creatorId;
-    }
-
-    public int getTargetId() {
-        return targetId;
-    }
-
-    public void setTargetId(int targetId) {
-        this.targetId = targetId;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public LocalDateTime getDatatime() {
@@ -69,4 +70,19 @@ public class Notification {
     public void setText(String text) {
         this.text = text;
     }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public enum Type {
+        PERSONAL, CLASS, GENERAL
+    }
 }
+
+
+
