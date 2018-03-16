@@ -1,9 +1,22 @@
 package com.github.polimi_mt_acg.back2school.model;
 
+
+import javax.persistence.*;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "class")
 public class Class {
 
+    @Id
+    @GeneratedValue
+    @Column(name = "id")
     private int id;
+
+    @Column(name = "academic_year")
     private int accademicYear;
+
+    @Column(name = "name")
     private String name;
 
     public int getId() {

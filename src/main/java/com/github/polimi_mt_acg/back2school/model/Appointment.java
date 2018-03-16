@@ -1,14 +1,34 @@
 package com.github.polimi_mt_acg.back2school.model;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "appointment")
 public class Appointment {
 
+    @Id
+    @GeneratedValue
+    @Column(name = "id")
     private int id;
+
+    @ManyToOne
+    @JoinColumn(name = "target_id",
+            foreignKey = @ForeignKey(name = "TEACHER_ID_FK"))
     private int teacherId;
+
+    @ManyToOne
+    @JoinColumn(name = "target_id",
+            foreignKey = @ForeignKey(name = "PARENT_ID_FK"))
     private int parentId;
+
+    @Column(name = "datetime_start")
     private LocalDateTime datetimeStart;
+
+    @Column(name = "datetime_end")
     private LocalDateTime datetimeEnd;
+
+    @Column(name = "status")
     private String status;
 
     public int getId() {
