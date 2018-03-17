@@ -14,12 +14,12 @@ public class Appointment {
 
     @ManyToOne
     @JoinColumn(name = "target_id",
-            foreignKey = @ForeignKey(name = "TEACHER_ID_FK"))
+            foreignKey = @ForeignKey(name = "APPOINTMENT_TEACHER_ID_FK"))
     private int teacherId;
 
     @ManyToOne
     @JoinColumn(name = "target_id",
-            foreignKey = @ForeignKey(name = "PARENT_ID_FK"))
+            foreignKey = @ForeignKey(name = "APPOINTMENT_PARENT_ID_FK"))
     private int parentId;
 
     @Column(name = "datetime_start")

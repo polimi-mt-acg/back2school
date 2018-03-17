@@ -14,12 +14,8 @@ public class Notification {
 
     @ManyToOne
     @JoinColumn(name = "creator_id",
-            foreignKey = @ForeignKey(name = "CREATOR_ID_FK"))
+            foreignKey = @ForeignKey(name = "NOTIFICATION_CREATOR_ID_FK"))
     private int creatorId;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "type")
-    private String type;
 
     @Column(name = "date")
     private LocalDateTime datatime;
@@ -71,17 +67,6 @@ public class Notification {
         this.text = text;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public enum Type {
-        PERSONAL, CLASS, GENERAL
-    }
 }
 
 
