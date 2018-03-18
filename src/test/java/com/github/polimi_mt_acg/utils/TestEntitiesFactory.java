@@ -166,6 +166,11 @@ public class TestEntitiesFactory {
         return testEntity;
     }
 
+    public static AuthenticationSession buildAuthenticationSession() {
+        AuthenticationSession testEntity = new AuthenticationSession();
+        return testEntity;
+    }
+
     public static Appointment buildAppointment(){
         Appointment testEntity = new Appointment();
         testEntity.setDatetimeStart(appointmentDatetimeStart);
