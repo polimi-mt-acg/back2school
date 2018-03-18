@@ -10,7 +10,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,7 +54,7 @@ public class PaymentTest {// Test members
     }
 
     @Test
-    public void testGradeAssociations() {
+    public void testPaymentAssociations() {
         // Persist test entities
         Session session = sessionFactory.openSession();
         session.beginTransaction();
