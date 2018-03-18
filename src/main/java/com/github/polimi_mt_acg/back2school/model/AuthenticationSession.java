@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "session")
+@Table(name = "authetication_session")
 public class AuthenticationSession {
 
     @Id
