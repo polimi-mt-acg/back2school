@@ -58,6 +58,13 @@ public class TestEntitiesFactory {
     private static final String paymentDescription = "Fees and costs for the trip";
     private static final double paymentAmount = 450.42;
 
+    //testAppointment data
+    private static final LocalDateTime appointmentDatetimeStart = LocalDateTime.of(2018, 3, 18, 6, 0);
+    private static final LocalDateTime appointmentDateTimeEnd= LocalDateTime.of(2018, 3, 18, 6, 30);
+    private static final String appointmentStatus = "Setted";
+
+
+
     public static Role buildRole(Role.RoleName roleName) {
         Role testEntity = new Role();
         testEntity.setRole(roleName);
@@ -156,6 +163,14 @@ public class TestEntitiesFactory {
         testEntity.setSubject(paymentSubject);
         testEntity.setDescription(paymentDescription);
         testEntity.setAmount(paymentAmount);
+        return testEntity;
+    }
+
+    public static Appointment buildAppointment(){
+        Appointment testEntity = new Appointment();
+        testEntity.setDatetimeStart(appointmentDatetimeStart);
+        testEntity.setDatetimeEnd(appointmentDateTimeEnd);
+        testEntity.setStatus(appointmentStatus);
         return testEntity;
     }
 

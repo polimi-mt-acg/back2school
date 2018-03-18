@@ -15,12 +15,12 @@ public class Appointment {
     @ManyToOne
     @JoinColumn(name = "target_id",
             foreignKey = @ForeignKey(name = "APPOINTMENT_TEACHER_ID_FK"))
-    private int teacherId;
+    private User teacher;
 
     @ManyToOne
     @JoinColumn(name = "target_id",
             foreignKey = @ForeignKey(name = "APPOINTMENT_PARENT_ID_FK"))
-    private int parentId;
+    private User parent;
 
     @Column(name = "datetime_start")
     private LocalDateTime datetimeStart;
@@ -39,20 +39,20 @@ public class Appointment {
         this.id = id;
     }
 
-    public int getTeacherId() {
-        return teacherId;
+    public User getTeacher() {
+        return teacher;
     }
 
-    public void setTeacherId(int teacherId) {
-        this.teacherId = teacherId;
+    public void setTeacher(User teacher) {
+        this.teacher = teacher;
     }
 
-    public int getParentId() {
-        return parentId;
+    public User getParent() {
+        return parent;
     }
 
-    public void setParentId(int parentId) {
-        this.parentId = parentId;
+    public void setParent(User parent) {
+        this.parent = parent;
     }
 
     public LocalDateTime getDatetimeStart() {

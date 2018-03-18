@@ -8,14 +8,14 @@ public class NotificationClass extends Notification {
     @OneToOne
     @JoinColumn(name = "target_id",
             foreignKey = @ForeignKey(name = "TARGET_CLASS_ID_FK"))
-    private int targetId;
+    private Class target;
     //usato per indicare la classe (se il tipo e' classe)
 
-    public int getTargetId() {
-        return targetId;
+    public Class getTarget() {
+        return target;
     }
 
-    public void setTargetId(int targetId) {
-        this.targetId = targetId;
+    public void setTarget(Class target) {
+        this.target = target;
     }
 }

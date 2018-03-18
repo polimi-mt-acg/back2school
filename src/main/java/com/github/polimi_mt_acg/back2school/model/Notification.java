@@ -15,7 +15,7 @@ public class Notification {
     @ManyToOne
     @JoinColumn(name = "creator_id",
             foreignKey = @ForeignKey(name = "NOTIFICATION_CREATOR_ID_FK"))
-    private int creatorId;
+    private User creator;
 
     @Column(name = "date")
     private LocalDateTime datatime;
@@ -35,12 +35,12 @@ public class Notification {
         this.id = id;
     }
 
-    public int getCreatorId() {
-        return creatorId;
+    public User getCreator() {
+        return creator;
     }
 
-    public void setCreatorId(int creatorId) {
-        this.creatorId = creatorId;
+    public void setCreator(User creator) {
+        this.creator = creator;
     }
 
     public LocalDateTime getDatatime() {
