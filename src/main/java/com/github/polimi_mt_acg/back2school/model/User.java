@@ -1,6 +1,8 @@
 package com.github.polimi_mt_acg.back2school.model;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
@@ -30,6 +32,13 @@ public class User {
 
     @Column(name = "salt")
     private String salt;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_notification_read",
+            joinColumns = @JoinColumn(name = "notification_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private List<Notification> notificationsRead = new ArrayList<>();
 
     public int getId() {
         return id;
