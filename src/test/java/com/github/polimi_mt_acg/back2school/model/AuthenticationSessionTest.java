@@ -45,9 +45,9 @@ public class AuthenticationSessionTest {
         testAdministrator = TestEntitiesFactory.buildAdministrator();
         testTeacher = TestEntitiesFactory.buildTeacher();
         testParent = TestEntitiesFactory.buildParent();
-        testSessionAdministrator = TestEntitiesFactory.buildSession();
-        testSessionTeacher = TestEntitiesFactory.buildSession();
-        testSessionParent = TestEntitiesFactory.buildSession();
+        testSessionAdministrator = TestEntitiesFactory.buildAuthenticationSession();
+        testSessionTeacher = TestEntitiesFactory.buildAuthenticationSession();
+        testSessionParent = TestEntitiesFactory.buildAuthenticationSession();
     }
 
     @After
