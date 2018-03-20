@@ -2,9 +2,8 @@ package com.github.polimi_mt_acg.back2school.model;
 
 import javax.persistence.*;
 
-@Entity
-@Table(name = "notification_personal")
-public class NotificationPersonal extends Notification{
+@Entity(name = "notification_personal")
+public class NotificationPersonal extends Notification {
     @OneToOne
     @JoinColumn(name = "target_id",
             foreignKey = @ForeignKey(name = "TARGET_USER_ID_FK"))

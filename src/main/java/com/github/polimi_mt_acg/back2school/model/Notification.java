@@ -4,7 +4,8 @@ package com.github.polimi_mt_acg.back2school.model;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@MappedSuperclass
+@Entity(name = "notification")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class Notification {
 
     @Id
@@ -25,7 +26,6 @@ public class Notification {
 
     @Column(name = "text")
     private String text;
-
 
     public int getId() {
         return id;
@@ -66,8 +66,4 @@ public class Notification {
     public void setText(String text) {
         this.text = text;
     }
-
 }
-
-
-
