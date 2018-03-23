@@ -80,11 +80,15 @@ public class DatabaseHandler {
                     LOGGER.warning("Found null table");
                     break;
                 }
-                String query =
-                        String.format("TRUNCATE TABLE %s", table.getName());
+                String tableName = table.getName();
 
-                LOGGER.info("Executing query: " + query);
-                session.createNativeQuery(query).executeUpdate();
+                if (!tableName.equals("hibernate_sequence")){
+                    String query =
+                            String.format("TRUNCATE TABLE %s", table.getName());
+
+                    LOGGER.info("Executing query: " + query);
+                    session.createNativeQuery(query).executeUpdate();
+                }
             }
         }
 
