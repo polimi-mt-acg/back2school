@@ -3,6 +3,8 @@ package com.github.polimi_mt_acg.back2school.model;
 
 import javax.persistence.*;
 import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "class")
@@ -14,10 +16,14 @@ public class Class {
     private int id;
 
     @Column(name = "academic_year")
-    private int accademicYear;
+    private int academicYear;
 
     @Column(name = "name")
     private String name;
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<User> studentsOfTheClass = new ArrayList<>();
+
 
     public int getId() {
         return id;
@@ -27,12 +33,12 @@ public class Class {
         this.id = id;
     }
 
-    public int getAccademicYear() {
-        return accademicYear;
+    public int getAcademicYear() {
+        return academicYear;
     }
 
-    public void setAccademicYear(int accademicYear) {
-        this.accademicYear = accademicYear;
+    public void setAcademicYear(int academicYear) {
+        this.academicYear = academicYear;
     }
 
     public String getName() {
@@ -41,5 +47,13 @@ public class Class {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<User> getStudentsOfTheClass() {
+        return studentsOfTheClass;
+    }
+
+    public void setStudentsOfTheClass(List<User> studentsOfTheClass) {
+        this.studentsOfTheClass = studentsOfTheClass;
     }
 }

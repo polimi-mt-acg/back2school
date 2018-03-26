@@ -24,7 +24,6 @@
         <mapping class="com.github.polimi_mt_acg.back2school.model.Payment"/>
         <mapping class="com.github.polimi_mt_acg.back2school.model.Role"/>
         <mapping class="com.github.polimi_mt_acg.back2school.model.AuthenticationSession"/>
-        <mapping class="com.github.polimi_mt_acg.back2school.model.StudentClass"/>
         <mapping class="com.github.polimi_mt_acg.back2school.model.Subject"/>
         <mapping class="com.github.polimi_mt_acg.back2school.model.User"/>
     </session-factory>
