@@ -65,13 +65,12 @@ public class DatabaseSeeder {
                 JSONTemplateInterface entitiesTemplate =
                         gson.fromJson(reader, (Class) sm.getValue());
 
-                List<?> entitiesToPerist = entitiesTemplate.getEntities();
-
+                List<?> entitiesToPersist = entitiesTemplate.getEntities();
 
                 Session s = DatabaseHandler.getInstance().getNewSession();
                 s.beginTransaction();
 
-                for (Object genericEntity: entitiesToPerist) {
+                for (Object genericEntity: entitiesToPersist) {
                     if (genericEntity instanceof DeserializeToPersistInterface) {
 
                         // cast the entity
