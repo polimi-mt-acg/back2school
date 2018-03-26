@@ -7,7 +7,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "authentication_session")
-public class AuthenticationSession {
+public class AuthenticationSession implements DeserializeToPersistInterface {
 
     @Id
     @GeneratedValue
@@ -66,6 +66,11 @@ public class AuthenticationSession {
 
     public void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
+    }
+
+    @Override
+    public void prepareToPersist() {
+
     }
 
     public class RandomStringGenerator {

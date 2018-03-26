@@ -6,7 +6,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "user")
-public class User {
+public class User implements DeserializeToPersistInterface {
 
     @Id
     @GeneratedValue
@@ -94,5 +94,10 @@ public class User {
 
     public void setSalt(String salt) {
         this.salt = salt;
+    }
+
+    @Override
+    public void prepareToPersist() {
+
     }
 }

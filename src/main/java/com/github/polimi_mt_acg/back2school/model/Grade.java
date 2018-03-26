@@ -5,7 +5,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "grade")
-public class Grade {
+public class Grade implements DeserializeToPersistInterface {
 
     @Id
     @GeneratedValue
@@ -86,5 +86,10 @@ public class Grade {
 
     public void setGrade(double grade) {
         this.grade = grade;
+    }
+
+    @Override
+    public void prepareToPersist() {
+
     }
 }

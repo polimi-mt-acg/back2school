@@ -3,7 +3,8 @@ package com.github.polimi_mt_acg.back2school.model;
 import javax.persistence.*;
 
 @Entity(name = "notification_class")
-public class NotificationClass extends Notification {
+public class NotificationClass
+        extends Notification implements DeserializeToPersistInterface {
 
     //usato per indicare la classe (se il tipo e' classe)
     @OneToOne
@@ -17,5 +18,10 @@ public class NotificationClass extends Notification {
 
     public void setTarget(Class target) {
         this.target = target;
+    }
+
+    @Override
+    public void prepareToPersist() {
+
     }
 }

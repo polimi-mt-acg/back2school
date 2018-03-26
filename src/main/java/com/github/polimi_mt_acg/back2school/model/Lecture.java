@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "lecture")
-public class Lecture {
+public class Lecture implements DeserializeToPersistInterface {
 
     @Id
     @GeneratedValue
@@ -78,5 +78,10 @@ public class Lecture {
 
     public void setDatetimeEnd(LocalDateTime datetimeEnd) {
         this.datetimeEnd = datetimeEnd;
+    }
+
+    @Override
+    public void prepareToPersist() {
+
     }
 }

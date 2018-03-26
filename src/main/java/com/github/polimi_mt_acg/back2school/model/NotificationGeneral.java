@@ -4,6 +4,11 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity(name = "notification_general")
-public class NotificationGeneral extends Notification {
+public class NotificationGeneral
+        extends Notification implements DeserializeToPersistInterface {
 
+    @Override
+    public void prepareToPersist() {
+
+    }
 }

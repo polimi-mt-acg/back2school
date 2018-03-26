@@ -1,6 +1,6 @@
 package com.github.polimi_mt_acg.back2school.model;
 
-public class StudentClass {
+public class StudentClass implements DeserializeToPersistInterface {
 
     private int studentId;
     private int classId;
@@ -19,5 +19,10 @@ public class StudentClass {
 
     public void setClassId(int classId) {
         this.classId = classId;
+    }
+
+    @Override
+    public void prepareToPersist() {
+
     }
 }
