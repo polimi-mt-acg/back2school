@@ -65,7 +65,7 @@ public class DatabaseHandler {
         LOGGER.info("Executing truncateDatabase");
         Metadata metadata = new MetadataSources(registry).buildMetadata();
 
-        // shut off the foreign key checks
+        // shutoff the foreign key checks
         session.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
 
         // Iterate over namespaces
@@ -84,7 +84,7 @@ public class DatabaseHandler {
 
                 if (!tableName.equals("hibernate_sequence")){
                     String query =
-                            String.format("TRUNCATE TABLE %s", table.getName());
+                            String.format("TRUNCATE TABLE `%s`", tableName);
 
                     LOGGER.info("Executing query: " + query);
                     session.createNativeQuery(query).executeUpdate();
@@ -94,6 +94,9 @@ public class DatabaseHandler {
 
         // turn on again the foreign key checks
         session.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
+
+        // reset hibernate auto increment reference indexes
+        session.createNativeQuery("UPDATE hibernate_sequence SET next_val = 1").executeUpdate();
 
         session.getTransaction().commit();
         session.close();
