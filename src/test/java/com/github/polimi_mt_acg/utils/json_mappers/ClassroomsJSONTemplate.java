@@ -1,4 +1,4 @@
-package com.github.polimi_mt_acg.utils.json_mapper;
+package com.github.polimi_mt_acg.utils.json_mappers;
 
 import com.github.polimi_mt_acg.back2school.model.Classroom;
 
