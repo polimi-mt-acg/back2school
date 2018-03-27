@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "class")
-public class Class {
+@Table(name = "school_class")
+public class SchoolClass {
 
     @Id
     @GeneratedValue
@@ -21,8 +21,13 @@ public class Class {
     @Column(name = "name")
     private String name;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<User> studentsOfTheClass = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_school_class",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "school_class_id"))
+    private List<User> studentsOfTheClass;
 
 
     public int getId() {
@@ -49,11 +54,7 @@ public class Class {
         this.name = name;
     }
 
-    public List<User> getStudentsOfTheClass() {
-        return studentsOfTheClass;
-    }
+    public List<User> getStudentsOfTheClass() {return studentsOfTheClass; }
 
-    public void setStudentsOfTheClass(List<User> studentsOfTheClass) {
-        this.studentsOfTheClass = studentsOfTheClass;
-    }
+    public void setStudentsOfTheClass(List<User> studentsOfTheClass) { this.studentsOfTheClass = studentsOfTheClass; }
 }

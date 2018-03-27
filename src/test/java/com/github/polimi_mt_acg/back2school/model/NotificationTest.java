@@ -20,12 +20,15 @@ public class NotificationTest {// Test members
     private User testAdministrator;
     private User testTeacher;
     private User testParent;
-    private Class testClass;
+    private User testStudent1;
+    private User testStudent2;
+    private SchoolClass testClass;
     private NotificationPersonalParent testNotificationPersonalParent;
     private NotificationPersonalTeacher testNotificationPersonalTeacher;
     private NotificationClassParent testNotificationClassParent;
     private NotificationClassTeacher testNotificationClassTeacher;
     private NotificationGeneral testNotificationGeneral;
+    //private List<User> ls = new ArrayList<>();
 
 
     @Before
@@ -47,7 +50,9 @@ public class NotificationTest {// Test members
         testAdministrator = TestEntitiesFactory.buildAdministrator();
         testParent = TestEntitiesFactory.buildParent();
         testTeacher = TestEntitiesFactory.buildTeacher();
-        testClass = TestEntitiesFactory.buildClass();
+        testClass = TestEntitiesFactory.buildSchoolClass();
+        testStudent1 = TestEntitiesFactory.buildStudent();
+        testStudent2 = TestEntitiesFactory.buildStudent();
         testNotificationPersonalParent = (NotificationPersonalParent) TestEntitiesFactory.buildNotification(NotificationPersonalParent.class);
         testNotificationPersonalTeacher = (NotificationPersonalTeacher) TestEntitiesFactory.buildNotification(NotificationPersonalTeacher.class);
         testNotificationClassParent = (NotificationClassParent) TestEntitiesFactory.buildNotification(NotificationClassParent.class);
@@ -55,5 +60,53 @@ public class NotificationTest {// Test members
         testNotificationGeneral = (NotificationGeneral) TestEntitiesFactory.buildNotification(NotificationGeneral.class);
     }
 
+    @After
+    public void tearDown() throws Exception {
+        if (sessionFactory != null) {
+            sessionFactory.close();
+        }
+    }
 
+    @Test
+    public void testNotificationAssociations() {
+        // Persist test entities
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        session.save(testAdministrator);
+        session.save(testParent);
+        session.save(testTeacher);
+
+        //Link and save testClass/
+        // testClass.setStudentsOfTheClass(ls);
+        //session.save(testClass);
+
+        /* Link and save testNotificationPersonalParent
+        testNotificationPersonalParent.setCreator(testAdministrator);
+        testNotificationPersonalParent.setTarget(testParent);
+        session.save(testNotificationPersonalParent);
+
+        // Link and save testNotificationPersonalTeacher
+        testNotificationPersonalTeacher.setCreator(testAdministrator);
+        testNotificationPersonalTeacher.setTarget(testTeacher);
+        session.save(testNotificationPersonalTeacher);
+
+        / Link and save testNotificationClassParent
+        testNotificationClassParent.setCreator(testAdministrator);
+        // testNotificationClassParent.setTarget(testClass);
+        session.save(testNotificationClassParent);
+
+        // Link and save testNotificationClassTeacher
+        testNotificationClassTeacher.setCreator(testAdministrator);
+        testNotificationClassTeacher.setTarget(testClass);
+        session.save(testNotificationClassTeacher);
+        // Link and save testNotificationGeneral
+        testNotificationGeneral.setCreator(testAdministrator);
+        session.save(testNotificationGeneral);
+
+        */
+        session.getTransaction().commit();
+        session.close();
+
+    }
 }
