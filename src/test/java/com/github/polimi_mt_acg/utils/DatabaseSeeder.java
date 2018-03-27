@@ -3,7 +3,7 @@ package com.github.polimi_mt_acg.utils;
 
 import com.github.polimi_mt_acg.back2school.model.DeserializeToPersistInterface;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
-import com.github.polimi_mt_acg.utils.json_mapper.*;
+import com.github.polimi_mt_acg.utils.json_mappers.*;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import org.hibernate.Session;
@@ -63,8 +63,6 @@ public class DatabaseSeeder {
                 File f = new File(seedFilePath);
                 if(f.exists() && !f.isDirectory()) {
 
-                    LOGGER.info("deployed seed file: " + seedFilePath);
-
                     JsonReader reader =
                             new JsonReader(new FileReader(seedFilePath));
 
@@ -92,6 +90,8 @@ public class DatabaseSeeder {
 
                     s.getTransaction().commit();
                     s.close();
+
+                    LOGGER.info("deployed seed file: " + seedFilePath);
                 }
             }
 

@@ -3,11 +3,14 @@ package com.github.polimi_mt_acg.back2school.model;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 @Entity
 @Table(name = "user")
 public class User implements DeserializeToPersistInterface {
 
+    private final static Logger LOGGER =
+            Logger.getLogger(User.class.getName());
     @Id
     @GeneratedValue
     @Column(name = "id")
@@ -98,6 +101,5 @@ public class User implements DeserializeToPersistInterface {
 
     @Override
     public void prepareToPersist() {
-
     }
 }
