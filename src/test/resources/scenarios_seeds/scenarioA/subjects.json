@@ -1,0 +1,24 @@
+{
+  "subjects": [
+    {
+      "name": "English",
+      "description": "English teach students the grammar"
+    },
+    {
+      "name": "History",
+      "description": "The history teach students what happened in the past"
+    },
+    {
+      "name": "Mathematics",
+      "description": "Teach how to do basic calculations"
+    },
+    {
+      "name": "Art",
+      "description": "How to express feelings through art"
+    },
+    {
+      "name": "Technical drawing",
+      "description": "How to design and draw objects into 3D spaces"
+    }
+  ]
+}
