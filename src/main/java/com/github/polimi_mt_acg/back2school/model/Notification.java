@@ -19,7 +19,7 @@ public class Notification {
     private User creator;
 
     @Column(name = "date")
-    private LocalDateTime datatime;
+    private LocalDateTime datetime;
 
     @Column(name = "subject")
     private String subject;
@@ -43,12 +43,12 @@ public class Notification {
         this.creator = creator;
     }
 
-    public LocalDateTime getDatatime() {
-        return datatime;
+    public LocalDateTime getDatetime() {
+        return datetime;
     }
 
-    public void setDatatime(LocalDateTime datatime) {
-        this.datatime = datatime;
+    public void setDatetime(LocalDateTime datetime) {
+        this.datetime = datetime;
     }
 
     public String getSubject() {
