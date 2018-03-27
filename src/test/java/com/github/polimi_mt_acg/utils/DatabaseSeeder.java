@@ -1,16 +1,14 @@
 package com.github.polimi_mt_acg.utils;
 
 
-import com.github.polimi_mt_acg.back2school.model.Classroom;
 import com.github.polimi_mt_acg.back2school.model.DeserializeToPersistInterface;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
-import com.github.polimi_mt_acg.utils.json_mapper.ClassesJSONTemplate;
-import com.github.polimi_mt_acg.utils.json_mapper.ClassroomsJSONTemplate;
-import com.github.polimi_mt_acg.utils.json_mapper.JSONTemplateInterface;
+import com.github.polimi_mt_acg.utils.json_mapper.*;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import org.hibernate.Session;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Collections;
@@ -28,7 +26,12 @@ public class DatabaseSeeder {
     static {
         Map<String, Object> map = new LinkedHashMap<>();
 
+        // zero dependencies from other entities
         map.put("classrooms.json", ClassroomsJSONTemplate.class);
+        map.put("subjects.json", SubjectsJSONTemplate.class);
+        map.put("users.json", UsersJSONTemplate.class);
+
+        // one dependency from other entities
         map.put("classes.json", ClassesJSONTemplate.class);
 
         seedsMap = Collections.unmodifiableMap(map);
@@ -56,54 +59,41 @@ public class DatabaseSeeder {
 
                 // create the base path for the seed file
                 String seedFilePath = scenarioBasePath + sm.getKey();
-                LOGGER.info(seedFilePath);
 
+                File f = new File(seedFilePath);
+                if(f.exists() && !f.isDirectory()) {
 
-                JsonReader reader =
-                        new JsonReader(new FileReader(seedFilePath));
+                    LOGGER.info("deployed seed file: " + seedFilePath);
 
-                JSONTemplateInterface entitiesTemplate =
-                        gson.fromJson(reader, (Class) sm.getValue());
+                    JsonReader reader =
+                            new JsonReader(new FileReader(seedFilePath));
 
-                List<?> entitiesToPersist = entitiesTemplate.getEntities();
+                    JSONTemplateInterface entitiesTemplate =
+                            gson.fromJson(reader, (Class) sm.getValue());
 
-                Session s = DatabaseHandler.getInstance().getNewSession();
-                s.beginTransaction();
+                    List<?> entitiesToPersist = entitiesTemplate.getEntities();
 
-                for (Object genericEntity: entitiesToPersist) {
-                    if (genericEntity instanceof DeserializeToPersistInterface) {
+                    Session s = DatabaseHandler.getInstance().getNewSession();
+                    s.beginTransaction();
 
-                        // cast the entity
-                        DeserializeToPersistInterface entity =
-                                (DeserializeToPersistInterface) genericEntity;
+                    for (Object genericEntity: entitiesToPersist) {
+                        if (genericEntity instanceof DeserializeToPersistInterface) {
 
-                        // notify the entity that it will be persisted
-                        entity.prepareToPersist();
+                            // cast the entity
+                            DeserializeToPersistInterface entity =
+                                    (DeserializeToPersistInterface) genericEntity;
 
-                        s.persist(entity);
+                            // notify the entity that it will be persisted
+                            entity.prepareToPersist();
+
+                            s.persist(entity);
+                        }
                     }
+
+                    s.getTransaction().commit();
+                    s.close();
                 }
-
-                s.getTransaction().commit();
-                s.close();
             }
-
-//            String filename = "src/test/resources/scenarios_seeds/scenarioA/classrooms.json";
-//            Gson gson = new Gson();
-//            JsonReader reader = new JsonReader(new FileReader(filename));
-//            ClassroomsJSONTemplate data = gson.fromJson(reader, ClassroomsJSONTemplate.class);
-//
-//            Session s = DatabaseHandler.getInstance().getNewSession();
-//            s.beginTransaction();
-//
-//            for (Classroom classroom: data.classrooms) {
-//                LOGGER.info("CLASS NAME: " + classroom.getName());
-//                s.persist(classroom);
-//            }
-//
-//
-//            s.getTransaction().commit();
-//            s.close();
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
