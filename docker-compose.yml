@@ -1,7 +1,9 @@
 version: '2'
 services:
   mariadb:
-    image: mariadb
+    build:
+          context: .
+          dockerfile: Dockerfile.mariadb
     environment:
       - MYSQL_ROOT_PASSWORD=rootpwd
     volumes:
