@@ -1,0 +1,32 @@
+package com.github.polimi_mt_acg.back2school.model;
+
+import javax.persistence.*;
+
+<<<<<<< HEAD:src/main/java/com/github/polimi_mt_acg/back2school/model/NotificationClass.java
+@Entity(name = "notification_class")
+public class NotificationClass
+        extends Notification implements DeserializeToPersistInterface {
+=======
+@Entity(name = "notification_class_parent")
+public class NotificationClassParent extends Notification {
+>>>>>>> master:src/main/java/com/github/polimi_mt_acg/back2school/model/NotificationClassParent.java
+
+    //usato per indicare la classe (se il tipo e' classe)
+    @OneToOne
+    @JoinColumn(name = "target_id",
+            foreignKey = @ForeignKey(name = "TARGET_CLASS_PARENTS_ID_FK"))
+    private Class target;
+
+    public Class getTarget() {
+        return target;
+    }
+
+    public void setTarget(Class target) {
+        this.target = target;
+    }
+
+    @Override
+    public void prepareToPersist() {
+
+    }
+}

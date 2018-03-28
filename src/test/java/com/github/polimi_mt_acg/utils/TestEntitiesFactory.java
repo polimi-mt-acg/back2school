@@ -1,6 +1,7 @@
 package com.github.polimi_mt_acg.utils;
 
 import com.github.polimi_mt_acg.back2school.model.*;
+import com.github.polimi_mt_acg.back2school.model.Class;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -63,6 +64,14 @@ public class TestEntitiesFactory {
     private static final LocalDateTime appointmentDateTimeEnd= LocalDateTime.of(2018, 3, 18, 6, 30);
     private static final String appointmentStatus = "Setted";
 
+    //testClass data
+    private static final int classAcademicYear = 2017;
+    private static final String className = "3D";
+
+    //testNotification data
+    private static final LocalDateTime notificationDatetime = LocalDateTime.of(2018, 4, 7, 6, 50);
+    private static final String notificationSubject = "Ricevuta pagamento";
+    private static  final String notificationText = "La transizione è stata eseguita correttamente";
 
 
     public static Role buildRole(Role.RoleName roleName) {
@@ -86,6 +95,7 @@ public class TestEntitiesFactory {
     public static User buildParent() {
         User testEntity = new User();
         // TODO set role
+
         testEntity.setName(parentName);
         testEntity.setSurname(parentSurname);
         testEntity.setEmail(parentEmail);
@@ -179,4 +189,18 @@ public class TestEntitiesFactory {
         return testEntity;
     }
 
+    public static Class buildClass(){
+        Class testEntity = new Class();
+        testEntity.setAcademicYear(classAcademicYear);
+        testEntity.setName(className);
+        return testEntity;
+    }
+
+    public static Notification buildNotification(java.lang.Class<?> cls) throws IllegalAccessException, InstantiationException {
+        Notification testEntity = (Notification) cls.newInstance();
+        testEntity.setDatetime(notificationDatetime);
+        testEntity.setSubject(notificationSubject);
+        testEntity.setText(notificationText);
+        return testEntity;
+    }
 }

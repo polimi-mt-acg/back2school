@@ -49,16 +49,17 @@ public class Class implements DeserializeToPersistInterface {
         this.name = name;
     }
 
+<<<<<<< HEAD
+    @Override
+    public void prepareToPersist() {
+
+=======
     public List<User> getStudentsOfTheClass() {
         return studentsOfTheClass;
     }
 
     public void setStudentsOfTheClass(List<User> studentsOfTheClass) {
         this.studentsOfTheClass = studentsOfTheClass;
-    }
-
-    @Override
-    public void prepareToPersist() {
-
+>>>>>>> master
     }
 }
