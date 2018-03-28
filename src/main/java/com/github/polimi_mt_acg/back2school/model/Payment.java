@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "payment")
-public class Payment {
+public class Payment implements DeserializeToPersistInterface {
 
     @Id
     @GeneratedValue
@@ -49,6 +49,11 @@ public class Payment {
 
     @Column(name = "amount")
     private double amount;
+
+    @Override
+    public void prepareToPersist() {
+
+    }
 
     public enum Type {
         MATERIAL, MONTHLY, TRIP

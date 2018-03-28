@@ -1,0 +1,5 @@
+FROM mariadb
+
+MAINTAINER nyxgear <dev@nyxgear.com>
+
+COPY ./mariadb.cnf /etc/mysql/conf.d/mariadboverride.cnf

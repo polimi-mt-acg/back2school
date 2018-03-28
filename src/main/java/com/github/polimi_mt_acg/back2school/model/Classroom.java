@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "classroom")
-public class Classroom {
+public class Classroom implements DeserializeToPersistInterface {
 
     @Id
     @GeneratedValue
@@ -46,5 +46,10 @@ public class Classroom {
 
     public void setBuilding(String building) {
         this.building = building;
+    }
+
+    @Override
+    public void prepareToPersist() {
+
     }
 }

@@ -8,7 +8,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "class")
-public class Class {
+public class Class implements DeserializeToPersistInterface {
 
     @Id
     @GeneratedValue
@@ -55,5 +55,10 @@ public class Class {
 
     public void setStudentsOfTheClass(List<User> studentsOfTheClass) {
         this.studentsOfTheClass = studentsOfTheClass;
+    }
+
+    @Override
+    public void prepareToPersist() {
+
     }
 }

@@ -1,0 +1,24 @@
+{
+  "grades": [
+    {
+      "seedStudentEmail": "alice@email.com",
+      "title": "1st math test",
+      "grade": 4.5
+    },
+    {
+      "seedStudentEmail": "alice@email.com",
+      "title": "English test vocabulary",
+      "grade": 6.5
+    },
+    {
+      "seedStudentEmail": "alice@email.com",
+      "title": "Art test, impressionism movement",
+      "grade": 7.0
+    },
+    {
+      "seedStudentEmail": "carl@email.com",
+      "title": "Biology test: chloroplasts",
+      "grade": 8.5
+    }
+  ]
+}

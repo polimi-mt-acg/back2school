@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "appointment")
-public class Appointment {
+public class Appointment implements DeserializeToPersistInterface {
 
     @Id
     @GeneratedValue
@@ -77,5 +77,10 @@ public class Appointment {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    @Override
+    public void prepareToPersist() {
+
     }
 }

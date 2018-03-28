@@ -5,7 +5,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "grade")
-public class Grade {
+public class Grade implements DeserializeToPersistInterface {
 
     @Id
     @GeneratedValue
@@ -35,6 +35,15 @@ public class Grade {
 
     @Column(name = "grade")
     private double grade;
+
+    @Transient
+    private String seedSubjectName;
+
+    @Transient
+    private String seedTeacherEmail;
+
+    @Transient
+    private String seedStudentEmail;
 
     public int getId() {
         return id;
@@ -86,5 +95,11 @@ public class Grade {
 
     public void setGrade(double grade) {
         this.grade = grade;
+    }
+
+    @Override
+    public void prepareToPersist() {
+        // TODO implement this by fetching entities according to the seed
+        // fields: seedSubjectName, seedTeacherEmail, seedStudentEmail
     }
 }

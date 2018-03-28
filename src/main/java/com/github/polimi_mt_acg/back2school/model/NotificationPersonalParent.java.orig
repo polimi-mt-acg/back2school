@@ -2,11 +2,16 @@ package com.github.polimi_mt_acg.back2school.model;
 
 import javax.persistence.*;
 
-@Entity(name = "notification_personal_parent")
-public class NotificationPersonalParent
+<<<<<<< HEAD:src/main/java/com/github/polimi_mt_acg/back2school/model/NotificationPersonal.java
+@Entity(name = "notification_personal")
+public class NotificationPersonal
         extends Notification implements DeserializeToPersistInterface {
 
     // Reference to the single user since the notification is personal
+=======
+@Entity(name = "notification_personal_parent")
+public class NotificationPersonalParent extends Notification {
+>>>>>>> master:src/main/java/com/github/polimi_mt_acg/back2school/model/NotificationPersonalParent.java
     @OneToOne
     @JoinColumn(name = "target_id",
             foreignKey = @ForeignKey(name = "TARGET_USER_PARENT_ID_FK"))
