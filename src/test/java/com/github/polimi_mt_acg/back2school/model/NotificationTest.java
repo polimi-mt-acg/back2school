@@ -1,4 +1,4 @@
-package com.github.polimi_mt_acg.back2school.model;
+/*package com.github.polimi_mt_acg.back2school.model;
 
 import com.github.polimi_mt_acg.utils.TestEntitiesFactory;
 import org.hibernate.Session;
@@ -81,7 +81,7 @@ public class NotificationTest {// Test members
         // testClass.setStudentsOfTheClass(ls);
         //session.save(testClass);
 
-        /* Link and save testNotificationPersonalParent
+        // Link and save testNotificationPersonalParent
         testNotificationPersonalParent.setCreator(testAdministrator);
         testNotificationPersonalParent.setTarget(testParent);
         session.save(testNotificationPersonalParent);
@@ -104,9 +104,10 @@ public class NotificationTest {// Test members
         testNotificationGeneral.setCreator(testAdministrator);
         session.save(testNotificationGeneral);
 
-        */
+
         session.getTransaction().commit();
         session.close();
 
     }
 }
+      */

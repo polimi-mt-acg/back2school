@@ -4,7 +4,8 @@ package com.github.polimi_mt_acg.back2school.model;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity(name = "notification")
+@Entity
+@Table(name = "notification")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class Notification {
 

@@ -22,13 +22,13 @@ public class SchoolClass {
     private String name;
 
 
-    @ManyToMany
+/*    @ManyToMany
     @JoinTable(
-            name = "user_school_class",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "school_class_id"))
+           name = "user_school_class",
+           joinColumns = @JoinColumn(name = "user_id"),
+           inverseJoinColumns = @JoinColumn(name = "school_class_id"))
     private List<User> studentsOfTheClass;
-
+    */
 
     public int getId() {
         return id;
@@ -54,7 +54,9 @@ public class SchoolClass {
         this.name = name;
     }
 
-    public List<User> getStudentsOfTheClass() {return studentsOfTheClass; }
+    //public List<User> getStudentsOfTheClass() {return studentsOfTheClass; }
 
-    public void setStudentsOfTheClass(List<User> studentsOfTheClass) { this.studentsOfTheClass = studentsOfTheClass; }
+    //public void setStudentsOfTheClass(List<User> studentsOfTheClass) { this.studentsOfTheClass = studentsOfTheClass; }
+
+
 }
