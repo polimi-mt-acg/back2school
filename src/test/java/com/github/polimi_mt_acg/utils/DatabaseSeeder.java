@@ -31,8 +31,9 @@ public class DatabaseSeeder {
         map.put("subjects.json", SubjectsJSONTemplate.class);
         map.put("users.json", UsersJSONTemplate.class);
 
-        // one dependency from other entities
+        // one or more dependency from other entities
         map.put("classes.json", ClassesJSONTemplate.class);
+        map.put("grades.json", GradesJSONTemplate.class);
 
         seedsMap = Collections.unmodifiableMap(map);
     }

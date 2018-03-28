@@ -36,6 +36,15 @@ public class Grade implements DeserializeToPersistInterface {
     @Column(name = "grade")
     private double grade;
 
+    @Transient
+    private String seedSubjectName;
+
+    @Transient
+    private String seedTeacherEmail;
+
+    @Transient
+    private String seedStudentEmail;
+
     public int getId() {
         return id;
     }
@@ -90,6 +99,7 @@ public class Grade implements DeserializeToPersistInterface {
 
     @Override
     public void prepareToPersist() {
-
+        // TODO implement this by fetching entities according to the seed
+        // fields: seedSubjectName, seedTeacherEmail, seedStudentEmail
     }
 }
