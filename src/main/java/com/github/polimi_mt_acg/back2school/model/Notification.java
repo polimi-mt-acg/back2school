@@ -5,6 +5,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity(name = "notification")
+@DiscriminatorColumn(name = "type")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class Notification {
 
