@@ -1,6 +1,5 @@
 package com.github.polimi_mt_acg.utils.json_mappers;
 
-import com.github.polimi_mt_acg.back2school.model.Classroom;
 import com.github.polimi_mt_acg.back2school.model.User;
 
 import java.util.List;
