@@ -1,4 +1,4 @@
-/*package com.github.polimi_mt_acg.back2school.model;
+package com.github.polimi_mt_acg.back2school.model;
 
 import com.github.polimi_mt_acg.utils.TestEntitiesFactory;
 import org.hibernate.Session;
@@ -28,7 +28,7 @@ public class NotificationTest {// Test members
     private NotificationClassParent testNotificationClassParent;
     private NotificationClassTeacher testNotificationClassTeacher;
     private NotificationGeneral testNotificationGeneral;
-    //private List<User> ls = new ArrayList<>();
+    private List<User> ls = new ArrayList<>();
 
 
     @Before
@@ -78,8 +78,8 @@ public class NotificationTest {// Test members
         session.save(testTeacher);
 
         //Link and save testClass/
-        // testClass.setStudentsOfTheClass(ls);
-        //session.save(testClass);
+        testClass.setStudentsOfTheClass(ls);
+        session.save(testClass);
 
         // Link and save testNotificationPersonalParent
         testNotificationPersonalParent.setCreator(testAdministrator);
@@ -91,15 +91,16 @@ public class NotificationTest {// Test members
         testNotificationPersonalTeacher.setTarget(testTeacher);
         session.save(testNotificationPersonalTeacher);
 
-        / Link and save testNotificationClassParent
+        // Link and save testNotificationClassParent
         testNotificationClassParent.setCreator(testAdministrator);
-        // testNotificationClassParent.setTarget(testClass);
+        testNotificationClassParent.setTarget(testClass);
         session.save(testNotificationClassParent);
 
         // Link and save testNotificationClassTeacher
         testNotificationClassTeacher.setCreator(testAdministrator);
         testNotificationClassTeacher.setTarget(testClass);
         session.save(testNotificationClassTeacher);
+
         // Link and save testNotificationGeneral
         testNotificationGeneral.setCreator(testAdministrator);
         session.save(testNotificationGeneral);
@@ -110,4 +111,3 @@ public class NotificationTest {// Test members
 
     }
 }
-      */

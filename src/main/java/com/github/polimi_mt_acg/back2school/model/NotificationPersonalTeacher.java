@@ -3,18 +3,19 @@ package com.github.polimi_mt_acg.back2school.model;
 import javax.persistence.*;
 
 @Entity//(name = "notification_personal_teacher")
+@DiscriminatorValue(value = "personal_teacher")
 public class NotificationPersonalTeacher extends Notification {
     @OneToOne
     @JoinColumn(name = "target_id",
             foreignKey = @ForeignKey(name = "TARGET_USER_TEACHER_ID_FK"))
-    private User target;
+    private User targetut;
     //usato per indicare il singolo utente (se il tipo è personal)
 
     public User getTarget() {
-        return target;
+        return targetut;
     }
 
     public void setTarget(User target) {
-        this.target = target;
+        this.targetut = target;
     }
 }
