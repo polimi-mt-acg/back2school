@@ -6,7 +6,7 @@ import javax.persistence.*;
 @DiscriminatorValue(value = "personal_parent")
 public class NotificationPersonalParent extends Notification {
     @OneToOne
-    @JoinColumn(name = "target_id",
+    @JoinColumn(name = "target_personal_parent_id",
             foreignKey = @ForeignKey(name = "TARGET_USER_PARENT_ID_FK"))
     private User targetup;
 

@@ -78,6 +78,7 @@ public class NotificationTest {// Test members
         session.save(testTeacher);
 
         //Link and save testClass/
+
         testClass.setStudentsOfTheClass(ls);
         session.save(testClass);
 
@@ -108,6 +109,26 @@ public class NotificationTest {// Test members
 
         session.getTransaction().commit();
         session.close();
+
+        // Now we check how Hibernate fetches foreign keys' data
+        session = sessionFactory.openSession();
+        session.beginTransaction();
+        NotificationPersonalParent nPP = session.get(NotificationPersonalParent.class, testNotificationPersonalParent.getId());
+        NotificationPersonalTeacher nPT = session.get(NotificationPersonalTeacher.class, testNotificationPersonalTeacher.getId());
+        NotificationClassParent nCP = session.get(NotificationClassParent.class, testNotificationClassParent.getId());
+        NotificationClassTeacher nCT = session.get(NotificationClassTeacher.class, testNotificationClassTeacher.getId());
+        NotificationGeneral nG = session.get(NotificationGeneral.class, testNotificationGeneral.getId());
+
+        session.getTransaction().commit();
+        session.close();
+
+        assertNotNull(nPP);
+        assertNotNull(nPT);
+        assertNotNull(nCP);
+        assertNotNull(nCT);
+        assertNotNull(nG);
+
+
 
     }
 }
