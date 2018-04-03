@@ -19,6 +19,10 @@
     {
       "name": "Technical drawing",
       "description": "How to design and draw objects into 3D spaces"
+    },
+    {
+      "name": "Biology",
+      "description": "Biology base knowledge"
     }
   ]
 }
