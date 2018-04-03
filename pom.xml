@@ -23,6 +23,9 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                    <compilerArguments>
+                        <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
+                    </compilerArguments>
                 </configuration>
             </plugin>
             <plugin>
@@ -32,6 +35,7 @@
                     <!--<groups>com.github.polimi_mt_acg.back2school.utils.TestCategory$Transient</groups>-->
                 </configuration>
             </plugin>
+
         </plugins>
     </build>
 
@@ -76,6 +80,11 @@
             <artifactId>hibernate-core</artifactId>
             <version>5.2.14.Final</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-jpamodelgen</artifactId>
+            <version>5.2.14.Final</version>
         </dependency>
 
         <!-- MariaDB JDBC -->
