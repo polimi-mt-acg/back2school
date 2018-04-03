@@ -1,12 +1,9 @@
 package com.github.polimi_mt_acg.back2school.model;
 
+import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import com.github.polimi_mt_acg.back2school.utils.TestCategory;
 import com.github.polimi_mt_acg.utils.TestEntitiesFactory;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.boot.MetadataSources;
-import org.hibernate.boot.registry.StandardServiceRegistry;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +16,7 @@ import static org.junit.Assert.assertNotNull;
 public class AuthenticationSessionTest {
 
     // Test members
-    private SessionFactory sessionFactory;
+    private Session session;
     private User testAdministrator;
     private User testTeacher;
     private User testParent;
@@ -29,20 +26,7 @@ public class AuthenticationSessionTest {
     // the student cannot login into the system
 
     @Before
-    public void setUp() throws Exception {
-        // A SessionFactory is set up once for an application!
-        final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
-                .configure() // configures settings from hibernate.cfg.xml
-                .build();
-        try {
-            sessionFactory = new MetadataSources(registry).buildMetadata().buildSessionFactory();
-        } catch (Exception e) {
-            // The registry would be destroyed by the SessionFactory, but we had trouble building the SessionFactory
-            // so destroy it manually.
-            StandardServiceRegistryBuilder.destroy(registry);
-            throw e;
-        }
-
+    public void setUp() {
         // Then create fictitious Entities
         testAdministrator = TestEntitiesFactory.buildAdministrator();
         testTeacher = TestEntitiesFactory.buildTeacher();
@@ -53,44 +37,47 @@ public class AuthenticationSessionTest {
     }
 
     @After
-    public void tearDown() throws Exception {
-        if (sessionFactory != null) {
-            sessionFactory.close();
+    public void tearDown() {
+        DatabaseHandler.getInstance().truncateDatabase();
+
+        if (session != null) {
+            session.close();
         }
     }
 
     @Test
     @Category(TestCategory.Unit.class)
     public void testAuthenticationSessionAssociations() {
-        // Persist test entities
-        Session sessionFactory = this.sessionFactory.openSession();
-        sessionFactory.beginTransaction();
+        session = DatabaseHandler.getInstance().getNewSession();
 
-        sessionFactory.save(testAdministrator);
-        sessionFactory.save(testTeacher);
-        sessionFactory.save(testParent);
+        // Persist test entities
+        session.beginTransaction();
+
+        session.save(testAdministrator);
+        session.save(testTeacher);
+        session.save(testParent);
 
         testSessionAdministrator.setUser(testAdministrator);
         testSessionTeacher.setUser(testTeacher);
         testSessionParent.setUser(testParent);
 
-        sessionFactory.save(testSessionAdministrator);
-        sessionFactory.save(testSessionTeacher);
-        sessionFactory.save(testSessionParent);
+        session.save(testSessionAdministrator);
+        session.save(testSessionTeacher);
+        session.save(testSessionParent);
 
-        sessionFactory.getTransaction().commit();
-        sessionFactory.close();
+        session.getTransaction().commit();
+        session.close();
 
         // Now we check how Hibernate fetches foreign keys' data
-        sessionFactory = this.sessionFactory.openSession();
-        sessionFactory.beginTransaction();
+        session = DatabaseHandler.getInstance().getNewSession();
+        session.beginTransaction();
 
-        AuthenticationSession ASA = sessionFactory.get(AuthenticationSession.class, testSessionAdministrator.getId());
-        AuthenticationSession ASP = sessionFactory.get(AuthenticationSession.class, testSessionParent.getId());
-        AuthenticationSession AST = sessionFactory.get(AuthenticationSession.class, testSessionTeacher.getId());
+        AuthenticationSession ASA = session.get(AuthenticationSession.class, testSessionAdministrator.getId());
+        AuthenticationSession ASP = session.get(AuthenticationSession.class, testSessionParent.getId());
+        AuthenticationSession AST = session.get(AuthenticationSession.class, testSessionTeacher.getId());
 
-        sessionFactory.getTransaction().commit();
-        sessionFactory.close();
+        session.getTransaction().commit();
+        session.close();
 
         assertNotNull(ASA);
         assertNotNull(ASP);

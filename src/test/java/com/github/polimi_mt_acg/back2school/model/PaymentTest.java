@@ -1,5 +1,6 @@
 package com.github.polimi_mt_acg.back2school.model;
 
+import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import com.github.polimi_mt_acg.back2school.utils.TestCategory;
 import com.github.polimi_mt_acg.utils.TestEntitiesFactory;
 import org.hibernate.Session;
@@ -18,7 +19,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 public class PaymentTest {// Test members
-    private SessionFactory sessionFactory;
+    private Session session;
     private User testAdministrator;
     private User testParent;
     private Payment testPaymentMaterial;
@@ -27,19 +28,6 @@ public class PaymentTest {// Test members
 
     @Before
     public void setUp() throws Exception {
-        // A SessionFactory is set up once for an application!
-        final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
-                .configure() // configures settings from hibernate.cfg.xml
-                .build();
-        try {
-            sessionFactory = new MetadataSources(registry).buildMetadata().buildSessionFactory();
-        } catch (Exception e) {
-            // The registry would be destroyed by the SessionFactory, but we had trouble building the SessionFactory
-            // so destroy it manually.
-            StandardServiceRegistryBuilder.destroy(registry);
-            throw e;
-        }
-
         // Then create fictitious Entities
         testAdministrator = TestEntitiesFactory.buildAdministrator();
         testParent = TestEntitiesFactory.buildParent();
@@ -50,16 +38,18 @@ public class PaymentTest {// Test members
 
     @After
     public void tearDown() throws Exception {
-        if (sessionFactory != null) {
-            sessionFactory.close();
+        DatabaseHandler.getInstance().truncateDatabase();
+
+        if (session != null) {
+            session.close();
         }
     }
 
     @Test
     @Category(TestCategory.Unit.class)
     public void testPaymentAssociations() {
+        session = DatabaseHandler.getInstance().getNewSession();
         // Persist test entities
-        Session session = sessionFactory.openSession();
         session.beginTransaction();
 
         session.save(testAdministrator);
@@ -84,7 +74,7 @@ public class PaymentTest {// Test members
         session.close();
 
         // Now we check how Hibernate fetches foreign keys' data
-        session = sessionFactory.openSession();
+        session = DatabaseHandler.getInstance().getNewSession();
         session.beginTransaction();
         Payment pMa = session.get(Payment.class, testPaymentMaterial.getId());
         Payment pMo = session.get(Payment.class, testPaymentMonthly.getId());

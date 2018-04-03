@@ -1,12 +1,9 @@
 package com.github.polimi_mt_acg.back2school.model;
 
+import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import com.github.polimi_mt_acg.back2school.utils.TestCategory;
 import com.github.polimi_mt_acg.utils.TestEntitiesFactory;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.boot.MetadataSources;
-import org.hibernate.boot.registry.StandardServiceRegistry;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +14,7 @@ import static org.junit.Assert.assertNotNull;
 
 public class LectureTest {
     // Test members
-    private SessionFactory sessionFactory;
+    private Session session;
     private Lecture testLecture;
     private User testTeacher;
     private Subject testSubject;
@@ -25,19 +22,6 @@ public class LectureTest {
 
     @Before
     public void setUp() throws Exception {
-        // A SessionFactory is set up once for an application!
-        final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
-                .configure() // configures settings from hibernate.cfg.xml
-                .build();
-        try {
-            sessionFactory = new MetadataSources(registry).buildMetadata().buildSessionFactory();
-        } catch (Exception e) {
-            // The registry would be destroyed by the SessionFactory, but we had trouble building the SessionFactory
-            // so destroy it manually.
-            StandardServiceRegistryBuilder.destroy(registry);
-            throw e;
-        }
-
         // Then create fictitious Entities
         testTeacher = TestEntitiesFactory.buildTeacher();
         testSubject = TestEntitiesFactory.buildSubject();
@@ -47,16 +31,19 @@ public class LectureTest {
 
     @After
     public void tearDown() throws Exception {
-        if (sessionFactory != null) {
-            sessionFactory.close();
+        DatabaseHandler.getInstance().truncateDatabase();
+
+        if (session != null) {
+            session.close();
         }
     }
 
     @Test
     @Category(TestCategory.Unit.class)
     public void testLectureAssociations() {
+        session = DatabaseHandler.getInstance().getNewSession();
+
         // Persist test entities
-        Session session = sessionFactory.openSession();
         session.beginTransaction();
 
         session.save(testTeacher);
@@ -73,7 +60,7 @@ public class LectureTest {
         session.close();
 
         // Now we check how Hibernate fetches foreign keys' data
-        session = sessionFactory.openSession();
+        session = DatabaseHandler.getInstance().getNewSession();
         session.beginTransaction();
         Lecture l = session.get(Lecture.class, testLecture.getId());
 
