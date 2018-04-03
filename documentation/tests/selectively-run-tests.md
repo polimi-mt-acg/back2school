@@ -8,7 +8,7 @@ JUnit categories allow to run selectively groups/classes of tests.
 
 Categories for the project are defined as interfaces at:
 
-[/src/main/java/com/github/polimi_mt_acg/back2school/utils/TestCategory.java](../../src/main/java/test.java)
+[/src/main/java/com/github/polimi_mt_acg/back2school/utils/TestCategory.java](../../src/main/java/com/github/polimi_mt_acg/back2school/utils/TestCategory.java)
 
 
 ### Run only one category of tests
