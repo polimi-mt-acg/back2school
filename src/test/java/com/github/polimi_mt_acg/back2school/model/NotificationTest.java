@@ -128,6 +128,117 @@ public class NotificationTest {// Test members
         assertNotNull(nCT);
         assertNotNull(nG);
 
+        List<NotificationPersonalParent> notificationPP = new ArrayList<>();
+        notificationPP.add(nPP);
+        List<NotificationPersonalTeacher> notificationPT = new ArrayList<>();
+        notificationPT.add(nPT);
+        List<NotificationClassParent> notificationCP = new ArrayList<>();
+        notificationCP.add(nCP);
+        List<NotificationClassTeacher> notificationCT = new ArrayList<>();
+        notificationCT.add(nCT);
+        List<NotificationGeneral> notificationG = new ArrayList<>();
+        notificationG.add(nG);
+
+        // Notification Personal Parent data
+        for (NotificationPersonalParent p: notificationPP) {
+            // Administrator and parent data test
+            assertEquals(p.getCreator().getId(), testAdministrator.getId());
+            assertEquals(p.getCreator().getName(), testAdministrator.getName());
+            assertEquals(p.getCreator().getSurname(), testAdministrator.getSurname());
+            assertEquals(p.getCreator().getPassword(), testAdministrator.getPassword());
+            assertEquals(p.getCreator().getSalt(), testAdministrator.getSalt());
+//            assertEquals(p.getPlacedBy().getType(), testAdministrator.getType());
+
+            assertEquals(p.getTarget().getId(), testParent.getId());
+            assertEquals(p.getTarget().getName(), testParent.getName());
+            assertEquals(p.getTarget().getSurname(), testParent.getSurname());
+            assertEquals(p.getTarget().getPassword(), testParent.getPassword());
+            assertEquals(p.getTarget().getSalt(), testParent.getSalt());
+//            assertEquals(p.getAssignedTo().getType(), testParent.getType());
+        }
+
+
+        assertEquals(nPP.getDatetime(), testNotificationPersonalParent.getDatetime());
+        assertEquals(nPP.getSubject(), testNotificationPersonalParent.getSubject());
+        assertEquals(nPP.getText(), testNotificationPersonalParent.getText());
+
+// Notification Personal Teacher data
+        for (NotificationPersonalTeacher p: notificationPT) {
+            // Administrator and parent data test
+            assertEquals(p.getCreator().getId(), testAdministrator.getId());
+            assertEquals(p.getCreator().getName(), testAdministrator.getName());
+            assertEquals(p.getCreator().getSurname(), testAdministrator.getSurname());
+            assertEquals(p.getCreator().getPassword(), testAdministrator.getPassword());
+            assertEquals(p.getCreator().getSalt(), testAdministrator.getSalt());
+//            assertEquals(p.getPlacedBy().getType(), testAdministrator.getType());
+
+            assertEquals(p.getTarget().getId(), testTeacher.getId());
+            assertEquals(p.getTarget().getName(), testTeacher.getName());
+            assertEquals(p.getTarget().getSurname(), testTeacher.getSurname());
+            assertEquals(p.getTarget().getPassword(), testTeacher.getPassword());
+            assertEquals(p.getTarget().getSalt(), testTeacher.getSalt());
+//            assertEquals(p.getAssignedTo().getType(), testParent.getType());
+        }
+
+        assertEquals(nPT.getDatetime(), testNotificationPersonalTeacher.getDatetime());
+        assertEquals(nPT.getSubject(), testNotificationPersonalTeacher.getSubject());
+        assertEquals(nPT.getText(), testNotificationPersonalTeacher.getText());
+
+// Notification Class Parent data
+        for (NotificationClassParent p: notificationCP) {
+            // Administrator and parent data test
+            assertEquals(p.getCreator().getId(), testAdministrator.getId());
+            assertEquals(p.getCreator().getName(), testAdministrator.getName());
+            assertEquals(p.getCreator().getSurname(), testAdministrator.getSurname());
+            assertEquals(p.getCreator().getPassword(), testAdministrator.getPassword());
+            assertEquals(p.getCreator().getSalt(), testAdministrator.getSalt());
+//            assertEquals(p.getPlacedBy().getType(), testAdministrator.getType());
+
+            assertEquals(p.getTarget().getId(), testClass.getId());
+            assertEquals(p.getTarget().getName(), testClass.getName());
+            assertEquals(p.getTarget().getAcademicYear(), testClass.getAcademicYear());
+//            assertEquals(p.getAssignedTo().getType(), testParent.getType());
+        }
+
+        assertEquals(nCP.getDatetime(), testNotificationClassParent.getDatetime());
+        assertEquals(nCP.getSubject(), testNotificationClassParent.getSubject());
+        assertEquals(nCP.getText(), testNotificationClassParent.getText());
+
+
+// Notification Class Teacher data
+        for (NotificationClassTeacher p: notificationCT) {
+            // Administrator and parent data test
+            assertEquals(p.getCreator().getId(), testAdministrator.getId());
+            assertEquals(p.getCreator().getName(), testAdministrator.getName());
+            assertEquals(p.getCreator().getSurname(), testAdministrator.getSurname());
+            assertEquals(p.getCreator().getPassword(), testAdministrator.getPassword());
+            assertEquals(p.getCreator().getSalt(), testAdministrator.getSalt());
+//            assertEquals(p.getPlacedBy().getType(), testAdministrator.getType());
+
+            assertEquals(p.getTarget().getId(), testClass.getId());
+            assertEquals(p.getTarget().getName(), testClass.getName());
+            assertEquals(p.getTarget().getAcademicYear(), testClass.getAcademicYear());
+//            assertEquals(p.getAssignedTo().getType(), testParent.getType());
+        }
+
+        assertEquals(nCT.getDatetime(), testNotificationClassTeacher.getDatetime());
+        assertEquals(nCT.getSubject(), testNotificationClassTeacher.getSubject());
+        assertEquals(nCT.getText(), testNotificationClassTeacher.getText());
+
+// Notification General data
+        for (NotificationGeneral p: notificationG) {
+            // Administrator and parent data test
+            assertEquals(p.getCreator().getId(), testAdministrator.getId());
+            assertEquals(p.getCreator().getName(), testAdministrator.getName());
+            assertEquals(p.getCreator().getSurname(), testAdministrator.getSurname());
+            assertEquals(p.getCreator().getPassword(), testAdministrator.getPassword());
+            assertEquals(p.getCreator().getSalt(), testAdministrator.getSalt());
+//            assertEquals(p.getPlacedBy().getType(), testAdministrator.getType());
+        }
+
+        assertEquals(nG.getDatetime(), testNotificationGeneral.getDatetime());
+        assertEquals(nG.getSubject(), testNotificationGeneral.getSubject());
+        assertEquals(nG.getText(), testNotificationGeneral.getText());
 
 
     }
