@@ -83,7 +83,6 @@ public class AppointmentTest {
             assertEquals(a.getTeacher().getPassword(), testTeacher.getPassword());
             assertEquals(a.getTeacher().getSalt(), testTeacher.getSalt());
             assertEquals(a.getTeacher().getSurname(), testTeacher.getSurname());
-            assertEquals(a.getTeacher().getRole(), testTeacher.getRole());
             assertEquals(a.getTeacher().getClass(), testTeacher.getClass());
 
             assertEquals(a.getParent().getId(), testParent.getId());

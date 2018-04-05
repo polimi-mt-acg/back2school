@@ -74,12 +74,6 @@ public class TestEntitiesFactory {
     private static  final String notificationText = "La transizione è stata eseguita correttamente";
 
 
-    public static Role buildRole(Role.RoleName roleName) {
-        Role testEntity = new Role();
-        testEntity.setRole(roleName);
-        return testEntity;
-    }
-
     public static User buildStudent() {
         User testStudent = new User();
         // TODO set role

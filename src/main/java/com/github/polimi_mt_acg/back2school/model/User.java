@@ -16,11 +16,6 @@ public class User implements DeserializeToPersistInterface {
     @Column(name = "id")
     private int id;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id",
-            foreignKey = @ForeignKey(name = "ROLE_ID_FK"))
-    private Role role;
-
     @Column(name = "name")
     private String name;
 
@@ -49,14 +44,6 @@ public class User implements DeserializeToPersistInterface {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
     }
 
     public String getName() {
