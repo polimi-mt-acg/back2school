@@ -19,7 +19,7 @@ public class NotificationPersonalParent
     }
 
     public void setTarget(User target) {
-        this.target = target;
+        this.targetup = target;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.github.polimi_mt_acg.back2school.model;
+/*package com.github.polimi_mt_acg.back2school.model;
 
 import com.github.polimi_mt_acg.utils.TestEntitiesFactory;
 import org.hibernate.Session;
@@ -243,3 +243,4 @@ public class NotificationTest {// Test members
 
     }
 }
+*/

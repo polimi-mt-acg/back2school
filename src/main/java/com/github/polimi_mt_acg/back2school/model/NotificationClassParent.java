@@ -3,7 +3,7 @@ package com.github.polimi_mt_acg.back2school.model;
 import javax.persistence.*;
 
 @Entity(name = "notification_class_parent")
-@DiscriminatorValue(value = "CLASS_PARENT")
+@DiscriminatorValue(value = "class_parent")
 public class NotificationClassParent
         extends Notification implements DeserializeToPersistInterface {
 
@@ -15,8 +15,8 @@ public class NotificationClassParent
 
     public SchoolClass getTarget() { return targetcp; }
 
-    public void setTarget(Class target) {
-        this.target = target;
+    public void setTarget(SchoolClass target) {
+        targetcp = target;
     }
 
     @Override
