@@ -1,12 +1,15 @@
 package com.github.polimi_mt_acg.back2school.model;
 
 
+import org.hibernate.type.DiscriminatorType;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity(name = "notification")
-@DiscriminatorColumn(name = "type")
+@Entity
+@Table(name = "notification")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn( name = "type", discriminatorType = javax.persistence.DiscriminatorType.STRING)
 public class Notification {
 
     @Id

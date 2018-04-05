@@ -1,7 +1,6 @@
 package com.github.polimi_mt_acg.utils;
 
 import com.github.polimi_mt_acg.back2school.model.*;
-import com.github.polimi_mt_acg.back2school.model.Class;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -64,7 +63,7 @@ public class TestEntitiesFactory {
     private static final LocalDateTime appointmentDateTimeEnd= LocalDateTime.of(2018, 3, 18, 6, 30);
     private static final String appointmentStatus = "Setted";
 
-    //testClass data
+    //testSchoolClass data
     private static final int classAcademicYear = 2017;
     private static final String className = "3D";
 
@@ -183,8 +182,8 @@ public class TestEntitiesFactory {
         return testEntity;
     }
 
-    public static Class buildClass(){
-        Class testEntity = new Class();
+    public static SchoolClass buildSchoolClass(){
+        SchoolClass testEntity = new SchoolClass();
         testEntity.setAcademicYear(classAcademicYear);
         testEntity.setName(className);
         return testEntity;

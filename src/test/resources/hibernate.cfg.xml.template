@@ -21,6 +21,11 @@
         <mapping class="com.github.polimi_mt_acg.back2school.model.Grade"/>
         <mapping class="com.github.polimi_mt_acg.back2school.model.Lecture"/>
         <mapping class="com.github.polimi_mt_acg.back2school.model.Notification"/>
+                <mapping class="com.github.polimi_mt_acg.back2school.model.NotificationPersonalParent"/>
+                <mapping class="com.github.polimi_mt_acg.back2school.model.NotificationPersonalTeacher"/>
+                <mapping class="com.github.polimi_mt_acg.back2school.model.NotificationClassParent"/>
+                <mapping class="com.github.polimi_mt_acg.back2school.model.NotificationClassTeacher"/>
+                <mapping class="com.github.polimi_mt_acg.back2school.model.NotificationGeneral"/>
         <mapping class="com.github.polimi_mt_acg.back2school.model.Payment"/>
         <mapping class="com.github.polimi_mt_acg.back2school.model.AuthenticationSession"/>
         <mapping class="com.github.polimi_mt_acg.back2school.model.Subject"/>
