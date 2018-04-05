@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Table(name = "notification")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn( name = "type", discriminatorType = javax.persistence.DiscriminatorType.STRING)
-public class Notification {
+public class Notification implements DeserializeToPersistInterface {
 
     @Id
     @GeneratedValue
@@ -69,5 +69,10 @@ public class Notification {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    @Override
+    public void prepareToPersist() {
+
     }
 }

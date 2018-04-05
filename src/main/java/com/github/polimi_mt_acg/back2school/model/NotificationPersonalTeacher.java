@@ -18,6 +18,7 @@ public class NotificationPersonalTeacher extends Notification implements Deseria
     public void setTarget(User target) {
         this.targetut = target;
     }
+
     @Override
     public void prepareToPersist() {
 
