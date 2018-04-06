@@ -26,14 +26,41 @@ public class DatabaseSeeder {
     static {
         Map<String, Object> map = new LinkedHashMap<>();
 
+        /* Seeds to be deployed
+         * [x] subject
+         * [x] classroom
+         * [x] lecture
+         * [x] school_class
+         * [x] grade
+         * [x] user
+         * [x] appointment
+         * [x] notification_general
+         * [x] notification_class_parent
+         * [x] notification_class_teacher
+         * [x] notification_personal_parent
+         * [x] notification_personal_teacher
+         * [x] notification_read
+         * [x] payment
+         * [x] authentication_session
+         */
         // zero dependencies from other entities
         map.put("classrooms.json", ClassroomsJSONTemplate.class);
         map.put("subjects.json", SubjectsJSONTemplate.class);
         map.put("users.json", UsersJSONTemplate.class);
 
         // one or more dependency from other entities
-        map.put("classes.json", ClassesJSONTemplate.class);
+//        map.put("payments.json", PaymentsJSONTemplate.class);
         map.put("grades.json", GradesJSONTemplate.class);
+        map.put("classes.json", ClassesJSONTemplate.class);
+//        map.put("lectures.json", LecturesJSONTemplate.class);
+//        map.put("notifications_general.json", NotificationsGeneralJSONTemplate.class);
+//        map.put("appointments.json", AppointmentsJSONTemplate.class);
+//        map.put("notifications_personal_parent.json", NotificationsPersonalParentJSONTemplate.class);
+//        map.put("notifications_personal_teacher.json", NotificationsPersonalTeacherJSONTemplate.class);
+//        map.put("notifications_class_parent.json", NotificationsClassParent5JSONTemplate.class);
+//        map.put("notifications_class_teacher.json", NotificationsClassTeacherJSONTemplate.class);
+//        map.put("notifications_read.json", NotificationsReadJSONTemplate.class);
+//        map.put("authentication_sessions.json", AuthenticationSessionJSONTemplate.class);
 
         seedsMap = Collections.unmodifiableMap(map);
     }
