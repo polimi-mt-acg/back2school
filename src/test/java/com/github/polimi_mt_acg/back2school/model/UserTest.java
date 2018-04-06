@@ -15,6 +15,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class UserTest {
 
@@ -50,7 +51,7 @@ public class UserTest {
                 .getEntitiesListFromSeed("scenarioA_unit_tests", "users.json");
 
         assertNotNull(seedUsers);
-        assertEquals(seedUsers.size(), 1);
+        assertTrue(seedUsers.size() >= 1);
 
         User seedEntity = seedUsers.get(0);
         User databaseEntity = getUserFromDB(seedEntity.getEmail());

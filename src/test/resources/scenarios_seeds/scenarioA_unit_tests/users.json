@@ -4,6 +4,11 @@
       "name": "Alice",
       "surname": "SurnameAlice",
       "email": "alice@email.com"
+    },
+    {
+      "name": "Bob",
+      "surname": "SurnameBob",
+      "email": "bob@email.com"
     }
   ]
 }
