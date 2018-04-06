@@ -50,54 +50,67 @@ public class DatabaseSeeder {
      * @param scenarioFolderName
      */
     public static void deployScenario(String scenarioFolderName) {
-        String scenarioBasePath =
-                "src/test/resources/scenarios_seeds/" + scenarioFolderName + "/";
+        for (Map.Entry<String, Object> sm: seedsMap.entrySet()) {
+            String seedFilename = sm.getKey();
+
+            List<?> entitiesToPersist =
+                    getEntitiesListFromSeed(scenarioFolderName, seedFilename);
+
+            if (entitiesToPersist != null) {
+                Session s = DatabaseHandler.getInstance().getNewSession();
+                s.beginTransaction();
+                for (Object genericEntity: entitiesToPersist) {
+                    if (genericEntity instanceof DeserializeToPersistInterface) {
+
+                        // cast the entity
+                        DeserializeToPersistInterface entity =
+                                (DeserializeToPersistInterface) genericEntity;
+
+                        // notify the entity that it will be persisted
+                        entity.prepareToPersist();
+
+                        s.persist(entity);
+                    }
+                }
+                s.getTransaction().commit();
+                s.close();
+
+                LOGGER.info(
+                        String.format(
+                                "deployed seed file: %s/%s",
+                                scenarioFolderName,
+                                seedFilename
+                        )
+                );
+            }
+
+        }
+    }
+
+    public static List<?> getEntitiesListFromSeed(String scenarioFolderName, String seedFilename) {
+        Gson gson = new Gson();
+
+        String seedFilePath = "src/test/resources/scenarios_seeds/"
+                + scenarioFolderName
+                + "/"
+                + seedFilename;
+        File f = new File(seedFilePath);
 
         try {
-            Gson gson = new Gson();
+            if (f.exists() && !f.isDirectory()) {
+                JsonReader reader =
+                        new JsonReader(new FileReader(seedFilePath));
 
-            for (Map.Entry<String, Object> sm: seedsMap.entrySet()) {
+                Class entitiesTemplateClass = (Class) seedsMap.get(seedFilename);
+                JSONTemplateInterface entitiesTemplate =
+                        gson.fromJson(reader, entitiesTemplateClass);
 
-                // create the base path for the seed file
-                String seedFilePath = scenarioBasePath + sm.getKey();
-
-                File f = new File(seedFilePath);
-                if(f.exists() && !f.isDirectory()) {
-
-                    JsonReader reader =
-                            new JsonReader(new FileReader(seedFilePath));
-
-                    JSONTemplateInterface entitiesTemplate =
-                            gson.fromJson(reader, (Class) sm.getValue());
-
-                    List<?> entitiesToPersist = entitiesTemplate.getEntities();
-
-                    Session s = DatabaseHandler.getInstance().getNewSession();
-                    s.beginTransaction();
-
-                    for (Object genericEntity: entitiesToPersist) {
-                        if (genericEntity instanceof DeserializeToPersistInterface) {
-
-                            // cast the entity
-                            DeserializeToPersistInterface entity =
-                                    (DeserializeToPersistInterface) genericEntity;
-
-                            // notify the entity that it will be persisted
-                            entity.prepareToPersist();
-
-                            s.persist(entity);
-                        }
-                    }
-
-                    s.getTransaction().commit();
-                    s.close();
-
-                    LOGGER.info("deployed seed file: " + seedFilePath);
-                }
+                return entitiesTemplate.getEntities();
             }
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+        return null;
     }
 }
