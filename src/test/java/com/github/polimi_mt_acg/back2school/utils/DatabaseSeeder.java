@@ -49,7 +49,7 @@ public class DatabaseSeeder {
         map.put("users.json", UsersJSONTemplate.class);
 
         // one or more dependency from other entities
-//        map.put("payments.json", PaymentsJSONTemplate.class);
+        map.put("payments.json", PaymentsJSONTemplate.class);
         map.put("grades.json", GradesJSONTemplate.class);
         map.put("classes.json", ClassesJSONTemplate.class);
 //        map.put("lectures.json", LecturesJSONTemplate.class);
