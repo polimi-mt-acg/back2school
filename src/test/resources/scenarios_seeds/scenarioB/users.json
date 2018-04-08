@@ -1,19 +1,28 @@
 {
   "users": [
     {
+      "role": "STUDENT",
       "name": "Alice",
       "surname": "SurnameAlice",
       "email": "alice@email.com"
     },
     {
+      "role": "PARENT",
       "name": "Bob",
       "surname": "SurnameBob",
       "email": "bob@email.com"
     },
     {
+      "role": "TEACHER",
       "name": "Carl",
       "surname": "SurnameCarl",
       "email": "carl@email.com"
+    },
+    {
+      "role": "ADMINISTRATOR",
+      "name": "David",
+      "surname": "SurnameDavid",
+      "email": "david@email.com"
     }
   ]
 }

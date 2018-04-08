@@ -1,7 +1,6 @@
 package com.github.polimi_mt_acg.back2school.model;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -15,6 +14,10 @@ public class User implements DeserializeToPersistInterface {
     @GeneratedValue
     @Column(name = "id")
     private int id;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role")
+    private Role role = Role.STUDENT;
 
     @Column(name = "name")
     private String name;
@@ -37,6 +40,14 @@ public class User implements DeserializeToPersistInterface {
             joinColumns = @JoinColumn(name = "notification_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<Notification> notificationsRead;
+
+    enum Role {
+        STUDENT, PARENT, TEACHER, ADMINISTRATOR
+    }
+
+    @Override
+    public void prepareToPersist() {
+    }
 
     public int getId() {
         return id;
@@ -86,7 +97,11 @@ public class User implements DeserializeToPersistInterface {
         this.salt = salt;
     }
 
-    @Override
-    public void prepareToPersist() {
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

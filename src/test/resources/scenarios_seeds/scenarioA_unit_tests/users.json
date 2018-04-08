@@ -1,11 +1,13 @@
 {
   "users": [
     {
+      "role": "STUDENT",
       "name": "Alice",
       "surname": "SurnameAlice",
       "email": "alice@email.com"
     },
     {
+      "role": "PARENT",
       "name": "Bob",
       "surname": "SurnameBob",
       "email": "bob@email.com"
