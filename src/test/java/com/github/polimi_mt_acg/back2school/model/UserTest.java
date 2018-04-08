@@ -38,6 +38,7 @@ public class UserTest {
         User databaseEntity = DatabaseHandler
                 .getInstance().getListSelectFrom(User.class).get(0);
 
+        assertNotNull(databaseEntity);
         assertEquals(seedEntity.getRole(), databaseEntity.getRole());
         assertEquals(seedEntity.getName(), databaseEntity.getName());
         assertEquals(seedEntity.getSurname(), databaseEntity.getSurname());
