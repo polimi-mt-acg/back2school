@@ -3,7 +3,6 @@ package com.github.polimi_mt_acg.back2school.model;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import com.github.polimi_mt_acg.back2school.utils.TestCategory;
 import com.github.polimi_mt_acg.utils.DatabaseSeeder;
-import org.hibernate.Session;
 import org.junit.*;
 import org.junit.experimental.categories.Category;
 
@@ -37,7 +36,7 @@ public class UserTest {
         User seedEntity = seedUsers.get(0);
         // get user from database
         User databaseEntity = DatabaseHandler
-                .getInstance().getResultListSelectFrom(User.class).get(0);
+                .getInstance().getListSelectFrom(User.class).get(0);
 
         assertEquals(seedEntity.getRole(), databaseEntity.getRole());
         assertEquals(seedEntity.getName(), databaseEntity.getName());

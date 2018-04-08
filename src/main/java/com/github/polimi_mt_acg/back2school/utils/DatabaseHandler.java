@@ -76,7 +76,7 @@ public class DatabaseHandler {
      * @param <T> entity type
      * @return
      */
-    public <T> List<T> getResultListSelectFrom(Class<T> classType) {
+    public <T> List<T> getListSelectFrom(Class<T> classType) {
         Session session = getNewSession();
 
         CriteriaQuery<T> criteria = getCriteriaQuery(classType);

@@ -52,7 +52,7 @@ public class DatabaseHandlerTest {
         List<User> seedUsers = (List<User>) DatabaseSeeder
                 .getEntitiesListFromSeed("scenarioA_unit_tests", "users.json");
 
-        List<User> users = dbh.getResultListSelectFrom(User.class);
+        List<User> users = dbh.getListSelectFrom(User.class);
 
         assertNotNull(users);
         assertNotNull(seedUsers);
@@ -67,7 +67,7 @@ public class DatabaseHandlerTest {
         DatabaseSeeder.deployScenario("scenarioA_unit_tests");
         dbh.truncateDatabase();
 
-        List<User> users = dbh.getResultListSelectFrom(User.class);
+        List<User> users = dbh.getListSelectFrom(User.class);
         assertNotNull(users);
         assertEquals(users.size(), 0);
     }
