@@ -25,7 +25,7 @@ public class SubjectTest {
     }
 
     @Test
-    @Category(TestCategory.Transient.class)
+    @Category(TestCategory.Unit.class)
     public void testSubjectEntity() {
         List<Subject> seedSubjects = (List<Subject>) DatabaseSeeder
                 .getEntitiesListFromSeed("scenarioA_unit_tests", "subjects.json");

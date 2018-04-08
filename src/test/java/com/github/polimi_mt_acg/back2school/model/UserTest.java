@@ -43,5 +43,7 @@ public class UserTest {
         assertEquals(seedEntity.getName(), databaseEntity.getName());
         assertEquals(seedEntity.getSurname(), databaseEntity.getSurname());
         assertEquals(seedEntity.getEmail(), databaseEntity.getEmail());
+        assertNotNull(databaseEntity.getSalt());
+        assertNotNull(databaseEntity.getPassword());
     }
 }

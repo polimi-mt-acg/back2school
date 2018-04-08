@@ -4,19 +4,22 @@
       "role": "STUDENT",
       "name": "Alice",
       "surname": "SurnameAlice",
-      "email": "alice@email.com"
+      "email": "alice@email.com",
+      "seedPassword": "alice_password"
     },
     {
       "role": "PARENT",
       "name": "Bob",
       "surname": "SurnameBob",
-      "email": "bob@email.com"
+      "email": "bob@email.com",
+      "seedPassword": "bob_password"
     },
     {
       "role": "ADMINISTRATOR",
       "name": "David",
       "surname": "SurnameDavid",
-      "email": "david@email.com"
+      "email": "david@email.com",
+      "seedPassword": "david_password"
     }
   ]
 }

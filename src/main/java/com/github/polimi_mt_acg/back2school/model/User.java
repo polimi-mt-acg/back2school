@@ -1,7 +1,14 @@
 package com.github.polimi_mt_acg.back2school.model;
 
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 import javax.persistence.*;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.KeySpec;
+import java.util.Base64;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 @Entity
@@ -41,12 +48,19 @@ public class User implements DeserializeToPersistInterface {
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<Notification> notificationsRead;
 
+    @Transient
+    public String seedPassword;
+
     enum Role {
         STUDENT, PARENT, TEACHER, ADMINISTRATOR
     }
 
     @Override
     public void prepareToPersist() {
+        if (seedPassword != null) {
+            setPassword(this.seedPassword);
+        }
+
     }
 
     public int getId() {
@@ -86,7 +100,7 @@ public class User implements DeserializeToPersistInterface {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.password = getStringHash(password);
     }
 
     public String getSalt() {
@@ -103,5 +117,38 @@ public class User implements DeserializeToPersistInterface {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    private String getStringHash(String string) {
+        if (this.salt == null) {
+            // generate salt from a new UUID
+            this.salt = UUID.randomUUID().toString().replace("-", "");
+        }
+
+        KeySpec spec =
+                new PBEKeySpec(string.toCharArray(), this.salt.getBytes(), 65536, 128);
+
+        byte[] hash = new byte[0];
+        try {
+            SecretKeyFactory f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+            hash = f.generateSecret(spec).getEncoded();
+        }
+        catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        Base64.Encoder enc = Base64.getEncoder();
+        return enc.encodeToString(hash);
+    }
+
+    /**
+     * Check the given password validity.
+     * @param passwordToCheck the password to check
+     * @return
+     */
+    public boolean passwordEqualsTo(String passwordToCheck) {
+        if (this.salt == null || this.password == null) return false;
+
+        String hashOfPasswordToCheck = getStringHash(passwordToCheck);
+        return this.password.equals(hashOfPasswordToCheck);
     }
 }
