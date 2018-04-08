@@ -9,6 +9,10 @@ import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.mapping.Table;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import java.util.List;
 import java.util.logging.Logger;
 
 public class DatabaseHandler {
@@ -56,6 +60,32 @@ public class DatabaseHandler {
 
     public Session getNewSession() {
         return sessionFactory.openSession();
+    }
+
+    public <T> CriteriaQuery<T> getCriteriaQuery(Class<T> classType) {
+        Session session = DatabaseHandler.getInstance().getNewSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+
+        CriteriaQuery<T> criteria = builder.createQuery(classType);
+        return criteria;
+    }
+
+    /**
+     * List of entities for the SQL query: SELECT * FROM <classType entity>
+     * @param classType entity class
+     * @param <T> entity type
+     * @return
+     */
+    public <T> List<T> getResultListSelectFrom(Class<T> classType) {
+        Session session = getNewSession();
+
+        CriteriaQuery<T> criteria = getCriteriaQuery(classType);
+        Root<T> root = criteria.from(classType);
+        criteria.select(root);
+
+        List<T> entities = session.createQuery(criteria).getResultList();
+        session.close();
+        return entities;
     }
 
     public void truncateDatabase() {
