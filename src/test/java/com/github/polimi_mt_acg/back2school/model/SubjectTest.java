@@ -12,7 +12,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class ClassroomTest {
+public class SubjectTest {
 
     @BeforeClass
     public static void setUpClass() {
@@ -25,22 +25,21 @@ public class ClassroomTest {
     }
 
     @Test
-    @Category(TestCategory.Unit.class)
-    public void testClassroomEntity() {
-        List<Classroom> seedClassrooms = (List<Classroom>) DatabaseSeeder
-                .getEntitiesListFromSeed("scenarioA_unit_tests", "classrooms.json");
+    @Category(TestCategory.Transient.class)
+    public void testSubjectEntity() {
+        List<Subject> seedSubjects = (List<Subject>) DatabaseSeeder
+                .getEntitiesListFromSeed("scenarioA_unit_tests", "subjects.json");
 
-        assertNotNull(seedClassrooms);
-        assertEquals(seedClassrooms.size(), 1);
+        assertNotNull(seedSubjects);
+        assertEquals(seedSubjects.size(), 1);
 
-        Classroom seedEntity = seedClassrooms.get(0);
+        Subject seedEntity = seedSubjects.get(0);
         // get entity from database
-        Classroom databaseEntity = DatabaseHandler
-                .getInstance().getListSelectFrom(Classroom.class).get(0);
+        Subject databaseEntity = DatabaseHandler
+                .getInstance().getListSelectFrom(Subject.class).get(0);
 
         assertNotNull(databaseEntity);
         assertEquals(seedEntity.getName(), databaseEntity.getName());
-        assertEquals(seedEntity.getFloor(), databaseEntity.getFloor());
-        assertEquals(seedEntity.getBuilding(), databaseEntity.getBuilding());
+        assertEquals(seedEntity.getDescription(), databaseEntity.getDescription());
     }
 }
