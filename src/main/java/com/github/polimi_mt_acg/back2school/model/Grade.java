@@ -47,13 +47,13 @@ public class Grade implements DeserializeToPersistInterface {
     private double grade;
 
     @Transient
-    private String seedSubjectName;
+    public String seedSubjectName;
 
     @Transient
-    private String seedTeacherEmail;
+    public String seedTeacherEmail;
 
     @Transient
-    private String seedStudentEmail;
+    public String seedStudentEmail;
 
     public int getId() {
         return id;
@@ -109,12 +109,12 @@ public class Grade implements DeserializeToPersistInterface {
 
     @Override
     public void prepareToPersist() {
-        associateSubject();
-        associateTeacher();
-        associateStudent();
+        seedAssociateSubject();
+        seedAssociateTeacher();
+        seedAssociateStudent();
     }
 
-    private void associateSubject() {
+    private void seedAssociateSubject() {
         Session session = DatabaseHandler.getInstance().getNewSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
 
@@ -132,7 +132,7 @@ public class Grade implements DeserializeToPersistInterface {
         }
     }
 
-    private void associateTeacher() {
+    private void seedAssociateTeacher() {
         Session session = DatabaseHandler.getInstance().getNewSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
 
@@ -150,7 +150,7 @@ public class Grade implements DeserializeToPersistInterface {
         }
     }
 
-    private void associateStudent() {
+    private void seedAssociateStudent() {
         Session session = DatabaseHandler.getInstance().getNewSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
 
