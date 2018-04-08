@@ -4,13 +4,18 @@ package com.github.polimi_mt_acg.utils;
 import com.github.polimi_mt_acg.back2school.model.DeserializeToPersistInterface;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import com.github.polimi_mt_acg.utils.json_mappers.*;
-import com.google.gson.Gson;
+import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
 import org.hibernate.Session;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.lang.reflect.Type;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -115,7 +120,16 @@ public class DatabaseSeeder {
     }
 
     public static List<?> getEntitiesListFromSeed(String scenarioFolderName, String seedFilename) {
-        Gson gson = new Gson();
+        // gson object initialized with the LocalDateTime registered in order to
+        // parse and manage correctly the dates
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(LocalDateTime.class, new JsonDeserializer<LocalDateTime>() {
+                    @Override
+                    public LocalDateTime deserialize(JsonElement json, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+                        return ZonedDateTime.parse(json.getAsJsonPrimitive().getAsString()).toLocalDateTime();
+                    }
+                }).create();
+
 
         String seedFilePath = "src/test/resources/scenarios_seeds/"
                 + scenarioFolderName

@@ -11,6 +11,12 @@
       "name": "Bob",
       "surname": "SurnameBob",
       "email": "bob@email.com"
+    },
+    {
+      "role": "ADMINISTRATOR",
+      "name": "David",
+      "surname": "SurnameDavid",
+      "email": "david@email.com"
     }
   ]
 }

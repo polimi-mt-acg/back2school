@@ -1,0 +1,16 @@
+{
+  "payments": [
+    {
+      "seedPlacedByUserEmail": "david@email.com",
+      "seedAssignedToUserEmail": "alice@email.com",
+      "type": "MONTHLY",
+      "datetimeRequested": "2018-04-05T20:24:10+02:00",
+      "datetimeDone": "2018-05-05T20:24:10+02:00",
+      "datetimeDeadline": "2018-06-05T20:24:10+02:00",
+      "done": true,
+      "subject": "School material",
+      "description": "The school material used in one month",
+      "amount": 25.99
+    }
+  ]
+}
