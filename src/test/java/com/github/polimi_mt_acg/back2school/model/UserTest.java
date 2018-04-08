@@ -1,8 +1,8 @@
 package com.github.polimi_mt_acg.back2school.model;
 
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
+import com.github.polimi_mt_acg.back2school.utils.DatabaseSeeder;
 import com.github.polimi_mt_acg.back2school.utils.TestCategory;
-import com.github.polimi_mt_acg.utils.DatabaseSeeder;
 import org.junit.*;
 import org.junit.experimental.categories.Category;
 

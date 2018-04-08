@@ -1,8 +1,6 @@
-package com.github.polimi_mt_acg.utils;
-
+package com.github.polimi_mt_acg.back2school.utils;
 
 import com.github.polimi_mt_acg.back2school.model.DeserializeToPersistInterface;
-import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import com.github.polimi_mt_acg.utils.json_mappers.*;
 import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
@@ -12,9 +10,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.lang.reflect.Type;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.LinkedHashMap;

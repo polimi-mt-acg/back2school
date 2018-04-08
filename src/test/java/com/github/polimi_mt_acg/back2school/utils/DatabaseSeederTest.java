@@ -1,7 +1,6 @@
 package com.github.polimi_mt_acg.back2school.utils;
 
 import com.github.polimi_mt_acg.back2school.model.User;
-import com.github.polimi_mt_acg.utils.DatabaseSeeder;
 import org.junit.*;
 import org.junit.experimental.categories.Category;
 import static org.junit.Assert.*;
