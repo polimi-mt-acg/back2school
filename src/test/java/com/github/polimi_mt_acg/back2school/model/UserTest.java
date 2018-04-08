@@ -3,14 +3,10 @@ package com.github.polimi_mt_acg.back2school.model;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import com.github.polimi_mt_acg.back2school.utils.TestCategory;
 import com.github.polimi_mt_acg.utils.DatabaseSeeder;
-import org.apache.maven.shared.invoker.SystemOutHandler;
 import org.hibernate.Session;
 import org.junit.*;
 import org.junit.experimental.categories.Category;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -54,26 +50,12 @@ public class UserTest {
         assertTrue(seedUsers.size() >= 1);
 
         User seedEntity = seedUsers.get(0);
-        User databaseEntity = getUserFromDB(seedEntity.getEmail());
-
+        // get user from database
+        User databaseEntity = DatabaseHandler
+                .getInstance().getResultListSelectFrom(User.class).get(0);
 
         assertEquals(seedEntity.getName(), databaseEntity.getName());
         assertEquals(seedEntity.getSurname(), databaseEntity.getSurname());
         assertEquals(seedEntity.getEmail(), databaseEntity.getEmail());
-    }
-
-    private User getUserFromDB(String email) {
-        CriteriaBuilder builder = session.getCriteriaBuilder();
-
-        CriteriaQuery<User> criteria = builder.createQuery(User.class);
-        Root<User> root = criteria.from(User.class);
-        criteria.select(root);
-        criteria.where(builder.equal(root.get(User_.email), email));
-
-        List<User> entities = session.createQuery(criteria).getResultList();
-
-        assertNotNull(entities);
-        assertNotNull(entities.get(0));
-        return entities.get(0);
     }
 }
