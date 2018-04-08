@@ -12,6 +12,7 @@ import org.hibernate.mapping.Table;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.persistence.metamodel.SingularAttribute;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -86,6 +87,27 @@ public class DatabaseHandler {
         List<T> entities = session.createQuery(criteria).getResultList();
         session.close();
         return entities;
+    }
+
+    /**
+     * List of entities for the SQL query:
+     *      SELECT * FROM <classType entity> WHERE <singularAttribute> = <obj>
+     * @param classType entity class
+     * @param singularAttribute entity attribute on which perform the query
+     * @param obj the value to look for
+     * @param <T> entity type
+     * @return
+     */
+    public <T> List<T> getListSelectFromWhereEqual(Class<T> classType,  SingularAttribute singularAttribute, Object obj) {
+        Session session = getNewSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+
+        CriteriaQuery<T> criteria = builder.createQuery(classType);
+        Root<T> root = criteria.from(classType);
+        criteria.select(root);
+        criteria.where(builder.equal(root.get(singularAttribute), obj));
+
+        return session.createQuery(criteria).getResultList();
     }
 
     public void truncateDatabase() {

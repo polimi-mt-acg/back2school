@@ -1,8 +1,11 @@
 package com.github.polimi_mt_acg.back2school.model;
 
 
+import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "payment")
@@ -50,13 +53,36 @@ public class Payment implements DeserializeToPersistInterface {
     @Column(name = "amount")
     private double amount;
 
+    @Transient
+    public String seedPlacedByUserEmail;
+
+    @Transient
+    public String seedAssignedToUserEmail;
+
     @Override
     public void prepareToPersist() {
-
+        seedAssociatePlacedBy();
+        seedAssociateAssignedTo();
     }
 
     public enum Type {
         MATERIAL, MONTHLY, TRIP
+    }
+
+    private void seedAssociatePlacedBy() {
+        DatabaseHandler dhi = DatabaseHandler.getInstance();
+        List<User> users = dhi.getListSelectFromWhereEqual(User.class, User_.email, seedPlacedByUserEmail);
+        if (users != null) {
+            setPlacedBy(users.get(0));
+        }
+    }
+
+    private void seedAssociateAssignedTo() {
+        DatabaseHandler dhi = DatabaseHandler.getInstance();
+        List<User> users = dhi.getListSelectFromWhereEqual(User.class, User_.email, seedAssignedToUserEmail);
+        if (users != null) {
+            setAssignedTo(users.get(0));
+        }
     }
 
     public int getId() {
