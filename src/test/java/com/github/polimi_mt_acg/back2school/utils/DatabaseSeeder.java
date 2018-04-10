@@ -1,17 +1,14 @@
 package com.github.polimi_mt_acg.back2school.utils;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.polimi_mt_acg.back2school.model.DeserializeToPersistInterface;
 import com.github.polimi_mt_acg.utils.json_mappers.*;
-import com.google.gson.*;
-import com.google.gson.stream.JsonReader;
 import org.hibernate.Session;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.lang.reflect.Type;
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -116,16 +113,9 @@ public class DatabaseSeeder {
     }
 
     public static List<?> getEntitiesListFromSeed(String scenarioFolderName, String seedFilename) {
-        // gson object initialized with the LocalDateTime registered in order to
-        // parse and manage correctly the dates
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter(LocalDateTime.class, new JsonDeserializer<LocalDateTime>() {
-                    @Override
-                    public LocalDateTime deserialize(JsonElement json, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
-                        return ZonedDateTime.parse(json.getAsJsonPrimitive().getAsString()).toLocalDateTime();
-                    }
-                }).create();
-
+        final ObjectMapper mapper = new ObjectMapper();
+        mapper.findAndRegisterModules();
+        mapper.enable(JsonParser.Feature.ALLOW_COMMENTS);
 
         String seedFilePath = "src/test/resources/scenarios_seeds/"
                 + scenarioFolderName
@@ -135,17 +125,22 @@ public class DatabaseSeeder {
 
         try {
             if (f.exists() && !f.isDirectory()) {
-                JsonReader reader =
-                        new JsonReader(new FileReader(seedFilePath));
-
                 Class entitiesTemplateClass = (Class) seedsMap.get(seedFilename);
+
                 JSONTemplateInterface entitiesTemplate =
-                        gson.fromJson(reader, entitiesTemplateClass);
+                        (JSONTemplateInterface) mapper.readValue(f, entitiesTemplateClass);
 
                 return entitiesTemplate.getEntities();
             }
 
-        } catch (FileNotFoundException e) {
+        }
+        catch (com.fasterxml.jackson.core.JsonParseException e) {
+            e.printStackTrace();
+        }
+        catch (JsonMappingException e) {
+            e.printStackTrace();
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
         return null;
