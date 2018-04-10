@@ -40,10 +40,12 @@ public class PaymentTest {
 
         // asserts beginning
         assertNotNull(databaseEntity);
+        assertNotNull(databaseEntity.getAssignedTo());
         assertEquals(
                 seedEntity.seedAssignedToUserEmail,
                 databaseEntity.getAssignedTo().getEmail()
         );
+        assertNotNull(databaseEntity.getPlacedBy());
         assertEquals(
                 seedEntity.seedPlacedByUserEmail,
                 databaseEntity.getPlacedBy().getEmail()

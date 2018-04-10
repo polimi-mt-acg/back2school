@@ -115,56 +115,27 @@ public class Grade implements DeserializeToPersistInterface {
     }
 
     private void seedAssociateSubject() {
-        Session session = DatabaseHandler.getInstance().getNewSession();
-        CriteriaBuilder builder = session.getCriteriaBuilder();
-
-        CriteriaQuery<Subject> criteria = builder.createQuery(Subject.class);
-        Root<Subject> root = criteria.from(Subject.class);
-        criteria.select(root);
-        criteria.where(builder.equal(root.get(Subject_.name), this.seedSubjectName));
-
-        List<Subject> entities = session.createQuery(criteria).getResultList();
-
-        if (entities.size() != 0) {
-            this.setSubject(entities.get(0));
-        } else {
-            LOGGER.info("NO subject found with name: " + String.valueOf(this.seedSubjectName));
+        DatabaseHandler dhi = DatabaseHandler.getInstance();
+        List<Subject> subjects =
+                dhi.getListSelectFromWhereEqual(Subject.class, Subject_.name, seedSubjectName);
+        if (subjects != null) {
+            setSubject(subjects.get(0));
         }
     }
 
     private void seedAssociateTeacher() {
-        Session session = DatabaseHandler.getInstance().getNewSession();
-        CriteriaBuilder builder = session.getCriteriaBuilder();
-
-        CriteriaQuery<User> criteria = builder.createQuery(User.class);
-        Root<User> root = criteria.from(User.class);
-        criteria.select(root);
-        criteria.where(builder.equal(root.get(User_.email), this.seedTeacherEmail));
-
-        List<User> entities = session.createQuery(criteria).getResultList();
-
-        if (entities.size() != 0) {
-            this.setTeacher(entities.get(0));
-        } else {
-            LOGGER.info("NO teacher found with email: " + String.valueOf(this.seedTeacherEmail));
+        DatabaseHandler dhi = DatabaseHandler.getInstance();
+        List<User> users = dhi.getListSelectFromWhereEqual(User.class, User_.email, seedTeacherEmail);
+        if (users != null) {
+            setTeacher(users.get(0));
         }
     }
 
     private void seedAssociateStudent() {
-        Session session = DatabaseHandler.getInstance().getNewSession();
-        CriteriaBuilder builder = session.getCriteriaBuilder();
-
-        CriteriaQuery<User> criteria = builder.createQuery(User.class);
-        Root<User> root = criteria.from(User.class);
-        criteria.select(root);
-        criteria.where(builder.equal(root.get(User_.email), this.seedStudentEmail));
-
-        List<User> entities = session.createQuery(criteria).getResultList();
-
-        if (entities.size() != 0) {
-            this.setStudent(entities.get(0));
-        } else {
-            LOGGER.info("NO student found with email: " + String.valueOf(this.seedStudentEmail));
+        DatabaseHandler dhi = DatabaseHandler.getInstance();
+        List<User> users = dhi.getListSelectFromWhereEqual(User.class, User_.email, seedStudentEmail);
+        if (users != null) {
+            setStudent(users.get(0));
         }
     }
 }

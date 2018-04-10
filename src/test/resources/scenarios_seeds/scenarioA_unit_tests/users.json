@@ -15,6 +15,13 @@
       "seedPassword": "bob_password"
     },
     {
+      "role": "TEACHER",
+      "name": "Carl",
+      "surname": "SurnameCarl",
+      "email": "carl@email.com",
+      "seedPassword": "email_password"
+    },
+    {
       "role": "ADMINISTRATOR",
       "name": "David",
       "surname": "SurnameDavid",
