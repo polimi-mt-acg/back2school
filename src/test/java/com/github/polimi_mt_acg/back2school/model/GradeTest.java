@@ -55,10 +55,10 @@ public class GradeTest {
                 seedEntity.seedStudentEmail,
                 databaseEntity.getStudent().getEmail()
         );
-//        assertEquals(
-//                seedEntity.getDate().toString(),
-//                databaseEntity.getDate().toString()
-//        );
+        assertEquals(
+                seedEntity.getDate().toString(),
+                databaseEntity.getDate().toString()
+        );
         assertEquals(seedEntity.getTitle(), databaseEntity.getTitle());
         assertEquals(seedEntity.getGrade(), databaseEntity.getGrade(), 0.001);
     }
