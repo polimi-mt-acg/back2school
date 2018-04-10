@@ -7,15 +7,15 @@ import javax.persistence.*;
 public class NotificationClassParent
         extends Notification implements DeserializeToPersistInterface {
 
-    
+
     @OneToOne
     @JoinColumn(name = "target_class_parents_id",
             foreignKey = @ForeignKey(name = "TARGET_CLASS_PARENTS_ID_FK"))
-    private SchoolClass targetcp ;//= new SchoolClass();
+    private Class targetcp ;//= new SchoolClass();
 
-    public SchoolClass getTarget() { return targetcp; }
+    public Class getTarget() { return targetcp; }
 
-    public void setTarget(SchoolClass target) {
+    public void setTarget(Class target) {
         targetcp = target;
     }
 

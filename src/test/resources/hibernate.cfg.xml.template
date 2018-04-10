@@ -16,7 +16,7 @@
         <property name="show_sql">false</property>
 
         <mapping class="com.github.polimi_mt_acg.back2school.model.Appointment"/>
-        <mapping class="com.github.polimi_mt_acg.back2school.model.SchoolClass"/>
+        <mapping class="com.github.polimi_mt_acg.back2school.model.Class"/>
         <mapping class="com.github.polimi_mt_acg.back2school.model.Classroom"/>
         <mapping class="com.github.polimi_mt_acg.back2school.model.Grade"/>
         <mapping class="com.github.polimi_mt_acg.back2school.model.Lecture"/>

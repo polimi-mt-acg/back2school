@@ -1,6 +1,7 @@
 package com.github.polimi_mt_acg.utils;
 
 import com.github.polimi_mt_acg.back2school.model.*;
+import com.github.polimi_mt_acg.back2school.model.Class;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -182,14 +183,14 @@ public class TestEntitiesFactory {
         return testEntity;
     }
 
-    public static SchoolClass buildSchoolClass(){
-        SchoolClass testEntity = new SchoolClass();
+    public static Class buildClass(){
+        Class testEntity = new Class();
         testEntity.setAcademicYear(classAcademicYear);
         testEntity.setName(className);
         return testEntity;
     }
 
-    public static Notification buildNotification(java.lang.Class<?> cls) throws IllegalAccessException, InstantiationException {
+    public static Notification buildNotification(java.lang.Class cls) throws IllegalAccessException, InstantiationException {
         Notification testEntity = (Notification) cls.newInstance();
         testEntity.setDatetime(notificationDatetime);
         testEntity.setSubject(notificationSubject);

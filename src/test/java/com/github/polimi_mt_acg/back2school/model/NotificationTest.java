@@ -22,7 +22,7 @@ public class NotificationTest {// Test members
     private User testParent;
     private User testStudent1;
     private User testStudent2;
-    private SchoolClass testClass;
+    private Class testClass;
     private NotificationPersonalParent testNotificationPersonalParent;
     private NotificationPersonalTeacher testNotificationPersonalTeacher;
     private NotificationClassParent testNotificationClassParent;
@@ -50,7 +50,7 @@ public class NotificationTest {// Test members
         testAdministrator = TestEntitiesFactory.buildAdministrator();
         testParent = TestEntitiesFactory.buildParent();
         testTeacher = TestEntitiesFactory.buildTeacher();
-        testClass = TestEntitiesFactory.buildSchoolClass();
+        testClass = TestEntitiesFactory.buildClass();
         testStudent1 = TestEntitiesFactory.buildStudent();
         testStudent2 = TestEntitiesFactory.buildStudent();
         testNotificationPersonalParent = (NotificationPersonalParent) TestEntitiesFactory.buildNotification(NotificationPersonalParent.class);

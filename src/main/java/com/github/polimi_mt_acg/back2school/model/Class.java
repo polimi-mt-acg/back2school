@@ -8,7 +8,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "school_class")
-public class SchoolClass implements DeserializeToPersistInterface {
+public class Class implements DeserializeToPersistInterface {
 
     @Id
     @GeneratedValue
@@ -27,7 +27,7 @@ public class SchoolClass implements DeserializeToPersistInterface {
            name = "user_school_class",
            joinColumns = @JoinColumn(name = "user_id"),
            inverseJoinColumns = @JoinColumn(name = "school_class_id"))
-    private List<User> studentsOfTheClass;
+    private List<User> classStudents = new ArrayList<>();
 
 
     public int getId() {
@@ -54,12 +54,16 @@ public class SchoolClass implements DeserializeToPersistInterface {
         this.name = name;
     }
 
-    public List<User> getStudentsOfTheClass() {
-        return studentsOfTheClass;
+    public List<User> getClassStudents() {
+        return classStudents;
     }
 
-    public void setStudentsOfTheClass(List<User> studentsOfTheClass) {
-        this.studentsOfTheClass = studentsOfTheClass;
+    public void setClassStudents(List<User> classStudents) {
+        this.classStudents = classStudents;
+    }
+
+    public void addStudent(User student) {
+        this.classStudents.add(student);
     }
 
     @Override
