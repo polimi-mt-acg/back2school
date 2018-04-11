@@ -23,7 +23,6 @@ public class GradeTest {
         DatabaseHandler.getInstance().truncateDatabase();
     }
 
-
     @Test
     @Category(TestCategory.Unit.class)
     public void testPaymentEntity() {

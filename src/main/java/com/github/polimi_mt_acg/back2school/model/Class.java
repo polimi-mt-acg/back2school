@@ -1,14 +1,22 @@
 package com.github.polimi_mt_acg.back2school.model;
 
 
+import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 @Entity
-@Table(name = "school_class")
+@Table(name = "class")
 public class Class implements DeserializeToPersistInterface {
+
+    private final static Logger LOGGER =
+            Logger.getLogger(Class.class.getName());
 
     @Id
     @GeneratedValue
@@ -24,11 +32,14 @@ public class Class implements DeserializeToPersistInterface {
 
     @ManyToMany
     @JoinTable(
-           name = "user_school_class",
-           joinColumns = @JoinColumn(name = "user_id"),
-           inverseJoinColumns = @JoinColumn(name = "school_class_id"))
+            name = "class_user",
+            joinColumns = @JoinColumn(name = "class_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    @Fetch(FetchMode.JOIN)
     private List<User> classStudents = new ArrayList<>();
 
+    @Transient
+    public List<String> seedStudentsEmail = new ArrayList<>();
 
     public int getId() {
         return id;
@@ -68,6 +79,18 @@ public class Class implements DeserializeToPersistInterface {
 
     @Override
     public void prepareToPersist() {
+        seedAssociateStudents();
+    }
 
+    private void seedAssociateStudents() {
+        DatabaseHandler dhi = DatabaseHandler.getInstance();
+        for (String seedStudentEmail: this.seedStudentsEmail) {
+            List<User> users = dhi.getListSelectFromWhereEqual(User.class, User_.email, seedStudentEmail);
+            if (users != null && users.size() >= 1) {
+                addStudent(users.get(0));
+            } else {
+                LOGGER.info("STUDENT NOT FOUND. Skipped student with email: " + seedStudentEmail);
+            }
+        }
     }
 }

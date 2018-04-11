@@ -79,7 +79,7 @@ public class NotificationTest {// Test members
 
         //Link and save testClass/
 
-        testClass.setStudentsOfTheClass(ls);
+//        testClass.setStudentsOfTheClass(ls);
         session.save(testClass);
 
         // Link and save testNotificationPersonalParent
