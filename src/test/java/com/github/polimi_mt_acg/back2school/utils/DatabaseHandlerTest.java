@@ -55,9 +55,9 @@ public class DatabaseHandlerTest {
 
         assertNotNull(users);
         assertNotNull(seedUsers);
-        assertEquals(users.size(), seedUsers.size());
-        assertEquals(users.get(0).getName(), seedUsers.get(0).getName());
-        assertEquals(users.get(1).getName(), seedUsers.get(1).getName());
+        assertEquals(seedUsers.size(), users.size());
+        assertEquals(seedUsers.get(0).getName(), users.get(0).getName());
+        assertEquals(seedUsers.get(1).getName(), users.get(1).getName());
     }
 
     @Test
@@ -68,6 +68,6 @@ public class DatabaseHandlerTest {
 
         List<User> users = dbh.getListSelectFrom(User.class);
         assertNotNull(users);
-        assertEquals(users.size(), 0);
+        assertEquals(0, users.size());
     }
 }

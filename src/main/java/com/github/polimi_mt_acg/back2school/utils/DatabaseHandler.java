@@ -107,7 +107,9 @@ public class DatabaseHandler {
         criteria.select(root);
         criteria.where(builder.equal(root.get(singularAttribute), obj));
 
-        return session.createQuery(criteria).getResultList();
+        List <T> results = session.createQuery(criteria).getResultList();
+        session.close();
+        return results;
     }
 
     public void truncateDatabase() {
