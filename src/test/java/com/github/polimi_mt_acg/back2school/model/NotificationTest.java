@@ -63,6 +63,45 @@ public class NotificationTest {
 
     @Test
     @Category(TestCategory.Unit.class)
+    public void testNotificationClassTeacherEntity() {
+        List<NotificationClassTeacher> seedNotificationsClassTeacher = (List<NotificationClassTeacher>) DatabaseSeeder
+                .getEntitiesListFromSeed("scenarioA_unit_tests", "notifications_class_teacher.json");
+
+        assertNotNull(seedNotificationsClassTeacher);
+        assertEquals(seedNotificationsClassTeacher.size(), 1);
+
+        NotificationClassTeacher seedEntity = seedNotificationsClassTeacher.get(0);
+        // get entity from database
+        NotificationClassTeacher databaseEntity = DatabaseHandler
+                .getInstance().getListSelectFrom(NotificationClassTeacher.class).get(0);
+
+        // asserts beginning
+        assertNotNull(databaseEntity);
+        assertNotNull(databaseEntity.getCreator());
+        assertEquals(
+                seedEntity.seedCreatorEmail,
+                databaseEntity.getCreator().getEmail()
+        );
+        assertEquals(
+                seedEntity.getDatetime().toString(),
+                databaseEntity.getDatetime().toString()
+        );
+        assertEquals(
+                seedEntity.getSubject(),
+                databaseEntity.getSubject()
+        );
+        assertEquals(
+                seedEntity.getText(),
+                databaseEntity.getText()
+        );
+        assertEquals(
+                seedEntity.seedTargetClassName,
+                databaseEntity.getTargetClass().getName()
+        );
+    }
+
+    @Test
+    @Category(TestCategory.Unit.class)
     public void testNotificationGeneralEntity() {
         List<NotificationGeneral> seedNotificationsGeneral = (List<NotificationGeneral>) DatabaseSeeder
                 .getEntitiesListFromSeed("scenarioA_unit_tests", "notifications_general.json");
