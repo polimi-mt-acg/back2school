@@ -1,0 +1,11 @@
+{
+  "notificationsPersonalParent": [
+    {
+      "seedCreatorEmail": "david@email.com",
+      "datetime": "2018-04-12T15:55:28",
+      "subject": "Bad behaviour of your son!",
+      "text": "Hi Mr. Bob,\nI writing you because we're having many troubles due to your son behaviour... please just come to catch him up.\n\nRegards,\nThe headmaster.",
+      "seedTargetParentEmail": "bob@email.com"
+    }
+  ]
+}
