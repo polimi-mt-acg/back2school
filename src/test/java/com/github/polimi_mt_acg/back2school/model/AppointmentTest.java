@@ -1,16 +1,11 @@
 package com.github.polimi_mt_acg.back2school.model;
 
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
+import com.github.polimi_mt_acg.back2school.utils.DatabaseSeeder;
 import com.github.polimi_mt_acg.back2school.utils.TestCategory;
-import com.github.polimi_mt_acg.utils.TestEntitiesFactory;
-import org.hibernate.Session;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.experimental.categories.Category;
 
-
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -18,85 +13,50 @@ import static org.junit.Assert.assertNotNull;
 
 public class AppointmentTest {
 
-    private Session session;
-    private User testTeacher;
-    private User testParent;
-    private Appointment testAppointment;
-    //datetimeStart, datetimeEnd, status
-
-    @Before
-    public void setUp() {
-        // Then create fictitious Entities
-        testTeacher = TestEntitiesFactory.buildTeacher();
-        testParent = TestEntitiesFactory.buildParent();
-        testAppointment = TestEntitiesFactory.buildAppointment();
+    @BeforeClass
+    public static void setUpClass() {
+        DatabaseSeeder.deployScenario("scenarioA_unit_tests");
     }
 
-    @After
-    public void tearDown() {
+    @AfterClass
+    public static void tearDownClass() {
         DatabaseHandler.getInstance().truncateDatabase();
-
-        if (session != null) {
-            session.close();
-        }
     }
 
     @Test
-    @Category(TestCategory.Unit.class)
-    public void testGradeAssociations() {
-        session = DatabaseHandler.getInstance().getNewSession();
+    @Category(TestCategory.Transient.class)
+    public void testAppointmentEntity() {
+        List<Appointment> seedAppointments = (List<Appointment>) DatabaseSeeder
+                .getEntitiesListFromSeed("scenarioA_unit_tests", "appointments.json");
 
-        // Persist test entities
-        session.beginTransaction();
+        assertNotNull(seedAppointments);
+        assertEquals(seedAppointments.size(), 1);
 
-        session.save(testTeacher);
-        session.save(testParent);
+        Appointment seedEntity = seedAppointments.get(0);
+        // get entity from database
+        Appointment databaseEntity = DatabaseHandler
+                .getInstance().getListSelectFrom(Appointment.class).get(0);
 
-        // Link and save testAppointment
-        testAppointment.setTeacher(testTeacher);
-        testAppointment.setParent(testParent);
-        session.save(testAppointment);
-
-        session.getTransaction().commit();
-        session.close();
-
-        // Now we check how Hibernate fetches foreign keys' data
-        session = DatabaseHandler.getInstance().getNewSession();
-        session.beginTransaction();
-        Appointment ap = session.get(Appointment.class, testAppointment.getId());
-
-
-        session.getTransaction().commit();
-        session.close();
-
-        assertNotNull(ap);
-
-        List<Appointment> appointments = new ArrayList<>();
-        appointments.add(ap);
-
-
-        for (Appointment a: appointments) {
-            // Teacher and parent data test
-            assertEquals(a.getTeacher().getId(), testTeacher.getId());
-            assertEquals(a.getTeacher().getName(), testTeacher.getName());
-            assertEquals(a.getTeacher().getEmail(), testTeacher.getEmail());
-            assertEquals(a.getTeacher().getPassword(), testTeacher.getPassword());
-            assertEquals(a.getTeacher().getSalt(), testTeacher.getSalt());
-            assertEquals(a.getTeacher().getSurname(), testTeacher.getSurname());
-            assertEquals(a.getTeacher().getClass(), testTeacher.getClass());
-
-            assertEquals(a.getParent().getId(), testParent.getId());
-            assertEquals(a.getParent().getName(), testParent.getName());
-            assertEquals(a.getParent().getSurname(), testParent.getSurname());
-            assertEquals(a.getParent().getPassword(), testParent.getPassword());
-            assertEquals(a.getParent().getSalt(), testParent.getSalt());
-//            assertEquals(p.getAssignedTo().getType(), testParent.getType());
-        }
-
-        // Appointment data
-        assertEquals(ap.getDatetimeStart(), testAppointment.getDatetimeStart());
-        assertEquals(ap.getDatetimeEnd(), testAppointment.getDatetimeEnd());
-        assertEquals(ap.getStatus(), testAppointment.getStatus());
+        // asserts beginning
+        assertNotNull(databaseEntity);
+        assertNotNull(databaseEntity.getTeacher());
+        assertEquals(
+                seedEntity.seedTeacherEmail,
+                databaseEntity.getTeacher().getEmail()
+        );
+        assertNotNull(databaseEntity.getParent());
+        assertEquals(
+                seedEntity.seedParentEmail,
+                databaseEntity.getParent().getEmail()
+        );
+        assertEquals(
+                seedEntity.getDatetimeStart().toString(),
+                databaseEntity.getDatetimeStart().toString()
+        );
+        assertEquals(
+                seedEntity.getDatetimeEnd().toString(),
+                databaseEntity.getDatetimeEnd().toString()
+        );
+        assertEquals(seedEntity.getStatus(), databaseEntity.getStatus());
     }
-
 }

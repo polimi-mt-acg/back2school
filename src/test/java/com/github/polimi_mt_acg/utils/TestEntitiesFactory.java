@@ -179,7 +179,7 @@ public class TestEntitiesFactory {
         Appointment testEntity = new Appointment();
         testEntity.setDatetimeStart(appointmentDatetimeStart);
         testEntity.setDatetimeEnd(appointmentDateTimeEnd);
-        testEntity.setStatus(appointmentStatus);
+//        testEntity.setStatus(appointmentStatus);
         return testEntity;
     }
 

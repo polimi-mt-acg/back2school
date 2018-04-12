@@ -51,8 +51,8 @@ public class DatabaseSeeder {
         map.put("grades.json", GradesJSONTemplate.class);
         map.put("classes.json", ClassesJSONTemplate.class);
         map.put("lectures.json", LecturesJSONTemplate.class);
+        map.put("appointments.json", AppointmentsJSONTemplate.class);
 //        map.put("notifications_general.json", NotificationsGeneralJSONTemplate.class);
-//        map.put("appointments.json", AppointmentsJSONTemplate.class);
 //        map.put("notifications_personal_parent.json", NotificationsPersonalParentJSONTemplate.class);
 //        map.put("notifications_personal_teacher.json", NotificationsPersonalTeacherJSONTemplate.class);
 //        map.put("notifications_class_parent.json", NotificationsClassParent5JSONTemplate.class);
@@ -141,6 +141,9 @@ public class DatabaseSeeder {
             e.printStackTrace();
         }
         catch (IOException e) {
+            e.printStackTrace();
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
         return null;
