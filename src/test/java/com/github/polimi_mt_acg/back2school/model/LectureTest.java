@@ -1,91 +1,80 @@
 package com.github.polimi_mt_acg.back2school.model;
 
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
+import com.github.polimi_mt_acg.back2school.utils.DatabaseSeeder;
 import com.github.polimi_mt_acg.back2school.utils.TestCategory;
-import com.github.polimi_mt_acg.utils.TestEntitiesFactory;
-import org.hibernate.Session;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.experimental.categories.Category;
+
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class LectureTest {
-    // Test members
-    private Session session;
-    private Lecture testLecture;
-    private User testTeacher;
-    private Subject testSubject;
-    private Classroom testClassroom;
 
-    @Before
-    public void setUp() throws Exception {
-        // Then create fictitious Entities
-        testTeacher = TestEntitiesFactory.buildTeacher();
-        testSubject = TestEntitiesFactory.buildSubject();
-        testClassroom = TestEntitiesFactory.buildClassroom();
-        testLecture = TestEntitiesFactory.buildLecture();
+    @BeforeClass
+    public static void setUpClass() {
+        DatabaseSeeder.deployScenario("scenarioA_unit_tests");
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterClass
+    public static void tearDownClass() {
         DatabaseHandler.getInstance().truncateDatabase();
-
-        if (session != null) {
-            session.close();
-        }
     }
+
 
     @Test
     @Category(TestCategory.Unit.class)
-    public void testLectureAssociations() {
-        session = DatabaseHandler.getInstance().getNewSession();
+    public void testLectureEntity() {
+        List<Lecture> seedLectures = (List<Lecture>) DatabaseSeeder
+                .getEntitiesListFromSeed("scenarioA_unit_tests", "lectures.json");
 
-        // Persist test entities
-        session.beginTransaction();
+        assertNotNull(seedLectures);
+        assertEquals(seedLectures.size(), 1);
 
-        session.save(testTeacher);
-        session.save(testClassroom);
-        session.save(testSubject);
+        Lecture seedEntity = seedLectures.get(0);
+        // get entity from database
+        Lecture databaseEntity = DatabaseHandler
+                .getInstance().getListSelectFrom(Lecture.class).get(0);
 
-        // Link testLecture to other entities
-        testLecture.setTeacher(testTeacher);
-        testLecture.setClassroom(testClassroom);
-        testLecture.setSubject(testSubject);
-        session.save(testLecture);
+        // asserts beginning
+        assertNotNull(databaseEntity);
+        assertNotNull(databaseEntity.getSubject());
+        assertNotNull(databaseEntity.getTeacher());
+        assertNotNull(databaseEntity.getClassroom());
+        assertNotNull(databaseEntity.getClass_());
 
-        session.getTransaction().commit();
-        session.close();
+        assertEquals(
+                seedEntity.seedSubjectName,
+                databaseEntity.getSubject().getName()
+        );
+        assertEquals(
+                seedEntity.seedSubjectName,
+                databaseEntity.getSubject().getName()
+        );
+        assertNotNull(databaseEntity.getTeacher());
+        assertEquals(
+                seedEntity.seedTeacherEmail,
+                databaseEntity.getTeacher().getEmail()
+        );
+        assertEquals(
+                seedEntity.seedClassroomName,
+                databaseEntity.getClassroom().getName()
+        );
+        assertEquals(
+                seedEntity.seedClassName,
+                databaseEntity.getClass_().getName()
+        );
 
-        // Now we check how Hibernate fetches foreign keys' data
-        session = DatabaseHandler.getInstance().getNewSession();
-        session.beginTransaction();
-        Lecture l = session.get(Lecture.class, testLecture.getId());
 
-        session.getTransaction().commit();
-        session.close();
-
-        assertNotNull(l);
-
-        // Teacher data
-        assertEquals(l.getTeacher().getId(), testTeacher.getId());
-        assertEquals(l.getTeacher().getName(), testTeacher.getName());
-        assertEquals(l.getTeacher().getSurname(), testTeacher.getSurname());
-        assertEquals(l.getTeacher().getPassword(), testTeacher.getPassword());
-        assertEquals(l.getTeacher().getSalt(), testTeacher.getSalt());
-//        assertEquals(l.getTeacher().getType(), testTeacher.getType());
-
-        // Subject data
-        assertEquals(l.getSubject().getId(), testSubject.getId());
-        assertEquals(l.getSubject().getName(), testSubject.getName());
-        assertEquals(l.getSubject().getDescription(), testSubject.getDescription());
-
-        // Classroom data
-        assertEquals(l.getClassroom().getId(), testClassroom.getId());
-        assertEquals(l.getClassroom().getName(), testClassroom.getName());
-        assertEquals(l.getClassroom().getFloor(), testClassroom.getFloor());
-        assertEquals(l.getClassroom().getBuilding(), testClassroom.getBuilding());
+        assertEquals(
+                seedEntity.getDatetimeStart().toString(),
+                databaseEntity.getDatetimeStart().toString()
+        );
+        assertEquals(
+                seedEntity.getDatetimeEnd().toString(),
+                databaseEntity.getDatetimeEnd().toString()
+        );
     }
 }

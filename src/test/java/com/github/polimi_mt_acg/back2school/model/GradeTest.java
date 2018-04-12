@@ -25,7 +25,7 @@ public class GradeTest {
 
     @Test
     @Category(TestCategory.Unit.class)
-    public void testPaymentEntity() {
+    public void testGradeEntity() {
         List<Grade> seedGrades = (List<Grade>) DatabaseSeeder
                 .getEntitiesListFromSeed("scenarioA_unit_tests", "grades.json");
 

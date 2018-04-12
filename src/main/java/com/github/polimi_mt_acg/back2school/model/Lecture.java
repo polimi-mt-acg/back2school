@@ -1,7 +1,10 @@
 package com.github.polimi_mt_acg.back2school.model;
 
+import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "lecture")
@@ -27,14 +30,28 @@ public class Lecture implements DeserializeToPersistInterface {
             foreignKey = @ForeignKey(name = "LECTURE_CLASSROOM_ID_FK"))
     private Classroom classroom;
 
-    // TODO: Add @ManyToOne association to Class
-    private int classId;
+    @ManyToOne
+    @JoinColumn(name = "class_id",
+            foreignKey = @ForeignKey(name = "LECTURE_CLASS_ID_FK"))
+    private Class class_;
 
     @Column(name = "datetime_start")
     private LocalDateTime datetimeStart;
 
     @Column(name = "datetime_end")
     private LocalDateTime datetimeEnd;
+
+    @Transient
+    public String seedSubjectName;
+
+    @Transient
+    public String seedTeacherEmail;
+
+    @Transient
+    public String seedClassroomName;
+
+    @Transient
+    public String seedClassName;
 
     public int getId() {
         return id;
@@ -64,6 +81,14 @@ public class Lecture implements DeserializeToPersistInterface {
         this.classroom = classroom;
     }
 
+    public Class getClass_() {
+        return class_;
+    }
+
+    public void setClass_(Class class_) {
+        this.class_ = class_;
+    }
+
     public LocalDateTime getDatetimeStart() {
         return datetimeStart;
     }
@@ -82,6 +107,44 @@ public class Lecture implements DeserializeToPersistInterface {
 
     @Override
     public void prepareToPersist() {
-
+        seedAssociateSubject();
+        seedAssociateTeacher();
+        seedAssociateClassroom();
+        seedAssociateClass();
     }
+
+    private void seedAssociateSubject() {
+        DatabaseHandler dhi = DatabaseHandler.getInstance();
+        List<Subject> subjects =
+                dhi.getListSelectFromWhereEqual(Subject.class, Subject_.name, seedSubjectName);
+        if (subjects != null) {
+            setSubject(subjects.get(0));
+        }
+    }
+
+    private void seedAssociateTeacher() {
+        DatabaseHandler dhi = DatabaseHandler.getInstance();
+        List<User> users =
+                dhi.getListSelectFromWhereEqual(User.class, User_.email, seedTeacherEmail);
+        if (users != null) {
+            setTeacher(users.get(0));
+        }
+    }
+    private void seedAssociateClassroom() {
+        DatabaseHandler dhi = DatabaseHandler.getInstance();
+        List<Classroom> classrooms =
+                dhi.getListSelectFromWhereEqual(Classroom.class, Classroom_.name, seedClassroomName);
+        if (classrooms != null) {
+            setClassroom(classrooms.get(0));
+        }
+    }
+    private void seedAssociateClass() {
+        DatabaseHandler dhi = DatabaseHandler.getInstance();
+        List<Class> classes =
+                dhi.getListSelectFromWhereEqual(Class.class, Class_.name, seedClassName);
+        if (classes != null) {
+            setClass_(classes.get(0));
+        }
+    }
+
 }

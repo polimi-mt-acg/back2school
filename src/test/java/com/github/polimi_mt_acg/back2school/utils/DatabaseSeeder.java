@@ -50,7 +50,7 @@ public class DatabaseSeeder {
         map.put("payments.json", PaymentsJSONTemplate.class);
         map.put("grades.json", GradesJSONTemplate.class);
         map.put("classes.json", ClassesJSONTemplate.class);
-//        map.put("lectures.json", LecturesJSONTemplate.class);
+        map.put("lectures.json", LecturesJSONTemplate.class);
 //        map.put("notifications_general.json", NotificationsGeneralJSONTemplate.class);
 //        map.put("appointments.json", AppointmentsJSONTemplate.class);
 //        map.put("notifications_personal_parent.json", NotificationsPersonalParentJSONTemplate.class);
