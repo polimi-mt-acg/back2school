@@ -6,6 +6,7 @@ import javax.persistence.*;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
@@ -46,7 +47,7 @@ public class User implements DeserializeToPersistInterface {
             name = "user_notification_read",
             joinColumns = @JoinColumn(name = "notification_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private List<Notification> notificationsRead;
+    private List<Notification> notificationsRead = new ArrayList<>();
 
     @Transient
     public String seedPassword;
@@ -150,5 +151,13 @@ public class User implements DeserializeToPersistInterface {
 
         String hashOfPasswordToCheck = getStringHash(passwordToCheck);
         return this.password.equals(hashOfPasswordToCheck);
+    }
+
+    public List<Notification> getNotificationsRead() {
+        return notificationsRead;
+    }
+
+    public void addNotificationsRead(Notification notification) {
+        this.notificationsRead.add(notification);
     }
 }

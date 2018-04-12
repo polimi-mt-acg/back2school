@@ -3,6 +3,7 @@ package com.github.polimi_mt_acg.back2school.model;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseSeeder;
 import com.github.polimi_mt_acg.back2school.utils.TestCategory;
+import org.hibernate.Session;
 import org.junit.*;
 import org.junit.experimental.categories.Category;
 
@@ -211,5 +212,14 @@ public class NotificationTest {
                 seedEntity.seedTargetTeacherEmail,
                 databaseEntity.getTargetUser().getEmail()
         );
+    }
+
+    @Test
+    @Category(TestCategory.Unit.class)
+    public void testNotificationsRead() {
+        System.out.println("-------------- TODO testNotificationsRead --------------");
+        // TODO
+        // before this, it must work:
+        // com.github.polimi_mt_acg.utils.json_mappers.SeedEntityNotificationRead$seedAssociateNotificationToUser()
     }
 }

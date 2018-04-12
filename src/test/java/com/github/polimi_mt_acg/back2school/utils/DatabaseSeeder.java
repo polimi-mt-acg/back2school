@@ -57,7 +57,7 @@ public class DatabaseSeeder {
         map.put("notifications_general.json", NotificationsGeneralJSONTemplate.class);
         map.put("notifications_personal_parent.json", NotificationsPersonalParentJSONTemplate.class);
         map.put("notifications_personal_teacher.json", NotificationsPersonalTeacherJSONTemplate.class);
-//        map.put("notifications_read.json", NotificationsReadJSONTemplate.class);
+        map.put("notifications_read.json", NotificationsReadJSONTemplate.class);
 //        map.put("authentication_sessions.json", AuthenticationSessionJSONTemplate.class);
 
         seedsMap = Collections.unmodifiableMap(map);
@@ -108,7 +108,6 @@ public class DatabaseSeeder {
 //                        )
 //                );
             }
-
         }
     }
 
