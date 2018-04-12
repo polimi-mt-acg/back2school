@@ -83,13 +83,15 @@ public class Class implements DeserializeToPersistInterface {
     }
 
     private void seedAssociateStudents() {
-        DatabaseHandler dhi = DatabaseHandler.getInstance();
-        for (String seedStudentEmail: this.seedStudentsEmail) {
-            List<User> users = dhi.getListSelectFromWhereEqual(User.class, User_.email, seedStudentEmail);
-            if (users != null && users.size() >= 1) {
-                addStudent(users.get(0));
-            } else {
-                LOGGER.info("STUDENT NOT FOUND. Skipped student with email: " + seedStudentEmail);
+        if (seedStudentsEmail.size() != 0) {
+            DatabaseHandler dhi = DatabaseHandler.getInstance();
+            for (String seedStudentEmail: this.seedStudentsEmail) {
+                List<User> users = dhi.getListSelectFromWhereEqual(User.class, User_.email, seedStudentEmail);
+                if (users != null && users.size() >= 1) {
+                    addStudent(users.get(0));
+                } else {
+                    LOGGER.info("STUDENT NOT FOUND. Skipped student with email: " + seedStudentEmail);
+                }
             }
         }
     }

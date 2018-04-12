@@ -70,18 +70,22 @@ public class Payment implements DeserializeToPersistInterface {
     }
 
     private void seedAssociatePlacedBy() {
-        DatabaseHandler dhi = DatabaseHandler.getInstance();
-        List<User> users = dhi.getListSelectFromWhereEqual(User.class, User_.email, seedPlacedByUserEmail);
-        if (users != null) {
-            setPlacedBy(users.get(0));
+        if (seedPlacedByUserEmail != null) {
+            DatabaseHandler dhi = DatabaseHandler.getInstance();
+            List<User> users = dhi.getListSelectFromWhereEqual(User.class, User_.email, seedPlacedByUserEmail);
+            if (users != null) {
+                setPlacedBy(users.get(0));
+            }
         }
     }
 
     private void seedAssociateAssignedTo() {
-        DatabaseHandler dhi = DatabaseHandler.getInstance();
-        List<User> users = dhi.getListSelectFromWhereEqual(User.class, User_.email, seedAssignedToUserEmail);
-        if (users != null) {
-            setAssignedTo(users.get(0));
+        if (seedAssignedToUserEmail != null) {
+            DatabaseHandler dhi = DatabaseHandler.getInstance();
+            List<User> users = dhi.getListSelectFromWhereEqual(User.class, User_.email, seedAssignedToUserEmail);
+            if (users != null) {
+                setAssignedTo(users.get(0));
+            }
         }
     }
 

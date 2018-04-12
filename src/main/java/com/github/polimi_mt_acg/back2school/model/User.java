@@ -62,7 +62,6 @@ public class User implements DeserializeToPersistInterface {
         if (seedPassword != null) {
             setPassword(this.seedPassword);
         }
-
     }
 
     public int getId() {

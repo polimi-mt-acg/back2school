@@ -31,10 +31,12 @@ public class NotificationPersonalParent extends Notification {
     }
 
     private void seedAssociateTargetParent() {
-        DatabaseHandler dhi = DatabaseHandler.getInstance();
-        List<User> users = dhi.getListSelectFromWhereEqual(User.class, User_.email, seedTargetParentEmail);
-        if (users != null) {
-            setTargetUser(users.get(0));
+        if (seedTargetParentEmail != null) {
+            DatabaseHandler dhi = DatabaseHandler.getInstance();
+            List<User> users = dhi.getListSelectFromWhereEqual(User.class, User_.email, seedTargetParentEmail);
+            if (users != null) {
+                setTargetUser(users.get(0));
+            }
         }
     }
 }

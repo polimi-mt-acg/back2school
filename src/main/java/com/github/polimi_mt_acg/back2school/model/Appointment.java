@@ -100,18 +100,22 @@ public class Appointment implements DeserializeToPersistInterface {
     }
 
     private void seedAssociateTeacher() {
-        DatabaseHandler dhi = DatabaseHandler.getInstance();
-        List<User> users = dhi.getListSelectFromWhereEqual(User.class, User_.email, seedTeacherEmail);
-        if (users != null) {
-            setTeacher(users.get(0));
+        if (seedTeacherEmail != null) {
+            DatabaseHandler dhi = DatabaseHandler.getInstance();
+            List<User> users = dhi.getListSelectFromWhereEqual(User.class, User_.email, seedTeacherEmail);
+            if (users != null) {
+                setTeacher(users.get(0));
+            }
         }
     }
 
     private void seedAssociateParent() {
-        DatabaseHandler dhi = DatabaseHandler.getInstance();
-        List<User> users = dhi.getListSelectFromWhereEqual(User.class, User_.email, seedParentEmail);
-        if (users != null) {
-            setParent(users.get(0));
+        if (seedParentEmail != null) {
+            DatabaseHandler dhi = DatabaseHandler.getInstance();
+            List<User> users = dhi.getListSelectFromWhereEqual(User.class, User_.email, seedParentEmail);
+            if (users != null) {
+                setParent(users.get(0));
+            }
         }
     }
 }

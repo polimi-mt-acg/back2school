@@ -80,10 +80,12 @@ public class Notification implements DeserializeToPersistInterface {
     }
 
     private void seedAssociateCreator() {
-        DatabaseHandler dhi = DatabaseHandler.getInstance();
-        List<User> users = dhi.getListSelectFromWhereEqual(User.class, User_.email, seedCreatorEmail);
-        if (users != null) {
-            setCreator(users.get(0));
+        if (seedCreatorEmail != null) {
+            DatabaseHandler dhi = DatabaseHandler.getInstance();
+            List<User> users = dhi.getListSelectFromWhereEqual(User.class, User_.email, seedCreatorEmail);
+            if (users != null) {
+                setCreator(users.get(0));
+            }
         }
     }
 }

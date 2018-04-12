@@ -115,27 +115,33 @@ public class Grade implements DeserializeToPersistInterface {
     }
 
     private void seedAssociateSubject() {
-        DatabaseHandler dhi = DatabaseHandler.getInstance();
-        List<Subject> subjects =
-                dhi.getListSelectFromWhereEqual(Subject.class, Subject_.name, seedSubjectName);
-        if (subjects != null) {
-            setSubject(subjects.get(0));
+        if (seedSubjectName != null) {
+            DatabaseHandler dhi = DatabaseHandler.getInstance();
+            List<Subject> subjects =
+                    dhi.getListSelectFromWhereEqual(Subject.class, Subject_.name, seedSubjectName);
+            if (subjects != null) {
+                setSubject(subjects.get(0));
+            }
         }
     }
 
     private void seedAssociateTeacher() {
-        DatabaseHandler dhi = DatabaseHandler.getInstance();
-        List<User> users = dhi.getListSelectFromWhereEqual(User.class, User_.email, seedTeacherEmail);
-        if (users != null) {
-            setTeacher(users.get(0));
+        if (seedTeacherEmail != null) {
+            DatabaseHandler dhi = DatabaseHandler.getInstance();
+            List<User> users = dhi.getListSelectFromWhereEqual(User.class, User_.email, seedTeacherEmail);
+            if (users != null) {
+                setTeacher(users.get(0));
+            }
         }
     }
 
     private void seedAssociateStudent() {
-        DatabaseHandler dhi = DatabaseHandler.getInstance();
-        List<User> users = dhi.getListSelectFromWhereEqual(User.class, User_.email, seedStudentEmail);
-        if (users != null) {
-            setStudent(users.get(0));
+        if (seedStudentEmail != null) {
+            DatabaseHandler dhi = DatabaseHandler.getInstance();
+            List<User> users = dhi.getListSelectFromWhereEqual(User.class, User_.email, seedStudentEmail);
+            if (users != null) {
+                setStudent(users.get(0));
+            }
         }
     }
 }

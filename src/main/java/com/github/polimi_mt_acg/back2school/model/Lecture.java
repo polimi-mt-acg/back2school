@@ -114,36 +114,44 @@ public class Lecture implements DeserializeToPersistInterface {
     }
 
     private void seedAssociateSubject() {
-        DatabaseHandler dhi = DatabaseHandler.getInstance();
-        List<Subject> subjects =
-                dhi.getListSelectFromWhereEqual(Subject.class, Subject_.name, seedSubjectName);
-        if (subjects != null) {
-            setSubject(subjects.get(0));
+        if (seedSubjectName != null) {
+            DatabaseHandler dhi = DatabaseHandler.getInstance();
+            List<Subject> subjects =
+                    dhi.getListSelectFromWhereEqual(Subject.class, Subject_.name, seedSubjectName);
+            if (subjects != null) {
+                setSubject(subjects.get(0));
+            }
         }
     }
 
     private void seedAssociateTeacher() {
-        DatabaseHandler dhi = DatabaseHandler.getInstance();
-        List<User> users =
-                dhi.getListSelectFromWhereEqual(User.class, User_.email, seedTeacherEmail);
-        if (users != null) {
-            setTeacher(users.get(0));
+        if (seedTeacherEmail != null) {
+            DatabaseHandler dhi = DatabaseHandler.getInstance();
+            List<User> users =
+                    dhi.getListSelectFromWhereEqual(User.class, User_.email, seedTeacherEmail);
+            if (users != null) {
+                setTeacher(users.get(0));
+            }
         }
     }
     private void seedAssociateClassroom() {
-        DatabaseHandler dhi = DatabaseHandler.getInstance();
-        List<Classroom> classrooms =
-                dhi.getListSelectFromWhereEqual(Classroom.class, Classroom_.name, seedClassroomName);
-        if (classrooms != null) {
-            setClassroom(classrooms.get(0));
+        if (seedClassroomName != null) {
+            DatabaseHandler dhi = DatabaseHandler.getInstance();
+            List<Classroom> classrooms =
+                    dhi.getListSelectFromWhereEqual(Classroom.class, Classroom_.name, seedClassroomName);
+            if (classrooms != null) {
+                setClassroom(classrooms.get(0));
+            }
         }
     }
     private void seedAssociateClass() {
-        DatabaseHandler dhi = DatabaseHandler.getInstance();
-        List<Class> classes =
-                dhi.getListSelectFromWhereEqual(Class.class, Class_.name, seedClassName);
-        if (classes != null) {
-            setClass_(classes.get(0));
+        if (seedClassName != null) {
+            DatabaseHandler dhi = DatabaseHandler.getInstance();
+            List<Class> classes =
+                    dhi.getListSelectFromWhereEqual(Class.class, Class_.name, seedClassName);
+            if (classes != null) {
+                setClass_(classes.get(0));
+            }
         }
     }
 

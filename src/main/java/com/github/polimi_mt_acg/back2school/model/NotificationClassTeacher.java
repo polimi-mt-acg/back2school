@@ -31,10 +31,12 @@ public class NotificationClassTeacher extends Notification {
     }
 
     private void seedAssociateTargetClass() {
-        DatabaseHandler dhi = DatabaseHandler.getInstance();
-        List<Class> classes = dhi.getListSelectFromWhereEqual(Class.class, Class_.name, seedTargetClassName);
-        if (classes != null) {
-            setTargetClass(classes.get(0));
+        if (seedTargetClassName != null) {
+            DatabaseHandler dhi = DatabaseHandler.getInstance();
+            List<Class> classes = dhi.getListSelectFromWhereEqual(Class.class, Class_.name, seedTargetClassName);
+            if (classes != null) {
+                setTargetClass(classes.get(0));
+            }
         }
     }
 }
