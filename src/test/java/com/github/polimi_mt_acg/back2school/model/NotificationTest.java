@@ -173,4 +173,43 @@ public class NotificationTest {
                 databaseEntity.getTargetUser().getEmail()
         );
     }
+
+    @Test
+    @Category(TestCategory.Unit.class)
+    public void testNotificationPersonalTeacherEntity() {
+        List<NotificationPersonalTeacher> seedNotificationsPersonalTeacher = (List<NotificationPersonalTeacher>) DatabaseSeeder
+                .getEntitiesListFromSeed("scenarioA_unit_tests", "notifications_personal_teacher.json");
+
+        assertNotNull(seedNotificationsPersonalTeacher);
+        assertEquals(seedNotificationsPersonalTeacher.size(), 1);
+
+        NotificationPersonalTeacher seedEntity = seedNotificationsPersonalTeacher.get(0);
+        // get entity from database
+        NotificationPersonalTeacher databaseEntity = DatabaseHandler
+                .getInstance().getListSelectFrom(NotificationPersonalTeacher.class).get(0);
+
+        // asserts beginning
+        assertNotNull(databaseEntity);
+        assertNotNull(databaseEntity.getCreator());
+        assertEquals(
+                seedEntity.seedCreatorEmail,
+                databaseEntity.getCreator().getEmail()
+        );
+        assertEquals(
+                seedEntity.getDatetime().toString(),
+                databaseEntity.getDatetime().toString()
+        );
+        assertEquals(
+                seedEntity.getSubject(),
+                databaseEntity.getSubject()
+        );
+        assertEquals(
+                seedEntity.getText(),
+                databaseEntity.getText()
+        );
+        assertEquals(
+                seedEntity.seedTargetTeacherEmail,
+                databaseEntity.getTargetUser().getEmail()
+        );
+    }
 }
