@@ -84,22 +84,22 @@ public class NotificationTest {// Test members
 
         // Link and save testNotificationPersonalParent
         testNotificationPersonalParent.setCreator(testAdministrator);
-        testNotificationPersonalParent.setTarget(testParent);
+        testNotificationPersonalParent.setTargetUser(testParent);
         session.save(testNotificationPersonalParent);
 
         // Link and save testNotificationPersonalTeacher
         testNotificationPersonalTeacher.setCreator(testAdministrator);
-        testNotificationPersonalTeacher.setTarget(testTeacher);
+        testNotificationPersonalTeacher.setTargetUser(testTeacher);
         session.save(testNotificationPersonalTeacher);
 
         // Link and save testNotificationClassParent
         testNotificationClassParent.setCreator(testAdministrator);
-        testNotificationClassParent.setTarget(testClass);
+        testNotificationClassParent.setTargetClass(testClass);
         session.save(testNotificationClassParent);
 
         // Link and save testNotificationClassTeacher
         testNotificationClassTeacher.setCreator(testAdministrator);
-        testNotificationClassTeacher.setTarget(testClass);
+        testNotificationClassTeacher.setTargetClass(testClass);
         session.save(testNotificationClassTeacher);
 
         // Link and save testNotificationGeneral
@@ -149,11 +149,11 @@ public class NotificationTest {// Test members
             assertEquals(p.getCreator().getSalt(), testAdministrator.getSalt());
 //            assertEquals(p.getPlacedBy().getType(), testAdministrator.getType());
 
-            assertEquals(p.getTarget().getId(), testParent.getId());
-            assertEquals(p.getTarget().getName(), testParent.getName());
-            assertEquals(p.getTarget().getSurname(), testParent.getSurname());
-            assertEquals(p.getTarget().getPassword(), testParent.getPassword());
-            assertEquals(p.getTarget().getSalt(), testParent.getSalt());
+            assertEquals(p.getTargetUser().getId(), testParent.getId());
+            assertEquals(p.getTargetUser().getName(), testParent.getName());
+            assertEquals(p.getTargetUser().getSurname(), testParent.getSurname());
+            assertEquals(p.getTargetUser().getPassword(), testParent.getPassword());
+            assertEquals(p.getTargetUser().getSalt(), testParent.getSalt());
 //            assertEquals(p.getAssignedTo().getType(), testParent.getType());
         }
 
@@ -172,11 +172,11 @@ public class NotificationTest {// Test members
             assertEquals(p.getCreator().getSalt(), testAdministrator.getSalt());
 //            assertEquals(p.getPlacedBy().getType(), testAdministrator.getType());
 
-            assertEquals(p.getTarget().getId(), testTeacher.getId());
-            assertEquals(p.getTarget().getName(), testTeacher.getName());
-            assertEquals(p.getTarget().getSurname(), testTeacher.getSurname());
-            assertEquals(p.getTarget().getPassword(), testTeacher.getPassword());
-            assertEquals(p.getTarget().getSalt(), testTeacher.getSalt());
+            assertEquals(p.getTargetUser().getId(), testTeacher.getId());
+            assertEquals(p.getTargetUser().getName(), testTeacher.getName());
+            assertEquals(p.getTargetUser().getSurname(), testTeacher.getSurname());
+            assertEquals(p.getTargetUser().getPassword(), testTeacher.getPassword());
+            assertEquals(p.getTargetUser().getSalt(), testTeacher.getSalt());
 //            assertEquals(p.getAssignedTo().getType(), testParent.getType());
         }
 
@@ -194,9 +194,9 @@ public class NotificationTest {// Test members
             assertEquals(p.getCreator().getSalt(), testAdministrator.getSalt());
 //            assertEquals(p.getPlacedBy().getType(), testAdministrator.getType());
 
-            assertEquals(p.getTarget().getId(), testClass.getId());
-            assertEquals(p.getTarget().getName(), testClass.getName());
-            assertEquals(p.getTarget().getAcademicYear(), testClass.getAcademicYear());
+            assertEquals(p.getTargetClass().getId(), testClass.getId());
+            assertEquals(p.getTargetClass().getName(), testClass.getName());
+            assertEquals(p.getTargetClass().getAcademicYear(), testClass.getAcademicYear());
 //            assertEquals(p.getAssignedTo().getType(), testParent.getType());
         }
 
@@ -215,9 +215,9 @@ public class NotificationTest {// Test members
             assertEquals(p.getCreator().getSalt(), testAdministrator.getSalt());
 //            assertEquals(p.getPlacedBy().getType(), testAdministrator.getType());
 
-            assertEquals(p.getTarget().getId(), testClass.getId());
-            assertEquals(p.getTarget().getName(), testClass.getName());
-            assertEquals(p.getTarget().getAcademicYear(), testClass.getAcademicYear());
+            assertEquals(p.getTargetClass().getId(), testClass.getId());
+            assertEquals(p.getTargetClass().getName(), testClass.getName());
+            assertEquals(p.getTargetClass().getAcademicYear(), testClass.getAcademicYear());
 //            assertEquals(p.getAssignedTo().getType(), testParent.getType());
         }
 

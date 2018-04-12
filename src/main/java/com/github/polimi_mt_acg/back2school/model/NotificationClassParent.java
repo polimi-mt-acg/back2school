@@ -2,25 +2,24 @@ package com.github.polimi_mt_acg.back2school.model;
 
 import javax.persistence.*;
 
-@Entity(name = "notification_class_parent")
-@DiscriminatorValue(value = "class_parent")
-public class NotificationClassParent
-        extends Notification implements DeserializeToPersistInterface {
-
+@Entity
+@DiscriminatorValue(value = "CLASS-PARENT")
+public class NotificationClassParent extends Notification {
 
     @OneToOne
-    @JoinColumn(name = "target_class_parents_id",
+    @JoinColumn(name = "target_class_id",
             foreignKey = @ForeignKey(name = "TARGET_CLASS_PARENTS_ID_FK"))
-    private Class targetcp ;//= new SchoolClass();
+    private Class targetClass;
 
-    public Class getTarget() { return targetcp; }
-
-    public void setTarget(Class target) {
-        targetcp = target;
+    public Class getTargetClass() {
+        return targetClass;
     }
 
-    @Override
-    public void prepareToPersist() {
+    public void setTargetClass(Class targetClass) {
+        this.targetClass = targetClass;
+    }
 
+    public void prepareToPersist() {
+        super.prepareToPersist();
     }
 }

@@ -1,15 +1,12 @@
 package com.github.polimi_mt_acg.back2school.model;
 
-
-import org.hibernate.type.DiscriminatorType;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "notification")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn( name = "type", discriminatorType = javax.persistence.DiscriminatorType.STRING)
+@DiscriminatorColumn(name = "type", discriminatorType = javax.persistence.DiscriminatorType.STRING)
 public class Notification implements DeserializeToPersistInterface {
 
     @Id
@@ -22,7 +19,7 @@ public class Notification implements DeserializeToPersistInterface {
             foreignKey = @ForeignKey(name = "NOTIFICATION_CREATOR_ID_FK"))
     private User creator;
 
-    @Column(name = "date")
+    @Column(name = "datetime")
     private LocalDateTime datetime;
 
     @Column(name = "subject")
