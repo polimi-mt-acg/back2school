@@ -27,10 +27,10 @@ public class NotificationPersonalParent extends Notification {
 
     public void prepareToPersist() {
         super.prepareToPersist();
-        seedAssociateParent();
+        seedAssociateTargetParent();
     }
 
-    private void seedAssociateParent() {
+    private void seedAssociateTargetParent() {
         DatabaseHandler dhi = DatabaseHandler.getInstance();
         List<User> users = dhi.getListSelectFromWhereEqual(User.class, User_.email, seedTargetParentEmail);
         if (users != null) {

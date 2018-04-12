@@ -52,7 +52,7 @@ public class DatabaseSeeder {
         map.put("classes.json", ClassesJSONTemplate.class);
         map.put("lectures.json", LecturesJSONTemplate.class);
         map.put("appointments.json", AppointmentsJSONTemplate.class);
-//        map.put("notifications_class_parent.json", NotificationsClassParent5JSONTemplate.class);
+        map.put("notifications_class_parent.json", NotificationsClassParentJSONTemplate.class);
 //        map.put("notifications_class_teacher.json", NotificationsClassTeacherJSONTemplate.class);
         map.put("notifications_general.json", NotificationsGeneralJSONTemplate.class);
         map.put("notifications_personal_parent.json", NotificationsPersonalParentJSONTemplate.class);
