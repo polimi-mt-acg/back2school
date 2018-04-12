@@ -1,0 +1,10 @@
+{
+  "notificationsGeneral": [
+    {
+      "seedCreatorEmail": "david@email.com",
+      "datetime": "2018-04-12T15:22:34",
+      "subject": "Holidays period announcement",
+      "text": "Hello everybody,\nI would to announce you that during the whole month of june 2018 lectures will be suspended.\n\nHave good vacations\n\nRegards,\nThe headmaster."
+    }
+  ]
+}

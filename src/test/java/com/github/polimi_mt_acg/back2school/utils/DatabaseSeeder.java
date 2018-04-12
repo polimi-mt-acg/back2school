@@ -52,7 +52,7 @@ public class DatabaseSeeder {
         map.put("classes.json", ClassesJSONTemplate.class);
         map.put("lectures.json", LecturesJSONTemplate.class);
         map.put("appointments.json", AppointmentsJSONTemplate.class);
-//        map.put("notifications_general.json", NotificationsGeneralJSONTemplate.class);
+        map.put("notifications_general.json", NotificationsGeneralJSONTemplate.class);
 //        map.put("notifications_personal_parent.json", NotificationsPersonalParentJSONTemplate.class);
 //        map.put("notifications_personal_teacher.json", NotificationsPersonalTeacherJSONTemplate.class);
 //        map.put("notifications_class_parent.json", NotificationsClassParent5JSONTemplate.class);
@@ -66,7 +66,7 @@ public class DatabaseSeeder {
 
     /**
      * Deploy new seeds to the database by specifying the folder name in order
-     * load a scenario.
+     * to load a specific scenario.
      *
      * E.g. DatabaseSeeder.deployScenario("scenarioA")
      * It will look into the folder src/test/resources/scenarios_seeds/scenarioA/

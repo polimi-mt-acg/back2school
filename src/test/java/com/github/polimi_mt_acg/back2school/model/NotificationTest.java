@@ -1,245 +1,59 @@
 package com.github.polimi_mt_acg.back2school.model;
 
-import com.github.polimi_mt_acg.utils.TestEntitiesFactory;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.boot.MetadataSources;
-import org.hibernate.boot.registry.StandardServiceRegistry;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
+import com.github.polimi_mt_acg.back2school.utils.DatabaseSeeder;
+import com.github.polimi_mt_acg.back2school.utils.TestCategory;
+import org.junit.*;
+import org.junit.experimental.categories.Category;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class NotificationTest {// Test members
-    private SessionFactory sessionFactory;
-    private User testAdministrator;
-    private User testTeacher;
-    private User testParent;
-    private User testStudent1;
-    private User testStudent2;
-    private Class testClass;
-    private NotificationPersonalParent testNotificationPersonalParent;
-    private NotificationPersonalTeacher testNotificationPersonalTeacher;
-    private NotificationClassParent testNotificationClassParent;
-    private NotificationClassTeacher testNotificationClassTeacher;
-    private NotificationGeneral testNotificationGeneral;
-    private List<User> ls = new ArrayList<>();
+public class NotificationTest {
 
-
-    @Before
-    public void setUp() throws Exception {
-        // A SessionFactory is set up once for an application!
-        final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
-                .configure() // configures settings from hibernate.cfg.xml
-                .build();
-        try {
-            sessionFactory = new MetadataSources(registry).buildMetadata().buildSessionFactory();
-        } catch (Exception e) {
-            // The registry would be destroyed by the SessionFactory, but we had trouble building the SessionFactory
-            // so destroy it manually.
-            StandardServiceRegistryBuilder.destroy(registry);
-            throw e;
-        }
-
-        // Then create fictitious Entities
-        testAdministrator = TestEntitiesFactory.buildAdministrator();
-        testParent = TestEntitiesFactory.buildParent();
-        testTeacher = TestEntitiesFactory.buildTeacher();
-        testClass = TestEntitiesFactory.buildClass();
-        testStudent1 = TestEntitiesFactory.buildStudent();
-        testStudent2 = TestEntitiesFactory.buildStudent();
-        testNotificationPersonalParent = (NotificationPersonalParent) TestEntitiesFactory.buildNotification(NotificationPersonalParent.class);
-        testNotificationPersonalTeacher = (NotificationPersonalTeacher) TestEntitiesFactory.buildNotification(NotificationPersonalTeacher.class);
-        testNotificationClassParent = (NotificationClassParent) TestEntitiesFactory.buildNotification(NotificationClassParent.class);
-        testNotificationClassTeacher = (NotificationClassTeacher) TestEntitiesFactory.buildNotification(NotificationClassTeacher.class);
-        testNotificationGeneral = (NotificationGeneral) TestEntitiesFactory.buildNotification(NotificationGeneral.class);
+    @BeforeClass
+    public static void setUpClass() {
+        DatabaseSeeder.deployScenario("scenarioA_unit_tests");
     }
 
-    @After
-    public void tearDown() throws Exception {
-        if (sessionFactory != null) {
-            sessionFactory.close();
-        }
+    @AfterClass
+    public static void tearDownClass() {
+        DatabaseHandler.getInstance().truncateDatabase();
     }
 
     @Test
-    public void testNotificationAssociations() {
-        // Persist test entities
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
+    @Category(TestCategory.Unit.class)
+    public void testNotificationGeneralEntity() {
+        List<NotificationGeneral> seedNotificationsGeneral = (List<NotificationGeneral>) DatabaseSeeder
+                .getEntitiesListFromSeed("scenarioA_unit_tests", "notifications_general.json");
 
-        session.save(testAdministrator);
-        session.save(testParent);
-        session.save(testTeacher);
+        assertNotNull(seedNotificationsGeneral);
+        assertEquals(seedNotificationsGeneral.size(), 1);
 
-        //Link and save testClass/
+        NotificationGeneral seedEntity = seedNotificationsGeneral.get(0);
+        // get entity from database
+        NotificationGeneral databaseEntity = DatabaseHandler
+                .getInstance().getListSelectFrom(NotificationGeneral.class).get(0);
 
-//        testClass.setStudentsOfTheClass(ls);
-        session.save(testClass);
-
-        // Link and save testNotificationPersonalParent
-        testNotificationPersonalParent.setCreator(testAdministrator);
-        testNotificationPersonalParent.setTargetUser(testParent);
-        session.save(testNotificationPersonalParent);
-
-        // Link and save testNotificationPersonalTeacher
-        testNotificationPersonalTeacher.setCreator(testAdministrator);
-        testNotificationPersonalTeacher.setTargetUser(testTeacher);
-        session.save(testNotificationPersonalTeacher);
-
-        // Link and save testNotificationClassParent
-        testNotificationClassParent.setCreator(testAdministrator);
-        testNotificationClassParent.setTargetClass(testClass);
-        session.save(testNotificationClassParent);
-
-        // Link and save testNotificationClassTeacher
-        testNotificationClassTeacher.setCreator(testAdministrator);
-        testNotificationClassTeacher.setTargetClass(testClass);
-        session.save(testNotificationClassTeacher);
-
-        // Link and save testNotificationGeneral
-        testNotificationGeneral.setCreator(testAdministrator);
-        session.save(testNotificationGeneral);
-
-
-        session.getTransaction().commit();
-        session.close();
-
-        // Now we check how Hibernate fetches foreign keys' data
-        session = sessionFactory.openSession();
-        session.beginTransaction();
-        NotificationPersonalParent nPP = session.get(NotificationPersonalParent.class, testNotificationPersonalParent.getId());
-        NotificationPersonalTeacher nPT = session.get(NotificationPersonalTeacher.class, testNotificationPersonalTeacher.getId());
-        NotificationClassParent nCP = session.get(NotificationClassParent.class, testNotificationClassParent.getId());
-        NotificationClassTeacher nCT = session.get(NotificationClassTeacher.class, testNotificationClassTeacher.getId());
-        NotificationGeneral nG = session.get(NotificationGeneral.class, testNotificationGeneral.getId());
-
-        session.getTransaction().commit();
-        session.close();
-
-        assertNotNull(nPP);
-        assertNotNull(nPT);
-        assertNotNull(nCP);
-        assertNotNull(nCT);
-        assertNotNull(nG);
-
-        List<NotificationPersonalParent> notificationPP = new ArrayList<>();
-        notificationPP.add(nPP);
-        List<NotificationPersonalTeacher> notificationPT = new ArrayList<>();
-        notificationPT.add(nPT);
-        List<NotificationClassParent> notificationCP = new ArrayList<>();
-        notificationCP.add(nCP);
-        List<NotificationClassTeacher> notificationCT = new ArrayList<>();
-        notificationCT.add(nCT);
-        List<NotificationGeneral> notificationG = new ArrayList<>();
-        notificationG.add(nG);
-
-        // Notification Personal Parent data
-        for (NotificationPersonalParent p: notificationPP) {
-            // Administrator and parent data test
-            assertEquals(p.getCreator().getId(), testAdministrator.getId());
-            assertEquals(p.getCreator().getName(), testAdministrator.getName());
-            assertEquals(p.getCreator().getSurname(), testAdministrator.getSurname());
-            assertEquals(p.getCreator().getPassword(), testAdministrator.getPassword());
-            assertEquals(p.getCreator().getSalt(), testAdministrator.getSalt());
-//            assertEquals(p.getPlacedBy().getType(), testAdministrator.getType());
-
-            assertEquals(p.getTargetUser().getId(), testParent.getId());
-            assertEquals(p.getTargetUser().getName(), testParent.getName());
-            assertEquals(p.getTargetUser().getSurname(), testParent.getSurname());
-            assertEquals(p.getTargetUser().getPassword(), testParent.getPassword());
-            assertEquals(p.getTargetUser().getSalt(), testParent.getSalt());
-//            assertEquals(p.getAssignedTo().getType(), testParent.getType());
-        }
-
-
-        assertEquals(nPP.getDatetime(), testNotificationPersonalParent.getDatetime());
-        assertEquals(nPP.getSubject(), testNotificationPersonalParent.getSubject());
-        assertEquals(nPP.getText(), testNotificationPersonalParent.getText());
-
-// Notification Personal Teacher data
-        for (NotificationPersonalTeacher p: notificationPT) {
-            // Administrator and parent data test
-            assertEquals(p.getCreator().getId(), testAdministrator.getId());
-            assertEquals(p.getCreator().getName(), testAdministrator.getName());
-            assertEquals(p.getCreator().getSurname(), testAdministrator.getSurname());
-            assertEquals(p.getCreator().getPassword(), testAdministrator.getPassword());
-            assertEquals(p.getCreator().getSalt(), testAdministrator.getSalt());
-//            assertEquals(p.getPlacedBy().getType(), testAdministrator.getType());
-
-            assertEquals(p.getTargetUser().getId(), testTeacher.getId());
-            assertEquals(p.getTargetUser().getName(), testTeacher.getName());
-            assertEquals(p.getTargetUser().getSurname(), testTeacher.getSurname());
-            assertEquals(p.getTargetUser().getPassword(), testTeacher.getPassword());
-            assertEquals(p.getTargetUser().getSalt(), testTeacher.getSalt());
-//            assertEquals(p.getAssignedTo().getType(), testParent.getType());
-        }
-
-        assertEquals(nPT.getDatetime(), testNotificationPersonalTeacher.getDatetime());
-        assertEquals(nPT.getSubject(), testNotificationPersonalTeacher.getSubject());
-        assertEquals(nPT.getText(), testNotificationPersonalTeacher.getText());
-
-// Notification Class Parent data
-        for (NotificationClassParent p: notificationCP) {
-            // Administrator and parent data test
-            assertEquals(p.getCreator().getId(), testAdministrator.getId());
-            assertEquals(p.getCreator().getName(), testAdministrator.getName());
-            assertEquals(p.getCreator().getSurname(), testAdministrator.getSurname());
-            assertEquals(p.getCreator().getPassword(), testAdministrator.getPassword());
-            assertEquals(p.getCreator().getSalt(), testAdministrator.getSalt());
-//            assertEquals(p.getPlacedBy().getType(), testAdministrator.getType());
-
-            assertEquals(p.getTargetClass().getId(), testClass.getId());
-            assertEquals(p.getTargetClass().getName(), testClass.getName());
-            assertEquals(p.getTargetClass().getAcademicYear(), testClass.getAcademicYear());
-//            assertEquals(p.getAssignedTo().getType(), testParent.getType());
-        }
-
-        assertEquals(nCP.getDatetime(), testNotificationClassParent.getDatetime());
-        assertEquals(nCP.getSubject(), testNotificationClassParent.getSubject());
-        assertEquals(nCP.getText(), testNotificationClassParent.getText());
-
-
-// Notification Class Teacher data
-        for (NotificationClassTeacher p: notificationCT) {
-            // Administrator and parent data test
-            assertEquals(p.getCreator().getId(), testAdministrator.getId());
-            assertEquals(p.getCreator().getName(), testAdministrator.getName());
-            assertEquals(p.getCreator().getSurname(), testAdministrator.getSurname());
-            assertEquals(p.getCreator().getPassword(), testAdministrator.getPassword());
-            assertEquals(p.getCreator().getSalt(), testAdministrator.getSalt());
-//            assertEquals(p.getPlacedBy().getType(), testAdministrator.getType());
-
-            assertEquals(p.getTargetClass().getId(), testClass.getId());
-            assertEquals(p.getTargetClass().getName(), testClass.getName());
-            assertEquals(p.getTargetClass().getAcademicYear(), testClass.getAcademicYear());
-//            assertEquals(p.getAssignedTo().getType(), testParent.getType());
-        }
-
-        assertEquals(nCT.getDatetime(), testNotificationClassTeacher.getDatetime());
-        assertEquals(nCT.getSubject(), testNotificationClassTeacher.getSubject());
-        assertEquals(nCT.getText(), testNotificationClassTeacher.getText());
-
-// Notification General data
-        for (NotificationGeneral p: notificationG) {
-            // Administrator and parent data test
-            assertEquals(p.getCreator().getId(), testAdministrator.getId());
-            assertEquals(p.getCreator().getName(), testAdministrator.getName());
-            assertEquals(p.getCreator().getSurname(), testAdministrator.getSurname());
-            assertEquals(p.getCreator().getPassword(), testAdministrator.getPassword());
-            assertEquals(p.getCreator().getSalt(), testAdministrator.getSalt());
-//            assertEquals(p.getPlacedBy().getType(), testAdministrator.getType());
-        }
-
-        assertEquals(nG.getDatetime(), testNotificationGeneral.getDatetime());
-        assertEquals(nG.getSubject(), testNotificationGeneral.getSubject());
-        assertEquals(nG.getText(), testNotificationGeneral.getText());
-
-
+        // asserts beginning
+        assertNotNull(databaseEntity);
+        assertNotNull(databaseEntity.getCreator());
+        assertEquals(
+                seedEntity.seedCreatorEmail,
+                databaseEntity.getCreator().getEmail()
+        );
+        assertEquals(
+                seedEntity.getDatetime().toString(),
+                databaseEntity.getDatetime().toString()
+        );
+        assertEquals(
+                seedEntity.getSubject(),
+                databaseEntity.getSubject()
+        );
+        assertEquals(
+                seedEntity.getText(),
+                databaseEntity.getText()
+        );
     }
 }

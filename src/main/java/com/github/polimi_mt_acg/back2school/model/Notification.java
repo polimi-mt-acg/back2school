@@ -1,7 +1,10 @@
 package com.github.polimi_mt_acg.back2school.model;
 
+import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "notification")
@@ -27,6 +30,9 @@ public class Notification implements DeserializeToPersistInterface {
 
     @Column(name = "text")
     private String text;
+
+    @Transient
+    public String seedCreatorEmail;
 
     public int getId() {
         return id;
@@ -70,6 +76,14 @@ public class Notification implements DeserializeToPersistInterface {
 
     @Override
     public void prepareToPersist() {
+        seedAssociateCreator();
+    }
 
+    private void seedAssociateCreator() {
+        DatabaseHandler dhi = DatabaseHandler.getInstance();
+        List<User> users = dhi.getListSelectFromWhereEqual(User.class, User_.email, seedCreatorEmail);
+        if (users != null) {
+            setCreator(users.get(0));
+        }
     }
 }
