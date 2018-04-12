@@ -100,13 +100,13 @@ public class DatabaseSeeder {
                 s.getTransaction().commit();
                 s.close();
 
-                LOGGER.info(
-                        String.format(
-                                "deployed seed file: %s/%s",
-                                scenarioFolderName,
-                                seedFilename
-                        )
-                );
+//                LOGGER.info(
+//                        String.format(
+//                                "deployed seed file: %s/%s",
+//                                scenarioFolderName,
+//                                seedFilename
+//                        )
+//                );
             }
 
         }

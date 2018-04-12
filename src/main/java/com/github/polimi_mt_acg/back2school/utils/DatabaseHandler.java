@@ -116,7 +116,7 @@ public class DatabaseHandler {
         Session session = getInstance().getNewSession();
         session.beginTransaction();
 
-        LOGGER.info("Executing truncateDatabase");
+//        LOGGER.info("Executing truncateDatabase");
         Metadata metadata = new MetadataSources(registry).buildMetadata();
 
         // shutoff the foreign key checks
@@ -140,7 +140,7 @@ public class DatabaseHandler {
                     String query =
                             String.format("TRUNCATE TABLE `%s`", tableName);
 
-                    LOGGER.info("Executing query: " + query);
+//                    LOGGER.info("Executing query: " + query);
                     session.createNativeQuery(query).executeUpdate();
                 }
             }
@@ -154,6 +154,6 @@ public class DatabaseHandler {
 
         session.getTransaction().commit();
         session.close();
-        LOGGER.info("Database truncated");
+//        LOGGER.info("Database truncated");
     }
 }
