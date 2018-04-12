@@ -1,9 +1,12 @@
 package com.github.polimi_mt_acg.back2school.model;
 
 
+import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
+import com.github.polimi_mt_acg.back2school.utils.RandomStringGenerator;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.List;
 
 @Entity
 @Table(name = "authentication_session")
@@ -20,13 +23,16 @@ public class AuthenticationSession implements DeserializeToPersistInterface {
     private User user;
 
     @Column(name = "token")
-    private String token = new RandomStringGenerator().generateString();
+    private String token = RandomStringGenerator.generateString();
 
     @Column(name = "datetime_last_interaction")
     private LocalDateTime datetimeLastInteraction = LocalDateTime.now();
 
     @Column(name = "cancelled")
     private boolean cancelled = false;
+
+    @Transient
+    public String seedUserEmail;
 
     public int getId() {
         return id;
@@ -70,13 +76,16 @@ public class AuthenticationSession implements DeserializeToPersistInterface {
 
     @Override
     public void prepareToPersist() {
-
+        seedAssociateUser();
     }
 
-    public class RandomStringGenerator {
-        public String generateString() {
-            String uuid = UUID.randomUUID().toString();
-            return uuid.replace("-", "");
+    private void seedAssociateUser() {
+        if (seedUserEmail != null) {
+            DatabaseHandler dhi = DatabaseHandler.getInstance();
+            List<User> users = dhi.getListSelectFromWhereEqual(User.class, User_.email, seedUserEmail);
+            if (users != null) {
+                setUser(users.get(0));
+            }
         }
     }
 }

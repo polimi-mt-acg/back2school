@@ -1,5 +1,7 @@
 package com.github.polimi_mt_acg.back2school.model;
 
+import com.github.polimi_mt_acg.back2school.utils.RandomStringGenerator;
+
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.persistence.*;
@@ -9,7 +11,6 @@ import java.security.spec.KeySpec;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
-import java.util.UUID;
 import java.util.logging.Logger;
 
 @Entity
@@ -123,7 +124,7 @@ public class User implements DeserializeToPersistInterface {
     private String getStringHash(String string) {
         if (this.salt == null) {
             // generate salt from a new UUID
-            this.salt = UUID.randomUUID().toString().replace("-", "");
+            this.salt = RandomStringGenerator.generateString();
         }
 
         KeySpec spec =

@@ -1,90 +1,54 @@
 package com.github.polimi_mt_acg.back2school.model;
 
+
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
+import com.github.polimi_mt_acg.back2school.utils.DatabaseSeeder;
 import com.github.polimi_mt_acg.back2school.utils.TestCategory;
-import com.github.polimi_mt_acg.utils.TestEntitiesFactory;
-import org.hibernate.Session;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
+import static org.junit.Assert.assertTrue;
 
 public class AuthenticationSessionTest {
 
-    // Test members
-    private Session session;
-    private User testAdministrator;
-    private User testTeacher;
-    private User testParent;
-    private AuthenticationSession testSessionAdministrator;
-    private AuthenticationSession testSessionParent;
-    private AuthenticationSession testSessionTeacher;
-    // the student cannot login into the system
-
-    @Before
-    public void setUp() {
-        // Then create fictitious Entities
-        testAdministrator = TestEntitiesFactory.buildAdministrator();
-        testTeacher = TestEntitiesFactory.buildTeacher();
-        testParent = TestEntitiesFactory.buildParent();
-        testSessionAdministrator = TestEntitiesFactory.buildAuthenticationSession();
-        testSessionTeacher = TestEntitiesFactory.buildAuthenticationSession();
-        testSessionParent = TestEntitiesFactory.buildAuthenticationSession();
+    @BeforeClass
+    public static void setUpClass() {
+        DatabaseSeeder.deployScenario("scenarioA_unit_tests");
     }
 
-    @After
-    public void tearDown() {
+    @AfterClass
+    public static void tearDownClass() {
         DatabaseHandler.getInstance().truncateDatabase();
-
-        if (session != null) {
-            session.close();
-        }
     }
 
     @Test
     @Category(TestCategory.Unit.class)
-    public void testAuthenticationSessionAssociations() {
-        session = DatabaseHandler.getInstance().getNewSession();
+    public void testAuthenticationSessionEntity() {
+        List<AuthenticationSession> seedAuthenticationSessions = (List<AuthenticationSession>) DatabaseSeeder
+                .getEntitiesListFromSeed("scenarioA_unit_tests", "authentication_sessions.json");
 
-        // Persist test entities
-        session.beginTransaction();
+        assertNotNull(seedAuthenticationSessions);
+        assertEquals(seedAuthenticationSessions.size(), 1);
 
-        session.save(testAdministrator);
-        session.save(testTeacher);
-        session.save(testParent);
+        AuthenticationSession seedEntity = seedAuthenticationSessions.get(0);
+        // get entity from database
+        AuthenticationSession databaseEntity = DatabaseHandler
+                .getInstance().getListSelectFrom(AuthenticationSession.class).get(0);
 
-        testSessionAdministrator.setUser(testAdministrator);
-        testSessionTeacher.setUser(testTeacher);
-        testSessionParent.setUser(testParent);
-
-        session.save(testSessionAdministrator);
-        session.save(testSessionTeacher);
-        session.save(testSessionParent);
-
-        session.getTransaction().commit();
-        session.close();
-
-        // Now we check how Hibernate fetches foreign keys' data
-        session = DatabaseHandler.getInstance().getNewSession();
-        session.beginTransaction();
-
-        AuthenticationSession ASA = session.get(AuthenticationSession.class, testSessionAdministrator.getId());
-        AuthenticationSession ASP = session.get(AuthenticationSession.class, testSessionParent.getId());
-        AuthenticationSession AST = session.get(AuthenticationSession.class, testSessionTeacher.getId());
-
-        session.getTransaction().commit();
-        session.close();
-
-        assertNotNull(ASA);
-        assertNotNull(ASP);
-        assertNotNull(AST);
-
-        assertEquals(ASA.getUser().getId(), testAdministrator.getId());
-        assertEquals(AST.getUser().getId(), testTeacher.getId());
-        assertEquals(ASP.getUser().getId(), testParent.getId());
+        // asserts beginning
+        assertNotNull(databaseEntity);
+        assertNotNull(databaseEntity.getUser());
+        assertEquals(
+                seedEntity.seedUserEmail,
+                databaseEntity.getUser().getEmail()
+        );
+        assertNotNull(databaseEntity.getDatetimeLastInteraction());
+        assertTrue(!databaseEntity.isCancelled());
     }
 }
