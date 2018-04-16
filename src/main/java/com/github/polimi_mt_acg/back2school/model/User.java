@@ -1,10 +1,13 @@
 package com.github.polimi_mt_acg.back2school.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.polimi_mt_acg.back2school.utils.RandomStringGenerator;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
@@ -15,47 +18,37 @@ import java.util.logging.Logger;
 
 @Entity
 @Table(name = "user")
+@XmlRootElement
 public class User implements DeserializeToPersistInterface {
 
     private final static Logger LOGGER =
             Logger.getLogger(User.class.getName());
+    @Transient
+    @JsonIgnore
+    public String seedPassword;
     @Id
     @GeneratedValue
     @Column(name = "id")
     private int id;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private Role role = Role.STUDENT;
-
     @Column(name = "name")
     private String name;
-
     @Column(name = "surname")
     private String surname;
-
     @Column(name = "email")
     private String email;
-
     @Column(name = "password")
     private String password;
-
     @Column(name = "salt")
     private String salt;
-
     @ManyToMany
     @JoinTable(
             name = "user_notification_read",
             joinColumns = @JoinColumn(name = "notification_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<Notification> notificationsRead = new ArrayList<>();
-
-    @Transient
-    public String seedPassword;
-
-    enum Role {
-        STUDENT, PARENT, TEACHER, ADMINISTRATOR
-    }
 
     @Override
     public void prepareToPersist() {
@@ -64,10 +57,12 @@ public class User implements DeserializeToPersistInterface {
         }
     }
 
+    @JsonIgnore
     public int getId() {
         return id;
     }
 
+    @JsonProperty
     public void setId(int id) {
         this.id = id;
     }
@@ -96,18 +91,22 @@ public class User implements DeserializeToPersistInterface {
         this.email = email;
     }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
 
+    @JsonProperty
     public void setPassword(String password) {
         this.password = getStringHash(password);
     }
 
+    @JsonIgnore
     public String getSalt() {
         return salt;
     }
 
+    @JsonProperty
     public void setSalt(String salt) {
         this.salt = salt;
     }
@@ -133,8 +132,7 @@ public class User implements DeserializeToPersistInterface {
         try {
             SecretKeyFactory f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
             hash = f.generateSecret(spec).getEncoded();
-        }
-        catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
+        } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
         Base64.Encoder enc = Base64.getEncoder();
@@ -143,6 +141,7 @@ public class User implements DeserializeToPersistInterface {
 
     /**
      * Check the given password validity.
+     *
      * @param passwordToCheck the password to check
      * @return
      */
@@ -153,11 +152,16 @@ public class User implements DeserializeToPersistInterface {
         return this.password.equals(hashOfPasswordToCheck);
     }
 
+    @JsonIgnore
     public List<Notification> getNotificationsRead() {
         return notificationsRead;
     }
 
     public void addNotificationsRead(Notification notification) {
         this.notificationsRead.add(notification);
+    }
+
+    public enum Role {
+        STUDENT, PARENT, TEACHER, ADMINISTRATOR
     }
 }
