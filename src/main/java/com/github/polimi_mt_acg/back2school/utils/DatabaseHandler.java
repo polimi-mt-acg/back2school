@@ -18,10 +18,9 @@ import java.util.logging.Logger;
 
 public class DatabaseHandler {
     private static final Logger LOGGER;
-    private static volatile DatabaseHandler instance;
-
     private static final StandardServiceRegistry registry;
     private static final SessionFactory sessionFactory;
+    private static volatile DatabaseHandler instance;
 
     static {
         LOGGER = Logger.getLogger(DatabaseHandler.class.getName());
@@ -36,8 +35,7 @@ public class DatabaseHandler {
             sessionFactory = new MetadataSources(registry)
                     .buildMetadata()
                     .buildSessionFactory();
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             // The registry would be destroyed by the SessionFactory,
             // but we had trouble building the SessionFactory
             // so destroy it manually.
@@ -46,11 +44,12 @@ public class DatabaseHandler {
         }
     }
 
-    private DatabaseHandler() { }
+    private DatabaseHandler() {
+    }
 
     public static DatabaseHandler getInstance() {
         if (instance == null) {
-            synchronized(DatabaseHandler.class) {
+            synchronized (DatabaseHandler.class) {
                 if (instance == null) {
                     instance = new DatabaseHandler();
                 }
@@ -73,8 +72,9 @@ public class DatabaseHandler {
 
     /**
      * List of entities for the SQL query: SELECT * FROM <classType entity>
+     *
      * @param classType entity class
-     * @param <T> entity type
+     * @param <T>       entity type
      * @return
      */
     public <T> List<T> getListSelectFrom(Class<T> classType) {
@@ -91,14 +91,15 @@ public class DatabaseHandler {
 
     /**
      * List of entities for the SQL query:
-     *      SELECT * FROM <classType entity> WHERE <singularAttribute> = <obj>
-     * @param classType entity class
+     * SELECT * FROM <classType entity> WHERE <singularAttribute> = <obj>
+     *
+     * @param classType         entity class
      * @param singularAttribute entity attribute on which perform the query
-     * @param obj the value to look for
-     * @param <T> entity type
+     * @param obj               the value to look for
+     * @param <T>               entity type
      * @return
      */
-    public <T> List<T> getListSelectFromWhereEqual(Class<T> classType,  SingularAttribute singularAttribute, Object obj) {
+    public <T> List<T> getListSelectFromWhereEqual(Class<T> classType, SingularAttribute singularAttribute, Object obj) {
         Session session = getNewSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
 
@@ -107,8 +108,34 @@ public class DatabaseHandler {
         criteria.select(root);
         criteria.where(builder.equal(root.get(singularAttribute), obj));
 
-        List <T> results = session.createQuery(criteria).getResultList();
+        List<T> results = session.createQuery(criteria).getResultList();
         session.close();
+        return results;
+    }
+
+    /**
+     * List of entities for the SQL query:
+     * SELECT * FROM <classType entity> WHERE <singularAttribute> = <obj>
+     * <p>
+     * This overload takes a session as an additional parameter. The session must be managed by the caller,
+     * so transactions and connection status are not handled.
+     *
+     * @param classType         entity class
+     * @param singularAttribute entity attribute on which perform the query
+     * @param obj               the value to look for
+     * @param session           the Hibernate database session
+     * @param <T>               entity type
+     * @return
+     */
+    public <T> List<T> getListSelectFromWhereEqual(Class<T> classType, SingularAttribute singularAttribute, Object obj, Session session) {
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+
+        CriteriaQuery<T> criteria = builder.createQuery(classType);
+        Root<T> root = criteria.from(classType);
+        criteria.select(root);
+        criteria.where(builder.equal(root.get(singularAttribute), obj));
+
+        List<T> results = session.createQuery(criteria).getResultList();
         return results;
     }
 
@@ -136,7 +163,7 @@ public class DatabaseHandler {
                 }
                 String tableName = table.getName();
 
-                if (!tableName.equals("hibernate_sequence")){
+                if (!tableName.equals("hibernate_sequence")) {
                     String query =
                             String.format("TRUNCATE TABLE `%s`", tableName);
 
