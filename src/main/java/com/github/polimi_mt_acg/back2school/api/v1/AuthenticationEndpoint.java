@@ -27,6 +27,7 @@ public class AuthenticationEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public Response authenticateUser(Credentials request) {
         Session session = DatabaseHandler.getInstance().getNewSession();
+        System.out.println("Asking for " + request.email + " " + request.password);
         // Authenticate the user using the credentials provided
         Optional<User> user = authenticate(request.email, request.password, session);
 
@@ -52,7 +53,7 @@ public class AuthenticationEndpoint {
         // Select u from User where u.email = email and u.password = password
         Root<User> root = criteria.from(User.class);
         criteria.select(root);
-        criteria.where(builder.and(builder.equal(root.get(User_.email), email), builder.equal(root.get(User_.password), password)));
+        criteria.where(builder.equal(root.get(User_.email), email));
 
         session.beginTransaction();
         List<User> results = session.createQuery(criteria).getResultList();
@@ -62,10 +63,16 @@ public class AuthenticationEndpoint {
             // If no user was found, return an empty optional
             return Optional.empty();
         } else {
-            // Return the User to authenticate
-            return Optional.of(results.get(0));
+            // Check User's password
+            User user = results.get(0);
+            if (user.passwordEqualsTo(password)) {
+                // Return the User to authenticate
+                return Optional.of(user);
+            } else {
+                // Password is not matching.
+                return Optional.empty();
+            }
         }
-
     }
 
     private String issueToken(User user, Session session) {
@@ -107,8 +114,4 @@ public class AuthenticationEndpoint {
         return authSession.getToken();
     }
 
-    public class Credentials {
-        public String email;
-        public String password;
-    }
 }
