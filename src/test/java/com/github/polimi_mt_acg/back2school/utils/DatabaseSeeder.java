@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.polimi_mt_acg.back2school.model.DeserializeToPersistInterface;
-import com.github.polimi_mt_acg.utils.json_mappers.*;
+import com.github.polimi_mt_acg.back2school.utils.json_mappers.*;
 import org.hibernate.Session;
 
 import java.io.File;
