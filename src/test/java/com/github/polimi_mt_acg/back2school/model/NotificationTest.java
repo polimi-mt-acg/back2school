@@ -220,6 +220,6 @@ public class NotificationTest {
         System.out.println("-------------- TODO testNotificationsRead --------------");
         // TODO
         // before this, it must work:
-        // com.github.polimi_mt_acg.utils.json_mappers.SeedEntityNotificationRead$seedAssociateNotificationToUser()
+        // com.github.polimi_mt_acg.back2school.utils.json_mappers.SeedEntityNotificationRead$seedAssociateNotificationToUser()
     }
 }
