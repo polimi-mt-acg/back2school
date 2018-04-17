@@ -24,8 +24,7 @@ public class User implements DeserializeToPersistInterface {
     private final static Logger LOGGER =
             Logger.getLogger(User.class.getName());
     @Transient
-    @JsonIgnore
-    public String seedPassword;
+    private String seedPassword;
     @Id
     @GeneratedValue
     @Column(name = "id")
@@ -150,6 +149,16 @@ public class User implements DeserializeToPersistInterface {
 
         String hashOfPasswordToCheck = getStringHash(passwordToCheck);
         return this.password.equals(hashOfPasswordToCheck);
+    }
+
+    @JsonIgnore
+    public String getSeedPassword() {
+        return seedPassword;
+    }
+
+    @JsonProperty
+    public void setSeedPassword(String seedPassword) {
+        this.seedPassword = seedPassword;
     }
 
     @JsonIgnore
