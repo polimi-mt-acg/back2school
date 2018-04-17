@@ -19,4 +19,7 @@ public class AdministratorResponse {
         this.administrators = administrators;
     }
 
+    public List<User> getAdministrators() {
+        return administrators;
+    }
 }
