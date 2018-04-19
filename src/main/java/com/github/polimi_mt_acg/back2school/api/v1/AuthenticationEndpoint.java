@@ -39,7 +39,6 @@ public class AuthenticationEndpoint {
   @Produces(MediaType.APPLICATION_JSON)
   public Response authenticateUser(Credentials request) {
     Session session = DatabaseHandler.getInstance().getNewSession();
-    System.out.println("Asking for " + request.email + " " + request.password);
     // Authenticate the user using the credentials provided
     Optional<User> user = authenticate(request.email, request.password, session);
 
