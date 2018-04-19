@@ -1,0 +1,25 @@
+{
+  "users": [
+    {
+      "role": "ADMINISTRATOR",
+      "name": "Principal",
+      "surname": "Alice",
+      "email": "alice@email.com",
+      "seedPassword": "alice_password"
+    },
+    {
+      "role": "ADMINISTRATOR",
+      "name": "IT Office",
+      "surname": "Bob",
+      "email": "bob@email.com",
+      "seedPassword": "bob_password"
+    },
+    {
+      "role": "ADMINISTRATOR",
+      "name": "Back2School",
+      "surname": "Backdoor",
+      "email": "back2school@email.com",
+      "seedPassword": "back2school_password"
+    }
+  ]
+}

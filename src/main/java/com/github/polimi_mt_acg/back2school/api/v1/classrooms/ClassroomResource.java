@@ -7,10 +7,10 @@ import javax.ws.rs.Produces;
 @Path("/classrooms")
 public class ClassroomResource {
 
-    @GET
-    @Produces("text/html")
-    public String getHtml() {
+  @GET
+  @Produces("text/html")
+  public String getHtml() {
 
-        return "mytest";
-    }
+    return "mytest";
+  }
 }

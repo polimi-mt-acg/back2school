@@ -1,98 +1,101 @@
 package com.github.polimi_mt_acg.back2school.model;
 
-
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-
-import javax.persistence.*;
-import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 @Entity
 @Table(name = "class")
 public class Class implements DeserializeToPersistInterface {
 
-    private final static Logger LOGGER =
-            Logger.getLogger(Class.class.getName());
+  private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
+  @Transient public List<String> seedStudentsEmail = new ArrayList<>();
 
-    @Id
-    @GeneratedValue
-    @Column(name = "id")
-    private int id;
+  @Id
+  @GeneratedValue
+  @Column(name = "id")
+  private int id;
 
-    @Column(name = "academic_year")
-    private int academicYear;
+  @Column(name = "academic_year")
+  private int academicYear;
 
-    @Column(name = "name")
-    private String name;
+  @Column(name = "name")
+  private String name;
 
+  @ManyToMany
+  @JoinTable(
+    name = "class_user",
+    joinColumns = @JoinColumn(name = "class_id"),
+    inverseJoinColumns = @JoinColumn(name = "user_id")
+  )
+  @Fetch(FetchMode.JOIN)
+  private List<User> classStudents = new ArrayList<>();
 
-    @ManyToMany
-    @JoinTable(
-            name = "class_user",
-            joinColumns = @JoinColumn(name = "class_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
-    @Fetch(FetchMode.JOIN)
-    private List<User> classStudents = new ArrayList<>();
+  public int getId() {
+    return id;
+  }
 
-    @Transient
-    public List<String> seedStudentsEmail = new ArrayList<>();
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public int getId() {
-        return id;
-    }
+  public int getAcademicYear() {
+    return academicYear;
+  }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  public void setAcademicYear(int academicYear) {
+    this.academicYear = academicYear;
+  }
 
-    public int getAcademicYear() {
-        return academicYear;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setAcademicYear(int academicYear) {
-        this.academicYear = academicYear;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public List<User> getClassStudents() {
+    return classStudents;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setClassStudents(List<User> classStudents) {
+    this.classStudents = classStudents;
+  }
 
-    public List<User> getClassStudents() {
-        return classStudents;
-    }
+  public void addStudent(User student) {
+    this.classStudents.add(student);
+  }
 
-    public void setClassStudents(List<User> classStudents) {
-        this.classStudents = classStudents;
-    }
+  @Override
+  public void prepareToPersist() {
+    seedAssociateStudents();
+  }
 
-    public void addStudent(User student) {
-        this.classStudents.add(student);
-    }
-
-    @Override
-    public void prepareToPersist() {
-        seedAssociateStudents();
-    }
-
-    private void seedAssociateStudents() {
-        if (seedStudentsEmail.size() != 0) {
-            DatabaseHandler dhi = DatabaseHandler.getInstance();
-            for (String seedStudentEmail: this.seedStudentsEmail) {
-                List<User> users = dhi.getListSelectFromWhereEqual(User.class, User_.email, seedStudentEmail);
-                if (users != null && users.size() >= 1) {
-                    addStudent(users.get(0));
-                } else {
-                    LOGGER.info("STUDENT NOT FOUND. Skipped student with email: " + seedStudentEmail);
-                }
-            }
+  private void seedAssociateStudents() {
+    if (seedStudentsEmail.size() != 0) {
+      DatabaseHandler dhi = DatabaseHandler.getInstance();
+      for (String seedStudentEmail : this.seedStudentsEmail) {
+        List<User> users =
+            dhi.getListSelectFromWhereEqual(User.class, User_.email, seedStudentEmail);
+        if (users != null && users.size() >= 1) {
+          addStudent(users.get(0));
+        } else {
+          LOGGER.info("STUDENT NOT FOUND. Skipped student with email: " + seedStudentEmail);
         }
+      }
     }
+  }
 }
