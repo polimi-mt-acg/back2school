@@ -1,55 +1,58 @@
 package com.github.polimi_mt_acg.back2school.model;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "classroom")
 public class Classroom implements DeserializeToPersistInterface {
 
-    @Id
-    @GeneratedValue
-    @Column(name = "id")
-    private int id;
+  @Id
+  @GeneratedValue
+  @Column(name = "id")
+  private int id;
 
-    @Column(name = "name")
-    private String name;
+  @Column(name = "name")
+  private String name;
 
-    @Column(name = "floor")
-    private int floor;
+  @Column(name = "floor")
+  private int floor;
 
-    @Column(name = "building")
-    private String building;
+  @Column(name = "building")
+  private String building;
 
-    public int getId() {
-        return id;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public int getFloor() {
-        return floor;
-    }
+  public int getFloor() {
+    return floor;
+  }
 
-    public void setFloor(int floor) {
-        this.floor = floor;
-    }
+  public void setFloor(int floor) {
+    this.floor = floor;
+  }
 
-    public String getBuilding() {
-        return building;
-    }
+  public String getBuilding() {
+    return building;
+  }
 
-    public void setBuilding(String building) {
-        this.building = building;
-    }
+  public void setBuilding(String building) {
+    this.building = building;
+  }
 
-    @Override
-    public void prepareToPersist() {
-
-    }
+  @Override
+  public void prepareToPersist() {
+  }
 }

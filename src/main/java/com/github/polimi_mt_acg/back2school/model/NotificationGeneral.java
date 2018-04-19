@@ -5,4 +5,6 @@ import javax.persistence.Entity;
 
 @Entity
 @DiscriminatorValue(value = "GENERAL")
-public class NotificationGeneral extends Notification { }
+public class NotificationGeneral extends Notification {
+
+}

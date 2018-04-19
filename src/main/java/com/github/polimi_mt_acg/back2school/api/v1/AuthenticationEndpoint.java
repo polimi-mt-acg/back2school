@@ -5,8 +5,9 @@ import com.github.polimi_mt_acg.back2school.model.AuthenticationSession_;
 import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.model.User_;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
-import org.hibernate.Session;
-
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -16,12 +17,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import org.hibernate.Session;
 
 @Path("auth")
 public class AuthenticationEndpoint {
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -79,12 +79,10 @@ public class AuthenticationEndpoint {
         // Check if a token is already available for user and is still valid.
         // If so, update last interaction and return the token
         session.beginTransaction();
-        List<AuthenticationSession> results = DatabaseHandler.getInstance()
+        List<AuthenticationSession> results =
+            DatabaseHandler.getInstance()
                 .getListSelectFromWhereEqual(
-                        AuthenticationSession.class,
-                        AuthenticationSession_.user,
-                        user,
-                        session);
+                    AuthenticationSession.class, AuthenticationSession_.user, user, session);
 
         String token;
         if (results.size() > 0) {
@@ -113,5 +111,4 @@ public class AuthenticationEndpoint {
         // Return the newly created token
         return authSession.getToken();
     }
-
 }

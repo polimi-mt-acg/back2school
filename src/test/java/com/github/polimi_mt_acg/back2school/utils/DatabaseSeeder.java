@@ -4,9 +4,22 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.polimi_mt_acg.back2school.model.DeserializeToPersistInterface;
-import com.github.polimi_mt_acg.back2school.utils.json_mappers.*;
-import org.hibernate.Session;
-
+import com.github.polimi_mt_acg.back2school.utils.json_mappers.AppointmentsJSONTemplate;
+import com.github.polimi_mt_acg.back2school.utils.json_mappers.AuthenticationSessionJSONTemplate;
+import com.github.polimi_mt_acg.back2school.utils.json_mappers.ClassesJSONTemplate;
+import com.github.polimi_mt_acg.back2school.utils.json_mappers.ClassroomsJSONTemplate;
+import com.github.polimi_mt_acg.back2school.utils.json_mappers.GradesJSONTemplate;
+import com.github.polimi_mt_acg.back2school.utils.json_mappers.JSONTemplateInterface;
+import com.github.polimi_mt_acg.back2school.utils.json_mappers.LecturesJSONTemplate;
+import com.github.polimi_mt_acg.back2school.utils.json_mappers.NotificationsClassParentJSONTemplate;
+import com.github.polimi_mt_acg.back2school.utils.json_mappers.NotificationsClassTeacherJSONTemplate;
+import com.github.polimi_mt_acg.back2school.utils.json_mappers.NotificationsGeneralJSONTemplate;
+import com.github.polimi_mt_acg.back2school.utils.json_mappers.NotificationsPersonalParentJSONTemplate;
+import com.github.polimi_mt_acg.back2school.utils.json_mappers.NotificationsPersonalTeacherJSONTemplate;
+import com.github.polimi_mt_acg.back2school.utils.json_mappers.NotificationsReadJSONTemplate;
+import com.github.polimi_mt_acg.back2school.utils.json_mappers.PaymentsJSONTemplate;
+import com.github.polimi_mt_acg.back2school.utils.json_mappers.SubjectsJSONTemplate;
+import com.github.polimi_mt_acg.back2school.utils.json_mappers.UsersJSONTemplate;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
@@ -14,13 +27,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import org.hibernate.Session;
 
 public class DatabaseSeeder {
 
-    private final static Logger LOGGER =
-            Logger.getLogger(DatabaseSeeder.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DatabaseSeeder.class.getName());
 
     private static final Map<String, Object> seedsMap;
+
     static {
         Map<String, Object> map = new LinkedHashMap<>();
 
@@ -55,41 +69,37 @@ public class DatabaseSeeder {
         map.put("notifications_class_parent.json", NotificationsClassParentJSONTemplate.class);
         map.put("notifications_class_teacher.json", NotificationsClassTeacherJSONTemplate.class);
         map.put("notifications_general.json", NotificationsGeneralJSONTemplate.class);
-        map.put("notifications_personal_parent.json", NotificationsPersonalParentJSONTemplate.class);
-        map.put("notifications_personal_teacher.json", NotificationsPersonalTeacherJSONTemplate.class);
+        map.put("notifications_personal_parent.json",
+            NotificationsPersonalParentJSONTemplate.class);
+        map.put("notifications_personal_teacher.json",
+            NotificationsPersonalTeacherJSONTemplate.class);
         map.put("notifications_read.json", NotificationsReadJSONTemplate.class);
         map.put("authentication_sessions.json", AuthenticationSessionJSONTemplate.class);
 
         seedsMap = Collections.unmodifiableMap(map);
     }
 
-
     /**
-     * Deploy new seeds to the database by specifying the folder name in order
-     * to load a specific scenario.
+     * Deploy new seeds to the database by specifying the folder name in order to load a specific
+     * scenario.
      *
-     * E.g. DatabaseSeeder.deployScenario("scenarioA")
-     * It will look into the folder src/test/resources/scenarios_seeds/scenarioA/
-     * for Json files from which to load the data.
-     *
-     * @param scenarioFolderName
+     * <p>E.g. DatabaseSeeder.deployScenario("scenarioA") It will look into the folder
+     * src/test/resources/scenarios_seeds/scenarioA/ for Json files from which to load the data.
      */
     public static void deployScenario(String scenarioFolderName) {
-        for (Map.Entry<String, Object> sm: seedsMap.entrySet()) {
+        for (Map.Entry<String, Object> sm : seedsMap.entrySet()) {
             String seedFilename = sm.getKey();
 
-            List<?> entitiesToPersist =
-                    getEntitiesListFromSeed(scenarioFolderName, seedFilename);
+            List<?> entitiesToPersist = getEntitiesListFromSeed(scenarioFolderName, seedFilename);
 
             if (entitiesToPersist != null) {
                 Session s = DatabaseHandler.getInstance().getNewSession();
                 s.beginTransaction();
-                for (Object genericEntity: entitiesToPersist) {
+                for (Object genericEntity : entitiesToPersist) {
                     if (genericEntity instanceof DeserializeToPersistInterface) {
 
                         // cast the entity
-                        DeserializeToPersistInterface entity =
-                                (DeserializeToPersistInterface) genericEntity;
+                        DeserializeToPersistInterface entity = (DeserializeToPersistInterface) genericEntity;
 
                         // notify the entity that it will be persisted
                         entity.prepareToPersist();
@@ -100,13 +110,13 @@ public class DatabaseSeeder {
                 s.getTransaction().commit();
                 s.close();
 
-//                LOGGER.info(
-//                        String.format(
-//                                "deployed seed file: %s/%s",
-//                                scenarioFolderName,
-//                                seedFilename
-//                        )
-//                );
+                //                LOGGER.info(
+                //                        String.format(
+                //                                "deployed seed file: %s/%s",
+                //                                scenarioFolderName,
+                //                                seedFilename
+                //                        )
+                //                );
             }
         }
     }
@@ -116,10 +126,8 @@ public class DatabaseSeeder {
         mapper.findAndRegisterModules();
         mapper.enable(JsonParser.Feature.ALLOW_COMMENTS);
 
-        String seedFilePath = "src/test/resources/scenarios_seeds/"
-                + scenarioFolderName
-                + "/"
-                + seedFilename;
+        String seedFilePath =
+            "src/test/resources/scenarios_seeds/" + scenarioFolderName + "/" + seedFilename;
         File f = new File(seedFilePath);
 
         try {
@@ -127,22 +135,18 @@ public class DatabaseSeeder {
                 Class entitiesTemplateClass = (Class) seedsMap.get(seedFilename);
 
                 JSONTemplateInterface entitiesTemplate =
-                        (JSONTemplateInterface) mapper.readValue(f, entitiesTemplateClass);
+                    (JSONTemplateInterface) mapper.readValue(f, entitiesTemplateClass);
 
                 return entitiesTemplate.getEntities();
             }
 
-        }
-        catch (com.fasterxml.jackson.core.JsonParseException e) {
+        } catch (com.fasterxml.jackson.core.JsonParseException e) {
             e.printStackTrace();
-        }
-        catch (JsonMappingException e) {
+        } catch (JsonMappingException e) {
             e.printStackTrace();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;

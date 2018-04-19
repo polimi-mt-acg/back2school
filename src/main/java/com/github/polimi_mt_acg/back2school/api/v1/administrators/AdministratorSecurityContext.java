@@ -4,8 +4,8 @@ import com.github.polimi_mt_acg.back2school.model.AuthenticationSession;
 import com.github.polimi_mt_acg.back2school.model.AuthenticationSession_;
 import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
-import org.hibernate.Session;
-
+import java.io.IOException;
+import java.util.List;
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -13,8 +13,7 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
-import java.io.IOException;
-import java.util.List;
+import org.hibernate.Session;
 
 @AdministratorSecured
 @Provider
@@ -41,8 +40,7 @@ public class AdministratorSecurityContext implements ContainerRequestFilter {
 
     private void abortWithUnauthorized(ContainerRequestContext requestContext) {
         // Abort the filter chain with a 401 status code response
-        requestContext.abortWith(
-                Response.status(Response.Status.UNAUTHORIZED).build());
+        requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
     }
 
     private boolean isTokenValid(String token) {
@@ -50,12 +48,10 @@ public class AdministratorSecurityContext implements ContainerRequestFilter {
         // If so, check if the User is an admin. If not, abort.
         Session session = DatabaseHandler.getInstance().getNewSession();
         session.beginTransaction();
-        List<AuthenticationSession> results = DatabaseHandler.getInstance()
+        List<AuthenticationSession> results =
+            DatabaseHandler.getInstance()
                 .getListSelectFromWhereEqual(
-                        AuthenticationSession.class,
-                        AuthenticationSession_.token,
-                        token,
-                        session);
+                    AuthenticationSession.class, AuthenticationSession_.token, token, session);
 
         boolean isValid = false;
         if (results.size() > 0) {

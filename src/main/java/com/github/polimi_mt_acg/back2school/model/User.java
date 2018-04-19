@@ -3,11 +3,6 @@ package com.github.polimi_mt_acg.back2school.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.polimi_mt_acg.back2school.utils.RandomStringGenerator;
-
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
@@ -15,38 +10,60 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.logging.Logger;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
 @Table(name = "user")
 @XmlRootElement
 public class User implements DeserializeToPersistInterface {
 
-    private final static Logger LOGGER =
-            Logger.getLogger(User.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(User.class.getName());
     @Transient
     private String seedPassword;
+
     @Id
     @GeneratedValue
     @Column(name = "id")
     private int id;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private Role role = Role.STUDENT;
+
     @Column(name = "name")
     private String name;
+
     @Column(name = "surname")
     private String surname;
+
     @Column(name = "email")
     private String email;
+
     @Column(name = "password")
     private String password;
+
     @Column(name = "salt")
     private String salt;
+
     @ManyToMany
     @JoinTable(
-            name = "user_notification_read",
-            joinColumns = @JoinColumn(name = "notification_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
+        name = "user_notification_read",
+        joinColumns = @JoinColumn(name = "notification_id"),
+        inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
     private List<Notification> notificationsRead = new ArrayList<>();
 
     @Override
@@ -124,8 +141,7 @@ public class User implements DeserializeToPersistInterface {
             this.salt = RandomStringGenerator.generateString();
         }
 
-        KeySpec spec =
-                new PBEKeySpec(string.toCharArray(), this.salt.getBytes(), 65536, 128);
+        KeySpec spec = new PBEKeySpec(string.toCharArray(), this.salt.getBytes(), 65536, 128);
 
         byte[] hash = new byte[0];
         try {
@@ -142,10 +158,11 @@ public class User implements DeserializeToPersistInterface {
      * Check the given password validity.
      *
      * @param passwordToCheck the password to check
-     * @return
      */
     public boolean passwordEqualsTo(String passwordToCheck) {
-        if (this.salt == null || this.password == null) return false;
+        if (this.salt == null || this.password == null) {
+            return false;
+        }
 
         String hashOfPasswordToCheck = getStringHash(passwordToCheck);
         return this.password.equals(hashOfPasswordToCheck);
@@ -171,6 +188,9 @@ public class User implements DeserializeToPersistInterface {
     }
 
     public enum Role {
-        STUDENT, PARENT, TEACHER, ADMINISTRATOR
+        STUDENT,
+        PARENT,
+        TEACHER,
+        ADMINISTRATOR
     }
 }

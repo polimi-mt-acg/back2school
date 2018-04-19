@@ -4,10 +4,10 @@ import java.util.List;
 
 public class NotificationsReadJSONTemplate implements JSONTemplateInterface {
 
-    public List<SeedEntityNotificationRead> notificationsRead;
+  public List<SeedEntityNotificationRead> notificationsRead;
 
-    @Override
-    public List<?> getEntities() {
-        return notificationsRead;
-    }
+  @Override
+  public List<?> getEntities() {
+    return notificationsRead;
+  }
 }
