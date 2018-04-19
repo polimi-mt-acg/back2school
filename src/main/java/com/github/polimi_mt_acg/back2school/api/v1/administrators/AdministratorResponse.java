@@ -8,7 +8,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * The response to a request to /administrators REST API. The serialized JSON format has the
- * following structure:
+ * following structure: <code>{
+ *   "administrators" : [ {
+ *     "role" : "ADMINISTRATOR",
+ *     "name" : "Name 1",
+ *     "surname" : "Surname 1",
+ *     "email" : "namesurname@mail.com"
+ *   }, ...]
+ * }</code>
  */
 @XmlRootElement
 public class AdministratorResponse {
