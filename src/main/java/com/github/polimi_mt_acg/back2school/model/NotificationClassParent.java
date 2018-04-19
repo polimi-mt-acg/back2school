@@ -13,12 +13,12 @@ import javax.persistence.Transient;
 @DiscriminatorValue(value = "CLASS-PARENT")
 public class NotificationClassParent extends Notification {
 
-  @Transient
-  public String seedTargetClassName;
+  @Transient public String seedTargetClassName;
+
   @OneToOne
   @JoinColumn(
-      name = "target_class_id",
-      foreignKey = @ForeignKey(name = "TARGET_CLASS_PARENTS_ID_FK")
+    name = "target_class_id",
+    foreignKey = @ForeignKey(name = "TARGET_CLASS_PARENTS_ID_FK")
   )
   private Class targetClass;
 

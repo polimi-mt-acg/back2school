@@ -8,17 +8,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class AdministratorResponse {
 
-    @XmlElement
-    private List<User> administrators;
+  @XmlElement private List<User> administrators;
 
-    public AdministratorResponse() {
-    }
+  public AdministratorResponse() {}
 
-    public AdministratorResponse(List<User> administrators) {
-        this.administrators = administrators;
-    }
+  public AdministratorResponse(List<User> administrators) {
+    this.administrators = administrators;
+  }
 
-    public List<User> getAdministrators() {
-        return administrators;
-    }
+  public List<User> getAdministrators() {
+    return administrators;
+  }
 }

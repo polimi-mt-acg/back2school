@@ -13,12 +13,12 @@ import javax.persistence.Transient;
 @DiscriminatorValue(value = "PERSONAL-PARENT")
 public class NotificationPersonalParent extends Notification {
 
-  @Transient
-  public String seedTargetParentEmail;
+  @Transient public String seedTargetParentEmail;
+
   @OneToOne
   @JoinColumn(
-      name = "target_user_id",
-      foreignKey = @ForeignKey(name = "TARGET_PERSONAL_PARENT_ID_FK")
+    name = "target_user_id",
+    foreignKey = @ForeignKey(name = "TARGET_PERSONAL_PARENT_ID_FK")
   )
   private User targetUser;
 

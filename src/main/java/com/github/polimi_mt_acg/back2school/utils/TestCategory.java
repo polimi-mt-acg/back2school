@@ -13,21 +13,11 @@ public class TestCategory {
    * <p>This class should be used only during the early code development. Afterwards choose any
    * other more appropriate category to categorize the written test.
    */
-  public interface Transient {
+  public interface Transient {}
 
-  }
+  /** Class for unit tests. */
+  public interface Unit {}
 
-  /**
-   * Class for unit tests.
-   */
-  public interface Unit {
-
-  }
-
-  /**
-   * Class for integration tests.
-   */
-  public interface Integration {
-
-  }
+  /** Class for integration tests. */
+  public interface Integration {}
 }

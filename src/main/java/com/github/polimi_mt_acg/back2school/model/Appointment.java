@@ -19,24 +19,28 @@ import javax.persistence.Transient;
 @Table(name = "appointment")
 public class Appointment implements DeserializeToPersistInterface {
 
-  @Transient
-  public String seedTeacherEmail;
-  @Transient
-  public String seedParentEmail;
+  @Transient public String seedTeacherEmail;
+  @Transient public String seedParentEmail;
+
   @Id
   @GeneratedValue
   @Column(name = "id")
   private int id;
+
   @ManyToOne
   @JoinColumn(name = "teacher_id", foreignKey = @ForeignKey(name = "APPOINTMENT_TEACHER_ID_FK"))
   private User teacher;
+
   @ManyToOne
   @JoinColumn(name = "parent_id", foreignKey = @ForeignKey(name = "APPOINTMENT_PARENT_ID_FK"))
   private User parent;
+
   @Column(name = "datetime_start")
   private LocalDateTime datetimeStart;
+
   @Column(name = "datetime_end")
   private LocalDateTime datetimeEnd;
+
   @Enumerated(EnumType.STRING)
   @Column(name = "status")
   private Status status = Status.REQUESTED;

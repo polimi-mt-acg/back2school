@@ -7,11 +7,9 @@ import javax.persistence.Transient;
 @Entity
 public class SeedEntityNotificationRead extends SeedDummy {
 
-  @Transient
-  public String seedUserEmail;
+  @Transient public String seedUserEmail;
 
-  @Transient
-  public String seedNotificationSubject;
+  @Transient public String seedNotificationSubject;
 
   @Override
   public void prepareToPersist() {

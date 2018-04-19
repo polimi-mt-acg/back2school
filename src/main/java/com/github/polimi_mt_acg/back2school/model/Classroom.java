@@ -53,6 +53,5 @@ public class Classroom implements DeserializeToPersistInterface {
   }
 
   @Override
-  public void prepareToPersist() {
-  }
+  public void prepareToPersist() {}
 }

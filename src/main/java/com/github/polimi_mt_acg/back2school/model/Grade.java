@@ -19,29 +19,33 @@ import javax.persistence.Transient;
 public class Grade implements DeserializeToPersistInterface {
 
   private static final Logger LOGGER = Logger.getLogger(Grade.class.getName());
-  @Transient
-  public String seedSubjectName;
-  @Transient
-  public String seedTeacherEmail;
-  @Transient
-  public String seedStudentEmail;
+  @Transient public String seedSubjectName;
+  @Transient public String seedTeacherEmail;
+  @Transient public String seedStudentEmail;
+
   @Id
   @GeneratedValue
   @Column(name = "id")
   private int id;
+
   @ManyToOne
   @JoinColumn(name = "subject_id", foreignKey = @ForeignKey(name = "GRADE_SUBJECT_ID_FK"))
   private Subject subject;
+
   @ManyToOne
   @JoinColumn(name = "teacher_id", foreignKey = @ForeignKey(name = "GRADE_TEACHER_ID_FK"))
   private User teacher;
+
   @ManyToOne
   @JoinColumn(name = "student_id", foreignKey = @ForeignKey(name = "GRADE_STUDENT_ID_FK"))
   private User student;
+
   @Column(name = "date")
   private LocalDate date;
+
   @Column(name = "title")
   private String title;
+
   @Column(name = "grade")
   private double grade;
 

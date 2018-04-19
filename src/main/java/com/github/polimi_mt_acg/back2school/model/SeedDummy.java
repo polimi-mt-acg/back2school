@@ -20,6 +20,5 @@ public class SeedDummy implements DeserializeToPersistInterface {
   private int id;
 
   @Override
-  public void prepareToPersist() {
-  }
+  public void prepareToPersist() {}
 }

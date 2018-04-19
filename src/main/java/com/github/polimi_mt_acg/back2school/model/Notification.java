@@ -22,19 +22,23 @@ import javax.persistence.Transient;
 @DiscriminatorColumn(name = "type", discriminatorType = javax.persistence.DiscriminatorType.STRING)
 public class Notification implements DeserializeToPersistInterface {
 
-  @Transient
-  public String seedCreatorEmail;
+  @Transient public String seedCreatorEmail;
+
   @Id
   @GeneratedValue
   @Column(name = "id")
   private int id;
+
   @ManyToOne
   @JoinColumn(name = "creator_id", foreignKey = @ForeignKey(name = "NOTIFICATION_CREATOR_ID_FK"))
   private User creator;
+
   @Column(name = "datetime")
   private LocalDateTime datetime;
+
   @Column(name = "subject")
   private String subject;
+
   @Column(name = "text")
   private String text;
 

@@ -18,19 +18,23 @@ import javax.persistence.Transient;
 @Table(name = "authentication_session")
 public class AuthenticationSession implements DeserializeToPersistInterface {
 
-  @Transient
-  public String seedUserEmail;
+  @Transient public String seedUserEmail;
+
   @Id
   @GeneratedValue
   @Column(name = "id")
   private int id;
+
   @ManyToOne
   @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "SESSION_USER_ID_FK"))
   private User user;
+
   @Column(name = "token")
   private String token = RandomStringGenerator.generateString();
+
   @Column(name = "datetime_last_interaction")
   private LocalDateTime datetimeLastInteraction = LocalDateTime.now();
+
   @Column(name = "cancelled")
   private boolean cancelled = false;
 

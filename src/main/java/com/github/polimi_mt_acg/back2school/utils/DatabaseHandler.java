@@ -43,8 +43,7 @@ public class DatabaseHandler {
     }
   }
 
-  private DatabaseHandler() {
-  }
+  private DatabaseHandler() {}
 
   public static DatabaseHandler getInstance() {
     if (instance == null) {
@@ -115,8 +114,8 @@ public class DatabaseHandler {
    * List of entities for the SQL query: SELECT * FROM <classType entity> WHERE <singularAttribute>
    * = <obj>
    *
-   * <p>This overload takes a session as an additional parameter. The session must be managed by
-   * the caller, so transactions and connection status are not handled.
+   * <p>This overload takes a session as an additional parameter. The session must be managed by the
+   * caller, so transactions and connection status are not handled.
    *
    * @param classType entity class
    * @param singularAttribute entity attribute on which perform the query

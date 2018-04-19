@@ -19,35 +19,44 @@ import javax.persistence.Transient;
 @Table(name = "payment")
 public class Payment implements DeserializeToPersistInterface {
 
-  @Transient
-  public String seedPlacedByUserEmail;
-  @Transient
-  public String seedAssignedToUserEmail;
+  @Transient public String seedPlacedByUserEmail;
+  @Transient public String seedAssignedToUserEmail;
+
   @Id
   @GeneratedValue
   @Column(name = "id")
   private int id;
+
   @ManyToOne
   @JoinColumn(name = "placed_by_id", foreignKey = @ForeignKey(name = "PLACED_BY_USER_ID_FK"))
   private User placedBy;
+
   @ManyToOne
   @JoinColumn(name = "assigned_to_id", foreignKey = @ForeignKey(name = "ASSIGNED_TO_USER_ID_FK"))
   private User assignedTo;
+
   @Enumerated(EnumType.STRING)
   @Column(name = "type")
   private Type type = Type.MATERIAL;
+
   @Column(name = "datetime_requested")
   private LocalDateTime datetimeRequested;
+
   @Column(name = "datetime_done")
   private LocalDateTime datetimeDone;
+
   @Column(name = "datetime_deadline")
   private LocalDateTime datetimeDeadline;
+
   @Column(name = "done")
   private boolean done;
+
   @Column(name = "subject")
   private String subject;
+
   @Column(name = "description")
   private String description;
+
   @Column(name = "amount")
   private double amount;
 

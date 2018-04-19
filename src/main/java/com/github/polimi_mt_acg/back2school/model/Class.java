@@ -21,21 +21,24 @@ import org.hibernate.annotations.FetchMode;
 public class Class implements DeserializeToPersistInterface {
 
   private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
-  @Transient
-  public List<String> seedStudentsEmail = new ArrayList<>();
+  @Transient public List<String> seedStudentsEmail = new ArrayList<>();
+
   @Id
   @GeneratedValue
   @Column(name = "id")
   private int id;
+
   @Column(name = "academic_year")
   private int academicYear;
+
   @Column(name = "name")
   private String name;
+
   @ManyToMany
   @JoinTable(
-      name = "class_user",
-      joinColumns = @JoinColumn(name = "class_id"),
-      inverseJoinColumns = @JoinColumn(name = "user_id")
+    name = "class_user",
+    joinColumns = @JoinColumn(name = "class_id"),
+    inverseJoinColumns = @JoinColumn(name = "user_id")
   )
   @Fetch(FetchMode.JOIN)
   private List<User> classStudents = new ArrayList<>();

@@ -29,106 +29,104 @@ import org.junit.Test;
 
 public class AdministratorResourceTest {
 
-    private static HttpServer server;
+  private static HttpServer server;
 
-    @BeforeClass
-    public static void setUp() throws Exception {
-        // Deploy database scenario
-        DatabaseSeeder.deployScenario("scenarioAdministrators");
+  @BeforeClass
+  public static void setUp() throws Exception {
+    // Deploy database scenario
+    DatabaseSeeder.deployScenario("scenarioAdministrators");
 
-        // Run HTTP server
-        server = startServer();
+    // Run HTTP server
+    server = startServer();
+  }
+
+  @AfterClass
+  public static void tearDown() throws Exception {
+    // Truncate DB
+    DatabaseHandler.getInstance().truncateDatabase();
+
+    // Close HTTP server
+    server.shutdownNow();
+  }
+
+  private static HttpServer startServer() {
+    // Create a resource config that scans for JAX-RS resources and providers
+    // in com.github.polimi_mt_acg.back2school.api.v1.administrators.resources package
+    final ResourceConfig rc =
+        new ResourceConfig()
+            .register(AuthenticationEndpoint.class)
+            .packages("com.github.polimi_mt_acg.back2school.api.v1.administrators")
+            .register(JacksonCustomMapper.class)
+            .register(JacksonFeature.class);
+
+    // create and start a new instance of grizzly http server
+    // exposing the Jersey application at BASE_URI
+    return GrizzlyHttpServerFactory.createHttpServer(URI.create(RestFactory.BASE_URI), rc);
+  }
+
+  @Test
+  public void getAdministrators() throws IOException {
+    // Get Database seeds
+    List<User> admins =
+        (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioAdministrators", "users.json");
+
+    // For each administrator
+    for (User admin : admins) {
+      // Build the Client
+      WebTarget target = RestFactory.buildWebTarget();
+      // Authenticate
+      String token = RestFactory.authenticate(admin.getEmail(), admin.getSeedPassword());
+      assertNotNull(token);
+      assertTrue(!token.isEmpty());
+
+      // Set target to /administrators
+      target = target.path("administrators");
+
+      // Set token and build the GET request
+      Invocation request =
+          target
+              .request(MediaType.APPLICATION_JSON)
+              .header(HttpHeaders.AUTHORIZATION, token)
+              .buildGet();
+
+      // Invoke the request
+      AdministratorResponse response = request.invoke(AdministratorResponse.class);
+
+      // Performs assertions
+      assertNotNull(response);
+      for (User u : response.getAdministrators()) {
+        assertNotNull(u);
+        assertEquals(u.getRole(), User.Role.ADMINISTRATOR);
+        assertNotNull(u.getEmail());
+        assertNotNull(u.getName());
+        assertNotNull(u.getSurname());
+      }
+
+      // Print it
+      System.out.println(
+          new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(response));
     }
+  }
 
-    @AfterClass
-    public static void tearDown() throws Exception {
-        // Truncate DB
-        DatabaseHandler.getInstance().truncateDatabase();
+  @Test(expected = NotAuthorizedException.class)
+  public void getAdministratorsUnauthorized() throws Exception {
+    // Get Database seeds
+    List<User> admins =
+        (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioAdministrators", "users.json");
 
-        // Close HTTP server
-        server.shutdownNow();
-    }
+    // Get a sample administrator
+    User admin = admins.get(0);
 
-    private static HttpServer startServer() {
-        // Create a resource config that scans for JAX-RS resources and providers
-        // in com.github.polimi_mt_acg.back2school.api.v1.administrators.resources package
-        final ResourceConfig rc =
-            new ResourceConfig()
-                .register(AuthenticationEndpoint.class)
-                .packages("com.github.polimi_mt_acg.back2school.api.v1.administrators")
-                .register(JacksonCustomMapper.class)
-                .register(JacksonFeature.class);
+    // Build the Client
+    WebTarget target = RestFactory.buildWebTarget();
 
-        // create and start a new instance of grizzly http server
-        // exposing the Jersey application at BASE_URI
-        return GrizzlyHttpServerFactory.createHttpServer(URI.create(RestFactory.BASE_URI), rc);
-    }
+    // Set target to /administrators
+    target = target.path("administrators");
 
-    @Test
-    public void getAdministrators() throws IOException {
-        // Get Database seeds
-        List<User> admins =
-            (List<User>) DatabaseSeeder
-                .getEntitiesListFromSeed("scenarioAdministrators", "users.json");
+    // Build the GET request with no auth
+    Invocation request = target.request(MediaType.APPLICATION_JSON).buildGet();
 
-        // For each administrator
-        for (User admin : admins) {
-            // Build the Client
-            WebTarget target = RestFactory.buildWebTarget();
-            // Authenticate
-            String token = RestFactory.authenticate(admin.getEmail(), admin.getSeedPassword());
-            assertNotNull(token);
-            assertTrue(!token.isEmpty());
-
-            // Set target to /administrators
-            target = target.path("administrators");
-
-            // Set token and build the GET request
-            Invocation request =
-                target
-                    .request(MediaType.APPLICATION_JSON)
-                    .header(HttpHeaders.AUTHORIZATION, token)
-                    .buildGet();
-
-            // Invoke the request
-            AdministratorResponse response = request.invoke(AdministratorResponse.class);
-
-            // Performs assertions
-            assertNotNull(response);
-            for (User u : response.getAdministrators()) {
-                assertNotNull(u);
-                assertEquals(u.getRole(), User.Role.ADMINISTRATOR);
-                assertNotNull(u.getEmail());
-                assertNotNull(u.getName());
-                assertNotNull(u.getSurname());
-            }
-
-            // Print it
-            System.out.println(
-                new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(response));
-        }
-    }
-
-    @Test(expected = NotAuthorizedException.class)
-    public void getAdministratorsUnauthorized() throws Exception {
-        // Get Database seeds
-        List<User> admins =
-            (List<User>) DatabaseSeeder
-                .getEntitiesListFromSeed("scenarioAdministrators", "users.json");
-
-        // Get a sample administrator
-        User admin = admins.get(0);
-
-        // Build the Client
-        WebTarget target = RestFactory.buildWebTarget();
-
-        // Set target to /administrators
-        target = target.path("administrators");
-
-        // Build the GET request with no auth
-        Invocation request = target.request(MediaType.APPLICATION_JSON).buildGet();
-
-        // Invoke the request and expect Unauthorized exception
-        AdministratorResponse response = request.invoke(AdministratorResponse.class);
-    }
+    // Invoke the request and expect Unauthorized exception
+    AdministratorResponse response = request.invoke(AdministratorResponse.class);
+  }
 }

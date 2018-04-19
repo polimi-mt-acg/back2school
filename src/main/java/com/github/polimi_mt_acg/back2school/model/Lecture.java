@@ -17,32 +17,35 @@ import javax.persistence.Transient;
 @Table(name = "lecture")
 public class Lecture implements DeserializeToPersistInterface {
 
-  @Transient
-  public String seedSubjectName;
-  @Transient
-  public String seedTeacherEmail;
-  @Transient
-  public String seedClassroomName;
-  @Transient
-  public String seedClassName;
+  @Transient public String seedSubjectName;
+  @Transient public String seedTeacherEmail;
+  @Transient public String seedClassroomName;
+  @Transient public String seedClassName;
+
   @Id
   @GeneratedValue
   @Column(name = "id")
   private int id;
+
   @ManyToOne
   @JoinColumn(name = "subject_id", foreignKey = @ForeignKey(name = "LECTURE_SUBJECT_ID_FK"))
   private Subject subject;
+
   @ManyToOne
   @JoinColumn(name = "teacher_id", foreignKey = @ForeignKey(name = "LECTURE_TEACHER_ID_FK"))
   private User teacher;
+
   @ManyToOne
   @JoinColumn(name = "classroom_id", foreignKey = @ForeignKey(name = "LECTURE_CLASSROOM_ID_FK"))
   private Classroom classroom;
+
   @ManyToOne
   @JoinColumn(name = "class_id", foreignKey = @ForeignKey(name = "LECTURE_CLASS_ID_FK"))
   private Class class_;
+
   @Column(name = "datetime_start")
   private LocalDateTime datetimeStart;
+
   @Column(name = "datetime_end")
   private LocalDateTime datetimeEnd;
 

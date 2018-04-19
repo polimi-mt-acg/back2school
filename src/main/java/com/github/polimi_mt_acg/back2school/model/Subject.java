@@ -42,6 +42,5 @@ public class Subject implements DeserializeToPersistInterface {
   }
 
   @Override
-  public void prepareToPersist() {
-  }
+  public void prepareToPersist() {}
 }
