@@ -8,6 +8,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import javax.ws.rs.NameBinding;
 
+/**
+ * Annotates a JAX-RS API that a request performed to it is filtered accoriding to "Administrators
+ * only" security policy.
+ */
 @NameBinding
 @Retention(RUNTIME)
 @Target({TYPE, METHOD})

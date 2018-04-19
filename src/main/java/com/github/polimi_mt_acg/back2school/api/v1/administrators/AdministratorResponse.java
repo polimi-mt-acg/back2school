@@ -1,22 +1,35 @@
 package com.github.polimi_mt_acg.back2school.api.v1.administrators;
 
 import com.github.polimi_mt_acg.back2school.model.User;
+import java.util.Iterator;
 import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * The response to a request to /administrators REST API. The serialized JSON format has the
+ * following structure:
+ */
 @XmlRootElement
 public class AdministratorResponse {
 
   @XmlElement private List<User> administrators;
 
+  /** Empty constructor. */
   public AdministratorResponse() {}
 
+  /**
+   * Construct an AdministratorResponse out of a List of administrators. No copy of {@code
+   * administrators} is performed.
+   *
+   * @param administrators
+   */
   public AdministratorResponse(List<User> administrators) {
     this.administrators = administrators;
   }
 
-  public List<User> getAdministrators() {
-    return administrators;
+  /** @return The iterator to the administrators returned. */
+  public Iterator<User> getAdministrators() {
+    return administrators.iterator();
   }
 }

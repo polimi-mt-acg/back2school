@@ -1,11 +1,16 @@
 package com.github.polimi_mt_acg.back2school.api.v1;
 
+import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
 
+/**
+ * A class to have Jersey use our customization of Jackson Object Mapper.
+ *
+ * <p>Features enabled: Indent output JSON text. Allow comments in JSON files.
+ */
 @Provider
 public class JacksonCustomMapper implements ContextResolver<ObjectMapper> {
 
@@ -18,8 +23,8 @@ public class JacksonCustomMapper implements ContextResolver<ObjectMapper> {
   private static ObjectMapper createDefaultMapper() {
     final ObjectMapper result = new ObjectMapper();
     result.enable(SerializationFeature.INDENT_OUTPUT);
+    result.enable(Feature.ALLOW_COMMENTS);
 
-    result.registerModule(new JaxbAnnotationModule());
     return result;
   }
 

@@ -13,6 +13,7 @@ import com.github.polimi_mt_acg.back2school.utils.DatabaseSeeder;
 import com.github.polimi_mt_acg.back2school.utils.rest.RestFactory;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Iterator;
 import java.util.List;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.client.Invocation;
@@ -94,7 +95,8 @@ public class AdministratorResourceTest {
 
       // Performs assertions
       assertNotNull(response);
-      for (User u : response.getAdministrators()) {
+      for (Iterator<User> it = response.getAdministrators(); it.hasNext(); ) {
+        User u = it.next();
         assertNotNull(u);
         assertEquals(u.getRole(), User.Role.ADMINISTRATOR);
         assertNotNull(u.getEmail());
@@ -127,6 +129,6 @@ public class AdministratorResourceTest {
     Invocation request = target.request(MediaType.APPLICATION_JSON).buildGet();
 
     // Invoke the request and expect Unauthorized exception
-    AdministratorResponse response = request.invoke(AdministratorResponse.class);
+    request.invoke(AdministratorResponse.class);
   }
 }

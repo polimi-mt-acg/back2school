@@ -26,6 +26,14 @@ import org.hibernate.Session;
 @Path("auth")
 public class AuthenticationEndpoint {
 
+  /**
+   * Replies to a HTTP POST to /auth endpoint. If the client is authenticated, we check if a valid
+   * token still exists for it. If so the existing token is returned. Otherwise a new one is
+   * generated.
+   *
+   * @param request The client Credentials, i.e. email and password
+   * @return The session token is the user is authenticated. A FORBIDDEN Error Response otherwise.
+   */
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)

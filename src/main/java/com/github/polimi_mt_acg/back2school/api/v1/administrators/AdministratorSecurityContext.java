@@ -15,11 +15,26 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 import org.hibernate.Session;
 
+/**
+ * AdministratorSecurityContext implements a request filter for JAX-RS REST APIs. It implements a
+ * "Administrators-only" security policy. A REST API that is annotated with @AdministratorSecured
+ * can only be accessed if: a) the client is authenticated. b) the client role is ADMINISTRATOR
+ */
 @AdministratorSecured
 @Provider
 @Priority(Priorities.AUTHENTICATION)
 public class AdministratorSecurityContext implements ContainerRequestFilter {
 
+  /**
+   * Filter requests that do not match the following security conditions: a) the client is
+   * authenticated. b) the client role is ADMINISTRATOR.
+   *
+   * <p>To be successfully authenticated, the client must send the auth token in the AUTHORIZATION
+   * HTTP header.
+   *
+   * <p>If any of the above conditions are not met the request is dropped and the client is returned
+   * a UNAUTHORIZED Error Response.
+   */
   @Override
   public void filter(ContainerRequestContext requestContext) throws IOException {
     // Get the Authorization header from the request

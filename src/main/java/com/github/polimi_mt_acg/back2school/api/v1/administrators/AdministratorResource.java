@@ -9,6 +9,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+/**
+ * JAX-RS Resource for administrators entity (a {@link User User} with (A {@link User.Role Role}
+ * equal to {@code ADMINISTRATOR}).
+ */
 @Path("administrators")
 public class AdministratorResource {
 
