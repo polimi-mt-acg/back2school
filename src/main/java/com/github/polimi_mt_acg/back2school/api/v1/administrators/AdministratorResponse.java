@@ -28,8 +28,6 @@ public class AdministratorResponse {
   /**
    * Construct an AdministratorResponse out of a List of administrators. No copy of {@code
    * administrators} is performed.
-   *
-   * @param administrators
    */
   public AdministratorResponse(List<User> administrators) {
     this.administrators = administrators;
