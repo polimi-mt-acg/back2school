@@ -1,6 +1,11 @@
 package com.github.polimi_mt_acg.back2school.utils.rest;
 
+import com.fasterxml.jackson.core.JsonParser.Feature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.github.polimi_mt_acg.back2school.api.v1.Credentials;
+import com.github.polimi_mt_acg.back2school.api.v1.JacksonCustomMapper;
 import java.net.URI;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -13,6 +18,7 @@ public class RestFactory {
 
   /** The base URI of all the REST APIs */
   public static final String BASE_URI = "http://localhost:8080/v1/";
+  private static ObjectMapper mapper = null;
 
   /**
    * A convenient method to create a client requesting to /auth endpoint for a session token.
@@ -36,7 +42,22 @@ public class RestFactory {
     return client.target(URI.create(BASE_URI));
   }
 
+  public static ObjectMapper objectMapper() {
+    if (mapper == null) {
+      mapper = new ObjectMapper();
+      // Handles polymorphism through inheritance
+      // mapper.enableDefaultTyping(DefaultTyping.NON_FINAL);
+      mapper.registerModule(new JavaTimeModule());
+      mapper.enable(SerializationFeature.INDENT_OUTPUT);
+      mapper.enable(Feature.ALLOW_COMMENTS);
+    }
+    return mapper;
+  }
+
   private static Client buildClient() {
-    return ClientBuilder.newBuilder().register(JacksonFeature.class).build();
+    return ClientBuilder.newBuilder()
+        .register(JacksonFeature.class)
+        .register(JacksonCustomMapper.class)
+        .build();
   }
 }

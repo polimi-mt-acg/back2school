@@ -1,5 +1,7 @@
 package com.github.polimi_mt_acg.back2school.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import java.util.List;
 import javax.persistence.DiscriminatorValue;
@@ -13,7 +15,7 @@ import javax.persistence.Transient;
 @DiscriminatorValue(value = "PERSONAL-TEACHER")
 public class NotificationPersonalTeacher extends Notification {
 
-  @Transient public String seedTargetTeacherEmail;
+  @Transient @JsonIgnore public String seedTargetTeacherEmail;
 
   @OneToOne
   @JoinColumn(
@@ -22,10 +24,12 @@ public class NotificationPersonalTeacher extends Notification {
   )
   private User targetUser;
 
+  @JsonProperty
   public User getTargetUser() {
     return targetUser;
   }
 
+  @JsonProperty
   public void setTargetUser(User targetUser) {
     this.targetUser = targetUser;
   }

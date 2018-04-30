@@ -1,12 +1,11 @@
-package com.github.polimi_mt_acg.back2school.api.v1.administrators;
+package com.github.polimi_mt_acg.back2school.api.v1;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.polimi_mt_acg.back2school.api.v1.AuthenticationEndpoint;
-import com.github.polimi_mt_acg.back2school.api.v1.JacksonCustomMapper;
+import com.github.polimi_mt_acg.back2school.api.v1.administrators.AdministratorResponse;
 import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseSeeder;
