@@ -5,7 +5,8 @@
       "datetime": "2018-04-12T16:15:11",
       "subject": "Congratulations to the best class ever!",
       "text": "Hi 1A's parents,\nI want to congratulate with you and your sons because they're are the best class we've ever seen at the back2school institute!!\n\nRegards,\nThe headmaster.",
-      "seedTargetClassName": "1A"
+      "seedTargetClassName": "1A",
+      "type": "class_parent"
     }
   ]
 }

@@ -83,6 +83,8 @@ public class DatabaseSeeder {
    *
    * <p>E.g. DatabaseSeeder.deployScenario("scenarioA") It will look into the folder
    * src/test/resources/scenarios_seeds/scenarioA/ for Json files from which to load the data.
+   *
+   * @param scenarioFolderName
    */
   public static void deployScenario(String scenarioFolderName) {
     for (Map.Entry<String, Object> sm : seedsMap.entrySet()) {
