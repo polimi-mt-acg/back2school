@@ -15,7 +15,7 @@ import javax.persistence.Transient;
 @DiscriminatorValue(value = "CLASS-TEACHER")
 public class NotificationClassTeacher extends Notification {
 
-  @Transient @JsonIgnore public String seedTargetClassName;
+  @Transient private String seedTargetClassName;
 
   @OneToOne
   @JoinColumn(
@@ -32,6 +32,16 @@ public class NotificationClassTeacher extends Notification {
   @JsonProperty
   public void setTargetClass(Class targetClass) {
     this.targetClass = targetClass;
+  }
+
+  @JsonIgnore
+  public String getSeedTargetClassName() {
+    return seedTargetClassName;
+  }
+
+  @JsonProperty
+  public void setSeedTargetClassName(String seedTargetClassName) {
+    this.seedTargetClassName = seedTargetClassName;
   }
 
   public void prepareToPersist() {

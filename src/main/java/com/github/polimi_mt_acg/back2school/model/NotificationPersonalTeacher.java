@@ -15,7 +15,7 @@ import javax.persistence.Transient;
 @DiscriminatorValue(value = "PERSONAL-TEACHER")
 public class NotificationPersonalTeacher extends Notification {
 
-  @Transient @JsonIgnore public String seedTargetTeacherEmail;
+  @Transient private String seedTargetTeacherEmail;
 
   @OneToOne
   @JoinColumn(
@@ -32,6 +32,16 @@ public class NotificationPersonalTeacher extends Notification {
   @JsonProperty
   public void setTargetUser(User targetUser) {
     this.targetUser = targetUser;
+  }
+
+  @JsonIgnore
+  public String getSeedTargetTeacherEmail() {
+    return seedTargetTeacherEmail;
+  }
+
+  @JsonProperty
+  public void setSeedTargetTeacherEmail(String seedTargetTeacherEmail) {
+    this.seedTargetTeacherEmail = seedTargetTeacherEmail;
   }
 
   public void prepareToPersist() {

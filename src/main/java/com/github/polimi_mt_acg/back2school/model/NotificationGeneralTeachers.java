@@ -4,5 +4,5 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 @Entity
-@DiscriminatorValue(value = "GENERAL")
-public class NotificationGeneral extends Notification {}
+@DiscriminatorValue(value = "GENERAL-TEACHERS")
+public class NotificationGeneralTeachers extends Notification {}
