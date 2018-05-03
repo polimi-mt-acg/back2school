@@ -43,11 +43,10 @@ public class NotificationTest {
     // asserts beginning
     assertNotNull(databaseEntity);
     assertNotNull(databaseEntity.getCreator());
-    assertEquals(seedEntity.seedCreatorEmail, databaseEntity.getCreator().getEmail());
     assertEquals(seedEntity.getDatetime().toString(), databaseEntity.getDatetime().toString());
     assertEquals(seedEntity.getSubject(), databaseEntity.getSubject());
     assertEquals(seedEntity.getText(), databaseEntity.getText());
-    assertEquals(seedEntity.seedTargetClassName, databaseEntity.getTargetClass().getName());
+    assertEquals(seedEntity.getSeedTargetClassName(), databaseEntity.getTargetClass().getName());
   }
 
   @Test
@@ -69,33 +68,31 @@ public class NotificationTest {
     // asserts beginning
     assertNotNull(databaseEntity);
     assertNotNull(databaseEntity.getCreator());
-    assertEquals(seedEntity.seedCreatorEmail, databaseEntity.getCreator().getEmail());
     assertEquals(seedEntity.getDatetime().toString(), databaseEntity.getDatetime().toString());
     assertEquals(seedEntity.getSubject(), databaseEntity.getSubject());
     assertEquals(seedEntity.getText(), databaseEntity.getText());
-    assertEquals(seedEntity.seedTargetClassName, databaseEntity.getTargetClass().getName());
+    assertEquals(seedEntity.getSeedTargetClassName(), databaseEntity.getTargetClass().getName());
   }
 
   @Test
   @Category(TestCategory.Unit.class)
   public void testNotificationGeneralEntity() {
-    List<NotificationGeneral> seedNotificationsGeneral =
-        (List<NotificationGeneral>)
+    List<NotificationGeneralParents> seedNotificationsGeneral =
+        (List<NotificationGeneralParents>)
             DatabaseSeeder.getEntitiesListFromSeed(
-                "scenarioA_unit_tests", "notifications_general.json");
+                "scenarioA_unit_tests", "notifications_general_parents.json");
 
     assertNotNull(seedNotificationsGeneral);
     assertEquals(seedNotificationsGeneral.size(), 1);
 
-    NotificationGeneral seedEntity = seedNotificationsGeneral.get(0);
+    NotificationGeneralParents seedEntity = seedNotificationsGeneral.get(0);
     // get entity from database
-    NotificationGeneral databaseEntity =
-        DatabaseHandler.getInstance().getListSelectFrom(NotificationGeneral.class).get(0);
+    NotificationGeneralParents databaseEntity =
+        DatabaseHandler.getInstance().getListSelectFrom(NotificationGeneralParents.class).get(0);
 
     // asserts beginning
     assertNotNull(databaseEntity);
     assertNotNull(databaseEntity.getCreator());
-    assertEquals(seedEntity.seedCreatorEmail, databaseEntity.getCreator().getEmail());
     assertEquals(seedEntity.getDatetime().toString(), databaseEntity.getDatetime().toString());
     assertEquals(seedEntity.getSubject(), databaseEntity.getSubject());
     assertEquals(seedEntity.getText(), databaseEntity.getText());
@@ -120,11 +117,10 @@ public class NotificationTest {
     // asserts beginning
     assertNotNull(databaseEntity);
     assertNotNull(databaseEntity.getCreator());
-    assertEquals(seedEntity.seedCreatorEmail, databaseEntity.getCreator().getEmail());
     assertEquals(seedEntity.getDatetime().toString(), databaseEntity.getDatetime().toString());
     assertEquals(seedEntity.getSubject(), databaseEntity.getSubject());
     assertEquals(seedEntity.getText(), databaseEntity.getText());
-    assertEquals(seedEntity.seedTargetParentEmail, databaseEntity.getTargetUser().getEmail());
+    assertEquals(seedEntity.getSeedTargetParentEmail(), databaseEntity.getTargetUser().getEmail());
   }
 
   @Test
@@ -146,11 +142,10 @@ public class NotificationTest {
     // asserts beginning
     assertNotNull(databaseEntity);
     assertNotNull(databaseEntity.getCreator());
-    assertEquals(seedEntity.seedCreatorEmail, databaseEntity.getCreator().getEmail());
     assertEquals(seedEntity.getDatetime().toString(), databaseEntity.getDatetime().toString());
     assertEquals(seedEntity.getSubject(), databaseEntity.getSubject());
     assertEquals(seedEntity.getText(), databaseEntity.getText());
-    assertEquals(seedEntity.seedTargetTeacherEmail, databaseEntity.getTargetUser().getEmail());
+    assertEquals(seedEntity.getSeedTargetTeacherEmail(), databaseEntity.getTargetUser().getEmail());
   }
 
   @Test

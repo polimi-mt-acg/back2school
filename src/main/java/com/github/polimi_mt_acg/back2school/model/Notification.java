@@ -28,15 +28,15 @@ import javax.persistence.Transient;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({
   @Type(value = NotificationClassParent.class, name = "class_parent"),
-  @Type(value = NotificationClassParent.class, name = "class_parent"),
   @Type(value = NotificationClassTeacher.class, name = "class_teacher"),
-  @Type(value = NotificationGeneral.class, name = "general"),
+  @Type(value = NotificationGeneralParents.class, name = "general_parents"),
+  @Type(value = NotificationGeneralTeachers.class, name = "general_teachers"),
   @Type(value = NotificationPersonalParent.class, name = "personal_parent"),
   @Type(value = NotificationPersonalTeacher.class, name = "personal_teacher")
 })
 public class Notification implements DeserializeToPersistInterface {
 
-  @Transient @JsonIgnore public String seedCreatorEmail;
+  @Transient private String seedCreatorEmail;
 
   @Id
   @GeneratedValue
@@ -104,6 +104,16 @@ public class Notification implements DeserializeToPersistInterface {
   @JsonProperty
   public void setText(String text) {
     this.text = text;
+  }
+
+  @JsonIgnore
+  public String getSeedCreatorEmail() {
+    return seedCreatorEmail;
+  }
+
+  @JsonProperty
+  public void setSeedCreatorEmail(String seedCreatorEmail) {
+    this.seedCreatorEmail = seedCreatorEmail;
   }
 
   @Override

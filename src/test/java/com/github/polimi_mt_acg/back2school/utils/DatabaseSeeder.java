@@ -13,7 +13,8 @@ import com.github.polimi_mt_acg.back2school.utils.json_mappers.JSONTemplateInter
 import com.github.polimi_mt_acg.back2school.utils.json_mappers.LecturesJSONTemplate;
 import com.github.polimi_mt_acg.back2school.utils.json_mappers.NotificationsClassParentJSONTemplate;
 import com.github.polimi_mt_acg.back2school.utils.json_mappers.NotificationsClassTeacherJSONTemplate;
-import com.github.polimi_mt_acg.back2school.utils.json_mappers.NotificationsGeneralJSONTemplate;
+import com.github.polimi_mt_acg.back2school.utils.json_mappers.NotificationsGeneralParentsJSONTemplate;
+import com.github.polimi_mt_acg.back2school.utils.json_mappers.NotificationsGeneralTeachersJSONTemplate;
 import com.github.polimi_mt_acg.back2school.utils.json_mappers.NotificationsPersonalParentJSONTemplate;
 import com.github.polimi_mt_acg.back2school.utils.json_mappers.NotificationsPersonalTeacherJSONTemplate;
 import com.github.polimi_mt_acg.back2school.utils.json_mappers.NotificationsReadJSONTemplate;
@@ -68,7 +69,8 @@ public class DatabaseSeeder {
     map.put("appointments.json", AppointmentsJSONTemplate.class);
     map.put("notifications_class_parent.json", NotificationsClassParentJSONTemplate.class);
     map.put("notifications_class_teacher.json", NotificationsClassTeacherJSONTemplate.class);
-    map.put("notifications_general.json", NotificationsGeneralJSONTemplate.class);
+    map.put("notifications_general_parents.json", NotificationsGeneralParentsJSONTemplate.class);
+    map.put("notifications_general_teachers.json", NotificationsGeneralTeachersJSONTemplate.class);
     map.put("notifications_personal_parent.json", NotificationsPersonalParentJSONTemplate.class);
     map.put("notifications_personal_teacher.json", NotificationsPersonalTeacherJSONTemplate.class);
     map.put("notifications_read.json", NotificationsReadJSONTemplate.class);
