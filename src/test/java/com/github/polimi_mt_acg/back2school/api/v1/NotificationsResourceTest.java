@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.polimi_mt_acg.back2school.api.v1.auth.AuthenticationEndpoint;
 import com.github.polimi_mt_acg.back2school.api.v1.notifications.NotificationsResponse;
 import com.github.polimi_mt_acg.back2school.model.NotificationGeneralParents;
 import com.github.polimi_mt_acg.back2school.model.NotificationGeneralTeachers;
@@ -13,6 +14,7 @@ import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.model.User.Role;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseSeeder;
+import com.github.polimi_mt_acg.back2school.utils.JacksonCustomMapper;
 import com.github.polimi_mt_acg.back2school.utils.rest.RestFactory;
 import java.io.IOException;
 import java.net.URI;

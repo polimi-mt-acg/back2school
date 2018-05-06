@@ -6,13 +6,14 @@ import static org.junit.Assert.assertTrue;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.polimi_mt_acg.back2school.api.v1.administrators.AdministratorResponse;
+import com.github.polimi_mt_acg.back2school.api.v1.auth.AuthenticationEndpoint;
 import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseSeeder;
+import com.github.polimi_mt_acg.back2school.utils.JacksonCustomMapper;
 import com.github.polimi_mt_acg.back2school.utils.TestCategory;
 import com.github.polimi_mt_acg.back2school.utils.rest.RestFactory;
 
-import java.beans.Transient;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Iterator;

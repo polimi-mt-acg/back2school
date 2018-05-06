@@ -1,4 +1,4 @@
-package com.github.polimi_mt_acg.back2school.api.v1;
+package com.github.polimi_mt_acg.back2school.api.v1.auth;
 
 /** The login credentials. A client can authenticate itself providing its EMAIL and PASSWORD. */
 public class Credentials {
