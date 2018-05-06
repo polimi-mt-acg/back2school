@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.github.polimi_mt_acg.back2school.api.v1.auth.Credentials;
+import com.github.polimi_mt_acg.back2school.api.v1.auth.LoginRequest;
 import com.github.polimi_mt_acg.back2school.utils.JacksonCustomMapper;
 import java.net.URI;
 import javax.ws.rs.client.Client;
@@ -35,7 +35,7 @@ public class RestFactory {
 
     return target
         .request(MediaType.APPLICATION_JSON)
-        .buildPost(Entity.json(new Credentials(email, password)))
+        .buildPost(Entity.json(new LoginRequest(email, password)))
         .invoke(String.class);
   }
 

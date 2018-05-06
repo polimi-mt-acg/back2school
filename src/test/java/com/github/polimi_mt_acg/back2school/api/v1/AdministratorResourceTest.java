@@ -6,7 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.polimi_mt_acg.back2school.api.v1.administrators.AdministratorResponse;
-import com.github.polimi_mt_acg.back2school.api.v1.auth.AuthenticationEndpoint;
+import com.github.polimi_mt_acg.back2school.api.v1.auth.AuthenticationResource;
 import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseSeeder;
@@ -59,7 +59,7 @@ public class AdministratorResourceTest {
     // in com.github.polimi_mt_acg.back2school.api.v1.administrators.resources package
     final ResourceConfig rc =
         new ResourceConfig()
-            .register(AuthenticationEndpoint.class)
+            .register(AuthenticationResource.class)
             .packages("com.github.polimi_mt_acg.back2school.api.v1.administrators")
             .register(JacksonCustomMapper.class)
             .register(JacksonFeature.class);

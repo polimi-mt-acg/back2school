@@ -181,14 +181,10 @@ public class AuthenticationSession implements DeserializeToPersistInterface {
   public static AuthenticationSession startNewAuthenticationSession(User user) {
     Session session = DatabaseHandler.getInstance().getNewSession();
 
-    /* ** Invalidate the previous still valid authentication sessions ** */
-    List<AuthenticationSession> sessionsStillValid =
-        getValidAuthenticationSession(user, session);
+    // just start with a new fresh session: get invalid all the other sessions
+    invalidateAllAuthenticationSession(user, session);
 
-    // proceed to invalidate all the still valid sessions
-    invalidateSessions(sessionsStillValid, session);
-
-    /* ** create a new AuthenticationSession and associate it to the user ** */
+    // create a new AuthenticationSession and associate it to the user
     AuthenticationSession authSession = new AuthenticationSession();
     authSession.setUser(user);
 
@@ -199,6 +195,29 @@ public class AuthenticationSession implements DeserializeToPersistInterface {
     session.close();
 
     return authSession;
+  }
+
+  /**
+   * Invalidate all the still valid (set AuthenticationSession.cancelled = true)
+   * sessions associated to the user.
+   *
+   * @param user The user to which invalidate the sessions
+   * @param session The hibernate session
+   */
+  public static void invalidateAllAuthenticationSession(User user, Session session) {
+    // get all the previous still valid authentication sessions
+    List<AuthenticationSession> sessionsStillValid =
+        getValidAuthenticationSession(user, session);
+
+    // proceed to invalidate all the still valid sessions
+    for (AuthenticationSession authSession : sessionsStillValid) {
+      // invalidate the authSession and save it
+      authSession.setCancelled(true);
+
+      session.beginTransaction();
+      session.persist(authSession);
+      session.getTransaction().commit();
+    }
   }
 
   /**
@@ -225,23 +244,5 @@ public class AuthenticationSession implements DeserializeToPersistInterface {
     cq.orderBy(cb.desc(root.get(AuthenticationSession_.datetimeLastInteraction)));
 
     return session.createQuery(cq).getResultList();
-  }
-
-  /**
-   * Invalidate (set AuthenticationSession.cancelled = true) the provided
-   * sessions list
-   *
-   * @param authSessions List of sessions to be invalidated
-   * @param session The hibernate session
-   */
-  private static void invalidateSessions(List<AuthenticationSession> authSessions, Session session) {
-    for (AuthenticationSession authSession : authSessions) {
-      // invalidate the authSession and save it
-      authSession.setCancelled(true);
-
-      session.beginTransaction();
-      session.persist(authSession);
-      session.getTransaction().commit();
-    }
   }
 }

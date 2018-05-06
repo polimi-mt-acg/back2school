@@ -1,14 +1,14 @@
 package com.github.polimi_mt_acg.back2school.api.v1.auth;
 
 /** The login credentials. A client can authenticate itself providing its EMAIL and PASSWORD. */
-public class Credentials {
+public class LoginRequest {
 
   public String email;
   public String password;
 
-  public Credentials() {}
+  public LoginRequest() {}
 
-  public Credentials(String email, String password) {
+  public LoginRequest(String email, String password) {
     this.email = email;
     this.password = password;
   }

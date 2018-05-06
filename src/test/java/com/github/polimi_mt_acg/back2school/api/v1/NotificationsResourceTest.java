@@ -6,7 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.polimi_mt_acg.back2school.api.v1.auth.AuthenticationEndpoint;
+import com.github.polimi_mt_acg.back2school.api.v1.auth.AuthenticationResource;
 import com.github.polimi_mt_acg.back2school.api.v1.notifications.NotificationsResponse;
 import com.github.polimi_mt_acg.back2school.model.NotificationGeneralParents;
 import com.github.polimi_mt_acg.back2school.model.NotificationGeneralTeachers;
@@ -63,7 +63,7 @@ public class NotificationsResourceTest {
     // in com.github.polimi_mt_acg.back2school.api.v1.administrators.resources package
     final ResourceConfig rc =
         new ResourceConfig()
-            .register(AuthenticationEndpoint.class)
+            .register(AuthenticationResource.class)
             .packages("com.github.polimi_mt_acg.back2school.api.v1.notifications")
             .register(JacksonCustomMapper.class)
             .register(JacksonFeature.class);
