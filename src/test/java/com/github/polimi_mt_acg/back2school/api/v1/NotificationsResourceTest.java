@@ -83,7 +83,7 @@ public class NotificationsResourceTest {
         // Build the Client
         WebTarget target = RestFactory.buildWebTarget();
         // Authenticate
-        String token = RestFactory.authenticate(admin.getEmail(), admin.getSeedPassword());
+        String token = RestFactory.doLoginGetToken(admin.getEmail(), admin.getSeedPassword());
         assertNotNull(token);
         assertTrue(!token.isEmpty());
 
@@ -126,7 +126,7 @@ public class NotificationsResourceTest {
     // Authenticate the admin
     WebTarget target = RestFactory.buildWebTarget();
     // Authenticate
-    String token = RestFactory.authenticate(admin.getEmail(), admin.getSeedPassword());
+    String token = RestFactory.doLoginGetToken(admin.getEmail(), admin.getSeedPassword());
     assertNotNull(token);
     assertTrue(!token.isEmpty());
 
@@ -177,7 +177,7 @@ public class NotificationsResourceTest {
     // Authenticate the admin
     WebTarget target = RestFactory.buildWebTarget();
     // Authenticate
-    String token = RestFactory.authenticate(admin.getEmail(), admin.getSeedPassword());
+    String token = RestFactory.doLoginGetToken(admin.getEmail(), admin.getSeedPassword());
     assertNotNull(token);
     assertTrue(!token.isEmpty());
 

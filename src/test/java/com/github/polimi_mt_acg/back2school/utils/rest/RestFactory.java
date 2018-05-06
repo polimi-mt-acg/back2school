@@ -21,16 +21,18 @@ public class RestFactory {
   private static ObjectMapper mapper = null;
 
   /**
-   * A convenient method to create a client requesting to /auth endpoint for a session token.
+   * A convenient method to create a client requesting the login to the
+   * endpoint /auth/login getting back session token.
    *
    * @param email The user login email.
    * @param password The user login password.
    * @return The session token if {@code email} and {@code password} are valid.
    * @throws javax.ws.rs.ForbiddenException if {@code email} and {@code password} are not valid.
    */
-  public static String authenticate(String email, String password) {
+  public static String doLoginGetToken(String email, String password) {
     Client client = buildClient();
-    WebTarget target = client.target(URI.create(BASE_URI)).path("auth");
+    WebTarget target = client.target(URI.create(BASE_URI)).path("auth").path("login");
+
     return target
         .request(MediaType.APPLICATION_JSON)
         .buildPost(Entity.json(new Credentials(email, password)))
