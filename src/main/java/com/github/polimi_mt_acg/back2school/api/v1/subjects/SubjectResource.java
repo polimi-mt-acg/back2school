@@ -43,5 +43,22 @@ public class SubjectResource {
 
     return Response.ok(subject, MediaType.APPLICATION_JSON).build();
   }
+
+  @Path("{id}")
+  @GET
+  @Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
+  @AdministratorSecured
+  public Subject getSubjectID (@PathParam("id") int id){
+    DatabaseHandler dhi = DatabaseHandler.getInstance();
+    Session session = dhi.getNewSession();
+    session.beginTransaction();
+    List<Subject> subjects =
+            DatabaseHandler.getInstance()
+                    .getListSelectFromWhereEqual(Subject.class, Subject_.id, id, session);
+
+    session.close();
+    return subjects.get(0);
+  }
+
 }
 
