@@ -3,13 +3,16 @@ package com.github.polimi_mt_acg.back2school.api.v1.subjects;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.polimi_mt_acg.back2school.api.v1.administrators.AdministratorSecured;
-import com.github.polimi_mt_acg.back2school.model.Subject;
+import com.github.polimi_mt_acg.back2school.model.*;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
+import org.hibernate.Session;
+
 import java.util.List;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 @Path("subjects")
 public class SubjectResource {
@@ -24,4 +27,21 @@ public class SubjectResource {
 
     return new SubjectResponse(subjects);
   }
+
+  @POST
+  @Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
+  @AdministratorSecured
+  public Response postSubjects(
+          Subject subject, @Context HttpHeaders hh) {
+
+    DatabaseHandler dhi = DatabaseHandler.getInstance();
+    Session session = dhi.getNewSession();
+    session.beginTransaction();
+    session.persist(subject);
+    session.getTransaction().commit();
+    session.close();
+
+    return Response.ok(subject, MediaType.APPLICATION_JSON).build();
+  }
 }
+
