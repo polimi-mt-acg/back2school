@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.polimi_mt_acg.back2school.api.v1.subjects.SubjectResponse;
+import com.github.polimi_mt_acg.back2school.model.NotificationGeneralParents;
 import com.github.polimi_mt_acg.back2school.model.Subject;
 import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.model.User.Role;
@@ -105,6 +106,64 @@ public class SubjectsResourceTest {
                 System.out.println("----SUBJECTS----"+mapper.writerWithDefaultPrettyPrinter().writeValueAsString(response));
             }
         }
+    }
+
+    @Test
+    public void postSubjects() throws JsonProcessingException {
+        // Get an admin
+        List<User> admins =
+                (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioSubjects", "users.json");
+
+        admins =
+                admins
+                        .stream()
+                        .filter(user -> user.getRole() == Role.ADMINISTRATOR)
+                        .collect(Collectors.toList());
+        User admin = admins.get(0);
+
+        // Create a custom subject
+        Subject subject = makeSubject();
+
+        // Authenticate the admin
+        WebTarget target = RestFactory.buildWebTarget();
+        // Authenticate
+        String token = RestFactory.authenticate(admin.getEmail(), admin.getSeedPassword());
+        assertNotNull(token);
+        assertTrue(!token.isEmpty());
+
+        // Set target to /notifications/send-to-teachers
+        target = target.path("subjects");
+
+        // Set token and build the POST request
+        Invocation request =
+                target
+                        .request()
+                        .header(HttpHeaders.AUTHORIZATION, token)
+                        .buildPost(Entity.json(subject));
+
+        // Invoke the request
+        Response response = request.invoke();
+        assertEquals(Status.OK.getStatusCode(), response.getStatus());
+
+        Subject responseSubj =
+                response.readEntity(Subject.class);
+
+        // Print it
+        ObjectMapper mapper = RestFactory.objectMapper();
+        System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(responseSubj));
+
+        assertNotNull(responseSubj);
+        assertEquals(responseSubj.getName(), subject.getName());
+        assertEquals(responseSubj.getDescription(), subject.getDescription());
+
+    }
+
+
+    private Subject makeSubject(){
+        Subject sbj = new Subject();
+        sbj.setName("Matematica");
+        sbj.setDescription("Analisi matematica e trigonometria");
+        return sbj;
     }
 
 }
