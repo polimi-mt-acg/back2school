@@ -36,134 +36,129 @@ import org.junit.Test;
 
 public class SubjectsResourceTest {
 
-    private static HttpServer server;
+  private static HttpServer server;
 
-    @BeforeClass
-    public static void setUp() throws Exception {
-        // Deploy database scenario
-        DatabaseSeeder.deployScenario("scenarioSubjects");
+  @BeforeClass
+  public static void setUp() throws Exception {
+    // Deploy database scenario
+    DatabaseSeeder.deployScenario("scenarioSubjects");
 
-        // Run HTTP server
-        server = startServer();
-    }
+    // Run HTTP server
+    server = startServer();
+  }
 
-    @AfterClass
-    public static void tearDown() throws Exception {
-        // Truncate DB
-        DatabaseHandler.getInstance().truncateDatabase();
+  @AfterClass
+  public static void tearDown() throws Exception {
+    // Truncate DB
+    DatabaseHandler.getInstance().truncateDatabase();
 
-        // Close HTTP server
-        server.shutdownNow();
-    }
+    // Close HTTP server
+    server.shutdownNow();
+  }
 
-    private static HttpServer startServer() {
-        // Create a resource config that scans for JAX-RS resources and providers
-        // in com.github.polimi_mt_acg.back2school.api.v1.subjects.resources package
-        final ResourceConfig rc =
-                new ResourceConfig()
-                        .register(AuthenticationEndpoint.class)
-                        .packages("com.github.polimi_mt_acg.back2school.api.v1.subjects")
-                        .register(JacksonCustomMapper.class)
-                        .register(JacksonFeature.class);
+  private static HttpServer startServer() {
+    // Create a resource config that scans for JAX-RS resources and providers
+    // in com.github.polimi_mt_acg.back2school.api.v1.subjects.resources package
+    final ResourceConfig rc =
+        new ResourceConfig()
+            .register(AuthenticationEndpoint.class)
+            .packages("com.github.polimi_mt_acg.back2school.api.v1.subjects")
+            .register(JacksonCustomMapper.class)
+            .register(JacksonFeature.class);
 
-        // create and start a new instance of grizzly http server
-        // exposing the Jersey application at BASE_URI
-        return GrizzlyHttpServerFactory.createHttpServer(URI.create(RestFactory.BASE_URI), rc);
-    }
+    // create and start a new instance of grizzly http server
+    // exposing the Jersey application at BASE_URI
+    return GrizzlyHttpServerFactory.createHttpServer(URI.create(RestFactory.BASE_URI), rc);
+  }
 
-    @Test
-    public void getSubjects() throws IOException {
-        // Get Database seeds
-        List<User> admins =
-                (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioSubjects", "users.json");
+  @Test
+  public void getSubjects() throws IOException {
+    // Get Database seeds
+    List<User> admins =
+        (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioSubjects", "users.json");
 
-        // For each administrator
-        for (User admin : admins) {
-            if (admin.getRole() == Role.ADMINISTRATOR) {
-                // Build the Client
-                WebTarget target = RestFactory.buildWebTarget();
-                // Authenticate
-                String token = RestFactory.authenticate(admin.getEmail(), admin.getSeedPassword());
-                assertNotNull(token);
-                assertTrue(!token.isEmpty());
-
-                // Set target to /notifications
-                target = target.path("subjects");
-
-                // Set token and build the GET request
-                Invocation request =
-                        target
-                                .request(MediaType.APPLICATION_JSON)
-                                .header(HttpHeaders.AUTHORIZATION, token)
-                                .buildGet();
-
-                // Invoke the request
-                SubjectResponse response = request.invoke(SubjectResponse.class);
-                assertNotNull(response);
-
-                // Print it
-                ObjectMapper mapper = RestFactory.objectMapper();
-                System.out.println("----SUBJECTS----"+mapper.writerWithDefaultPrettyPrinter().writeValueAsString(response));
-            }
-        }
-    }
-
-    @Test
-    public void postSubjects() throws JsonProcessingException {
-        // Get an admin
-        List<User> admins =
-                (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioSubjects", "users.json");
-
-        admins =
-                admins
-                        .stream()
-                        .filter(user -> user.getRole() == Role.ADMINISTRATOR)
-                        .collect(Collectors.toList());
-        User admin = admins.get(0);
-
-        // Create a custom subject
-        Subject subject = makeSubject();
-
-        // Authenticate the admin
+    // For each administrator
+    for (User admin : admins) {
+      if (admin.getRole() == Role.ADMINISTRATOR) {
+        // Build the Client
         WebTarget target = RestFactory.buildWebTarget();
         // Authenticate
         String token = RestFactory.authenticate(admin.getEmail(), admin.getSeedPassword());
         assertNotNull(token);
         assertTrue(!token.isEmpty());
 
-        // Set target to /notifications/send-to-teachers
+        // Set target to /notifications
         target = target.path("subjects");
 
-        // Set token and build the POST request
+        // Set token and build the GET request
         Invocation request =
-                target
-                        .request()
-                        .header(HttpHeaders.AUTHORIZATION, token)
-                        .buildPost(Entity.json(subject));
+            target
+                .request(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, token)
+                .buildGet();
 
         // Invoke the request
-        Response response = request.invoke();
-        assertEquals(Status.OK.getStatusCode(), response.getStatus());
-
-        Subject responseSubj =
-                response.readEntity(Subject.class);
+        SubjectResponse response = request.invoke(SubjectResponse.class);
+        assertNotNull(response);
 
         // Print it
         ObjectMapper mapper = RestFactory.objectMapper();
-        System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(responseSubj));
-
-        assertNotNull(responseSubj);
-        assertEquals(responseSubj.getName(), subject.getName());
-        assertEquals(responseSubj.getDescription(), subject.getDescription());
-
+        System.out.println(
+            "----SUBJECTS----"
+                + mapper.writerWithDefaultPrettyPrinter().writeValueAsString(response));
+      }
     }
+  }
 
+  @Test
+  public void postSubjects() throws JsonProcessingException {
+    // Get an admin
+    List<User> admins =
+        (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioSubjects", "users.json");
 
-    private Subject makeSubject(){
-        Subject sbj = new Subject();
-        sbj.setName("Matematica");
-        sbj.setDescription("Analisi matematica e trigonometria");
-        return sbj;
-    }
+    admins =
+        admins
+            .stream()
+            .filter(user -> user.getRole() == Role.ADMINISTRATOR)
+            .collect(Collectors.toList());
+    User admin = admins.get(0);
 
+    // Create a custom subject
+    Subject subject = makeSubject();
+
+    // Authenticate the admin
+    WebTarget target = RestFactory.buildWebTarget();
+    // Authenticate
+    String token = RestFactory.authenticate(admin.getEmail(), admin.getSeedPassword());
+    assertNotNull(token);
+    assertTrue(!token.isEmpty());
+
+    // Set target to /notifications/send-to-teachers
+    target = target.path("subjects");
+
+    // Set token and build the POST request
+    Invocation request =
+        target.request().header(HttpHeaders.AUTHORIZATION, token).buildPost(Entity.json(subject));
+
+    // Invoke the request
+    Response response = request.invoke();
+    assertEquals(Status.OK.getStatusCode(), response.getStatus());
+
+    Subject responseSubj = response.readEntity(Subject.class);
+
+    // Print it
+    ObjectMapper mapper = RestFactory.objectMapper();
+    System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(responseSubj));
+
+    assertNotNull(responseSubj);
+    assertEquals(responseSubj.getName(), subject.getName());
+    assertEquals(responseSubj.getDescription(), subject.getDescription());
+  }
+
+  private Subject makeSubject() {
+    Subject sbj = new Subject();
+    sbj.setName("Matematica");
+    sbj.setDescription("Analisi matematica e trigonometria");
+    return sbj;
+  }
 }

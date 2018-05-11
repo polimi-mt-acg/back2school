@@ -18,26 +18,26 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class ClassroomResponse {
 
-    @XmlElement private List<Classroom> classrooms;
+  @XmlElement private List<Classroom> classrooms;
 
-    /** Empty constructor. */
-    public ClassroomResponse() {}
+  /** Empty constructor. */
+  public ClassroomResponse() {}
 
-    /**
-     * Construct an ClassroomResponse out of a List of subjects. No copy of {@code classrooms} is
-     * performed.
-     */
-    public ClassroomResponse(List<Classroom> classrooms) {
-        this.classrooms = classrooms;
-    }
+  /**
+   * Construct an ClassroomResponse out of a List of subjects. No copy of {@code classrooms} is
+   * performed.
+   */
+  public ClassroomResponse(List<Classroom> classrooms) {
+    this.classrooms = classrooms;
+  }
 
-    @JsonProperty
-    public List<Classroom> getClassrooms() {
-        return classrooms;
-    }
+  @JsonProperty
+  public List<Classroom> getClassrooms() {
+    return classrooms;
+  }
 
-    @JsonProperty
-    public void setClassrooms(List<Classroom> classrooms) {
-        this.classrooms = classrooms;
-    }
+  @JsonProperty
+  public void setClassrooms(List<Classroom> classrooms) {
+    this.classrooms = classrooms;
+  }
 }

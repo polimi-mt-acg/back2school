@@ -8,7 +8,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.polimi_mt_acg.back2school.api.v1.classrooms.ClassroomResponse;
 import com.github.polimi_mt_acg.back2school.api.v1.subjects.SubjectResponse;
+import com.github.polimi_mt_acg.back2school.model.Class;
 import com.github.polimi_mt_acg.back2school.model.Classroom;
+import com.github.polimi_mt_acg.back2school.model.Subject;
 import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.model.User.Role;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
@@ -36,76 +38,131 @@ import org.junit.Test;
 
 public class ClassroomsResourceTest {
 
-    private static HttpServer server;
+  private static HttpServer server;
 
-    @BeforeClass
-    public static void setUp() throws Exception {
-        // Deploy database scenario
-        DatabaseSeeder.deployScenario("scenarioClassrooms");
+  @BeforeClass
+  public static void setUp() throws Exception {
+    // Deploy database scenario
+    DatabaseSeeder.deployScenario("scenarioClassrooms");
 
-        // Run HTTP server
-        server = startServer();
+    // Run HTTP server
+    server = startServer();
+  }
+
+  @AfterClass
+  public static void tearDown() throws Exception {
+    // Truncate DB
+    DatabaseHandler.getInstance().truncateDatabase();
+
+    // Close HTTP server
+    server.shutdownNow();
+  }
+
+  private static HttpServer startServer() {
+    // Create a resource config that scans for JAX-RS resources and providers
+    // in com.github.polimi_mt_acg.back2school.api.v1.subjects.resources package
+    final ResourceConfig rc =
+        new ResourceConfig()
+            .register(AuthenticationEndpoint.class)
+            .packages("com.github.polimi_mt_acg.back2school.api.v1.classrooms")
+            .register(JacksonCustomMapper.class)
+            .register(JacksonFeature.class);
+
+    // create and start a new instance of grizzly http server
+    // exposing the Jersey application at BASE_URI
+    return GrizzlyHttpServerFactory.createHttpServer(URI.create(RestFactory.BASE_URI), rc);
+  }
+
+  @Test
+  public void getClassrooms() throws IOException {
+    // Get Database seeds
+    List<User> admins =
+        (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioClassrooms", "users.json");
+
+    // For each administrator
+    for (User admin : admins) {
+      if (admin.getRole() == Role.ADMINISTRATOR) {
+        // Build the Client
+        WebTarget target = RestFactory.buildWebTarget();
+        // Authenticate
+        String token = RestFactory.authenticate(admin.getEmail(), admin.getSeedPassword());
+        assertNotNull(token);
+        assertTrue(!token.isEmpty());
+
+        // Set target to /notifications
+        target = target.path("classrooms");
+
+        // Set token and build the GET request
+        Invocation request =
+            target
+                .request(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, token)
+                .buildGet();
+
+        // Invoke the request
+        ClassroomResponse response = request.invoke(ClassroomResponse.class);
+        assertNotNull(response);
+
+        // Print it
+        ObjectMapper mapper = RestFactory.objectMapper();
+        System.out.println(
+            "----CLASSROOMS----"
+                + mapper.writerWithDefaultPrettyPrinter().writeValueAsString(response));
+      }
     }
+  }
 
-    @AfterClass
-    public static void tearDown() throws Exception {
-        // Truncate DB
-        DatabaseHandler.getInstance().truncateDatabase();
+  @Test
+  public void postClassrooms() throws JsonProcessingException {
+    // Get an admin
+    List<User> admins =
+        (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioClassrooms", "users.json");
 
-        // Close HTTP server
-        server.shutdownNow();
-    }
+    admins =
+        admins
+            .stream()
+            .filter(user -> user.getRole() == Role.ADMINISTRATOR)
+            .collect(Collectors.toList());
+    User admin = admins.get(0);
 
-    private static HttpServer startServer() {
-        // Create a resource config that scans for JAX-RS resources and providers
-        // in com.github.polimi_mt_acg.back2school.api.v1.subjects.resources package
-        final ResourceConfig rc =
-                new ResourceConfig()
-                        .register(AuthenticationEndpoint.class)
-                        .packages("com.github.polimi_mt_acg.back2school.api.v1.classrooms")
-                        .register(JacksonCustomMapper.class)
-                        .register(JacksonFeature.class);
+    // Create a custom classroom
+    Classroom classroom = makeClassroom();
 
-        // create and start a new instance of grizzly http server
-        // exposing the Jersey application at BASE_URI
-        return GrizzlyHttpServerFactory.createHttpServer(URI.create(RestFactory.BASE_URI), rc);
-    }
+    // Authenticate the admin
+    WebTarget target = RestFactory.buildWebTarget();
+    // Authenticate
+    String token = RestFactory.authenticate(admin.getEmail(), admin.getSeedPassword());
+    assertNotNull(token);
+    assertTrue(!token.isEmpty());
 
-    @Test
-    public void getClassrooms() throws IOException {
-        // Get Database seeds
-        List<User> admins =
-                (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioClassrooms", "users.json");
+    // Set target to /notifications/send-to-teachers
+    target = target.path("classrooms");
 
-        // For each administrator
-        for (User admin : admins) {
-            if (admin.getRole() == Role.ADMINISTRATOR) {
-                // Build the Client
-                WebTarget target = RestFactory.buildWebTarget();
-                // Authenticate
-                String token = RestFactory.authenticate(admin.getEmail(), admin.getSeedPassword());
-                assertNotNull(token);
-                assertTrue(!token.isEmpty());
+    // Set token and build the POST request
+    Invocation request =
+        target.request().header(HttpHeaders.AUTHORIZATION, token).buildPost(Entity.json(classroom));
 
-                // Set target to /notifications
-                target = target.path("classrooms");
+    // Invoke the request
+    Response response = request.invoke();
+    assertEquals(Status.OK.getStatusCode(), response.getStatus());
 
-                // Set token and build the GET request
-                Invocation request =
-                        target
-                                .request(MediaType.APPLICATION_JSON)
-                                .header(HttpHeaders.AUTHORIZATION, token)
-                                .buildGet();
+    Classroom responseSubj = response.readEntity(Classroom.class);
 
-                // Invoke the request
-                ClassroomResponse response = request.invoke(ClassroomResponse.class);
-                assertNotNull(response);
+    // Print it
+    ObjectMapper mapper = RestFactory.objectMapper();
+    System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(responseSubj));
 
-                // Print it
-                ObjectMapper mapper = RestFactory.objectMapper();
-                System.out.println("----CLASSROOMS----"+mapper.writerWithDefaultPrettyPrinter().writeValueAsString(response));
-            }
-        }
-    }
+    assertNotNull(responseSubj);
+    assertEquals(responseSubj.getName(), classroom.getName());
+    assertEquals(responseSubj.getBuilding(), classroom.getBuilding());
+    assertEquals(responseSubj.getFloor(), classroom.getFloor());
+  }
 
+  private Classroom makeClassroom() {
+    Classroom cr = new Classroom();
+    cr.setName("A.1.1");
+    cr.setBuilding("BL1");
+    cr.setFloor(2);
+    return cr;
+  }
 }
