@@ -87,7 +87,7 @@ public class SubjectsResourceTest {
         assertNotNull(token);
         assertTrue(!token.isEmpty());
 
-        // Set target to /notifications
+        // Set target to /subjects
         target = target.path("subjects");
 
         // Set token and build the GET request
@@ -104,7 +104,7 @@ public class SubjectsResourceTest {
         // Print it
         ObjectMapper mapper = RestFactory.objectMapper();
         System.out.println(
-            "----SUBJECTS----"
+            "----SUBJECTSGET----"
                 + mapper.writerWithDefaultPrettyPrinter().writeValueAsString(response));
       }
     }
@@ -133,7 +133,7 @@ public class SubjectsResourceTest {
     assertNotNull(token);
     assertTrue(!token.isEmpty());
 
-    // Set target to /notifications/send-to-teachers
+    // Set target to /subjects
     target = target.path("subjects");
 
     // Set token and build the POST request
@@ -148,11 +148,52 @@ public class SubjectsResourceTest {
 
     // Print it
     ObjectMapper mapper = RestFactory.objectMapper();
-    System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(responseSubj));
+    System.out.println("---SUBJECTPOST---"+mapper.writerWithDefaultPrettyPrinter().writeValueAsString(responseSubj));
 
     assertNotNull(responseSubj);
     assertEquals(responseSubj.getName(), subject.getName());
     assertEquals(responseSubj.getDescription(), subject.getDescription());
+  }
+
+  @Test
+  public void getSubjectID() throws JsonProcessingException {
+    // Get an admin
+    List<User> admins =
+        (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioSubjects", "users.json");
+
+    admins =
+        admins
+            .stream()
+            .filter(user -> user.getRole() == Role.ADMINISTRATOR)
+            .collect(Collectors.toList());
+    User admin = admins.get(0);
+
+    // Authenticate the admin
+    WebTarget target = RestFactory.buildWebTarget();
+    // Authenticate
+    String token = RestFactory.authenticate(admin.getEmail(), admin.getSeedPassword());
+    assertNotNull(token);
+    assertTrue(!token.isEmpty());
+
+    // Set target to /subjects/1
+    target = target.path("subjects").path("1");
+
+    // Set token and build the GET request
+    Invocation request =
+        target
+            .request(MediaType.APPLICATION_JSON)
+            .header(HttpHeaders.AUTHORIZATION, token)
+            .buildGet();
+
+    // Invoke the request
+    SubjectResponse response = request.invoke(SubjectResponse.class);
+    assertNotNull(response);
+
+    // Print it
+    ObjectMapper mapper = RestFactory.objectMapper();
+    System.out.println(
+        "----SUBJECTS / ID ----"
+            + mapper.writerWithDefaultPrettyPrinter().writeValueAsString(response));
   }
 
   private Subject makeSubject() {

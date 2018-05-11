@@ -44,7 +44,7 @@ public class SubjectResource {
   @GET
   @Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
   @AdministratorSecured
-  public Subject getSubjectID(@PathParam("id") int id) {
+  public SubjectResponse getSubjectID(@PathParam("id") int id) {
     DatabaseHandler dhi = DatabaseHandler.getInstance();
     Session session = dhi.getNewSession();
     session.beginTransaction();
@@ -53,6 +53,6 @@ public class SubjectResource {
             .getListSelectFromWhereEqual(Subject.class, Subject_.id, id, session);
 
     session.close();
-    return subjects.get(0);
+    return new SubjectResponse(subjects);
   }
 }
