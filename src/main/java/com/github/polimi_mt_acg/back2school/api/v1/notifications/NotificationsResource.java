@@ -14,6 +14,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -22,6 +23,7 @@ import org.hibernate.Session;
 
 @Path("notifications")
 public class NotificationsResource {
+
   @GET
   @Produces(javax.ws.rs.core.MediaType.APPLICATION_JSON)
   @AdministratorSecured
@@ -38,20 +40,13 @@ public class NotificationsResource {
   @Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
   @AdministratorSecured
   public Response sendNotificationToTeachers(
-      NotificationGeneralTeachers notification, @Context HttpHeaders hh) {
+      NotificationGeneralTeachers notification, @Context ContainerRequestContext crc) {
 
-    // Query the notification creator
-    DatabaseHandler dhi = DatabaseHandler.getInstance();
-    Session session = dhi.getNewSession();
-    String token = hh.getHeaderString(HttpHeaders.AUTHORIZATION);
-    session.beginTransaction();
-    User creator = getCreator(token, dhi, session);
+    // Get the notification creator
+    User creator = AuthenticationSession.getCurrentUser(crc);
 
-    // Fill creator field and persist it
-    notification.setCreator(creator);
-    session.persist(notification);
-    session.getTransaction().commit();
-    session.close();
+    // Persist the notification
+    saveNotificationWithCreator(notification, creator);
 
     return Response.ok(notification, MediaType.APPLICATION_JSON).build();
   }
@@ -61,28 +56,24 @@ public class NotificationsResource {
   @Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
   @AdministratorSecured
   public Response sendNotificationToParents(
-      NotificationGeneralParents notification, @Context HttpHeaders hh) {
+      NotificationGeneralParents notification, @Context ContainerRequestContext crc) {
 
-    // Query the notification creator
-    DatabaseHandler dhi = DatabaseHandler.getInstance();
-    Session session = dhi.getNewSession();
-    String token = hh.getHeaderString(HttpHeaders.AUTHORIZATION);
-    session.beginTransaction();
-    User creator = getCreator(token, dhi, session);
+    // Get the notification creator
+    User creator = AuthenticationSession.getCurrentUser(crc);
 
-    // Fill creator field and persist it
-    notification.setCreator(creator);
-    session.persist(notification);
-    session.getTransaction().commit();
-    session.close();
+    // Persist the notification
+    saveNotificationWithCreator(notification, creator);
 
     return Response.ok(notification, MediaType.APPLICATION_JSON).build();
   }
 
-  private User getCreator(String token, DatabaseHandler dhi, Session session) {
-    List<AuthenticationSession> results =
-        dhi.getListSelectFromWhereEqual(
-            AuthenticationSession.class, AuthenticationSession_.token, token, session);
-    return results.get(0).getUser();
+  private void saveNotificationWithCreator(Notification notification, User creator) {
+    // Fill creator field and persist it
+    Session session = DatabaseHandler.getInstance().getNewSession();
+    session.beginTransaction();
+    notification.setCreator(creator);
+    session.persist(notification);
+    session.getTransaction().commit();
+    session.close();
   }
 }
