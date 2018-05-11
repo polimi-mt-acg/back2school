@@ -18,6 +18,12 @@ public class TestCategory {
   /** Class for unit tests. */
   public interface Unit {}
 
+  /** Class for endpoint tests. */
+  public interface Endpoint {}
+
+  /** Class for authenticated endpoint tests. */
+  public interface AuthEndpoint {}
+
   /** Class for integration tests. */
   public interface Integration {}
 }

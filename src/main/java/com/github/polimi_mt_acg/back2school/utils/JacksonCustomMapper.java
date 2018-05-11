@@ -1,4 +1,4 @@
-package com.github.polimi_mt_acg.back2school.api.v1;
+package com.github.polimi_mt_acg.back2school.utils;
 
 import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.databind.ObjectMapper;

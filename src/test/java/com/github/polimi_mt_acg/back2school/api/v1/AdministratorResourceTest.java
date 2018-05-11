@@ -6,10 +6,14 @@ import static org.junit.Assert.assertTrue;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.polimi_mt_acg.back2school.api.v1.administrators.AdministratorResponse;
+import com.github.polimi_mt_acg.back2school.api.v1.auth.AuthenticationResource;
 import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseSeeder;
+import com.github.polimi_mt_acg.back2school.utils.JacksonCustomMapper;
+import com.github.polimi_mt_acg.back2school.utils.TestCategory;
 import com.github.polimi_mt_acg.back2school.utils.rest.RestFactory;
+
 import java.io.IOException;
 import java.net.URI;
 import java.util.Iterator;
@@ -26,6 +30,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 public class AdministratorResourceTest {
 
@@ -54,7 +59,7 @@ public class AdministratorResourceTest {
     // in com.github.polimi_mt_acg.back2school.api.v1.administrators.resources package
     final ResourceConfig rc =
         new ResourceConfig()
-            .register(AuthenticationEndpoint.class)
+            .register(AuthenticationResource.class)
             .packages("com.github.polimi_mt_acg.back2school.api.v1.administrators")
             .register(JacksonCustomMapper.class)
             .register(JacksonFeature.class);
@@ -65,8 +70,9 @@ public class AdministratorResourceTest {
   }
 
   @Test
+  @Category(TestCategory.AuthEndpoint.class)
   public void getAdministrators() throws IOException {
-    // Get Database seeds
+    // Get administrators seeds
     List<User> admins =
         (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioAdministrators", "users.json");
 
@@ -75,7 +81,9 @@ public class AdministratorResourceTest {
       // Build the Client
       WebTarget target = RestFactory.buildWebTarget();
       // Authenticate
-      String token = RestFactory.authenticate(admin.getEmail(), admin.getSeedPassword());
+      String token =
+          RestFactory.doLoginGetToken(admin.getEmail(), admin.getSeedPassword());
+
       assertNotNull(token);
       assertTrue(!token.isEmpty());
 
@@ -110,6 +118,7 @@ public class AdministratorResourceTest {
   }
 
   @Test(expected = NotAuthorizedException.class)
+  @Category(TestCategory.AuthEndpoint.class)
   public void getAdministratorsUnauthorized() throws Exception {
     // Get Database seeds
     List<User> admins =

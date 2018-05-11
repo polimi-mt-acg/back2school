@@ -37,50 +37,20 @@ public class AdministratorSecurityContext implements ContainerRequestFilter {
    */
   @Override
   public void filter(ContainerRequestContext requestContext) throws IOException {
-    // Get the Authorization header from the request
-    String authorizationHeader = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
+    User currentUser = AuthenticationSession.getCurrentUser(requestContext);
 
-    // Validate the Authorization header
-    if (authorizationHeader == null || authorizationHeader.isEmpty()) {
-      abortWithUnauthorized(requestContext);
-    } else {
-      // TODO: Should we have a more complex auth header?
-      String token = authorizationHeader.trim();
-
-      if (!isTokenValid(token)) {
-        abortWithUnauthorized(requestContext);
-      }
-    }
-  }
-
-  private void abortWithUnauthorized(ContainerRequestContext requestContext) {
     // Abort the filter chain with a 401 status code response
-    requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
-  }
 
-  private boolean isTokenValid(String token) {
-    // Check if the token was issued by the server and if it's not expired.
-    // If so, check if the User is an admin. If not, abort.
-    Session session = DatabaseHandler.getInstance().getNewSession();
-    session.beginTransaction();
-    List<AuthenticationSession> results =
-        DatabaseHandler.getInstance()
-            .getListSelectFromWhereEqual(
-                AuthenticationSession.class, AuthenticationSession_.token, token, session);
-
-    boolean isValid = false;
-    if (results.size() > 0) {
-      AuthenticationSession authSession = results.get(0);
-      // TODO: Check token expiration
-      if (!authSession.isCancelled()) {
-        User.Role role = authSession.getUser().getRole();
-        if (role == User.Role.ADMINISTRATOR) {
-          isValid = true;
-        }
-      }
+    // if there is no user logged in
+    if (currentUser == null) {
+      requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
+      return;
     }
-    session.getTransaction().commit();
-    session.close();
-    return isValid;
+
+    // if the user logged has not the correct role
+    if (currentUser.getRole() != User.Role.ADMINISTRATOR) {
+      requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
+      return;
+    }
   }
 }
