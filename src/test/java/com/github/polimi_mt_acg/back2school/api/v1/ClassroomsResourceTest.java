@@ -106,7 +106,7 @@ public class ClassroomsResourceTest {
         // Print it
         ObjectMapper mapper = RestFactory.objectMapper();
         System.out.println(
-            "----CLASSROOMS----"
+            "----CLASSROOMSGET----"
                 + mapper.writerWithDefaultPrettyPrinter().writeValueAsString(response));
       }
     }
@@ -156,6 +156,47 @@ public class ClassroomsResourceTest {
     assertEquals(responseSubj.getName(), classroom.getName());
     assertEquals(responseSubj.getBuilding(), classroom.getBuilding());
     assertEquals(responseSubj.getFloor(), classroom.getFloor());
+  }
+
+  @Test
+  public void getClassroomID() throws JsonProcessingException {
+    // Get an admin
+    List<User> admins =
+        (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioClassrooms", "users.json");
+
+    admins =
+        admins
+            .stream()
+            .filter(user -> user.getRole() == Role.ADMINISTRATOR)
+            .collect(Collectors.toList());
+    User admin = admins.get(0);
+
+    // Authenticate the admin
+    WebTarget target = RestFactory.buildWebTarget();
+    // Authenticate
+    String token = RestFactory.authenticate(admin.getEmail(), admin.getSeedPassword());
+    assertNotNull(token);
+    assertTrue(!token.isEmpty());
+
+    // Set target to /subjects/1
+    target = target.path("classrooms").path("1");
+
+    // Set token and build the GET request
+    Invocation request =
+        target
+            .request(MediaType.APPLICATION_JSON)
+            .header(HttpHeaders.AUTHORIZATION, token)
+            .buildGet();
+
+    // Invoke the request
+    ClassroomResponse response = request.invoke(ClassroomResponse.class);
+    assertNotNull(response);
+
+    // Print it
+    ObjectMapper mapper = RestFactory.objectMapper();
+    System.out.println(
+        "----CLASSROOMS / ID ----"
+            + mapper.writerWithDefaultPrettyPrinter().writeValueAsString(response));
   }
 
   private Classroom makeClassroom() {

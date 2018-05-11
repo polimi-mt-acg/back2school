@@ -41,12 +41,12 @@ public class ClassroomResource {
 
     return Response.ok(classroom, MediaType.APPLICATION_JSON).build();
   }
-  /*
+
   @Path("{id}")
   @GET
   @Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
   @AdministratorSecured
-  public Classroom getClassroomID (@PathParam("id") int id){
+  public ClassroomResponse getClassroomID (@PathParam("id") int id){
     DatabaseHandler dhi = DatabaseHandler.getInstance();
     Session session = dhi.getNewSession();
     session.beginTransaction();
@@ -55,7 +55,7 @@ public class ClassroomResource {
                     .getListSelectFromWhereEqual(Classroom.class, Classroom_.id, id, session);
 
     session.close();
-    return classrooms.get(0);
-  }*/
+    return new ClassroomResponse(classrooms);
+  }
 
 }
