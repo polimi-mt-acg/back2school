@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.github.polimi_mt_acg.back2school.api.v1.Credentials;
-import com.github.polimi_mt_acg.back2school.api.v1.JacksonCustomMapper;
+import com.github.polimi_mt_acg.back2school.api.v1.auth.LoginRequest;
+import com.github.polimi_mt_acg.back2school.utils.JacksonCustomMapper;
 import java.net.URI;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -21,19 +21,21 @@ public class RestFactory {
   private static ObjectMapper mapper = null;
 
   /**
-   * A convenient method to create a client requesting to /auth endpoint for a session token.
+   * A convenient method to create a client requesting the login to the
+   * endpoint /auth/login getting back session token.
    *
    * @param email The user login email.
    * @param password The user login password.
    * @return The session token if {@code email} and {@code password} are valid.
    * @throws javax.ws.rs.ForbiddenException if {@code email} and {@code password} are not valid.
    */
-  public static String authenticate(String email, String password) {
+  public static String doLoginGetToken(String email, String password) {
     Client client = buildClient();
-    WebTarget target = client.target(URI.create(BASE_URI)).path("auth");
+    WebTarget target = client.target(URI.create(BASE_URI)).path("auth").path("login");
+
     return target
         .request(MediaType.APPLICATION_JSON)
-        .buildPost(Entity.json(new Credentials(email, password)))
+        .buildPost(Entity.json(new LoginRequest(email, password)))
         .invoke(String.class);
   }
 
