@@ -21,10 +21,8 @@ public class ClassroomResource {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
-  public ClassroomResponse getClassrooms()throws JsonProcessingException {
-    List<Classroom> classrooms =
-            DatabaseHandler.getInstance()
-                    .getListSelectFrom(Classroom.class);
+  public ClassroomResponse getClassrooms() throws JsonProcessingException {
+    List<Classroom> classrooms = DatabaseHandler.getInstance().getListSelectFrom(Classroom.class);
 
     return new ClassroomResponse(classrooms);
   }
@@ -32,8 +30,7 @@ public class ClassroomResource {
   @POST
   @Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
   @AdministratorSecured
-  public Response postClassrooms(
-          Classroom classroom, @Context HttpHeaders hh) {
+  public Response postClassrooms(Classroom classroom, @Context HttpHeaders hh) {
 
     DatabaseHandler dhi = DatabaseHandler.getInstance();
     Session session = dhi.getNewSession();
@@ -62,4 +59,3 @@ public class ClassroomResource {
   }*/
 
 }
-

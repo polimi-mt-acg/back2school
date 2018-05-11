@@ -1,6 +1,5 @@
 package com.github.polimi_mt_acg.back2school.api.v1.subjects;
 
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.polimi_mt_acg.back2school.api.v1.administrators.AdministratorSecured;
 import com.github.polimi_mt_acg.back2school.model.*;
@@ -20,10 +19,8 @@ public class SubjectResource {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
-  public SubjectResponse getSubjects()throws JsonProcessingException {
-    List<Subject> subjects =
-        DatabaseHandler.getInstance()
-            .getListSelectFrom(Subject.class);
+  public SubjectResponse getSubjects() throws JsonProcessingException {
+    List<Subject> subjects = DatabaseHandler.getInstance().getListSelectFrom(Subject.class);
 
     return new SubjectResponse(subjects);
   }
@@ -31,8 +28,7 @@ public class SubjectResource {
   @POST
   @Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
   @AdministratorSecured
-  public Response postSubjects(
-          Subject subject, @Context HttpHeaders hh) {
+  public Response postSubjects(Subject subject, @Context HttpHeaders hh) {
 
     DatabaseHandler dhi = DatabaseHandler.getInstance();
     Session session = dhi.getNewSession();
@@ -48,17 +44,15 @@ public class SubjectResource {
   @GET
   @Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
   @AdministratorSecured
-  public Subject getSubjectID (@PathParam("id") int id){
+  public Subject getSubjectID(@PathParam("id") int id) {
     DatabaseHandler dhi = DatabaseHandler.getInstance();
     Session session = dhi.getNewSession();
     session.beginTransaction();
     List<Subject> subjects =
-            DatabaseHandler.getInstance()
-                    .getListSelectFromWhereEqual(Subject.class, Subject_.id, id, session);
+        DatabaseHandler.getInstance()
+            .getListSelectFromWhereEqual(Subject.class, Subject_.id, id, session);
 
     session.close();
     return subjects.get(0);
   }
-
 }
-
