@@ -230,4 +230,45 @@ public class User implements DeserializeToPersistInterface {
     TEACHER,
     ADMINISTRATOR
   }
+
+  /**
+   * Test weak equality against another object. Attributes tested to be equal: name, surname, email,
+   * role.
+   *
+   * @param obj The object to be compared.
+   * @return true if weak equality holds.
+   */
+  public boolean weakEquals(Object obj) {
+    if (obj == null) {
+      return false;
+    }
+    if (!User.class.isAssignableFrom(obj.getClass())) {
+      return false;
+    }
+    final User other = (User) obj;
+
+    // skip id
+
+    // name
+    if ((this.getName() == null)
+        ? (other.getName() != null)
+        : !this.getName().equals(other.getName())) return false;
+
+    // surname
+    if ((this.getSurname() == null)
+        ? (other.getSurname() != null)
+        : !this.getSurname().equals(other.getSurname())) return false;
+
+    // email
+    if ((this.getEmail() == null)
+        ? (other.getEmail() != null)
+        : !this.getEmail().equals(other.getEmail())) return false;
+
+    // role
+    if ((this.getRole() == null)
+        ? (other.getRole() != null)
+        : !this.getRole().equals(other.getRole())) return false;
+
+    return true;
+  }
 }
