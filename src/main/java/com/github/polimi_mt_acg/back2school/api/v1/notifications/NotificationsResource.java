@@ -2,7 +2,6 @@ package com.github.polimi_mt_acg.back2school.api.v1.notifications;
 
 import com.github.polimi_mt_acg.back2school.api.v1.administrators.AdministratorSecured;
 import com.github.polimi_mt_acg.back2school.model.AuthenticationSession;
-import com.github.polimi_mt_acg.back2school.model.AuthenticationSession_;
 import com.github.polimi_mt_acg.back2school.model.Notification;
 import com.github.polimi_mt_acg.back2school.model.NotificationGeneralParents;
 import com.github.polimi_mt_acg.back2school.model.NotificationGeneralTeachers;
@@ -16,7 +15,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.hibernate.Session;
@@ -67,6 +65,12 @@ public class NotificationsResource {
     return Response.ok(notification, MediaType.APPLICATION_JSON).build();
   }
 
+  /**
+   * Associate the creator user to the notification and save the latter.
+   *
+   * @param notification The notification to which associate the user.
+   * @param creator The creator user.
+   */
   private void saveNotificationWithCreator(Notification notification, User creator) {
     // Fill creator field and persist it
     Session session = DatabaseHandler.getInstance().getNewSession();

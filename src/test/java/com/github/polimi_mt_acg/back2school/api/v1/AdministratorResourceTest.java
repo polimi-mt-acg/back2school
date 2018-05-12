@@ -2,7 +2,6 @@ package com.github.polimi_mt_acg.back2school.api.v1;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.polimi_mt_acg.back2school.api.v1.administrators.AdministratorResponse;
@@ -20,7 +19,6 @@ import java.util.List;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.junit.AfterClass;
@@ -62,22 +60,9 @@ public class AdministratorResourceTest {
 
     // For each administrator
     for (User admin : admins) {
-      // Build the Client
-      WebTarget target = RestFactory.buildWebTarget();
-      // Authenticate
-      String token = RestFactory.doLoginGetToken(admin.getEmail(), admin.getSeedPassword());
-
-      assertNotNull(token);
-      assertTrue(!token.isEmpty());
-
-      // Set target to /administrators
-      target = target.path("administrators");
-
-      // Set token and build the GET request
+      // Create a get request
       Invocation request =
-          target
-              .request(MediaType.APPLICATION_JSON)
-              .header(HttpHeaders.AUTHORIZATION, token)
+          RestFactory.getAuthenticatedInvocationBuilder(new String[] {"administrators"}, admin)
               .buildGet();
 
       // Invoke the request
@@ -103,13 +88,6 @@ public class AdministratorResourceTest {
   @Test(expected = NotAuthorizedException.class)
   @Category(TestCategory.AuthEndpoint.class)
   public void getAdministratorsUnauthorized() throws Exception {
-    // Get Database seeds
-    List<User> admins =
-        (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioAdministrators", "users.json");
-
-    // Get a sample administrator
-    User admin = admins.get(0);
-
     // Build the Client
     WebTarget target = RestFactory.buildWebTarget();
 
