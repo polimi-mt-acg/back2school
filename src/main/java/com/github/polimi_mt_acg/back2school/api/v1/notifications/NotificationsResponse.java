@@ -10,13 +10,22 @@ import javax.xml.bind.annotation.XmlRootElement;
  * The response to a request to /notifications REST API. The serialized JSON format has the
  * following structure: <code>{
  *   "notifications" : [ {
- *     "role" : "ADMINISTRATOR",
- *     "name" : "Name 1",
- *     "surname" : "Surname 1",
- *     "email" : "namesurname@mail.com"
+ *     "type" : "general_teachers",
+ *     "creator" : {
+ *         "role" : "ADMINISTRATOR",
+ *         "name" : "David",
+ *         "surname" : "SurnameDavid",
+ *         "email" : "david@email.com"
+ *     },
+ *     "datetime" : [ 2018, 5, 11, 15, 15, 55, 52000000 ],
+ *     "subject" : "Test subject",
+ *     "text" : "Test notification text"
  *   }, ...]
  * }</code>
  */
+
+
+
 @XmlRootElement
 public class NotificationsResponse {
 
@@ -33,12 +42,13 @@ public class NotificationsResponse {
     this.notifications = notifications;
   }
 
-  @JsonProperty public List<Notification> getNotifications() {
+  @JsonProperty
+  public List<Notification> getNotifications() {
     return notifications;
   }
 
-  @JsonProperty public void setNotifications(
-      List<Notification> notifications) {
+  @JsonProperty
+  public void setNotifications(List<Notification> notifications) {
     this.notifications = notifications;
   }
 }

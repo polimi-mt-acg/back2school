@@ -5,24 +5,27 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.github.polimi_mt_acg.back2school.api.v1.auth.LoginRequest;
+import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.utils.JacksonCustomMapper;
 import java.net.URI;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.client.*;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import org.glassfish.jersey.jackson.JacksonFeature;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class RestFactory {
 
   /** The base URI of all the REST APIs */
-  public static final String BASE_URI = "http://localhost:8080/v1/";
+  public static final String BASE_URI = "http://localhost:8080/api/v1/";
+
   private static ObjectMapper mapper = null;
 
   /**
-   * A convenient method to create a client requesting the login to the
-   * endpoint /auth/login getting back session token.
+   * A convenient method to create a client requesting the login to the endpoint /auth/login getting
+   * back session token.
    *
    * @param email The user login email.
    * @param password The user login password.
@@ -39,9 +42,48 @@ public class RestFactory {
         .invoke(String.class);
   }
 
+  /**
+   * Build a WebTarget that starts from the base URI.
+   *
+   * @return the target.
+   */
   public static WebTarget buildWebTarget() {
     Client client = buildClient();
     return client.target(URI.create(BASE_URI));
+  }
+
+
+  /**
+   * Authenticate the given target with the provided user and return an invocation builder.
+   *
+   * @param user The user to be authenticated.
+   * @return
+   */
+  public static Invocation.Builder getAuthenticatedInvocationBuilder(String[] path, User user) {
+    // Build the Client
+    WebTarget target = RestFactory.buildWebTarget();
+
+    // Set target to /notifications
+    for (String p : path) {
+      target = target.path(p);
+    }
+
+    return getAuthenticatedInvocationBuilder(target, user);
+  }
+
+  /**
+   * Authenticate the given target with the provided user and return an invocation builder.
+   *
+   * @param user The user to be authenticated.
+   * @return
+   */
+  public static Invocation.Builder getAuthenticatedInvocationBuilder(WebTarget target, User user) {
+    // Authenticate
+    String token = RestFactory.doLoginGetToken(user.getEmail(), user.getSeedPassword());
+    assertNotNull(token);
+    assertTrue(!token.isEmpty());
+
+    return target.request(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, token);
   }
 
   public static ObjectMapper objectMapper() {
