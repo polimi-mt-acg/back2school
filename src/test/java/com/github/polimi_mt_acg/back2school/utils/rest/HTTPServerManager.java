@@ -10,7 +10,7 @@ import java.net.URI;
 
 public class HTTPServerManager {
 
-  public static HttpServer startServer(Class resourceClassName, String packages) {
+  public static HttpServer startServer(Class resourceClassName, String... packages) {
 
     // Create a resource config that scans for JAX-RS resources
     final ResourceConfig rc =
