@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.logging.Logger;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -21,6 +22,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -64,6 +66,9 @@ public class User implements DeserializeToPersistInterface {
     inverseJoinColumns = @JoinColumn(name = "user_id")
   )
   private List<Notification> notificationsRead = new ArrayList<>();
+
+  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<User> children = new ArrayList<>();
 
   @Override
   public void prepareToPersist() {
@@ -184,6 +189,34 @@ public class User implements DeserializeToPersistInterface {
 
   public void addNotificationsRead(Notification notification) {
     this.notificationsRead.add(notification);
+  }
+
+  @JsonIgnore
+  public List<User> getChildren() {
+    return children;
+  }
+
+  public void addChild(User student) {
+    children.add(student);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    User user = (User) o;
+
+    return id == user.id;
+  }
+
+  @Override
+  public int hashCode() {
+    return id;
   }
 
   public enum Role {
