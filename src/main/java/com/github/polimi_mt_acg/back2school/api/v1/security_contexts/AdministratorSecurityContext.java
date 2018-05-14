@@ -1,19 +1,13 @@
-package com.github.polimi_mt_acg.back2school.api.v1.administrators;
+package com.github.polimi_mt_acg.back2school.api.v1.security_contexts;
 
 import com.github.polimi_mt_acg.back2school.model.AuthenticationSession;
-import com.github.polimi_mt_acg.back2school.model.AuthenticationSession_;
 import com.github.polimi_mt_acg.back2school.model.User;
-import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import java.io.IOException;
-import java.util.List;
 import javax.annotation.Priority;
-import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
-import org.hibernate.Session;
 
 /**
  * AdministratorSecurityContext implements a request filter for JAX-RS REST APIs. It implements a
@@ -22,7 +16,7 @@ import org.hibernate.Session;
  */
 @AdministratorSecured
 @Provider
-@Priority(Priorities.AUTHENTICATION)
+@Priority(SecurityContextPriority.ADMINISTRATOR)
 public class AdministratorSecurityContext implements ContainerRequestFilter {
 
   /**

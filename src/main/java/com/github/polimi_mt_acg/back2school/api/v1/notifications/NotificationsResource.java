@@ -1,6 +1,6 @@
 package com.github.polimi_mt_acg.back2school.api.v1.notifications;
 
-import com.github.polimi_mt_acg.back2school.api.v1.administrators.AdministratorSecured;
+import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.AdministratorSecured;
 import com.github.polimi_mt_acg.back2school.model.AuthenticationSession;
 import com.github.polimi_mt_acg.back2school.model.AuthenticationSession_;
 import com.github.polimi_mt_acg.back2school.model.Notification;
@@ -40,18 +40,7 @@ public class NotificationsResource {
   public Response sendNotificationToTeachers(
       NotificationGeneralTeachers notification, @Context HttpHeaders hh) {
 
-    // Query the notification creator
-    DatabaseHandler dhi = DatabaseHandler.getInstance();
-    Session session = dhi.getNewSession();
-    String token = hh.getHeaderString(HttpHeaders.AUTHORIZATION);
-    session.beginTransaction();
-    User creator = getCreator(token, dhi, session);
-
-    // Fill creator field and persist it
-    notification.setCreator(creator);
-    session.persist(notification);
-    session.getTransaction().commit();
-    session.close();
+    notification = sendNotificationTo(notification, hh);
 
     return Response.ok(notification, MediaType.APPLICATION_JSON).build();
   }
@@ -63,6 +52,12 @@ public class NotificationsResource {
   public Response sendNotificationToParents(
       NotificationGeneralParents notification, @Context HttpHeaders hh) {
 
+    notification = sendNotificationTo(notification, hh);
+
+    return Response.ok(notification, MediaType.APPLICATION_JSON).build();
+  }
+
+  private <T extends Notification> T sendNotificationTo(T notification, HttpHeaders hh) {
     // Query the notification creator
     DatabaseHandler dhi = DatabaseHandler.getInstance();
     Session session = dhi.getNewSession();
@@ -76,7 +71,7 @@ public class NotificationsResource {
     session.getTransaction().commit();
     session.close();
 
-    return Response.ok(notification, MediaType.APPLICATION_JSON).build();
+    return notification;
   }
 
   private User getCreator(String token, DatabaseHandler dhi, Session session) {
