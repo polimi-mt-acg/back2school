@@ -2,7 +2,6 @@ package com.github.polimi_mt_acg.back2school.api.v1;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.polimi_mt_acg.back2school.api.v1.administrators.AdministratorResponse;
@@ -10,23 +9,18 @@ import com.github.polimi_mt_acg.back2school.api.v1.auth.AuthenticationResource;
 import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseSeeder;
-import com.github.polimi_mt_acg.back2school.utils.JacksonCustomMapper;
 import com.github.polimi_mt_acg.back2school.utils.TestCategory;
+import com.github.polimi_mt_acg.back2school.utils.rest.HTTPServerManager;
 import com.github.polimi_mt_acg.back2school.utils.rest.RestFactory;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.Iterator;
 import java.util.List;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import org.glassfish.grizzly.http.server.HttpServer;
-import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
-import org.glassfish.jersey.jackson.JacksonFeature;
-import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -42,7 +36,10 @@ public class AdministratorResourceTest {
     DatabaseSeeder.deployScenario("scenarioAdministrators");
 
     // Run HTTP server
-    server = startServer();
+    server =
+        HTTPServerManager.startServer(
+            AuthenticationResource.class,
+            "com.github.polimi_mt_acg.back2school.api.v1.administrators");
   }
 
   @AfterClass
@@ -54,21 +51,6 @@ public class AdministratorResourceTest {
     server.shutdownNow();
   }
 
-  private static HttpServer startServer() {
-    // Create a resource config that scans for JAX-RS resources and providers
-    // in com.github.polimi_mt_acg.back2school.api.v1.administrators.resources package
-    final ResourceConfig rc =
-        new ResourceConfig()
-            .register(AuthenticationResource.class)
-            .packages("com.github.polimi_mt_acg.back2school.api.v1.administrators")
-            .register(JacksonCustomMapper.class)
-            .register(JacksonFeature.class);
-
-    // create and start a new instance of grizzly http server
-    // exposing the Jersey application at BASE_URI
-    return GrizzlyHttpServerFactory.createHttpServer(URI.create(RestFactory.BASE_URI), rc);
-  }
-
   @Test
   @Category(TestCategory.AuthEndpoint.class)
   public void getAdministrators() throws IOException {
@@ -78,23 +60,9 @@ public class AdministratorResourceTest {
 
     // For each administrator
     for (User admin : admins) {
-      // Build the Client
-      WebTarget target = RestFactory.buildWebTarget();
-      // Authenticate
-      String token =
-          RestFactory.doLoginGetToken(admin.getEmail(), admin.getSeedPassword());
-
-      assertNotNull(token);
-      assertTrue(!token.isEmpty());
-
-      // Set target to /administrators
-      target = target.path("administrators");
-
-      // Set token and build the GET request
+      // Create a get request
       Invocation request =
-          target
-              .request(MediaType.APPLICATION_JSON)
-              .header(HttpHeaders.AUTHORIZATION, token)
+          RestFactory.getAuthenticatedInvocationBuilder(new String[] {"administrators"}, admin)
               .buildGet();
 
       // Invoke the request
@@ -120,13 +88,6 @@ public class AdministratorResourceTest {
   @Test(expected = NotAuthorizedException.class)
   @Category(TestCategory.AuthEndpoint.class)
   public void getAdministratorsUnauthorized() throws Exception {
-    // Get Database seeds
-    List<User> admins =
-        (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioAdministrators", "users.json");
-
-    // Get a sample administrator
-    User admin = admins.get(0);
-
     // Build the Client
     WebTarget target = RestFactory.buildWebTarget();
 

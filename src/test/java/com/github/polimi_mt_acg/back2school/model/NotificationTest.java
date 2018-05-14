@@ -6,7 +6,11 @@ import static org.junit.Assert.assertNotNull;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseSeeder;
 import com.github.polimi_mt_acg.back2school.utils.TestCategory;
+
+import java.lang.Class;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -27,124 +31,72 @@ public class NotificationTest {
   @Test
   @Category(TestCategory.Unit.class)
   public void testNotificationClassParentEntity() {
-    List<NotificationClassParent> seedNotificationsClassParent =
-        (List<NotificationClassParent>)
-            DatabaseSeeder.getEntitiesListFromSeed(
-                "scenarioA_unit_tests", "notifications_class_parent.json");
+    NotificationClassParent seedEntity = getSeedEntity(NotificationClassParent.class);
+    NotificationClassParent databaseEntity = getDatabaseEntity(NotificationClassParent.class);
 
-    assertNotNull(seedNotificationsClassParent);
-    assertEquals(seedNotificationsClassParent.size(), 1);
+    // common asserts of Notification class
+    testNotificationCommonAsserts(seedEntity, databaseEntity);
 
-    NotificationClassParent seedEntity = seedNotificationsClassParent.get(0);
-    // get entity from database
-    NotificationClassParent databaseEntity =
-        DatabaseHandler.getInstance().getListSelectFrom(NotificationClassParent.class).get(0);
-
-    // asserts beginning
-    assertNotNull(databaseEntity);
-    assertNotNull(databaseEntity.getCreator());
-    assertEquals(seedEntity.getDatetime().toString(), databaseEntity.getDatetime().toString());
-    assertEquals(seedEntity.getSubject(), databaseEntity.getSubject());
-    assertEquals(seedEntity.getText(), databaseEntity.getText());
+    // specific asserts
     assertEquals(seedEntity.getSeedTargetClassName(), databaseEntity.getTargetClass().getName());
   }
 
   @Test
   @Category(TestCategory.Unit.class)
   public void testNotificationClassTeacherEntity() {
-    List<NotificationClassTeacher> seedNotificationsClassTeacher =
-        (List<NotificationClassTeacher>)
-            DatabaseSeeder.getEntitiesListFromSeed(
-                "scenarioA_unit_tests", "notifications_class_teacher.json");
+    NotificationClassTeacher seedEntity = getSeedEntity(NotificationClassTeacher.class);
+    NotificationClassTeacher databaseEntity = getDatabaseEntity(NotificationClassTeacher.class);
 
-    assertNotNull(seedNotificationsClassTeacher);
-    assertEquals(seedNotificationsClassTeacher.size(), 1);
+    // common asserts of Notification class
+    testNotificationCommonAsserts(seedEntity, databaseEntity);
 
-    NotificationClassTeacher seedEntity = seedNotificationsClassTeacher.get(0);
-    // get entity from database
-    NotificationClassTeacher databaseEntity =
-        DatabaseHandler.getInstance().getListSelectFrom(NotificationClassTeacher.class).get(0);
-
-    // asserts beginning
-    assertNotNull(databaseEntity);
-    assertNotNull(databaseEntity.getCreator());
-    assertEquals(seedEntity.getDatetime().toString(), databaseEntity.getDatetime().toString());
-    assertEquals(seedEntity.getSubject(), databaseEntity.getSubject());
-    assertEquals(seedEntity.getText(), databaseEntity.getText());
+    // specific asserts
     assertEquals(seedEntity.getSeedTargetClassName(), databaseEntity.getTargetClass().getName());
   }
 
   @Test
   @Category(TestCategory.Unit.class)
-  public void testNotificationGeneralEntity() {
-    List<NotificationGeneralParents> seedNotificationsGeneral =
-        (List<NotificationGeneralParents>)
-            DatabaseSeeder.getEntitiesListFromSeed(
-                "scenarioA_unit_tests", "notifications_general_parents.json");
+  public void testNotificationGeneralParentsEntity() {
+    NotificationGeneralParents seedEntity = getSeedEntity(NotificationGeneralParents.class);
+    NotificationGeneralParents databaseEntity = getDatabaseEntity(NotificationGeneralParents.class);
 
-    assertNotNull(seedNotificationsGeneral);
-    assertEquals(seedNotificationsGeneral.size(), 1);
+    // common asserts of Notification class
+    testNotificationCommonAsserts(seedEntity, databaseEntity);
+  }
 
-    NotificationGeneralParents seedEntity = seedNotificationsGeneral.get(0);
-    // get entity from database
-    NotificationGeneralParents databaseEntity =
-        DatabaseHandler.getInstance().getListSelectFrom(NotificationGeneralParents.class).get(0);
+  @Test
+  @Category(TestCategory.Unit.class)
+  public void testNotificationGeneralTeachersEntity() {
+    NotificationGeneralTeachers seedEntity = getSeedEntity(NotificationGeneralTeachers.class);
+    NotificationGeneralTeachers databaseEntity = getDatabaseEntity(NotificationGeneralTeachers.class);
 
-    // asserts beginning
-    assertNotNull(databaseEntity);
-    assertNotNull(databaseEntity.getCreator());
-    assertEquals(seedEntity.getDatetime().toString(), databaseEntity.getDatetime().toString());
-    assertEquals(seedEntity.getSubject(), databaseEntity.getSubject());
-    assertEquals(seedEntity.getText(), databaseEntity.getText());
+    // common asserts of Notification class
+    testNotificationCommonAsserts(seedEntity, databaseEntity);
   }
 
   @Test
   @Category(TestCategory.Unit.class)
   public void testNotificationPersonalParentEntity() {
-    List<NotificationPersonalParent> seedNotificationsPersonalParent =
-        (List<NotificationPersonalParent>)
-            DatabaseSeeder.getEntitiesListFromSeed(
-                "scenarioA_unit_tests", "notifications_personal_parent.json");
+    NotificationPersonalParent seedEntity = getSeedEntity(NotificationPersonalParent.class);
+    NotificationPersonalParent databaseEntity = getDatabaseEntity(NotificationPersonalParent.class);
 
-    assertNotNull(seedNotificationsPersonalParent);
-    assertEquals(seedNotificationsPersonalParent.size(), 1);
+    // common asserts of Notification class
+    testNotificationCommonAsserts(seedEntity, databaseEntity);
 
-    NotificationPersonalParent seedEntity = seedNotificationsPersonalParent.get(0);
-    // get entity from database
-    NotificationPersonalParent databaseEntity =
-        DatabaseHandler.getInstance().getListSelectFrom(NotificationPersonalParent.class).get(0);
-
-    // asserts beginning
-    assertNotNull(databaseEntity);
-    assertNotNull(databaseEntity.getCreator());
-    assertEquals(seedEntity.getDatetime().toString(), databaseEntity.getDatetime().toString());
-    assertEquals(seedEntity.getSubject(), databaseEntity.getSubject());
-    assertEquals(seedEntity.getText(), databaseEntity.getText());
+    // specific asserts
     assertEquals(seedEntity.getSeedTargetParentEmail(), databaseEntity.getTargetUser().getEmail());
   }
 
   @Test
   @Category(TestCategory.Unit.class)
   public void testNotificationPersonalTeacherEntity() {
-    List<NotificationPersonalTeacher> seedNotificationsPersonalTeacher =
-        (List<NotificationPersonalTeacher>)
-            DatabaseSeeder.getEntitiesListFromSeed(
-                "scenarioA_unit_tests", "notifications_personal_teacher.json");
+    NotificationPersonalTeacher seedEntity = getSeedEntity(NotificationPersonalTeacher.class);
+    NotificationPersonalTeacher databaseEntity = getDatabaseEntity(NotificationPersonalTeacher.class);
 
-    assertNotNull(seedNotificationsPersonalTeacher);
-    assertEquals(seedNotificationsPersonalTeacher.size(), 1);
+    // common asserts of Notification class
+    testNotificationCommonAsserts(seedEntity, databaseEntity);
 
-    NotificationPersonalTeacher seedEntity = seedNotificationsPersonalTeacher.get(0);
-    // get entity from database
-    NotificationPersonalTeacher databaseEntity =
-        DatabaseHandler.getInstance().getListSelectFrom(NotificationPersonalTeacher.class).get(0);
-
-    // asserts beginning
-    assertNotNull(databaseEntity);
-    assertNotNull(databaseEntity.getCreator());
-    assertEquals(seedEntity.getDatetime().toString(), databaseEntity.getDatetime().toString());
-    assertEquals(seedEntity.getSubject(), databaseEntity.getSubject());
-    assertEquals(seedEntity.getText(), databaseEntity.getText());
+    // specific asserts
     assertEquals(seedEntity.getSeedTargetTeacherEmail(), databaseEntity.getTargetUser().getEmail());
   }
 
@@ -155,5 +107,59 @@ public class NotificationTest {
     // TODO
     // before this, it must work:
     // com.github.polimi_mt_acg.back2school.utils.json_mappers.SeedEntityNotificationRead$seedAssociateNotificationToUser()
+  }
+
+  /**
+   * Load a notification entity from the database by its class.
+   *
+   * @param className Notification class of which retrieve the entity.
+   * @param <T> The type of the class of the notification.
+   * @return
+   */
+  private <T> T getDatabaseEntity(Class<T> className) {
+    List<T> entities = DatabaseHandler.getInstance().getListSelectFrom(className);
+    assertNotNull(entities);
+    assertEquals(1, entities.size());
+    return entities.get(0);
+  }
+
+  /**
+   * Retrieve a notification entity from the seeds data by its class.
+   *
+   * @param className Notification class of which retrieve the entity.
+   * @param <T> The type of the class of the notification.
+   * @return
+   */
+  private <T> T getSeedEntity(Class className) {
+    List<Notification> seedNotifications =
+        (List<Notification>)
+            DatabaseSeeder.getEntitiesListFromSeed("scenarioA_unit_tests", "notifications.json");
+
+    List<T> entities =
+        (List<T>)
+            seedNotifications
+                .stream()
+                .filter(notification -> notification.getClass().equals(className))
+                .collect(Collectors.toList());
+    assertNotNull(entities);
+    assertEquals(1, entities.size());
+    return entities.get(0);
+  }
+
+  /**
+   * Perform common asserts on a Notification object.
+   *
+   * @param seedEntity The entity from the seeds
+   * @param databaseEntity The entity from the database
+   */
+  private void testNotificationCommonAsserts(Notification seedEntity, Notification databaseEntity) {
+    assertNotNull(seedEntity);
+
+    assertNotNull(databaseEntity);
+    assertNotNull(databaseEntity.getCreator());
+
+    assertEquals(seedEntity.getDatetime().toString(), databaseEntity.getDatetime().toString());
+    assertEquals(seedEntity.getSubject(), databaseEntity.getSubject());
+    assertEquals(seedEntity.getText(), databaseEntity.getText());
   }
 }
