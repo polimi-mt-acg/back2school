@@ -9,6 +9,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  * JAX-RS Resource for administrators entity (a {@link User User} with (A {@link User.Role Role}
@@ -20,11 +21,12 @@ public class AdministratorResource {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
-  public AdministratorResponse getAdministrators() {
+  public Response getAdministrators() {
     List<User> admins =
         DatabaseHandler.getInstance()
             .getListSelectFromWhereEqual(User.class, User_.role, User.Role.ADMINISTRATOR);
 
-    return new AdministratorResponse(admins);
+    AdministratorResponse response = new AdministratorResponse(admins);
+    return Response.ok(response, MediaType.APPLICATION_JSON_TYPE).build();
   }
 }
