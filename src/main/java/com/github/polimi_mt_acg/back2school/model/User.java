@@ -17,6 +17,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -67,7 +68,11 @@ public class User implements DeserializeToPersistInterface {
   )
   private List<Notification> notificationsRead = new ArrayList<>();
 
-  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+  @JoinTable(
+      name = "parent_children",
+      joinColumns = @JoinColumn(name = "child_id"),
+      inverseJoinColumns = @JoinColumn(name = "user_id"))
   private List<User> children = new ArrayList<>();
 
   @Override
@@ -120,7 +125,7 @@ public class User implements DeserializeToPersistInterface {
   public void setPassword(String password) {
     this.password = getStringHash(password);
   }
-
+  
   @JsonIgnore
   public String getSalt() {
     return salt;
