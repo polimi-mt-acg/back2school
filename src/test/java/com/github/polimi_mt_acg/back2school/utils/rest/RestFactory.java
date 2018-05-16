@@ -1,8 +1,5 @@
 package com.github.polimi_mt_acg.back2school.utils.rest;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -11,14 +8,13 @@ import com.github.polimi_mt_acg.back2school.api.v1.auth.LoginRequest;
 import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.utils.JacksonCustomMapper;
 import java.net.URI;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.client.*;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import org.glassfish.jersey.jackson.JacksonFeature;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class RestFactory {
 
@@ -56,10 +52,6 @@ public class RestFactory {
     return client.target(URI.create(BASE_URI));
   }
 
-  public static WebTarget buildWebTarget(URI uri) {
-    Client client = buildClient();
-    return client.target(uri);
-  }
 
   /**
    * Authenticate the given target with the provided user and return an invocation builder.
@@ -67,7 +59,7 @@ public class RestFactory {
    * @param user The user to be authenticated.
    * @return
    */
-  public static Invocation.Builder getAuthenticatedInvocationBuilder(User user, String... path) {
+  public static Invocation.Builder getAuthenticatedInvocationBuilder(String[] path, User user) {
     // Build the Client
     WebTarget target = RestFactory.buildWebTarget();
 
@@ -76,7 +68,7 @@ public class RestFactory {
       target = target.path(p);
     }
 
-    return getAuthenticatedInvocationBuilder(user, target);
+    return getAuthenticatedInvocationBuilder(target, user);
   }
 
   /**
@@ -85,22 +77,11 @@ public class RestFactory {
    * @param user The user to be authenticated.
    * @return
    */
-  public static Invocation.Builder getAuthenticatedInvocationBuilder(User user, WebTarget target) {
+  public static Invocation.Builder getAuthenticatedInvocationBuilder(WebTarget target, User user) {
     // Authenticate
     String token = RestFactory.doLoginGetToken(user.getEmail(), user.getSeedPassword());
     assertNotNull(token);
     assertTrue(!token.isEmpty());
-
-    return target.request(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, token);
-  }
-
-  public static Invocation.Builder getAuthenticatedInvocationBuilder(User user, URI uri) {
-    // Authenticate
-    String token = RestFactory.doLoginGetToken(user.getEmail(), user.getSeedPassword());
-    assertNotNull(token);
-    assertTrue(!token.isEmpty());
-
-    WebTarget target = RestFactory.buildWebTarget(uri);
 
     return target.request(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, token);
   }

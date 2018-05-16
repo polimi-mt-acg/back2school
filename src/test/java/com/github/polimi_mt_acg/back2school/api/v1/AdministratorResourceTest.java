@@ -12,14 +12,14 @@ import com.github.polimi_mt_acg.back2school.utils.DatabaseSeeder;
 import com.github.polimi_mt_acg.back2school.utils.TestCategory;
 import com.github.polimi_mt_acg.back2school.utils.rest.HTTPServerManager;
 import com.github.polimi_mt_acg.back2school.utils.rest.RestFactory;
+
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -39,8 +39,7 @@ public class AdministratorResourceTest {
     server =
         HTTPServerManager.startServer(
             AuthenticationResource.class,
-            "com.github.polimi_mt_acg.back2school.api.v1.administrators",
-            "com.github.polimi_mt_acg.back2school.api.v1.security_contexts");
+            "com.github.polimi_mt_acg.back2school.api.v1.administrators");
   }
 
   @AfterClass
@@ -63,7 +62,7 @@ public class AdministratorResourceTest {
     for (User admin : admins) {
       // Create a get request
       Invocation request =
-          RestFactory.getAuthenticatedInvocationBuilder(admin, new String[] {"administrators"})
+          RestFactory.getAuthenticatedInvocationBuilder(new String[] {"administrators"}, admin)
               .buildGet();
 
       // Invoke the request
@@ -86,7 +85,7 @@ public class AdministratorResourceTest {
     }
   }
 
-  @Test
+  @Test(expected = NotAuthorizedException.class)
   @Category(TestCategory.AuthEndpoint.class)
   public void getAdministratorsUnauthorized() throws Exception {
     // Build the Client
@@ -98,8 +97,7 @@ public class AdministratorResourceTest {
     // Build the GET request with no auth
     Invocation request = target.request(MediaType.APPLICATION_JSON).buildGet();
 
-    // Invoke the request
-    Response response = request.invoke();
-    assertEquals(Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+    // Invoke the request and expect Unauthorized exception
+    request.invoke(AdministratorResponse.class);
   }
 }

@@ -64,7 +64,7 @@ public class NotificationsResourceTest {
       if (admin.getRole() == Role.ADMINISTRATOR) {
         // Create a get request
         Invocation request =
-            RestFactory.getAuthenticatedInvocationBuilder(admin, new String[] {"notifications"})
+            RestFactory.getAuthenticatedInvocationBuilder(new String[] {"notifications"}, admin)
                 .buildGet();
 
         // Invoke the request
@@ -96,7 +96,7 @@ public class NotificationsResourceTest {
     // Set the POST request
     Invocation request =
         RestFactory.getAuthenticatedInvocationBuilder(
-            admin, new String[] {"notifications", "send-to-teachers"})
+                new String[] {"notifications", "send-to-teachers"}, admin)
             .buildPost(Entity.json(notification));
 
     // Invoke the request
@@ -136,7 +136,7 @@ public class NotificationsResourceTest {
     // Create the POST request
     Invocation request =
         RestFactory.getAuthenticatedInvocationBuilder(
-            admin, "notifications", "send-to-parents")
+            new String[] {"notifications", "send-to-parents"}, admin)
             .buildPost(Entity.json(notification));
 
     // Invoke the request

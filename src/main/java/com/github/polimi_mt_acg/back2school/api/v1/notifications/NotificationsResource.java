@@ -1,6 +1,6 @@
 package com.github.polimi_mt_acg.back2school.api.v1.notifications;
 
-import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.AdministratorSecured;
+import com.github.polimi_mt_acg.back2school.api.v1.administrators.AdministratorSecured;
 import com.github.polimi_mt_acg.back2school.model.AuthenticationSession;
 import com.github.polimi_mt_acg.back2school.model.Notification;
 import com.github.polimi_mt_acg.back2school.model.NotificationGeneralParents;
