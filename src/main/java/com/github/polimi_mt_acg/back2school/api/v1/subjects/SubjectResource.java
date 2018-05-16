@@ -55,4 +55,23 @@ public class SubjectResource {
     session.close();
     return new SubjectResponse(subjects);
   }
+
+  @Path("{id}")
+  @PUT
+  @Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
+  @AdministratorSecured
+  public Response putSubjectID(@PathParam("id") int id, Subject subject) {
+
+    Subject updateSubj = new Subject();
+    DatabaseHandler dhi = DatabaseHandler.getInstance();
+    Session session = dhi.getNewSession();
+    session.beginTransaction();
+
+
+    session.persist(updateSubj);
+    session.getTransaction().commit();
+    session.close();
+
+    return Response.ok(subject, MediaType.APPLICATION_JSON).build();
+  }
 }
