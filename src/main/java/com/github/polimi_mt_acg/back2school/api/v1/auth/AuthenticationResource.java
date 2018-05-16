@@ -4,8 +4,6 @@ import com.github.polimi_mt_acg.back2school.model.AuthenticationSession;
 import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.model.User_;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
-import org.hibernate.Session;
-
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -14,7 +12,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.xml.crypto.Data;
+import org.hibernate.Session;
 
 
 /**
@@ -84,7 +82,7 @@ public class AuthenticationResource {
         DatabaseHandler.getInstance().getListSelectFromWhereEqual(User.class, User_.email, email);
 
     // User not found
-    if (users.size() == 0) return null;
+    if (users.isEmpty()) return null;
 
     User user = users.get(0);
 

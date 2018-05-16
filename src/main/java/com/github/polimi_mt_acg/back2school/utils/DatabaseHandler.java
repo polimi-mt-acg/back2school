@@ -161,10 +161,9 @@ public class DatabaseHandler {
         String tableName = table.getName();
 
         if (!tableName.equals("hibernate_sequence")) {
-          String query = String.format("TRUNCATE TABLE `%s`", tableName);
-
-          //                    LOGGER.info("Executing query: " + query);
-          session.createNativeQuery(query).executeUpdate();
+          //String query = String.format("TRUNCATE TABLE `%s`", tableName);
+          String delete = String.format("DELETE FROM `%s`;", tableName);
+          session.createNativeQuery(delete).executeUpdate();
         }
       }
     }
