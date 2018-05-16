@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.polimi_mt_acg.back2school.api.v1.auth.AuthenticationResource;
 import com.github.polimi_mt_acg.back2school.api.v1.subjects.SubjectResponse;
 import com.github.polimi_mt_acg.back2school.model.NotificationGeneralParents;
 import com.github.polimi_mt_acg.back2school.model.Subject;
@@ -13,6 +14,7 @@ import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.model.User.Role;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseSeeder;
+import com.github.polimi_mt_acg.back2school.utils.JacksonCustomMapper;
 import com.github.polimi_mt_acg.back2school.utils.rest.RestFactory;
 import java.io.IOException;
 import java.net.URI;
@@ -61,7 +63,7 @@ public class SubjectsResourceTest {
     // in com.github.polimi_mt_acg.back2school.api.v1.subjects.resources package
     final ResourceConfig rc =
         new ResourceConfig()
-            .register(AuthenticationEndpoint.class)
+            .register(AuthenticationResource.class)
             .packages("com.github.polimi_mt_acg.back2school.api.v1.subjects")
             .register(JacksonCustomMapper.class)
             .register(JacksonFeature.class);
@@ -83,7 +85,7 @@ public class SubjectsResourceTest {
         // Build the Client
         WebTarget target = RestFactory.buildWebTarget();
         // Authenticate
-        String token = RestFactory.authenticate(admin.getEmail(), admin.getSeedPassword());
+        String token = RestFactory.doLoginGetToken(admin.getEmail(), admin.getSeedPassword());
         assertNotNull(token);
         assertTrue(!token.isEmpty());
 
@@ -129,7 +131,7 @@ public class SubjectsResourceTest {
     // Authenticate the admin
     WebTarget target = RestFactory.buildWebTarget();
     // Authenticate
-    String token = RestFactory.authenticate(admin.getEmail(), admin.getSeedPassword());
+    String token = RestFactory.doLoginGetToken(admin.getEmail(), admin.getSeedPassword());
     assertNotNull(token);
     assertTrue(!token.isEmpty());
 
@@ -171,7 +173,7 @@ public class SubjectsResourceTest {
     // Authenticate the admin
     WebTarget target = RestFactory.buildWebTarget();
     // Authenticate
-    String token = RestFactory.authenticate(admin.getEmail(), admin.getSeedPassword());
+    String token = RestFactory.doLoginGetToken(admin.getEmail(), admin.getSeedPassword());
     assertNotNull(token);
     assertTrue(!token.isEmpty());
 
