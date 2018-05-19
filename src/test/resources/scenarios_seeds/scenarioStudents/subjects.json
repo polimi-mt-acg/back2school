@@ -3,6 +3,10 @@
     {
       "name": "English",
       "description": "English teach students the grammar"
+    },
+    {
+      "name": "Middleware Technologies",
+      "description": "The course presents the main technologies used to ease development of distributed systems."
     }
   ]
 }
