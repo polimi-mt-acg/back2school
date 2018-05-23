@@ -16,7 +16,6 @@ import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -41,15 +40,10 @@ public class StudentsResource {
   @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
   public Response getStudents(@Context UriInfo uriInfo) {
-    Session session = DatabaseHandler.getInstance().getNewSession();
-    session.beginTransaction();
-
     // Get students from DB
     List<User> students =
         DatabaseHandler.getInstance()
-            .getListSelectFromWhereEqual(User.class, User_.role, Role.STUDENT, session);
-    session.getTransaction().commit();
-    session.close();
+            .getListSelectFromWhereEqual(User.class, User_.role, Role.STUDENT);
 
     // For each user, build a URI to /students/{id}
     List<URI> uris = new ArrayList<>();
@@ -71,15 +65,16 @@ public class StudentsResource {
     User student = request.getStudent();
     String parentEmail = request.getParentEmail();
 
+    DatabaseHandler dbi = DatabaseHandler.getInstance();
+    Session session = dbi.getNewSession();
+    session.beginTransaction();
+
     // Check if input user is a student
     if (student.getRole() != Role.STUDENT) {
       return Response.status(Status.BAD_REQUEST).entity("Not a student.").build();
     }
 
     // Check if a user with same email already exists, if so, do nothing
-    DatabaseHandler dbi = DatabaseHandler.getInstance();
-    Session session = dbi.getNewSession();
-    session.beginTransaction();
     List<User> result =
         dbi.getListSelectFromWhereEqual(User.class, User_.email, student.getEmail(), session);
     if (!result.isEmpty()) {
@@ -93,12 +88,16 @@ public class StudentsResource {
         dbi.getListSelectFromWhereEqual(User.class, User_.email, parentEmail, session);
     if (parentRes.isEmpty()) {
       // User with parentEmail email not found
+      session.getTransaction().commit();
+      session.close();
       return Response.status(Status.BAD_REQUEST).entity("Unregistered parent email.").build();
     }
 
     User parent = parentRes.get(0);
     if (parent.getRole() != Role.PARENT) {
       // parentEmail does not belong to a PARENT
+      session.getTransaction().commit();
+      session.close();
       return Response.status(Status.BAD_REQUEST).entity("Not a parent.").build();
     }
 
@@ -120,15 +119,10 @@ public class StudentsResource {
   @TeacherOfStudentSecured
   public Response getStudentById(@PathParam("id") String studentId) {
     // Fetch User
-    List<User> res =
-        DatabaseHandler.getInstance()
-            .getListSelectFromWhereEqual(User.class, User_.id, Integer.parseInt(studentId));
-
-    if (res.isEmpty()) {
+    User student = DatabaseHandler.fetchEntityBy(User.class, User_.id, Integer.parseInt(studentId));
+    if (student == null) {
       return Response.status(Status.NOT_FOUND).entity("Unknown student id").build();
     }
-
-    User student = res.get(0);
     return Response.ok(student, MediaType.APPLICATION_JSON_TYPE).build();
   }
 
@@ -138,22 +132,23 @@ public class StudentsResource {
   @ParentAdministratorSecured
   @ParentOfStudentSecured
   public Response putStudentById(PutStudentRequest newStudent, @PathParam("id") String studentId) {
-    // Fetch User
-    DatabaseHandler dbi = DatabaseHandler.getInstance();
-    Session session = dbi.getNewSession();
+    Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 
-    List<User> res =
-        dbi.getListSelectFromWhereEqual(User.class, User_.id, Integer.parseInt(studentId), session);
-
-    if (res.isEmpty()) {
+    // Fetch User
+    User student = session.get(User.class, Integer.parseInt(studentId));
+    if (student == null) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND).entity("Unknown student id").build();
     }
 
-    User student = res.get(0);
-    updateStudent(student, newStudent);
+    // Update student fields
+    student.setName(newStudent.getName());
+    student.setSurname(newStudent.getSurname());
+    student.setEmail(newStudent.getEmail());
+    student.setPassword(newStudent.getPassword());
+
     session.getTransaction().commit();
     session.close();
 
@@ -175,18 +170,11 @@ public class StudentsResource {
     session.beginTransaction();
 
     // Fetch User
-    List<User> res =
-        DatabaseHandler.getInstance()
-            .getListSelectFromWhereEqual(
-                User.class, User_.id, Integer.parseInt(studentId), session);
-
-    if (res.isEmpty()) {
-      session.getTransaction().commit();
+    User student = session.get(User.class, Integer.parseInt(studentId));
+    if (student == null) {
       session.close();
       return Response.status(Status.NOT_FOUND).entity("Unknown student id").build();
     }
-
-    User student = res.get(0);
 
     // Fetch grades of student
     List<Grade> grades =
@@ -199,8 +187,10 @@ public class StudentsResource {
       URI uri = builder.path(String.valueOf(g.getId())).build();
       gradeURIs.add(uri);
     }
-
     response.setGrades(gradeURIs);
+
+    session.getTransaction().commit();
+    session.close();
     return Response.ok(response, MediaType.APPLICATION_JSON_TYPE).build();
   }
 
@@ -226,25 +216,23 @@ public class StudentsResource {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    // Fetch User
-    Optional<User> studentOpt = fetchStudent(Integer.parseInt(studentId), session);
-    if (!studentOpt.isPresent()) {
+    // Fetch student
+    User student = session.get(User.class, Integer.parseInt(studentId));
+    if (student == null) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND).entity("Unknown student id").build();
     }
 
-    User student = studentOpt.get();
-
     // Fetch the subject entity by name
-    Optional<Subject> subjectOpt = fetchSubject(request.getSubjectName(), session);
-    if (!subjectOpt.isPresent()) {
+    Subject subject =
+        DatabaseHandler.fetchEntityBy(
+            Subject.class, Subject_.name, request.getSubjectName(), session);
+    if (subject == null) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND).entity("Unknown subject name").build();
     }
-
-    Subject subject = subjectOpt.get();
 
     // Build the Grade entity
     Grade grade = new Grade();
@@ -271,26 +259,14 @@ public class StudentsResource {
   @TeacherOfStudentSecured
   public Response getStudentGradeById(
       @PathParam("grade_id") String gradeId, @Context UriInfo uriInfo) {
-    DatabaseHandler dbi = DatabaseHandler.getInstance();
-    Session session = dbi.getNewSession();
-    session.beginTransaction();
 
-    // Fetch Grades
-    List<Grade> res =
-        DatabaseHandler.getInstance()
-            .getListSelectFromWhereEqual(
-                Grade.class, Grade_.id, Integer.parseInt(gradeId), session);
+    // Fetch grade
+    Grade grade = DatabaseHandler.fetchEntityBy(Grade.class, Grade_.id, Integer.parseInt(gradeId));
 
-    if (res.isEmpty()) {
-      session.getTransaction().commit();
-      session.close();
+    if (grade == null) {
       return Response.status(Status.NOT_FOUND).entity("Unknown grade id").build();
     }
 
-    Grade grade = res.get(0);
-
-    session.getTransaction().commit();
-    session.close();
     return Response.ok(grade, MediaType.APPLICATION_JSON_TYPE).build();
   }
 
@@ -317,35 +293,31 @@ public class StudentsResource {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
-    // Fetch User
-    Optional<User> studentOpt = fetchStudent(Integer.parseInt(studentId), session);
-    if (!studentOpt.isPresent()) {
+    // Fetch student
+    User student = session.get(User.class, Integer.parseInt(studentId));
+    if (student == null) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND).entity("Unknown student id").build();
     }
 
-    User student = studentOpt.get();
-
     // Fetch the subject entity by name
-    Optional<Subject> subjectOpt = fetchSubject(request.getSubjectName(), session);
-    if (!subjectOpt.isPresent()) {
+    Subject subject =
+        DatabaseHandler.fetchEntityBy(
+            Subject.class, Subject_.name, request.getSubjectName(), session);
+    if (subject == null) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND).entity("Unknown subject name").build();
     }
 
-    Subject subject = subjectOpt.get();
-
     // Fetch Grade entity
-    Optional<Grade> gradeOpt = fetchGrade(Integer.parseInt(gradeId), session);
-    if (!gradeOpt.isPresent()) {
+    Grade grade = session.get(Grade.class, Integer.parseInt(gradeId));
+    if (grade == null) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND).entity("Unknown grade id").build();
     }
-
-    Grade grade = gradeOpt.get();
 
     // Check if 'teacher' is the same that created the Grade entity
     if (!teacher.equals(grade.getTeacher())) {
@@ -382,14 +354,12 @@ public class StudentsResource {
     session.beginTransaction();
 
     // Fetch Grade entity
-    Optional<Grade> gradeOpt = fetchGrade(Integer.parseInt(gradeId), session);
-    if (!gradeOpt.isPresent()) {
+    Grade grade = session.get(Grade.class, Integer.parseInt(gradeId));
+    if (grade == null) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND).entity("Unknown grade id").build();
     }
-
-    Grade grade = gradeOpt.get();
 
     // Delete Grade
     session.delete(grade);
@@ -397,48 +367,5 @@ public class StudentsResource {
     session.close();
 
     return Response.ok().build();
-  }
-
-  private Optional<User> fetchStudent(int studentId, Session session) {
-    List<User> res =
-        DatabaseHandler.getInstance()
-            .getListSelectFromWhereEqual(User.class, User_.id, studentId, session);
-
-    if (res.isEmpty()) {
-      return Optional.empty();
-    } else {
-      return Optional.of(res.get(0));
-    }
-  }
-
-  private Optional<Subject> fetchSubject(String subjectName, Session session) {
-    List<Subject> res =
-        DatabaseHandler.getInstance()
-            .getListSelectFromWhereEqual(Subject.class, Subject_.name, subjectName, session);
-
-    if (res.isEmpty()) {
-      return Optional.empty();
-    } else {
-      return Optional.of(res.get(0));
-    }
-  }
-
-  private Optional<Grade> fetchGrade(int gradeId, Session session) {
-    List<Grade> res =
-        DatabaseHandler.getInstance()
-            .getListSelectFromWhereEqual(Grade.class, Grade_.id, gradeId, session);
-
-    if (res.isEmpty()) {
-      return Optional.empty();
-    } else {
-      return Optional.of(res.get(0));
-    }
-  }
-
-  private void updateStudent(User entity, PutStudentRequest newStudent) {
-    entity.setName(newStudent.getName());
-    entity.setSurname(newStudent.getSurname());
-    entity.setEmail(newStudent.getEmail());
-    entity.setPassword(newStudent.getPassword());
   }
 }
