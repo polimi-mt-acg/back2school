@@ -18,7 +18,7 @@ import javax.ws.rs.ext.Provider;
  */
 @ParentAdministratorSecured
 @Provider
-@Priority(SecurityContextPriority.PARENT_ADMINISTRATOR)
+@Priority(SecurityContextPriority.PARENT_TEACHER_ADMINISTRATOR)
 public class ParentAdministratorSecurityContext implements ContainerRequestFilter {
 
   /**
@@ -44,16 +44,8 @@ public class ParentAdministratorSecurityContext implements ContainerRequestFilte
     }
 
     // if the user logged has not the correct role
-    Role[] allowed = {Role.PARENT, Role.ADMINISTRATOR};
-    boolean is_allowed = false;
-    for (Role role : allowed) {
-      if (currentUser.getRole() == role) {
-        is_allowed = true;
-        break;
-      }
-    }
-
-    if (!is_allowed) {
+    Role role = currentUser.getRole();
+    if (!role.equals(Role.ADMINISTRATOR) && !role.equals(Role.PARENT)) {
       requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
     }
   }
