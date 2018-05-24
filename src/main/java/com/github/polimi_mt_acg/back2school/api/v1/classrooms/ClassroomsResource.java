@@ -1,30 +1,45 @@
 package com.github.polimi_mt_acg.back2school.api.v1.classrooms;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.github.polimi_mt_acg.back2school.api.v1.administrators.AdministratorSecured;
-import com.github.polimi_mt_acg.back2school.api.v1.subjects.SubjectResponse;
+import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.AdministratorSecured;
 import com.github.polimi_mt_acg.back2school.model.Classroom;
 import com.github.polimi_mt_acg.back2school.model.Classroom_;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import org.hibernate.Session;
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.*;
+import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 @Path("/classrooms")
-public class ClassroomResource {
+public class ClassroomsResource {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
-  public ClassroomResponse getClassrooms() throws JsonProcessingException {
-    List<Classroom> classrooms = DatabaseHandler.getInstance().getListSelectFrom(Classroom.class);
+  public Response getClassrooms(@Context UriInfo uriInfo) {
+    Session session = DatabaseHandler.getInstance().getNewSession();
+    session.beginTransaction();
 
-    return new ClassroomResponse(classrooms);
+    // Get classrooms from DB
+    List<Classroom> classrooms =
+            DatabaseHandler.getInstance()
+                    .getListSelectFrom(Classroom.class);
+    session.getTransaction().commit();
+    session.close();
+
+    // For each classroom, build a URI to /classroom/{id}
+    List<URI> uris = new ArrayList<>();
+    for (Classroom classroom : classrooms) {
+      UriBuilder builder = uriInfo.getAbsolutePathBuilder();
+      URI uri = builder.path(String.valueOf(classroom.getId())).build();
+      uris.add(uri);
+    }
+
+    ClassroomsResponse response = new ClassroomsResponse();
+    response.setClassrooms(uris);
+    return Response.ok(response, MediaType.APPLICATION_JSON_TYPE).build();
   }
 
   @POST
@@ -46,7 +61,7 @@ public class ClassroomResource {
   @GET
   @Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
   @AdministratorSecured
-  public ClassroomResponse getClassroomID (@PathParam("id") int id){
+  public void getClassroomID (@PathParam("id") int id){
     DatabaseHandler dhi = DatabaseHandler.getInstance();
     Session session = dhi.getNewSession();
     session.beginTransaction();
@@ -55,7 +70,8 @@ public class ClassroomResource {
                     .getListSelectFromWhereEqual(Classroom.class, Classroom_.id, id, session);
 
     session.close();
-    return new ClassroomResponse(classrooms);
+//    return new ClassroomsResponse(classrooms);
   }
+
 
 }
