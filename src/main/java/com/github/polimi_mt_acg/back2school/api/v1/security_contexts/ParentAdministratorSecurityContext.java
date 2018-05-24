@@ -18,7 +18,7 @@ import javax.ws.rs.ext.Provider;
  */
 @ParentAdministratorSecured
 @Provider
-@Priority(SecurityContextPriority.PARENT_TEACHER_ADMINISTRATOR)
+@Priority(SecurityContextPriority.PARENT_ADMINISTRATOR)
 public class ParentAdministratorSecurityContext implements ContainerRequestFilter {
 
   /**
