@@ -7,6 +7,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.SingularAttribute;
+import javax.swing.text.html.Option;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
@@ -189,11 +191,11 @@ public class DatabaseHandler {
    * @param <T> Type of the entity class.
    * @return Optional entity.
    */
-  public static <T> T fetchEntityBy(
+  public static <T> Optional<T> fetchEntityBy(
       Class<T> classType, SingularAttribute singularAttribute, Object parameter) {
 
     Session session = DatabaseHandler.getInstance().getNewSession();
-    T entity = fetchEntityBy(classType, singularAttribute, parameter, session);
+    Optional<T> entity = fetchEntityBy(classType, singularAttribute, parameter, session);
     session.close();
     return entity;
   }
@@ -208,15 +210,15 @@ public class DatabaseHandler {
    * @param <T> Type of the entity class.
    * @return Optional entity.
    */
-  public static <T> T fetchEntityBy(
+  public static <T> Optional<T> fetchEntityBy(
       Class<T> classType, SingularAttribute singularAttribute, Object parameter, Session session) {
     List<T> res =
         DatabaseHandler.getInstance()
             .getListSelectFromWhereEqual(classType, singularAttribute, parameter, session);
 
     if (res.isEmpty()) {
-      return null;
+      return Optional.empty();
     }
-    return res.get(0);
+    return Optional.of(res.get(0));
   }
 }

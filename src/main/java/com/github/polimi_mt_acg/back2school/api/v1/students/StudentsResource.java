@@ -16,6 +16,7 @@ import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -119,11 +120,11 @@ public class StudentsResource {
   @TeacherOfStudentSecured
   public Response getStudentById(@PathParam("id") String studentId) {
     // Fetch User
-    User student = DatabaseHandler.fetchEntityBy(User.class, User_.id, Integer.parseInt(studentId));
-    if (student == null) {
+    Optional<User> studentOpt = DatabaseHandler.fetchEntityBy(User.class, User_.id, Integer.parseInt(studentId));
+    if (!studentOpt.isPresent()) {
       return Response.status(Status.NOT_FOUND).entity("Unknown student id").build();
     }
-    return Response.ok(student, MediaType.APPLICATION_JSON_TYPE).build();
+    return Response.ok(studentOpt.get(), MediaType.APPLICATION_JSON_TYPE).build();
   }
 
   @Path("{id: [0-9]+}")
@@ -225,10 +226,10 @@ public class StudentsResource {
     }
 
     // Fetch the subject entity by name
-    Subject subject =
+    Optional<Subject> subjectOpt =
         DatabaseHandler.fetchEntityBy(
             Subject.class, Subject_.name, request.getSubjectName(), session);
-    if (subject == null) {
+    if (!subjectOpt.isPresent()) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND).entity("Unknown subject name").build();
@@ -236,7 +237,7 @@ public class StudentsResource {
 
     // Build the Grade entity
     Grade grade = new Grade();
-    grade.setSubject(subject);
+    grade.setSubject(subjectOpt.get());
     grade.setTeacher(teacher);
     grade.setStudent(student);
     grade.setDate(request.getDate());
@@ -261,13 +262,12 @@ public class StudentsResource {
       @PathParam("grade_id") String gradeId, @Context UriInfo uriInfo) {
 
     // Fetch grade
-    Grade grade = DatabaseHandler.fetchEntityBy(Grade.class, Grade_.id, Integer.parseInt(gradeId));
-
-    if (grade == null) {
+    Optional<Grade> gradeOpt = DatabaseHandler.fetchEntityBy(Grade.class, Grade_.id, Integer.parseInt(gradeId));
+    if (!gradeOpt.isPresent()) {
       return Response.status(Status.NOT_FOUND).entity("Unknown grade id").build();
     }
 
-    return Response.ok(grade, MediaType.APPLICATION_JSON_TYPE).build();
+    return Response.ok(gradeOpt.get(), MediaType.APPLICATION_JSON_TYPE).build();
   }
 
   @Path("{id: [0-9]+}/grades/{grade_id: [0-9]+}")
@@ -302,10 +302,10 @@ public class StudentsResource {
     }
 
     // Fetch the subject entity by name
-    Subject subject =
+    Optional<Subject> subjectOpt =
         DatabaseHandler.fetchEntityBy(
             Subject.class, Subject_.name, request.getSubjectName(), session);
-    if (subject == null) {
+    if (!subjectOpt.isPresent()) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND).entity("Unknown subject name").build();
@@ -327,7 +327,7 @@ public class StudentsResource {
     }
 
     // Update grade fields
-    grade.setSubject(subject);
+    grade.setSubject(subjectOpt.get());
     grade.setTeacher(teacher);
     grade.setStudent(student);
     grade.setDate(request.getDate());
