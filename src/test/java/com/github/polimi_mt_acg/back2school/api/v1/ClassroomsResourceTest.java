@@ -7,11 +7,8 @@ import static org.junit.Assert.assertTrue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.polimi_mt_acg.back2school.api.v1.auth.AuthenticationResource;
-import com.github.polimi_mt_acg.back2school.api.v1.classrooms.ClassroomResponse;
-import com.github.polimi_mt_acg.back2school.api.v1.subjects.SubjectResponse;
-import com.github.polimi_mt_acg.back2school.model.Class;
+import com.github.polimi_mt_acg.back2school.api.v1.classrooms.ClassroomsResponse;
 import com.github.polimi_mt_acg.back2school.model.Classroom;
-import com.github.polimi_mt_acg.back2school.model.Subject;
 import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.model.User.Role;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
@@ -20,7 +17,6 @@ import com.github.polimi_mt_acg.back2school.utils.JacksonCustomMapper;
 import com.github.polimi_mt_acg.back2school.utils.rest.RestFactory;
 import java.io.IOException;
 import java.net.URI;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.ws.rs.client.Entity;
@@ -102,7 +98,7 @@ public class ClassroomsResourceTest {
                 .buildGet();
 
         // Invoke the request
-        ClassroomResponse response = request.invoke(ClassroomResponse.class);
+        ClassroomsResponse response = request.invoke(ClassroomsResponse.class);
         assertNotNull(response);
 
         // Print it
@@ -191,7 +187,7 @@ public class ClassroomsResourceTest {
             .buildGet();
 
     // Invoke the request
-    ClassroomResponse response = request.invoke(ClassroomResponse.class);
+    ClassroomsResponse response = request.invoke(ClassroomsResponse.class);
     assertNotNull(response);
 
     // Print it
