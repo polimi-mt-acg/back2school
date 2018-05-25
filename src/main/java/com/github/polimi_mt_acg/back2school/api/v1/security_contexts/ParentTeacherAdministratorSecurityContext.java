@@ -43,16 +43,10 @@ public class ParentTeacherAdministratorSecurityContext implements ContainerReque
     }
 
     // if the user logged has not the correct role
-    User.Role[] allowed = {Role.PARENT, Role.TEACHER, Role.ADMINISTRATOR};
-    boolean is_allowed = false;
-    for (Role role : allowed) {
-      if (currentUser.getRole() == role) {
-        is_allowed = true;
-        break;
-      }
-    }
-
-    if (!is_allowed) {
+    Role role = currentUser.getRole();
+    if (!role.equals(Role.PARENT)
+        && !role.equals(Role.TEACHER)
+        && !role.equals(Role.ADMINISTRATOR)) {
       requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
     }
   }

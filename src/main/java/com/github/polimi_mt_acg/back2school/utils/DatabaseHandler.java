@@ -1,11 +1,14 @@
 package com.github.polimi_mt_acg.back2school.utils;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.SingularAttribute;
+import javax.swing.text.html.Option;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
@@ -161,7 +164,7 @@ public class DatabaseHandler {
         String tableName = table.getName();
 
         if (!tableName.equals("hibernate_sequence")) {
-          //String query = String.format("TRUNCATE TABLE `%s`", tableName);
+          // String query = String.format("TRUNCATE TABLE `%s`", tableName);
           String delete = String.format("DELETE FROM `%s`;", tableName);
           session.createNativeQuery(delete).executeUpdate();
         }
@@ -177,5 +180,45 @@ public class DatabaseHandler {
     session.getTransaction().commit();
     session.close();
     //        LOGGER.info("Database truncated");
+  }
+
+  /**
+   * Fetch a single entity from one of its attributes.
+   *
+   * @param classType The entity class to fetch.
+   * @param singularAttribute The attribute of the class on which to perform the query.
+   * @param parameter The value of the attribute to look for.
+   * @param <T> Type of the entity class.
+   * @return Optional entity.
+   */
+  public static <T> Optional<T> fetchEntityBy(
+      Class<T> classType, SingularAttribute singularAttribute, Object parameter) {
+
+    Session session = DatabaseHandler.getInstance().getNewSession();
+    Optional<T> entity = fetchEntityBy(classType, singularAttribute, parameter, session);
+    session.close();
+    return entity;
+  }
+
+  /**
+   * Fetch a single entity from one of its attributes.
+   *
+   * @param classType The entity class to fetch.
+   * @param singularAttribute The attribute of the class on which to perform the query.
+   * @param parameter The value of the attribute to look for.
+   * @param session The hibernate session.
+   * @param <T> Type of the entity class.
+   * @return Optional entity.
+   */
+  public static <T> Optional<T> fetchEntityBy(
+      Class<T> classType, SingularAttribute singularAttribute, Object parameter, Session session) {
+    List<T> res =
+        DatabaseHandler.getInstance()
+            .getListSelectFromWhereEqual(classType, singularAttribute, parameter, session);
+
+    if (res.isEmpty()) {
+      return Optional.empty();
+    }
+    return Optional.of(res.get(0));
   }
 }

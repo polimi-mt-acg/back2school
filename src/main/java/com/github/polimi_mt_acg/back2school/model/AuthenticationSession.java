@@ -121,7 +121,7 @@ public class AuthenticationSession implements DeserializeToPersistInterface {
    * 6. Update the last_interaction_datetime of the session.
    * 7. Return the user associated to the AuthenticationSession of the token.
    *
-   * @param requestContext
+   * @param requestContext The current request context.
    * @return
    */
   public static User getCurrentUser(ContainerRequestContext requestContext) {
@@ -134,6 +134,23 @@ public class AuthenticationSession implements DeserializeToPersistInterface {
     return currentUser;
   }
 
+  /**
+   * Get the current authenticated user, if any, according to AuthenticationSession validity.
+   *
+   * Overall procedure:
+   * 1. Get the token from the header.
+   * 2. Use the token to retrieve the linked AuthenticationSession.
+   * 3. Check if there exist an AuthenticationSession corresponding to the token.
+   * 4. Check if the AuthenticationSession is still valid (not cancelled).
+   * 5. Check if the duration of the user session is not gone over (w.r.t. the
+   *    last interaction)
+   * 6. Update the last_interaction_datetime of the session.
+   * 7. Return the user associated to the AuthenticationSession of the token.
+   *
+   * @param requestContext The current request context.
+   * @param session The hibernate session to use
+   * @return
+   */
   public static User getCurrentUser(ContainerRequestContext requestContext, Session session) {
     // Get the Authorization header from the request
     String authorizationHeader = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
