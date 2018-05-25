@@ -1,0 +1,53 @@
+{
+  "users": [
+    {
+      "role": "STUDENT",
+      "name": "Alice",
+      "surname": "SurnameAlice",
+      "email": "alice@email.com",
+      "seedPassword": "alice_password"
+    },
+    {
+      "role": "STUDENT",
+      "name": "Bob",
+      "surname": "SurnameBob",
+      "email": "bob@email.com",
+      "seedPassword": "bob_password"
+    },
+    {
+      "role": "ADMINISTRATOR",
+      "name": "Back2School",
+      "surname": "Backdoor",
+      "email": "back2school@email.com",
+      "seedPassword": "back2school_password"
+    },
+    {
+      "role": "TEACHER",
+      "name": "Mrs. Alice",
+      "surname": "Teacher",
+      "email": "alice.teacher@email.com",
+      "seedPassword": "alice_teacher_password"
+    },
+    {
+      "role": "TEACHER",
+      "name": "Mrs. Not Bobs",
+      "surname": "Teacher",
+      "email": "notbobs.teacher@email.com",
+      "seedPassword": "notbobs_teacher_password"
+    },
+    {
+      "role": "PARENT",
+      "name": "Carlos Dad",
+      "surname": "SurnameCarlos",
+      "email": "carlos_dad.parent@email.com",
+      "seedPassword": "carlos_dad_parent_password"
+    },
+    {
+      "role": "PARENT",
+      "name": "Not Bobs",
+      "surname": "Parent",
+      "email": "notbobs.parent@email.com",
+      "seedPassword": "notbobs_parent_password"
+    }
+  ]
+}

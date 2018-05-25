@@ -2,8 +2,6 @@ package com.github.polimi_mt_acg.back2school.model;
 
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import com.github.polimi_mt_acg.back2school.utils.RandomStringGenerator;
-import org.hibernate.Session;
-
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,6 +19,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.HttpHeaders;
+import org.hibernate.Session;
 
 @Entity
 @Table(name = "authentication_session")
@@ -122,10 +121,37 @@ public class AuthenticationSession implements DeserializeToPersistInterface {
    * 6. Update the last_interaction_datetime of the session.
    * 7. Return the user associated to the AuthenticationSession of the token.
    *
-   * @param requestContext
+   * @param requestContext The current request context.
    * @return
    */
   public static User getCurrentUser(ContainerRequestContext requestContext) {
+    Session session = DatabaseHandler.getInstance().getNewSession();
+    session.beginTransaction();
+
+    User currentUser = getCurrentUser(requestContext, session);
+    session.getTransaction().commit();
+    session.close();
+    return currentUser;
+  }
+
+  /**
+   * Get the current authenticated user, if any, according to AuthenticationSession validity.
+   *
+   * Overall procedure:
+   * 1. Get the token from the header.
+   * 2. Use the token to retrieve the linked AuthenticationSession.
+   * 3. Check if there exist an AuthenticationSession corresponding to the token.
+   * 4. Check if the AuthenticationSession is still valid (not cancelled).
+   * 5. Check if the duration of the user session is not gone over (w.r.t. the
+   *    last interaction)
+   * 6. Update the last_interaction_datetime of the session.
+   * 7. Return the user associated to the AuthenticationSession of the token.
+   *
+   * @param requestContext The current request context.
+   * @param session The hibernate session to use
+   * @return
+   */
+  public static User getCurrentUser(ContainerRequestContext requestContext, Session session) {
     // Get the Authorization header from the request
     String authorizationHeader = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
 
@@ -136,7 +162,6 @@ public class AuthenticationSession implements DeserializeToPersistInterface {
 
     // query to get the last valid AuthenticationSession corresponding to the token
     // ------------------------------------
-    Session session = DatabaseHandler.getInstance().getNewSession();
     CriteriaBuilder builder = session.getCriteriaBuilder();
 
     CriteriaQuery<AuthenticationSession> criteria = builder.createQuery(AuthenticationSession.class);
@@ -169,7 +194,6 @@ public class AuthenticationSession implements DeserializeToPersistInterface {
     authSession.setDatetimeLastInteraction(LocalDateTime.now());
     session.save(authSession);
 
-    session.close();
     return authSession.getUser();
   }
 

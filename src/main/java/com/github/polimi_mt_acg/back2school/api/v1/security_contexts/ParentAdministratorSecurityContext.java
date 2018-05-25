@@ -1,33 +1,29 @@
-package com.github.polimi_mt_acg.back2school.api.v1.administrators;
+package com.github.polimi_mt_acg.back2school.api.v1.security_contexts;
 
 import com.github.polimi_mt_acg.back2school.model.AuthenticationSession;
-import com.github.polimi_mt_acg.back2school.model.AuthenticationSession_;
 import com.github.polimi_mt_acg.back2school.model.User;
-import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
+import com.github.polimi_mt_acg.back2school.model.User.Role;
 import java.io.IOException;
-import java.util.List;
 import javax.annotation.Priority;
-import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
-import org.hibernate.Session;
 
 /**
  * AdministratorSecurityContext implements a request filter for JAX-RS REST APIs. It implements a
- * "Administrators-only" security policy. A REST API that is annotated with @AdministratorSecured
- * can only be accessed if: a) the client is authenticated. b) the client role is ADMINISTRATOR
+ * "Parents-Administrators-only" security policy. A REST API that is annotated
+ * with @ParentAdministratorSecured can only be accessed if: a) the client is authenticated. b) the
+ * client role is PARENT or ADMINISTRATOR
  */
-@AdministratorSecured
+@ParentAdministratorSecured
 @Provider
-@Priority(Priorities.AUTHENTICATION)
-public class AdministratorSecurityContext implements ContainerRequestFilter {
+@Priority(SecurityContextPriority.PARENT_ADMINISTRATOR)
+public class ParentAdministratorSecurityContext implements ContainerRequestFilter {
 
   /**
    * Filter requests that do not match the following security conditions: a) the client is
-   * authenticated. b) the client role is ADMINISTRATOR.
+   * authenticated. b) the client role is PARENT/ADMINISTRATOR.
    *
    * <p>To be successfully authenticated, the client must send the auth token in the AUTHORIZATION
    * HTTP header.
@@ -48,9 +44,9 @@ public class AdministratorSecurityContext implements ContainerRequestFilter {
     }
 
     // if the user logged has not the correct role
-    if (currentUser.getRole() != User.Role.ADMINISTRATOR) {
+    Role role = currentUser.getRole();
+    if (!role.equals(Role.ADMINISTRATOR) && !role.equals(Role.PARENT)) {
       requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
-      return;
     }
   }
 }
