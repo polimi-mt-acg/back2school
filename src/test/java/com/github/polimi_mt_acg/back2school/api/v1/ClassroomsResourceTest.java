@@ -8,6 +8,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.polimi_mt_acg.back2school.api.v1.auth.AuthenticationResource;
 import com.github.polimi_mt_acg.back2school.api.v1.classrooms.ClassroomsResponse;
+import com.github.polimi_mt_acg.back2school.api.v1.classrooms.PutClassroomRequest;
+import com.github.polimi_mt_acg.back2school.model.Class;
 import com.github.polimi_mt_acg.back2school.model.Classroom;
 import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.model.User.Role;
@@ -19,6 +21,8 @@ import com.github.polimi_mt_acg.back2school.utils.rest.HTTPServerManager;
 import com.github.polimi_mt_acg.back2school.utils.rest.RestFactory;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.ws.rs.client.Entity;
@@ -86,91 +90,85 @@ public class ClassroomsResourceTest {
   }
 
   @Test
-//  @Category(TestCategory.Transient.class)
-  public void postClassrooms() throws JsonProcessingException {
-    // Get an admin
-    List<User> admins =
-        (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioClassrooms", "users.json");
+  @Category(TestCategory.Transient.class)
+  public void postClassrooms() {
 
-    admins =
-        admins
-            .stream()
-            .filter(user -> user.getRole() == Role.ADMINISTRATOR)
-            .collect(Collectors.toList());
-    User admin = admins.get(0);
+    URI resourceURI = postB11(0);
 
-    // Create a custom classroom
-    Classroom classroom = makeClassroom();
-
-    // Authenticate the admin
-    WebTarget target = RestFactory.buildWebTarget();
-    // Authenticate
-    String token = RestFactory.doLoginGetToken(admin.getEmail(), admin.getSeedPassword());
-    assertNotNull(token);
-    assertTrue(!token.isEmpty());
-
-    // Set target to /notifications/send-to-teachers
-    target = target.path("classrooms");
-
-    // Set token and build the POST request
-    Invocation request =
-        target.request().header(HttpHeaders.AUTHORIZATION, token).buildPost(Entity.json(classroom));
-
-    // Invoke the request
-    Response response = request.invoke();
-    assertEquals(Status.OK.getStatusCode(), response.getStatus());
-
-    Classroom responseSubj = response.readEntity(Classroom.class);
-
-    // Print it
-    ObjectMapper mapper = RestFactory.objectMapper();
-    System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(responseSubj));
-
-    assertNotNull(responseSubj);
-    assertEquals(responseSubj.getName(), classroom.getName());
-    assertEquals(responseSubj.getBuilding(), classroom.getBuilding());
-    assertEquals(responseSubj.getFloor(), classroom.getFloor());
+    System.out.println(resourceURI);
   }
 
   @Test
+  @Category(TestCategory.Transient.class)
   public void getClassroomID() throws JsonProcessingException {
+    // Create a new Classroom in the system
+    URI B11URI = postB11(1);
+    System.out.println(B11URI);
+
     // Get an admin
-    List<User> admins =
-        (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioClassrooms", "users.json");
+    User admin = get(Role.ADMINISTRATOR);
 
-    admins =
-        admins
-            .stream()
-            .filter(user -> user.getRole() == Role.ADMINISTRATOR)
-            .collect(Collectors.toList());
-    User admin = admins.get(0);
+    // B11 ID
+    Path fullPath = Paths.get("/", B11URI.getPath());
+    Path idPath = fullPath.getParent().relativize(fullPath);
+    String B11ID = idPath.toString();
 
-    // Authenticate the admin
-    WebTarget target = RestFactory.buildWebTarget();
-    // Authenticate
-    String token = RestFactory.doLoginGetToken(admin.getEmail(), admin.getSeedPassword());
-    assertNotNull(token);
-    assertTrue(!token.isEmpty());
-
-    // Set target to /subjects/1
-    target = target.path("classrooms").path("1");
-
-    // Set token and build the GET request
     Invocation request =
-        target
-            .request(MediaType.APPLICATION_JSON)
-            .header(HttpHeaders.AUTHORIZATION, token)
-            .buildGet();
+            RestFactory.getAuthenticatedInvocationBuilder(admin, "classrooms", B11ID).buildGet();
 
-    // Invoke the request
-    ClassroomsResponse response = request.invoke(ClassroomsResponse.class);
-    assertNotNull(response);
+    Response response = request.invoke();
+    assertEquals(Status.OK.getStatusCode(), response.getStatus());
+    Classroom B11Response = response.readEntity(Classroom.class);
+
+    assertTrue(weakEquals(B11Response, buildB11(1)));
 
     // Print it
     ObjectMapper mapper = RestFactory.objectMapper();
+    System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(B11Response));
+  }
+
+  @Test
+  @Category(TestCategory.Transient.class)
+  public void putClassroomById() throws JsonProcessingException {
+    // Get an admin
+    User admin = get(Role.ADMINISTRATOR);
+
+    URI classroomURI = postB11(2);
+
+    Invocation getClassroom =
+            RestFactory.getAuthenticatedInvocationBuilder(admin, classroomURI).buildGet();
+    Classroom classroomResponse = getClassroom.invoke().readEntity(Classroom.class);
+
+    String nameSuffix = "newName";
+    String buildingSuffix = "newBuilding";
+    int floorSuffix = 100;
+
+    // Create a PutStudent request to change its name
+    PutClassroomRequest putClassroomRequest = new PutClassroomRequest();
+    putClassroomRequest.setName(classroomResponse.getName() + nameSuffix);
+    putClassroomRequest.setBuilding(classroomResponse.getBuilding() + buildingSuffix);
+    putClassroomRequest.setFloor(classroomResponse.getFloor() + floorSuffix);
+
+    // Make a PUT request
+    Invocation putClassroom =
+            RestFactory.getAuthenticatedInvocationBuilder(admin, classroomURI)
+                    .buildPut(Entity.json(putClassroomRequest));
+    Response putClassroomResponse = putClassroom.invoke();
+
+    assertEquals(Status.OK.getStatusCode(), putClassroomResponse.getStatus());
+
+    // Make a new GET to compare results
+    Invocation newGetClassroom =
+            RestFactory.getAuthenticatedInvocationBuilder(admin, classroomURI).buildGet();
+    Classroom newClassroomResponse = newGetClassroom.invoke().readEntity(Classroom.class);
+
+    assertEquals(classroomResponse.getName() + nameSuffix, newClassroomResponse.getName());
+    assertEquals(classroomResponse.getBuilding() + buildingSuffix, newClassroomResponse.getBuilding());
+    assertEquals(classroomResponse.getFloor() + floorSuffix, newClassroomResponse.getFloor());
+
+    ObjectMapper mapper = RestFactory.objectMapper();
     System.out.println(
-        "----CLASSROOMS / ID ----"
-            + mapper.writerWithDefaultPrettyPrinter().writeValueAsString(response));
+            mapper.writerWithDefaultPrettyPrinter().writeValueAsString(newClassroomResponse));
   }
 
 
@@ -204,5 +202,41 @@ public class ClassroomsResourceTest {
     List<User> usersWithRole =
             users.stream().filter(user -> user.getRole() == role).collect(Collectors.toList());
     return usersWithRole.get(0);
+  }
+
+  private URI postB11(int copyNumber) {
+    // Create a new Classroom in the system
+    Classroom B11 = buildB11(copyNumber);
+
+    // Get an admin to register B11 in the system
+    User admin = get(Role.ADMINISTRATOR);
+
+
+    // Make a POST to /students
+    Invocation post =
+            RestFactory.getAuthenticatedInvocationBuilder(admin, "classrooms")
+                    .buildPost(Entity.json(B11));
+
+    Response response = post.invoke();
+    assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
+
+    URI resourceURI = response.getLocation();
+    assertNotNull(resourceURI);
+    return resourceURI;
+  }
+
+  private Classroom buildB11(int copyNumber) {
+    Classroom B11 = new Classroom();
+    B11.setName("B11. " + copyNumber);
+    B11.setBuilding("B" +copyNumber);
+    B11.setFloor(11+copyNumber);
+    B11.prepareToPersist();
+    return B11;
+  }
+
+  private boolean weakEquals(Classroom u, Classroom p) {
+    return u.getName().equals(p.getName())
+            && u.getFloor() ==(p.getFloor())
+            && u.getBuilding().equals(p.getBuilding());
   }
 }
