@@ -1,7 +1,7 @@
 package com.github.polimi_mt_acg.back2school.api.v1.subjects;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.github.polimi_mt_acg.back2school.api.v1.administrators.AdministratorSecured;
+import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.AdministratorSecured;
 import com.github.polimi_mt_acg.back2school.model.*;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import org.hibernate.Session;
@@ -19,10 +19,10 @@ public class SubjectResource {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
-  public SubjectResponse getSubjects() throws JsonProcessingException {
+  public Response getSubjects() throws JsonProcessingException {
     List<Subject> subjects = DatabaseHandler.getInstance().getListSelectFrom(Subject.class);
 
-    return new SubjectResponse(subjects);
+    return Response.ok().build();
   }
 
   @POST
@@ -44,7 +44,7 @@ public class SubjectResource {
   @GET
   @Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
   @AdministratorSecured
-  public SubjectResponse getSubjectID(@PathParam("id") int id) {
+  public Response getSubjectID(@PathParam("id") int id) {
     DatabaseHandler dhi = DatabaseHandler.getInstance();
     Session session = dhi.getNewSession();
     session.beginTransaction();
@@ -53,7 +53,7 @@ public class SubjectResource {
             .getListSelectFromWhereEqual(Subject.class, Subject_.id, id, session);
 
     session.close();
-    return new SubjectResponse(subjects);
+    return Response.ok().build();
   }
 
   @Path("{id}")
