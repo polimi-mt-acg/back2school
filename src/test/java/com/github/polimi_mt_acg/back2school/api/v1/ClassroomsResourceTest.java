@@ -14,6 +14,8 @@ import com.github.polimi_mt_acg.back2school.model.User.Role;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseSeeder;
 import com.github.polimi_mt_acg.back2school.utils.JacksonCustomMapper;
+import com.github.polimi_mt_acg.back2school.utils.TestCategory;
+import com.github.polimi_mt_acg.back2school.utils.rest.HTTPServerManager;
 import com.github.polimi_mt_acg.back2school.utils.rest.RestFactory;
 import java.io.IOException;
 import java.net.URI;
@@ -33,6 +35,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 public class ClassroomsResourceTest {
 
@@ -44,7 +47,11 @@ public class ClassroomsResourceTest {
     DatabaseSeeder.deployScenario("scenarioClassrooms");
 
     // Run HTTP server
-    server = startServer();
+    server =
+            HTTPServerManager.startServer(
+                    AuthenticationResource.class,
+                    "com.github.polimi_mt_acg.back2school.api.v1.classrooms",
+                    "com.github.polimi_mt_acg.back2school.api.v1.security_contexts");
   }
 
   @AfterClass
@@ -56,61 +63,30 @@ public class ClassroomsResourceTest {
     server.shutdownNow();
   }
 
-  private static HttpServer startServer() {
-    // Create a resource config that scans for JAX-RS resources and providers
-    // in com.github.polimi_mt_acg.back2school.api.v1.subjects.resources package
-    final ResourceConfig rc =
-        new ResourceConfig()
-            .register(AuthenticationResource.class)
-            .packages("com.github.polimi_mt_acg.back2school.api.v1.classrooms")
-            .register(JacksonCustomMapper.class)
-            .register(JacksonFeature.class);
-
-    // create and start a new instance of grizzly http server
-    // exposing the Jersey application at BASE_URI
-    return GrizzlyHttpServerFactory.createHttpServer(URI.create(RestFactory.BASE_URI), rc);
-  }
-
   @Test
-  public void getClassrooms() throws IOException {
-    // Get Database seeds
-    List<User> admins =
-        (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioClassrooms", "users.json");
+  @Category(TestCategory.Transient.class)
+  public void getClassrooms() {
+    // Get an admin
+    User admin = get(Role.ADMINISTRATOR);
 
-    // For each administrator
-    for (User admin : admins) {
-      if (admin.getRole() == Role.ADMINISTRATOR) {
-        // Build the Client
-        WebTarget target = RestFactory.buildWebTarget();
-        // Authenticate
-        String token = RestFactory.doLoginGetToken(admin.getEmail(), admin.getSeedPassword());
-        assertNotNull(token);
-        assertTrue(!token.isEmpty());
+    Invocation getRequest =
+            RestFactory.getAuthenticatedInvocationBuilder(admin, "classrooms").buildGet();
 
-        // Set target to /notifications
-        target = target.path("classrooms");
+    Response response = getRequest.invoke();
+    assertEquals(Status.OK.getStatusCode(), response.getStatus());
 
-        // Set token and build the GET request
-        Invocation request =
-            target
-                .request(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, token)
-                .buildGet();
+//    System.out.println(admin);
 
-        // Invoke the request
-        ClassroomsResponse response = request.invoke(ClassroomsResponse.class);
-        assertNotNull(response);
+    List<URI> classroomsURIs = response.readEntity(ClassroomsResponse.class).getClassrooms();
 
-        // Print it
-        ObjectMapper mapper = RestFactory.objectMapper();
-        System.out.println(
-            "----CLASSROOMSGET----"
-                + mapper.writerWithDefaultPrettyPrinter().writeValueAsString(response));
-      }
+    for (URI uri : classroomsURIs) {
+      assertNotNull(uri);
+      System.out.println(uri);
     }
   }
 
   @Test
+//  @Category(TestCategory.Transient.class)
   public void postClassrooms() throws JsonProcessingException {
     // Get an admin
     List<User> admins =
@@ -197,11 +173,36 @@ public class ClassroomsResourceTest {
             + mapper.writerWithDefaultPrettyPrinter().writeValueAsString(response));
   }
 
+
+  private static HttpServer startServer() {
+    // Create a resource config that scans for JAX-RS resources and providers
+    // in com.github.polimi_mt_acg.back2school.api.v1.subjects.resources package
+    final ResourceConfig rc =
+            new ResourceConfig()
+                    .register(AuthenticationResource.class)
+                    .packages("com.github.polimi_mt_acg.back2school.api.v1.classrooms")
+                    .register(JacksonCustomMapper.class)
+                    .register(JacksonFeature.class);
+
+    // create and start a new instance of grizzly http server
+    // exposing the Jersey application at BASE_URI
+    return GrizzlyHttpServerFactory.createHttpServer(URI.create(RestFactory.BASE_URI), rc);
+  }
+
   private Classroom makeClassroom() {
     Classroom cr = new Classroom();
     cr.setName("A.1.1");
     cr.setBuilding("BL1");
     cr.setFloor(2);
     return cr;
+  }
+
+  private User get(Role role) {
+    List<User> users =
+            (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioClassrooms", "users.json");
+
+    List<User> usersWithRole =
+            users.stream().filter(user -> user.getRole() == role).collect(Collectors.toList());
+    return usersWithRole.get(0);
   }
 }

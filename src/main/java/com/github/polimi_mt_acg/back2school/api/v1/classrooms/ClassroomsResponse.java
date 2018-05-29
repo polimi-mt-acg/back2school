@@ -7,11 +7,13 @@ import java.util.List;
 public class ClassroomsResponse {
   private List<URI> classrooms;
 
-  @JsonProperty public List<URI> getClassrooms() {
+  @JsonProperty
+  public List<URI> getClassrooms() {
     return classrooms;
   }
 
-  @JsonProperty public void setClassrooms(List<URI> students) {
+  @JsonProperty
+  public void setClassrooms(List<URI> classrooms) {
     this.classrooms = classrooms;
   }
 }
