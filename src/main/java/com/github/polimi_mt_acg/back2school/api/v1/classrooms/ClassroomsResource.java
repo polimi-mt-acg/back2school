@@ -1,6 +1,7 @@
 package com.github.polimi_mt_acg.back2school.api.v1.classrooms;
 
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.AdministratorSecured;
+import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.TeacherAdministratorSecured;
 import com.github.polimi_mt_acg.back2school.model.Classroom;
 import com.github.polimi_mt_acg.back2school.model.Classroom_;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
@@ -64,7 +65,7 @@ public class ClassroomsResource {
     session.getTransaction().commit(); // Makes classrrom persisted.
     session.close();
 
-    // Now student has the ID field filled by the ORM
+    // Now classroom has the ID field filled by the ORM
     UriBuilder builder = uriInfo.getAbsolutePathBuilder();
     URI uri = builder.path(String.valueOf(classroom.getId())).build();
     return Response.created(uri).build();
@@ -73,7 +74,7 @@ public class ClassroomsResource {
   @Path("{id: [0-9]+}")
   @GET
   @Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
-  @AdministratorSecured
+  @TeacherAdministratorSecured
   public Response getClassroomID (@PathParam("id") String classroomId){
     // Fetch Classroom
     List<Classroom> res =
