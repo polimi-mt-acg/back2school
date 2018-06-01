@@ -77,6 +77,7 @@ public class User implements DeserializeToPersistInterface {
 
   @Override
   public void prepareToPersist() {
+    System.out.println("prepareToPersist, seedPassword: " + String.valueOf(seedPassword));
     if (seedPassword != null) {
       setPassword(this.seedPassword);
     }
@@ -125,7 +126,7 @@ public class User implements DeserializeToPersistInterface {
   public void setPassword(String password) {
     this.password = getStringHash(password);
   }
-  
+
   @JsonIgnore
   public String getSalt() {
     return salt;
@@ -146,6 +147,7 @@ public class User implements DeserializeToPersistInterface {
 
   private String getStringHash(String string) {
     if (this.salt == null) {
+      System.out.println("Generating salt for the user");
       // generate salt from a new UUID
       this.salt = RandomStringGenerator.generateString();
     }

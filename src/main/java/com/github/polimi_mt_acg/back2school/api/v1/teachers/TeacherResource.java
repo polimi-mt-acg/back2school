@@ -1,18 +1,23 @@
 package com.github.polimi_mt_acg.back2school.api.v1.teachers;
 
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.AdministratorSecured;
+import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.TeacherAdministratorSecured;
+import com.github.polimi_mt_acg.back2school.model.AuthenticationSession;
 import com.github.polimi_mt_acg.back2school.model.User;
+import com.github.polimi_mt_acg.back2school.model.User.Role;
 import com.github.polimi_mt_acg.back2school.model.User_;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
-import java.util.List;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import org.hibernate.Session;
 
-/**
- * JAX-RS Resource for teachers entity.
- */
+import java.net.URI;
+import java.util.List;
+import java.util.Optional;
+import javax.ws.rs.*;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.*;
+import javax.ws.rs.core.Response.Status;
+
+/** JAX-RS Resource for teachers entity. */
 @Path("teachers")
 public class TeacherResource {
 
@@ -25,5 +30,81 @@ public class TeacherResource {
             .getListSelectFromWhereEqual(User.class, User_.role, User.Role.TEACHER);
 
     return new TeacherResponse(teachers);
+  }
+
+  @POST
+  @Consumes(MediaType.APPLICATION_JSON)
+  @AdministratorSecured
+  public Response postTeachers(PostTeacherRequest request, @Context UriInfo uriInfo) {
+    User teacher = request.getTeacher();
+
+    System.out.println("INSIDE POST teacher.getSeedPassword: " + String.valueOf(teacher.getSeedPassword()));
+
+
+    Session session = DatabaseHandler.getInstance().getNewSession();
+    session.beginTransaction();
+
+    // Check if input user is a teacher
+    if (teacher.getRole() != User.Role.TEACHER) {
+      return Response.status(Status.BAD_REQUEST)
+          .entity("Provided user error: not a teacher")
+          .build();
+    }
+
+    // Check if a user with same email already exists, if so, do nothing
+    Optional<User> result =
+        DatabaseHandler.fetchEntityBy(User.class, User_.email, teacher.getEmail());
+    if (result.isPresent()) {
+      session.getTransaction().commit();
+      session.close();
+      return Response.status(Status.CONFLICT)
+          .entity("An account with this email already exists.")
+          .build();
+    }
+
+    System.out.println("BEFORE PREPARE TO PERSIST");
+    System.out.println("teacher.getSalt(): " + String.valueOf(teacher.getSalt()));
+    teacher.prepareToPersist();
+    System.out.println("AFTER PREPARE TO PERSIST");
+    System.out.println("teacher.getSalt(): " + String.valueOf(teacher.getSalt()));
+
+    session.persist(teacher);
+    session.getTransaction().commit();
+    session.close();
+
+    // Now the teacher has the ID field filled by the ORM
+    UriBuilder builder = uriInfo.getAbsolutePathBuilder();
+    URI uri = builder.path(String.valueOf(teacher.getId())).build();
+    return Response.created(uri).build();
+  }
+
+  @Path("{id: [0-9]+}")
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @TeacherAdministratorSecured
+  public Response getTeacherById(@PathParam("id") String id, @Context ContainerRequestContext crc) {
+    User currentUser = AuthenticationSession.getCurrentUser(crc);
+
+    // Fetch User
+    Optional<User> userOpt = DatabaseHandler.fetchEntityBy(User.class, User_.id, Integer.parseInt(id));
+    if (!userOpt.isPresent()) {
+      return Response.status(Status.NOT_FOUND).entity("User not found").build();
+    }
+    User teacher = userOpt.get();
+    System.out.println("currentUser.getRole " + currentUser.getRole());
+    System.out.println("currentUser.getId " + currentUser.getId());
+    System.out.println("teacher.getId " + teacher.getId());
+
+    Role role = currentUser.getRole();
+    System.out.println("currentUser.getRole " + currentUser.getRole());
+    System.out.println("role.equals(Role.TEACHER): " + String.valueOf(role.equals(Role.TEACHER)));
+
+    if (role.equals(Role.TEACHER) && currentUser.getId() != teacher.getId()) {
+      System.out.println("FORBIDDEN HERE");
+
+//      return Response.status(Status.FORBIDDEN).entity("Not a valid id").build();
+    }
+
+    return Response.ok(teacher, MediaType.APPLICATION_JSON_TYPE).build();
   }
 }

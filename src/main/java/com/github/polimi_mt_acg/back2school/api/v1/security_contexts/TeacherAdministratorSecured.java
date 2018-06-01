@@ -9,8 +9,8 @@ import java.lang.annotation.Target;
 import javax.ws.rs.NameBinding;
 
 /**
- * Annotates a JAX-RS API that a request performed to it is filtered accoriding to
- * "Parent/Administrators only" security policy.
+ * Annotates a JAX-RS API that a request performed to it is filtered according to
+ * "Teacher/Administrators only" security policy.
  */
 @NameBinding
 @Retention(RUNTIME)

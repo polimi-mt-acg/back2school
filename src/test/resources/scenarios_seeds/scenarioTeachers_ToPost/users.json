@@ -1,0 +1,11 @@
+{
+  "users": [
+    {
+      "role": "TEACHER",
+      "name": "CarlPost",
+      "surname": "SurnameCarlPost",
+      "email": "carl-post@email.com",
+      "seedPassword": "email_password"
+    }
+  ]
+}

@@ -1,7 +1,9 @@
 package com.github.polimi_mt_acg.back2school.api.v1;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.polimi_mt_acg.back2school.api.v1.auth.AuthenticationResource;
+import com.github.polimi_mt_acg.back2school.api.v1.teachers.PostTeacherRequest;
 import com.github.polimi_mt_acg.back2school.api.v1.teachers.TeacherResponse;
 import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
@@ -11,12 +13,19 @@ import com.github.polimi_mt_acg.back2school.utils.rest.HTTPServerManager;
 import com.github.polimi_mt_acg.back2school.utils.rest.RestFactory;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,10 +34,12 @@ import static org.junit.Assert.*;
 public class TeacherResourceTest {
 
   private static HttpServer server;
+  private static User adminForLogin;
 
   @BeforeClass
-  public static void setUp() throws Exception {
+  public static void oneTimeSetUp() {
     // Deploy database scenario
+    DatabaseHandler.getInstance().truncateDatabase();
     DatabaseSeeder.deployScenario("scenarioTeachers");
 
     // Run HTTP server
@@ -38,32 +49,28 @@ public class TeacherResourceTest {
   }
 
   @AfterClass
-  public static void tearDown() throws Exception {
+  public static void oneTimeTearDown() {
     // Truncate DB
-    DatabaseHandler.getInstance().truncateDatabase();
+    //    DatabaseHandler.getInstance().truncateDatabase();
 
     // Close HTTP server
     server.shutdownNow();
   }
 
-  @Test
-  public void getTeachers() {}
+  @Before
+  public void setUp() {
+    // Admin account for the log in
+    adminForLogin = DatabaseSeeder.getSeedUserByRole("scenarioTeachers", User.Role.ADMINISTRATOR);
+    assertNotNull(adminForLogin);
+  }
 
   @Test
-  @Category(TestCategory.Transient.class)
-  public void getAdministrators() throws IOException {
+  @Category(TestCategory.Endpoint.class)
+  public void getTeachers() throws IOException {
     // Get seeds' users
     List<User> seedUsers =
         (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioTeachers", "users.json");
     assertNotNull(seedUsers);
-
-    // get the admin from seeds
-    User seedAdmin =
-        seedUsers
-            .stream()
-            .filter(user -> user.getRole().equals(User.Role.ADMINISTRATOR))
-            .collect(Collectors.toList())
-            .get(0);
 
     // get the teachers from seeds
     List<User> seedTeachers =
@@ -73,8 +80,7 @@ public class TeacherResourceTest {
             .collect(Collectors.toList());
 
     Invocation request =
-        RestFactory.getAuthenticatedInvocationBuilder(seedAdmin, "teachers")
-            .buildGet();
+        RestFactory.getAuthenticatedInvocationBuilder(adminForLogin, "teachers").buildGet();
 
     TeacherResponse response = request.invoke(TeacherResponse.class);
     assertNotNull(response);
@@ -87,7 +93,7 @@ public class TeacherResourceTest {
       User responseTeacher =
           responseTeachers
               .stream()
-              .filter(user -> user.getEmail().equals(seedTeacher.getEmail()))
+              .filter(user -> user.weakEquals(seedTeacher))
               .collect(Collectors.toList())
               .get(0);
 
@@ -98,5 +104,99 @@ public class TeacherResourceTest {
     // Print it
     System.out.println(
         new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(response));
+  }
+
+  @Test
+  @Category(TestCategory.Endpoint.class)
+  public void postTeachers() {
+    // Get a user to be inserted
+    User carlosPost =
+        DatabaseSeeder.getSeedUserByRole("scenarioTeachers_ToPost", User.Role.TEACHER);
+    assertNotNull(carlosPost);
+
+    URI insertedTeacherURI = doTeacherPost(carlosPost);
+
+    System.out.println("Inserted teacher URI:");
+    System.out.println(insertedTeacherURI);
+  }
+
+  @Test
+  @Category(TestCategory.Endpoint.class)
+  public void getTeacherByIdFromAdmin() {
+    // Get a user to be inserted
+    User seedTeacher =
+        DatabaseSeeder.getSeedUserByRole("scenarioTeachers_ToPost", User.Role.TEACHER);
+    assertNotNull(seedTeacher);
+
+    URI insertedTeacherURI = doTeacherPost(seedTeacher);
+    Path fullPath = Paths.get("/", insertedTeacherURI.getPath());
+    Path idPath = fullPath.getParent().relativize(fullPath);
+    String teacherID = idPath.toString();
+
+    System.out.println("New inserted teacher id: " + teacherID);
+
+    // GET - Admin
+    Invocation request =
+        RestFactory.getAuthenticatedInvocationBuilder(adminForLogin, "teachers", teacherID)
+            .buildGet();
+
+    Response response = request.invoke();
+    assertEquals(Status.OK.getStatusCode(), response.getStatus());
+    User teacherFromResponse = response.readEntity(User.class);
+    assertTrue(teacherFromResponse.weakEquals(seedTeacher));
+  }
+
+  @Test
+  @Category(TestCategory.Transient.class)
+  public void getTeacherByIdFromTeacher() {
+    // Get a user to be inserted and then use the same to log in
+    User seedTeacher =
+        DatabaseSeeder.getSeedUserByRole("scenarioTeachers_ToPost", User.Role.TEACHER);
+    assertNotNull(seedTeacher);
+
+
+    seedTeacher.setEmail("carlos-post2@email.com");
+    System.out.println("seedTeacher.getSeedPassword: " + String.valueOf(seedTeacher.getSeedPassword()));
+
+    URI insertedTeacherURI = doTeacherPost(seedTeacher);
+    System.out.println("seedTeacher.getSeedPassword: " + String.valueOf(seedTeacher.getSeedPassword()));
+    Path fullPath = Paths.get("/", insertedTeacherURI.getPath());
+    Path idPath = fullPath.getParent().relativize(fullPath);
+    String teacherID = idPath.toString();
+
+    System.out.println("New inserted teacher id: " + teacherID);
+
+    //    // GET - Teacher
+    //    Invocation request =
+    //        RestFactory.getAuthenticatedInvocationBuilder(seedTeacher, "teachers", teacherID)
+    //            .buildGet();
+    //
+    //    Response response = request.invoke();
+    //    assertEquals(Status.OK.getStatusCode(), response.getStatus());
+    //    User teacherFromResponse = response.readEntity(User.class);
+    //    assertTrue(teacherFromResponse.weakEquals(seedTeacher));
+  }
+
+  /**
+   * Do a post an return the inserted teacher URI.
+   *
+   * @return The inserted resource URI.
+   */
+  private URI doTeacherPost(User user) {
+    // Now build a PostStudentRequest
+    PostTeacherRequest request = new PostTeacherRequest();
+    request.setTeacher(user);
+
+    // Make a POST to /teachers
+    Invocation post =
+        RestFactory.getAuthenticatedInvocationBuilder(adminForLogin, "teachers")
+            .buildPost(Entity.json(request));
+
+    Response response = post.invoke();
+    assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
+
+    URI resourceURI = response.getLocation();
+    assertNotNull(resourceURI);
+    return resourceURI;
   }
 }

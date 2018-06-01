@@ -46,7 +46,7 @@ public class AuthenticationResource {
 
     // if the user is null: invalid credentials or user does not exist
     if (user == null)
-      return Response.status(Response.Status.FORBIDDEN).build();
+      return Response.status(Response.Status.BAD_REQUEST).build();
 
 
     // create a new AuthenticationSession and return back the token to the client

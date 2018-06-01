@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.polimi_mt_acg.back2school.model.DeserializeToPersistInterface;
+import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.utils.json_mappers.AppointmentsJSONTemplate;
 import com.github.polimi_mt_acg.back2school.utils.json_mappers.AuthenticationSessionJSONTemplate;
 import com.github.polimi_mt_acg.back2school.utils.json_mappers.ClassesJSONTemplate;
@@ -23,7 +24,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
 import org.hibernate.Session;
+
+import static org.junit.Assert.assertNotNull;
 
 public class DatabaseSeeder {
 
@@ -142,5 +147,23 @@ public class DatabaseSeeder {
       e.printStackTrace();
     }
     return null;
+  }
+
+
+  /**
+   * Retrieve a user from seeds by its role
+   * @param seedFolder The seed folder from which to load users
+   * @param role The role to select.
+   * @return The first user with the role given is returned.
+   */
+  public static User getSeedUserByRole(String seedFolder, User.Role role) {
+    List<User> seedUsers =
+        (List<User>) DatabaseSeeder.getEntitiesListFromSeed(seedFolder, "users.json");
+    assertNotNull(seedUsers);
+    return seedUsers
+        .stream()
+        .filter(user -> user.getRole().equals(role))
+        .collect(Collectors.toList())
+        .get(0);
   }
 }
