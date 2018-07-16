@@ -1,6 +1,8 @@
 package com.github.polimi_mt_acg.back2school.model;
 
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
+import org.hibernate.Session;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.Column;
@@ -12,6 +14,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import javax.xml.crypto.Data;
 
 @Entity
 @Table(name = "lecture")
@@ -21,6 +27,7 @@ public class Lecture implements DeserializeToPersistInterface {
   @Transient public String seedTeacherEmail;
   @Transient public String seedClassroomName;
   @Transient public String seedClassName;
+  @Transient public String seedClassYear;
 
   @Id
   @GeneratedValue
@@ -142,10 +149,23 @@ public class Lecture implements DeserializeToPersistInterface {
   }
 
   private void seedAssociateClass() {
-    if (seedClassName != null) {
-      DatabaseHandler dhi = DatabaseHandler.getInstance();
-      List<Class> classes =
-          dhi.getListSelectFromWhereEqual(Class.class, Class_.name, seedClassName);
+    if (seedClassName != null && seedClassYear != null) {
+      Session session = DatabaseHandler.getInstance().getNewSession();
+
+      CriteriaBuilder builder = session.getCriteriaBuilder();
+      CriteriaQuery<Class> criteria = builder.createQuery(Class.class);
+      Root<Class> root = criteria.from(Class.class);
+      criteria.select(root);
+
+      // where Class_.name == seedClassName AND Class_.academicYear == seedClassYear
+      criteria.where(
+          builder.and(
+              builder.equal(root.get(Class_.name), seedClassName),
+              builder.equal(root.get(Class_.academicYear), seedClassYear)));
+
+      List<Class> classes = session.createQuery(criteria).getResultList();
+      session.close();
+
       if (classes != null) {
         setClass_(classes.get(0));
       }
