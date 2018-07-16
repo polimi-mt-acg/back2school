@@ -33,7 +33,7 @@
         <version>2.19.1</version>
         <configuration>
           <!--<groups>com.github.polimi_mt_acg.back2school.utils.TestCategory$StudentsEndpoint</groups>-->
-          <groups>com.github.polimi_mt_acg.back2school.utils.TestCategory$Transient</groups>
+          <!--<groups>com.github.polimi_mt_acg.back2school.utils.TestCategory$Transient</groups>-->
         </configuration>
       </plugin>
 

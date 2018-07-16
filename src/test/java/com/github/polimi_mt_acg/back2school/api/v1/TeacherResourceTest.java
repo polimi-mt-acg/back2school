@@ -1,6 +1,5 @@
 package com.github.polimi_mt_acg.back2school.api.v1;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.polimi_mt_acg.back2school.api.v1.auth.AuthenticationResource;
 import com.github.polimi_mt_acg.back2school.api.v1.teachers.PostTeacherRequest;
@@ -39,7 +38,6 @@ public class TeacherResourceTest {
   @BeforeClass
   public static void oneTimeSetUp() {
     // Deploy database scenario
-    DatabaseHandler.getInstance().truncateDatabase();
     DatabaseSeeder.deployScenario("scenarioTeachers");
 
     // Run HTTP server
@@ -51,7 +49,7 @@ public class TeacherResourceTest {
   @AfterClass
   public static void oneTimeTearDown() {
     // Truncate DB
-    //    DatabaseHandler.getInstance().truncateDatabase();
+    DatabaseHandler.getInstance().truncateDatabase();
 
     // Close HTTP server
     server.shutdownNow();
@@ -111,7 +109,7 @@ public class TeacherResourceTest {
   public void postTeachers() {
     // Get a user to be inserted
     User carlosPost =
-        DatabaseSeeder.getSeedUserByRole("scenarioTeachers_ToPost", User.Role.TEACHER);
+        DatabaseSeeder.getSeedUserByRole("scenarioTeachers_ToPost1", User.Role.TEACHER);
     assertNotNull(carlosPost);
 
     URI insertedTeacherURI = doTeacherPost(carlosPost);
@@ -125,7 +123,7 @@ public class TeacherResourceTest {
   public void getTeacherByIdFromAdmin() {
     // Get a user to be inserted
     User seedTeacher =
-        DatabaseSeeder.getSeedUserByRole("scenarioTeachers_ToPost", User.Role.TEACHER);
+        DatabaseSeeder.getSeedUserByRole("scenarioTeachers_ToPost2", User.Role.TEACHER);
     assertNotNull(seedTeacher);
 
     URI insertedTeacherURI = doTeacherPost(seedTeacher);
@@ -135,7 +133,7 @@ public class TeacherResourceTest {
 
     System.out.println("New inserted teacher id: " + teacherID);
 
-    // GET - Admin
+    // GET - Using admin to log in
     Invocation request =
         RestFactory.getAuthenticatedInvocationBuilder(adminForLogin, "teachers", teacherID)
             .buildGet();
@@ -147,34 +145,31 @@ public class TeacherResourceTest {
   }
 
   @Test
-  @Category(TestCategory.Transient.class)
+  @Category(TestCategory.Endpoint.class)
   public void getTeacherByIdFromTeacher() {
     // Get a user to be inserted and then use the same to log in
     User seedTeacher =
-        DatabaseSeeder.getSeedUserByRole("scenarioTeachers_ToPost", User.Role.TEACHER);
+        DatabaseSeeder.getSeedUserByRole("scenarioTeachers_ToPost3", User.Role.TEACHER);
     assertNotNull(seedTeacher);
 
-
-    seedTeacher.setEmail("carlos-post2@email.com");
-    System.out.println("seedTeacher.getSeedPassword: " + String.valueOf(seedTeacher.getSeedPassword()));
-
     URI insertedTeacherURI = doTeacherPost(seedTeacher);
-    System.out.println("seedTeacher.getSeedPassword: " + String.valueOf(seedTeacher.getSeedPassword()));
+    System.out.println(
+        "seedTeacher.getSeedPassword: " + String.valueOf(seedTeacher.getSeedPassword()));
     Path fullPath = Paths.get("/", insertedTeacherURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
     String teacherID = idPath.toString();
 
     System.out.println("New inserted teacher id: " + teacherID);
 
-    //    // GET - Teacher
-    //    Invocation request =
-    //        RestFactory.getAuthenticatedInvocationBuilder(seedTeacher, "teachers", teacherID)
-    //            .buildGet();
-    //
-    //    Response response = request.invoke();
-    //    assertEquals(Status.OK.getStatusCode(), response.getStatus());
-    //    User teacherFromResponse = response.readEntity(User.class);
-    //    assertTrue(teacherFromResponse.weakEquals(seedTeacher));
+    // GET - Using teacher to log in
+    Invocation request =
+        RestFactory.getAuthenticatedInvocationBuilder(seedTeacher, "teachers", teacherID)
+            .buildGet();
+
+    Response response = request.invoke();
+    assertEquals(Status.OK.getStatusCode(), response.getStatus());
+    User teacherFromResponse = response.readEntity(User.class);
+    assertTrue(teacherFromResponse.weakEquals(seedTeacher));
   }
 
   /**
@@ -185,7 +180,7 @@ public class TeacherResourceTest {
   private URI doTeacherPost(User user) {
     // Now build a PostStudentRequest
     PostTeacherRequest request = new PostTeacherRequest();
-    request.setTeacher(user);
+    request.setTeacherAndPassword(user, user.getSeedPassword());
 
     // Make a POST to /teachers
     Invocation post =
@@ -193,6 +188,7 @@ public class TeacherResourceTest {
             .buildPost(Entity.json(request));
 
     Response response = post.invoke();
+
     assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
 
     URI resourceURI = response.getLocation();

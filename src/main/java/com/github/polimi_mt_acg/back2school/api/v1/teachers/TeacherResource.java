@@ -38,9 +38,6 @@ public class TeacherResource {
   public Response postTeachers(PostTeacherRequest request, @Context UriInfo uriInfo) {
     User teacher = request.getTeacher();
 
-    System.out.println("INSIDE POST teacher.getSeedPassword: " + String.valueOf(teacher.getSeedPassword()));
-
-
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 
@@ -62,11 +59,7 @@ public class TeacherResource {
           .build();
     }
 
-    System.out.println("BEFORE PREPARE TO PERSIST");
-    System.out.println("teacher.getSalt(): " + String.valueOf(teacher.getSalt()));
     teacher.prepareToPersist();
-    System.out.println("AFTER PREPARE TO PERSIST");
-    System.out.println("teacher.getSalt(): " + String.valueOf(teacher.getSalt()));
 
     session.persist(teacher);
     session.getTransaction().commit();
@@ -86,23 +79,16 @@ public class TeacherResource {
     User currentUser = AuthenticationSession.getCurrentUser(crc);
 
     // Fetch User
-    Optional<User> userOpt = DatabaseHandler.fetchEntityBy(User.class, User_.id, Integer.parseInt(id));
+    Optional<User> userOpt =
+        DatabaseHandler.fetchEntityBy(User.class, User_.id, Integer.parseInt(id));
     if (!userOpt.isPresent()) {
       return Response.status(Status.NOT_FOUND).entity("User not found").build();
     }
     User teacher = userOpt.get();
-    System.out.println("currentUser.getRole " + currentUser.getRole());
-    System.out.println("currentUser.getId " + currentUser.getId());
-    System.out.println("teacher.getId " + teacher.getId());
 
-    Role role = currentUser.getRole();
-    System.out.println("currentUser.getRole " + currentUser.getRole());
-    System.out.println("role.equals(Role.TEACHER): " + String.valueOf(role.equals(Role.TEACHER)));
-
-    if (role.equals(Role.TEACHER) && currentUser.getId() != teacher.getId()) {
+    if (currentUser.getRole().equals(Role.TEACHER) && currentUser.getId() != teacher.getId()) {
       System.out.println("FORBIDDEN HERE");
-
-//      return Response.status(Status.FORBIDDEN).entity("Not a valid id").build();
+      return Response.status(Status.FORBIDDEN).entity("Not allowed user").build();
     }
 
     return Response.ok(teacher, MediaType.APPLICATION_JSON_TYPE).build();
