@@ -194,13 +194,14 @@ public class TeacherResourceTest {
     assertEquals(Status.OK.getStatusCode(), response.getStatus());
     TeacherClassesResponse teacherClassesResponse =
         response.readEntity(TeacherClassesResponse.class);
+
     print("Response /teachers/", carl1Teacher.getId(), "/classes:\n", teacherClassesResponse);
 
     assertEquals(teacherClassesResponse.getClasses().size(), 2);
   }
 
   @Test
-  @Category(TestCategory.Transient.class)
+  @Category(TestCategory.Endpoint.class)
   public void getTeacherClassesFromTeacher() {
     // Get the first teacher from database
     User carl1Teacher =

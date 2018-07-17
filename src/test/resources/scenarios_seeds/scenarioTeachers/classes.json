@@ -10,15 +10,18 @@
     },
     {
       "academicYear": 2018,
-      "name": "1B"
+      "name": "1B",
+      "seedStudentsEmail": ["bob1@email.com", "bob2@email.com"]
     },
     {
       "academicYear": 2018,
-      "name": "2B"
+      "name": "2B",
+      "seedStudentsEmail": ["bob1@email.com"]
     },
     {
       "academicYear": 2018,
-      "name": "3B"
+      "name": "3B",
+      "seedStudentsEmail": ["bob1@email.com", "bob2@email.com"]
     }
   ]
 }

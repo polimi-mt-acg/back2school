@@ -33,8 +33,6 @@ public class PythonMockedUtilityFunctions {
     StringBuilder sb = new StringBuilder();
 
     for (Object o: objects) {
-      String str = "";
-
       if (o == null
           || o instanceof String
           || o instanceof Boolean
