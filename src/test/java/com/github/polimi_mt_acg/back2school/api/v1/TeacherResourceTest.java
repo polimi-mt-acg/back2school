@@ -3,8 +3,10 @@ package com.github.polimi_mt_acg.back2school.api.v1;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.polimi_mt_acg.back2school.api.v1.auth.AuthenticationResource;
 import com.github.polimi_mt_acg.back2school.api.v1.teachers.PostTeacherRequest;
+import com.github.polimi_mt_acg.back2school.api.v1.teachers.TeacherClassesResponse;
 import com.github.polimi_mt_acg.back2school.api.v1.teachers.TeacherResponse;
 import com.github.polimi_mt_acg.back2school.model.User;
+import com.github.polimi_mt_acg.back2school.model.User_;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseSeeder;
 import com.github.polimi_mt_acg.back2school.utils.TestCategory;
@@ -28,6 +30,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.*;
 import static org.junit.Assert.*;
 
 public class TeacherResourceTest {
@@ -170,6 +173,59 @@ public class TeacherResourceTest {
     assertEquals(Status.OK.getStatusCode(), response.getStatus());
     User teacherFromResponse = response.readEntity(User.class);
     assertTrue(teacherFromResponse.weakEquals(seedTeacher));
+  }
+
+  @Test
+  @Category(TestCategory.Endpoint.class)
+  public void getTeacherClassesFromAdmin() {
+    // Get the first teacher from database
+    User carl1Teacher =
+        DatabaseHandler.getInstance()
+            .getListSelectFromWhereEqual(User.class, User_.role, User.Role.TEACHER)
+            .get(0);
+
+    // GET - Using admin to log in
+    Invocation request =
+        RestFactory.getAuthenticatedInvocationBuilder(
+                adminForLogin, "teachers", String.valueOf(carl1Teacher.getId()), "classes")
+            .buildGet();
+
+    Response response = request.invoke();
+    assertEquals(Status.OK.getStatusCode(), response.getStatus());
+    TeacherClassesResponse teacherClassesResponse =
+        response.readEntity(TeacherClassesResponse.class);
+    print("Response /teachers/", carl1Teacher.getId(), "/classes:\n", teacherClassesResponse);
+
+    assertEquals(teacherClassesResponse.getClasses().size(), 2);
+  }
+
+  @Test
+  @Category(TestCategory.Transient.class)
+  public void getTeacherClassesFromTeacher() {
+    // Get the first teacher from database
+    User carl1Teacher =
+        DatabaseHandler.getInstance()
+            .getListSelectFromWhereEqual(User.class, User_.role, User.Role.TEACHER)
+            .get(0);
+    assertNotNull(carl1Teacher);
+    assertEquals(carl1Teacher.getEmail(), "carl1@email.com");
+    // set the password in order to let the invocation builder be able to authenticate the user
+    carl1Teacher.setSeedPassword("email_password");
+
+    // GET - Using teacher to log in
+    Invocation request =
+        RestFactory.getAuthenticatedInvocationBuilder(
+                carl1Teacher, "teachers", String.valueOf(carl1Teacher.getId()), "classes")
+            .buildGet();
+
+    Response response = request.invoke();
+    assertEquals(Status.OK.getStatusCode(), response.getStatus());
+    TeacherClassesResponse teacherClassesResponse =
+        response.readEntity(TeacherClassesResponse.class);
+
+    print("Response /teachers/", carl1Teacher.getId(), "/classes:\n", teacherClassesResponse);
+
+    assertEquals(teacherClassesResponse.getClasses().size(), 2);
   }
 
   /**

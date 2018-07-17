@@ -1,0 +1,24 @@
+{
+  "classes": [
+    {
+      "academicYear": 2017,
+      "name": "1A"
+    },
+    {
+      "academicYear": 2017,
+      "name": "2A"
+    },
+    {
+      "academicYear": 2018,
+      "name": "1B"
+    },
+    {
+      "academicYear": 2018,
+      "name": "2B"
+    },
+    {
+      "academicYear": 2018,
+      "name": "3B"
+    }
+  ]
+}

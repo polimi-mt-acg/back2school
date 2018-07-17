@@ -1,8 +1,10 @@
 package com.github.polimi_mt_acg.back2school.api.v1.teachers;
 
+import com.github.polimi_mt_acg.back2school.api.v1.classes.ClassResource;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.AdministratorSecured;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.TeacherAdministratorSecured;
 import com.github.polimi_mt_acg.back2school.model.AuthenticationSession;
+import com.github.polimi_mt_acg.back2school.model.Class;
 import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.model.User.Role;
 import com.github.polimi_mt_acg.back2school.model.User_;
@@ -10,12 +12,15 @@ import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import org.hibernate.Session;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javax.ws.rs.*;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.*;
 import javax.ws.rs.core.Response.Status;
+
+import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.*;
 
 /** JAX-RS Resource for teachers entity. */
 @Path("teachers")
@@ -67,7 +72,7 @@ public class TeacherResource {
 
     // Now the teacher has the ID field filled by the ORM
     UriBuilder builder = uriInfo.getAbsolutePathBuilder();
-    URI uri = builder.path(String.valueOf(teacher.getId())).build();
+    URI uri = builder.path(str(teacher.getId())).build();
     return Response.created(uri).build();
   }
 
@@ -80,17 +85,110 @@ public class TeacherResource {
 
     // Fetch User
     Optional<User> userOpt =
-        DatabaseHandler.fetchEntityBy(User.class, User_.id, Integer.parseInt(id));
+        DatabaseHandler.fetchEntityBy(User.class, User_.id, as_int(id));
     if (!userOpt.isPresent()) {
       return Response.status(Status.NOT_FOUND).entity("User not found").build();
     }
     User teacher = userOpt.get();
 
     if (currentUser.getRole().equals(Role.TEACHER) && currentUser.getId() != teacher.getId()) {
-      System.out.println("FORBIDDEN HERE");
       return Response.status(Status.FORBIDDEN).entity("Not allowed user").build();
     }
 
     return Response.ok(teacher, MediaType.APPLICATION_JSON_TYPE).build();
+  }
+
+  @Path("{teacherId: [0-9]+}/classes")
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @TeacherAdministratorSecured
+  public Response getTeacherClasses(
+      @PathParam("teacherId") String teacherId,
+      @Context ContainerRequestContext crc,
+      @Context UriInfo uriInfo) {
+    User currentUser = AuthenticationSession.getCurrentUser(crc);
+
+    print("teacherID: ", teacherId);
+
+    // Fetch request user
+    Optional<User> userOpt =
+        DatabaseHandler.fetchEntityBy(User.class, User_.id, as_int(teacherId));
+    if (!userOpt.isPresent()) {
+      return Response.status(Status.NOT_FOUND).entity("User not found").build();
+    }
+    User teacher = userOpt.get();
+
+    if (currentUser.getRole().equals(Role.TEACHER) && currentUser.getId() != teacher.getId()) {
+      return Response.status(Status.FORBIDDEN).entity("Not allowed user").build();
+    }
+
+    Session session = DatabaseHandler.getInstance().getNewSession();
+    List<Class> classes =
+        session
+            .createNativeQuery(
+                "SELECT class.* "
+                    + "FROM class "
+                    + "LEFT JOIN lecture "
+                    + "ON lecture.class_id = class.id "
+                    + "LEFT JOIN user "
+                    + "ON lecture.teacher_id = user.id "
+                    + "WHERE user.id = "
+                    + teacherId,
+                Class.class)
+            .getResultList();
+
+    List<ClassResponse> responseClasses = new ArrayList<>();
+    for (Class cls : classes) {
+
+      UriBuilder builder = uriInfo.getBaseUriBuilder();
+
+      URI classUri = builder
+              .path(ClassResource.class)
+              .path(str(cls.getId()))
+              .build();
+
+      URI classStudentsUri = builder
+          .path(ClassResource.class)
+          .path(str(cls.getId()))
+          .path("students")
+          .build();
+
+      URI classTimetableUri =
+          builder
+              .path(TeacherResource.class)
+              .path(teacherId)
+              .path("classes")
+              .path(str(cls.getId()))
+              .path("timetable")
+              .build();
+
+      // create the response class and add to the list
+      ClassResponse crm = new ClassResponse();
+
+      crm.setName(cls.getName());
+      crm.setAcademicYear(cls.getAcademicYear());
+      crm.setUrlClass(classUri.toString());
+      crm.setUrlClassStudents(classStudentsUri.toString());
+      crm.setUrlClassTimetable(classTimetableUri.toString());
+
+      responseClasses.add(crm);
+    }
+
+    TeacherClassesResponse teacherClassesResponse = new TeacherClassesResponse();
+    teacherClassesResponse.setClasses(responseClasses);
+    return Response.ok(teacherClassesResponse, MediaType.APPLICATION_JSON_TYPE).build();
+  }
+
+  @Path("{teacherId: [0-9]+}/classes/{classId: [0-9]+}/timetable")
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @TeacherAdministratorSecured
+  public Response getTeacherClasses(
+      @PathParam("teacherId") String teacherId,
+      @PathParam("classId") String classId,
+      @Context ContainerRequestContext crc) {
+    User currentUser = AuthenticationSession.getCurrentUser(crc);
+
+    return Response.ok().build();
   }
 }
