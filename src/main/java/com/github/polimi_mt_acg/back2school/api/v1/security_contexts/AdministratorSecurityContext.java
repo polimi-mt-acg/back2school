@@ -41,8 +41,9 @@ public class AdministratorSecurityContext implements ContainerRequestFilter {
       return;
     }
 
+    System.out.println("Security context got ROLE: " + String.valueOf(currentUser.getRole()));
     // if the user logged has not the correct role
-    if (currentUser.getRole() != User.Role.ADMINISTRATOR) {
+    if (!currentUser.getRole().equals(User.Role.ADMINISTRATOR)) {
       requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
       return;
     }

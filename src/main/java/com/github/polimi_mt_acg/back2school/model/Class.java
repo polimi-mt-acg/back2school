@@ -36,10 +36,9 @@ public class Class implements DeserializeToPersistInterface {
 
   @ManyToMany
   @JoinTable(
-    name = "class_user",
-    joinColumns = @JoinColumn(name = "class_id"),
-    inverseJoinColumns = @JoinColumn(name = "user_id")
-  )
+      name = "class_user",
+      joinColumns = @JoinColumn(name = "class_id"),
+      inverseJoinColumns = @JoinColumn(name = "user_id"))
   @Fetch(FetchMode.JOIN)
   private List<User> classStudents = new ArrayList<>();
 
