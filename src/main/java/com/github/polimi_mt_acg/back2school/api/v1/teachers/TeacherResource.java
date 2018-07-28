@@ -103,8 +103,10 @@ public class TeacherResource {
   @TeacherAdministratorSecured
   public Response getTeacherClasses(
       @PathParam("teacherId") String teacherId,
+      @QueryParam("year") Integer year,
       @Context ContainerRequestContext crc,
       @Context UriInfo uriInfo) {
+
     User currentUser = AuthenticationSession.getCurrentUser(crc);
 
     // Fetch request user
@@ -119,19 +121,22 @@ public class TeacherResource {
     }
 
     Session session = DatabaseHandler.getInstance().getNewSession();
-    List<Class> classes =
-        session
-            .createNativeQuery(
-                "SELECT class.* "
-                    + "FROM class "
-                    + "LEFT JOIN lecture "
-                    + "ON lecture.class_id = class.id "
-                    + "LEFT JOIN user "
-                    + "ON lecture.teacher_id = user.id "
-                    + "WHERE user.id = "
-                    + teacherId,
-                Class.class)
-            .getResultList();
+
+    String queryString =
+        "SELECT class.* "
+            + "FROM class "
+            + "LEFT JOIN lecture "
+            + "ON lecture.class_id = class.id "
+            + "LEFT JOIN user "
+            + "ON lecture.teacher_id = user.id "
+            + "WHERE user.id = "
+            + teacherId;
+
+    if (year != null) {
+      queryString += " AND class.academic_year = " + str(year);
+    }
+
+    List<Class> classes = session.createNativeQuery(queryString, Class.class).getResultList();
 
     List<ClassResponse> responseClasses = new ArrayList<>();
     for (Class cls : classes) {

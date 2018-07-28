@@ -21,6 +21,7 @@ import org.junit.experimental.categories.Category;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.io.IOException;
@@ -227,6 +228,39 @@ public class TeacherResourceTest {
     print("Response /teachers/", carl1Teacher.getId(), "/classes:\n", teacherClassesResponse);
 
     assertEquals(teacherClassesResponse.getClasses().size(), 2);
+  }
+
+  @Test
+  @Category(TestCategory.Endpoint.class)
+  public void getTeacherClassesQueryYear() {
+    // Get the first teacher from database
+    User carl1Teacher =
+        DatabaseHandler.getInstance()
+            .getListSelectFromWhereEqual(User.class, User_.role, User.Role.TEACHER)
+            .get(0);
+
+    // GET - Using admin to log in
+    // Build the Client
+    WebTarget target = RestFactory.buildWebTarget();
+
+    // Set path as /teachers/{id}/classes
+    String[] path = {"teachers", str(carl1Teacher.getId()), "classes"};
+    for (String p : path) {
+      target = target.path(p);
+    }
+    // add query param to select the year to filter on
+    target = target.queryParam("year", "2017");
+
+    Invocation request =
+        RestFactory.getAuthenticatedInvocationBuilder(adminForLogin, target).buildGet();
+
+    Response response = request.invoke();
+    assertEquals(Status.OK.getStatusCode(), response.getStatus());
+    TeacherClassesResponse teacherClassesResponse =
+        response.readEntity(TeacherClassesResponse.class);
+
+    print("Response ", target.getUri().toString(), "\n", teacherClassesResponse);
+    assertEquals(teacherClassesResponse.getClasses().size(), 1);
   }
 
   /**
