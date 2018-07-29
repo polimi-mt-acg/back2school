@@ -1,0 +1,11 @@
+{
+  "users": [
+    {
+      "role": "PARENT",
+      "name": "Bob2",
+      "surname": "SurnameBob2",
+      "email": "bob2@email.com",
+      "seedPassword": "bob_password2"
+    }
+  ]
+}
