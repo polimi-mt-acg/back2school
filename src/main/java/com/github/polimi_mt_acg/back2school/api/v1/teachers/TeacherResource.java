@@ -149,45 +149,38 @@ public class TeacherResource {
               .getResultList();
     }
 
-    List<ClassResponse> responseClasses = new ArrayList<>();
+    ClassesResponse classesResponse = new ClassesResponse();
     for (Class cls : classes) {
+      ClassesResponse.Entity entity = new ClassesResponse.Entity();
 
-      URI classUri =
+      entity.setName(cls.getName());
+      entity.setAcademicYear(cls.getAcademicYear());
+      entity.setUrlClass(
           uriInfo
               .getBaseUriBuilder()
               .path(ClassesResource.class)
               .path(ClassesResource.class, "getClassById")
-              .build(cls.getId());
-
-      URI classStudentsUri =
+              .build(cls.getId())
+              .toString());
+      entity.setUrlClassStudents(
           uriInfo
               .getBaseUriBuilder()
               .path(ClassesResource.class)
               .path(ClassesResource.class, "getClassStudents")
-              .build(cls.getId());
-
-      URI classTimetableUri =
+              .build(cls.getId())
+              .toString());
+      entity.setUrlClassTimetable(
           uriInfo
               .getBaseUriBuilder()
               .path(TeacherResource.class)
               .path(TeacherResource.class, "getTeacherTimetable")
-              .build(teacherId, cls.getId());
+              .build(teacherId, cls.getId())
+              .toString());
 
-      // create the response class and add to the list
-      ClassResponse crm = new ClassResponse();
-
-      crm.setName(cls.getName());
-      crm.setAcademicYear(cls.getAcademicYear());
-      crm.setUrlClass(classUri.toString());
-      crm.setUrlClassStudents(classStudentsUri.toString());
-      crm.setUrlClassTimetable(classTimetableUri.toString());
-
-      responseClasses.add(crm);
+      // add the created entity to the response list
+      classesResponse.getClasses().add(entity);
     }
-
-    TeacherClassesResponse teacherClassesResponse = new TeacherClassesResponse();
-    teacherClassesResponse.setClasses(responseClasses);
-    return Response.ok(teacherClassesResponse, MediaType.APPLICATION_JSON_TYPE).build();
+    return Response.ok(classesResponse, MediaType.APPLICATION_JSON_TYPE).build();
   }
 
   @Path("{teacherId: [0-9]+}/classes/{classId: [0-9]+}/timetable")

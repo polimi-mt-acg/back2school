@@ -2,8 +2,8 @@ package com.github.polimi_mt_acg.back2school.api.v1;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.polimi_mt_acg.back2school.api.v1.auth.AuthenticationResource;
+import com.github.polimi_mt_acg.back2school.api.v1.teachers.ClassesResponse;
 import com.github.polimi_mt_acg.back2school.api.v1.teachers.PostTeacherRequest;
-import com.github.polimi_mt_acg.back2school.api.v1.teachers.TeacherClassesResponse;
 import com.github.polimi_mt_acg.back2school.api.v1.teachers.TeacherResponse;
 import com.github.polimi_mt_acg.back2school.api.v1.teachers.TimetableResponse;
 import com.github.polimi_mt_acg.back2school.model.Class;
@@ -196,12 +196,11 @@ public class TeacherResourceTest {
 
     Response response = request.invoke();
     assertEquals(Status.OK.getStatusCode(), response.getStatus());
-    TeacherClassesResponse teacherClassesResponse =
-        response.readEntity(TeacherClassesResponse.class);
+    ClassesResponse classesResponse = response.readEntity(ClassesResponse.class);
 
-    print("Response /teachers/", carl1Teacher.getId(), "/classes:\n", teacherClassesResponse);
+    print("Response /teachers/", carl1Teacher.getId(), "/classes:\n", classesResponse);
 
-    assertEquals(teacherClassesResponse.getClasses().size(), 2);
+    assertEquals(classesResponse.getClasses().size(), 2);
   }
 
   @Test
@@ -225,12 +224,11 @@ public class TeacherResourceTest {
 
     Response response = request.invoke();
     assertEquals(Status.OK.getStatusCode(), response.getStatus());
-    TeacherClassesResponse teacherClassesResponse =
-        response.readEntity(TeacherClassesResponse.class);
+    ClassesResponse classesResponse = response.readEntity(ClassesResponse.class);
 
-    print("Response /teachers/", carl1Teacher.getId(), "/classes:\n", teacherClassesResponse);
+    print("Response /teachers/", carl1Teacher.getId(), "/classes:\n", classesResponse);
 
-    assertEquals(teacherClassesResponse.getClasses().size(), 2);
+    assertEquals(classesResponse.getClasses().size(), 2);
   }
 
   @Test
@@ -259,11 +257,10 @@ public class TeacherResourceTest {
 
     Response response = request.invoke();
     assertEquals(Status.OK.getStatusCode(), response.getStatus());
-    TeacherClassesResponse teacherClassesResponse =
-        response.readEntity(TeacherClassesResponse.class);
+    ClassesResponse classesResponse = response.readEntity(ClassesResponse.class);
 
-    print("Response ", target.getUri().toString(), "\n", teacherClassesResponse);
-    assertEquals(teacherClassesResponse.getClasses().size(), 1);
+    print("Response ", target.getUri().toString(), "\n", classesResponse);
+    assertEquals(classesResponse.getClasses().size(), 1);
   }
 
   @Test
