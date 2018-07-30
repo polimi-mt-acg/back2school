@@ -1,13 +1,13 @@
 package com.github.polimi_mt_acg.back2school.api.v1.teachers;
 
 import com.github.polimi_mt_acg.back2school.api.v1.classes.ClassesResource;
+import com.github.polimi_mt_acg.back2school.api.v1.classrooms.ClassroomsResource;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.AdministratorSecured;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.TeacherAdministratorSecured;
-import com.github.polimi_mt_acg.back2school.model.AuthenticationSession;
+import com.github.polimi_mt_acg.back2school.api.v1.subjects.SubjectsResource;
+import com.github.polimi_mt_acg.back2school.model.*;
 import com.github.polimi_mt_acg.back2school.model.Class;
-import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.model.User.Role;
-import com.github.polimi_mt_acg.back2school.model.User_;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import org.hibernate.Session;
 
@@ -129,14 +129,25 @@ public class TeacherResource {
             + "ON lecture.class_id = class.id "
             + "LEFT JOIN user "
             + "ON lecture.teacher_id = user.id "
-            + "WHERE user.id = "
-            + teacherId;
+            + "WHERE user.id = :teacherId";
 
-    if (year != null) {
-      queryString += " AND class.academic_year = " + str(year);
+    List<Class> classes = new ArrayList<>();
+    if (year == null) {
+      classes =
+          session
+              .createNativeQuery(queryString, Class.class)
+              .setParameter("teacherId", teacherId)
+              .getResultList();
+    } else {
+      // add the academic_year clause
+      queryString += " AND class.academic_year = :year";
+      classes =
+          session
+              .createNativeQuery(queryString, Class.class)
+              .setParameter("teacherId", teacherId)
+              .setParameter("year", year)
+              .getResultList();
     }
-
-    List<Class> classes = session.createNativeQuery(queryString, Class.class).getResultList();
 
     List<ClassResponse> responseClasses = new ArrayList<>();
     for (Class cls : classes) {
@@ -186,9 +197,76 @@ public class TeacherResource {
   public Response getTeacherTimetable(
       @PathParam("teacherId") String teacherId,
       @PathParam("classId") String classId,
-      @Context ContainerRequestContext crc) {
+      @QueryParam("year") Integer year,
+      @Context ContainerRequestContext crc,
+      @Context UriInfo uriInfo) {
     User currentUser = AuthenticationSession.getCurrentUser(crc);
 
-    return Response.ok().build();
+    // Fetch request user
+    Optional<User> userOpt = DatabaseHandler.fetchEntityBy(User.class, User_.id, as_int(teacherId));
+    if (!userOpt.isPresent()) {
+      print("User not found");
+      return Response.status(Status.NOT_FOUND).entity("User not found").build();
+    }
+    User teacher = userOpt.get();
+
+    if (currentUser.getRole().equals(Role.TEACHER) && currentUser.getId() != teacher.getId()) {
+      print("Not allowed user");
+      return Response.status(Status.FORBIDDEN).entity("Not allowed user").build();
+    }
+
+    Session session = DatabaseHandler.getInstance().getNewSession();
+    String queryString =
+        "SELECT lecture.* "
+            + "FROM lecture "
+            + "LEFT JOIN class "
+            + "ON class.id = lecture.class_id "
+            + "WHERE lecture.teacher_id = :teacherId";
+
+    List<Lecture> lectures = new ArrayList<>();
+    if (year == null) {
+      lectures =
+          session
+              .createNativeQuery(queryString, Lecture.class)
+              .setParameter("teacherId", teacherId)
+              .getResultList();
+
+    } else {
+      // add the academic_year clause
+      queryString += " AND class.academic_year = :year";
+
+      lectures =
+          session
+              .createNativeQuery(queryString, Lecture.class)
+              .setParameter("teacherId", teacherId)
+              .setParameter("year", year)
+              .getResultList();
+    }
+
+    TimetableResponse timetableResponse = new TimetableResponse();
+    for (Lecture lecture : lectures) {
+      TimetableResponse.Entity entity = new TimetableResponse.Entity();
+
+      entity.setDatetimeStart(lecture.getDatetimeStart().toString());
+      entity.setDatetimeEnd(lecture.getDatetimeEnd().toString());
+      entity.setUrlClassroom(
+          uriInfo
+              .getBaseUriBuilder()
+              .path(ClassroomsResource.class)
+              .path(ClassroomsResource.class, "getClassroomById")
+              .build(lecture.getClassroom().getId())
+              .toString());
+      entity.setUrlSubject(
+          uriInfo
+              .getBaseUriBuilder()
+              .path(SubjectsResource.class)
+              .path(SubjectsResource.class, "getSubjectById")
+              .build(lecture.getSubject().getId())
+              .toString());
+
+      // add the created entity to the response list
+      timetableResponse.getLectures().add(entity);
+    }
+    return Response.ok(timetableResponse, MediaType.APPLICATION_JSON_TYPE).build();
   }
 }

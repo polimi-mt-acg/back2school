@@ -5,6 +5,9 @@ import com.github.polimi_mt_acg.back2school.api.v1.auth.AuthenticationResource;
 import com.github.polimi_mt_acg.back2school.api.v1.teachers.PostTeacherRequest;
 import com.github.polimi_mt_acg.back2school.api.v1.teachers.TeacherClassesResponse;
 import com.github.polimi_mt_acg.back2school.api.v1.teachers.TeacherResponse;
+import com.github.polimi_mt_acg.back2school.api.v1.teachers.TimetableResponse;
+import com.github.polimi_mt_acg.back2school.model.Class;
+import com.github.polimi_mt_acg.back2school.model.Class_;
 import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.model.User_;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
@@ -261,6 +264,140 @@ public class TeacherResourceTest {
 
     print("Response ", target.getUri().toString(), "\n", teacherClassesResponse);
     assertEquals(teacherClassesResponse.getClasses().size(), 1);
+  }
+
+  @Test
+  @Category(TestCategory.Endpoint.class)
+  public void getTeacherTimetableFromAdmin() {
+    // Get teacher from database
+    User carl1Teacher =
+        DatabaseHandler.getInstance()
+            .getListSelectFromWhereEqual(User.class, User_.email, "carl1@email.com")
+            .get(0);
+
+    assertNotNull(carl1Teacher);
+
+    // Get class from database
+    Class class1B =
+        DatabaseHandler.getInstance()
+            .getListSelectFromWhereEqual(Class.class, Class_.name, "1B")
+            .get(0);
+
+    // GET - Using admin to log in
+    // Build the Client
+    WebTarget target = RestFactory.buildWebTarget();
+
+    // Set path as /teachers/{id}/classes/{id}/timetable
+    String[] path = {
+      "teachers", str(carl1Teacher.getId()), "classes", str(class1B.getId()), "timetable"
+    };
+    for (String p : path) {
+      target = target.path(p);
+    }
+
+    Invocation request =
+        RestFactory.getAuthenticatedInvocationBuilder(adminForLogin, target).buildGet();
+
+    Response response = request.invoke();
+    assertEquals(Status.OK.getStatusCode(), response.getStatus());
+    TimetableResponse timetableResponse = response.readEntity(TimetableResponse.class);
+
+    print("Response to ", target.getUri().toString(), " :\n", timetableResponse);
+    // must be equal to 2 since both the years, not query param passed to filter
+    // on the year
+    assertEquals(timetableResponse.getLectures().size(), 2);
+  }
+
+  @Test
+  @Category(TestCategory.Endpoint.class)
+  public void getTeacherTimetableFromTeacher() {
+    // Get teacher from database
+    User carl2Teacher =
+        DatabaseHandler.getInstance()
+            .getListSelectFromWhereEqual(User.class, User_.email, "carl2@email.com")
+            .get(0);
+    assertNotNull(carl2Teacher);
+    assertEquals(carl2Teacher.getEmail(), "carl2@email.com");
+    // set the password in order to let the invocation builder be able to authenticate the user
+    carl2Teacher.setSeedPassword("email_password");
+
+    // Get class from database
+    Class class3B =
+        DatabaseHandler.getInstance()
+            .getListSelectFromWhereEqual(Class.class, Class_.name, "3B")
+            .get(0);
+
+    // GET - Using teacher to log in
+    // Build the Client
+    WebTarget target = RestFactory.buildWebTarget();
+
+    // Set path as /teachers/{id}/classes
+    String[] path = {
+      "teachers", str(carl2Teacher.getId()), "classes", str(class3B.getId()), "timetable"
+    };
+    for (String p : path) {
+      target = target.path(p);
+    }
+
+    Invocation request =
+        RestFactory.getAuthenticatedInvocationBuilder(carl2Teacher, target).buildGet();
+
+    Response response = request.invoke();
+    assertEquals(Status.OK.getStatusCode(), response.getStatus());
+    TimetableResponse timetableResponse = response.readEntity(TimetableResponse.class);
+
+    print(
+        "Invoked as " + carl2Teacher.getEmail() + ", id: " + str(carl2Teacher.getId()) + "\n",
+        "Response to ",
+        target.getUri().toString(),
+        " :\n",
+        timetableResponse);
+    // must be equal to 2 since both the years, not query param passed to filter
+    // on the year
+    assertEquals(timetableResponse.getLectures().size(), 1);
+  }
+
+  @Test
+  @Category(TestCategory.Endpoint.class)
+  public void getTeacherTimetableFromAdminQueryYear() {
+    // Get teacher from database
+    User carl1Teacher =
+        DatabaseHandler.getInstance()
+            .getListSelectFromWhereEqual(User.class, User_.email, "carl1@email.com")
+            .get(0);
+
+    assertNotNull(carl1Teacher);
+
+    // Get class from database
+    Class class1B =
+        DatabaseHandler.getInstance()
+            .getListSelectFromWhereEqual(Class.class, Class_.name, "1B")
+            .get(0);
+
+    // GET - Using admin to log in
+    // Build the Client
+    WebTarget target = RestFactory.buildWebTarget();
+
+    // Set path as /teachers/{id}/classes/{id}/timetable?year=2017
+    String[] path = {
+      "teachers", str(carl1Teacher.getId()), "classes", str(class1B.getId()), "timetable"
+    };
+    for (String p : path) {
+      target = target.path(p);
+    }
+    // add query param to select the year to filter on
+    target = target.queryParam("year", "2017");
+
+    Invocation request =
+        RestFactory.getAuthenticatedInvocationBuilder(adminForLogin, target).buildGet();
+
+    Response response = request.invoke();
+    assertEquals(Status.OK.getStatusCode(), response.getStatus());
+    TimetableResponse timetableResponse = response.readEntity(TimetableResponse.class);
+
+    print("Response to ", target.getUri().toString(), " :\n", timetableResponse);
+    // must be equal to 1 since query param is passed to filter on the year
+    assertEquals(timetableResponse.getLectures().size(), 1);
   }
 
   /**
