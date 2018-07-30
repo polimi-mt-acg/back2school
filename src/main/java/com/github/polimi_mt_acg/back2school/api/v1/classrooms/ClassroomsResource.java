@@ -24,9 +24,7 @@ public class ClassroomsResource {
     session.beginTransaction();
 
     // Get classrooms from DB
-    List<Classroom> classrooms =
-            DatabaseHandler.getInstance()
-                    .getListSelectFrom(Classroom.class);
+    List<Classroom> classrooms = DatabaseHandler.getInstance().getListSelectFrom(Classroom.class);
     session.getTransaction().commit();
     session.close();
 
@@ -53,7 +51,8 @@ public class ClassroomsResource {
     Session session = dbi.getNewSession();
     session.beginTransaction();
     List<Classroom> result =
-            dbi.getListSelectFromWhereEqual(Classroom.class, Classroom_.name, classroom.getName(), session);
+        dbi.getListSelectFromWhereEqual(
+            Classroom.class, Classroom_.name, classroom.getName(), session);
     if (!result.isEmpty()) {
       session.getTransaction().commit();
       session.close();
@@ -75,11 +74,12 @@ public class ClassroomsResource {
   @GET
   @Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
   @TeacherAdministratorSecured
-  public Response getClassroomID (@PathParam("id") String classroomId){
+  public Response getClassroomById(@PathParam("id") String classroomId) {
     // Fetch Classroom
     List<Classroom> res =
-            DatabaseHandler.getInstance()
-                    .getListSelectFromWhereEqual(Classroom.class, Classroom_.id, Integer.parseInt(classroomId));
+        DatabaseHandler.getInstance()
+            .getListSelectFromWhereEqual(
+                Classroom.class, Classroom_.id, Integer.parseInt(classroomId));
 
     if (res.isEmpty()) {
       return Response.status(Response.Status.NOT_FOUND).entity("Unknown classroom id").build();
@@ -89,19 +89,20 @@ public class ClassroomsResource {
     return Response.ok(classroom, MediaType.APPLICATION_JSON_TYPE).build();
   }
 
-
   @Path("{id: [0-9]+}")
   @PUT
   @Consumes(MediaType.APPLICATION_JSON)
   @AdministratorSecured
-  public Response putClassroomById(PutClassroomRequest newClassroom, @PathParam("id") String classroomId) {
+  public Response putClassroomById(
+      PutClassroomRequest newClassroom, @PathParam("id") String classroomId) {
     // Fetch Classroom
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
     session.beginTransaction();
 
     List<Classroom> res =
-            dbi.getListSelectFromWhereEqual(Classroom.class, Classroom_.id, Integer.parseInt(classroomId), session);
+        dbi.getListSelectFromWhereEqual(
+            Classroom.class, Classroom_.id, Integer.parseInt(classroomId), session);
 
     if (res.isEmpty()) {
       session.getTransaction().commit();
@@ -124,6 +125,5 @@ public class ClassroomsResource {
     classroom.setName(newClassroom.getName());
     classroom.setFloor(newClassroom.getFloor());
     classroom.setBuilding(newClassroom.getBuilding());
-
   }
 }

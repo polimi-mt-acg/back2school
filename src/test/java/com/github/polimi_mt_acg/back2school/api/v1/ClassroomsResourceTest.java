@@ -97,7 +97,7 @@ public class ClassroomsResourceTest {
   }
 
   @Test
-  public void getClassroomID() throws JsonProcessingException {
+  public void getClassroomById() throws JsonProcessingException {
     // Create a new Classroom in the system
     URI B11URI = postB11(1);
     System.out.println(B11URI);
