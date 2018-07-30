@@ -2,6 +2,7 @@ package com.github.polimi_mt_acg.back2school.api.v1.teachers;
 
 import com.github.polimi_mt_acg.back2school.api.v1.classes.ClassesResource;
 import com.github.polimi_mt_acg.back2school.api.v1.classrooms.ClassroomsResource;
+import com.github.polimi_mt_acg.back2school.api.v1.parents_stub.ParentsStubResource;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.AdministratorSecured;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.TeacherAdministratorSecured;
 import com.github.polimi_mt_acg.back2school.api.v1.subjects.SubjectsResource;
@@ -9,6 +10,7 @@ import com.github.polimi_mt_acg.back2school.model.*;
 import com.github.polimi_mt_acg.back2school.model.Class;
 import com.github.polimi_mt_acg.back2school.model.User.Role;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
+import org.glassfish.jersey.jaxb.internal.XmlJaxbElementProvider;
 import org.hibernate.Session;
 
 import java.net.URI;
@@ -261,5 +263,53 @@ public class TeacherResource {
       timetableResponse.getLectures().add(entity);
     }
     return Response.ok(timetableResponse, MediaType.APPLICATION_JSON_TYPE).build();
+  }
+
+  @Path("{teacherId: [0-9]+}/appointments")
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @TeacherAdministratorSecured
+  public Response getTeacherAppointments(
+      @PathParam("teacherId") String teacherId,
+      @Context ContainerRequestContext crc,
+      @Context UriInfo uriInfo) {
+    User currentUser = AuthenticationSession.getCurrentUser(crc);
+
+    // Fetch request user
+    Optional<User> userOpt = DatabaseHandler.fetchEntityBy(User.class, User_.id, as_int(teacherId));
+    if (!userOpt.isPresent()) {
+      print("User not found");
+      return Response.status(Status.NOT_FOUND).entity("User not found").build();
+    }
+    User teacher = userOpt.get();
+
+    if (currentUser.getRole().equals(Role.TEACHER) && currentUser.getId() != teacher.getId()) {
+      print("Not allowed user");
+      return Response.status(Status.FORBIDDEN).entity("Not allowed user").build();
+    }
+
+    List<Appointment> appointments = DatabaseHandler.getInstance()
+        .getListSelectFromWhereEqual(Appointment.class, Appointment_.teacher, teacher);
+
+    AppointmentsResponse appointmentsResponse = new AppointmentsResponse();
+    for (Appointment appointment : appointments) {
+      AppointmentsResponse.Entity entity = new AppointmentsResponse.Entity();
+
+      entity.setId(appointment.getId());
+      entity.setDatetimeStart(appointment.getDatetimeStart().toString());
+      entity.setDatetimeEnd(appointment.getDatetimeEnd().toString());
+      entity.setStatus(str(appointment.getStatus()));
+      entity.setUrlParent(
+          uriInfo
+              .getBaseUriBuilder()
+              .path(ParentsStubResource.class)
+              .path(ParentsStubResource.class, "getParentById")
+              .build(appointment.getTeacher().getId())
+              .toString());
+
+      // add the created entity to the response list
+      appointmentsResponse.getAppointments().add(entity);
+    }
+    return Response.ok(appointmentsResponse, MediaType.APPLICATION_JSON_TYPE).build();
   }
 }

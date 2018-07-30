@@ -1,0 +1,11 @@
+{
+  "appointments": [
+    {
+      "seedTeacherEmail": "",
+      "seedParentEmail": "",
+      "datetimeStart": "2018-05-20T12:15:00",
+      "datetimeEnd": "2018-05-20T14:15:00",
+      "status": "AGREED"
+    }
+  ]
+}

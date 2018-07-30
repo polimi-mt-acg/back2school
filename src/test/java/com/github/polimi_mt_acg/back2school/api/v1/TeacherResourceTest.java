@@ -179,6 +179,30 @@ public class TeacherResourceTest {
     assertTrue(teacherFromResponse.weakEquals(seedTeacher));
   }
 
+  /**
+   * Do a post an return the inserted teacher URI.
+   *
+   * @return The inserted resource URI.
+   */
+  private URI doTeacherPost(User user) {
+    // Now build a PostStudentRequest
+    PostTeacherRequest request = new PostTeacherRequest();
+    request.setTeacherAndPassword(user, user.getSeedPassword());
+
+    // Make a POST to /teachers
+    Invocation post =
+        RestFactory.getAuthenticatedInvocationBuilder(adminForLogin, "teachers")
+            .buildPost(Entity.json(request));
+
+    Response response = post.invoke();
+
+    assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
+
+    URI resourceURI = response.getLocation();
+    assertNotNull(resourceURI);
+    return resourceURI;
+  }
+
   @Test
   @Category(TestCategory.Endpoint.class)
   public void getTeacherClassesFromAdmin() {
@@ -395,29 +419,5 @@ public class TeacherResourceTest {
     print("Response to ", target.getUri().toString(), " :\n", timetableResponse);
     // must be equal to 1 since query param is passed to filter on the year
     assertEquals(timetableResponse.getLectures().size(), 1);
-  }
-
-  /**
-   * Do a post an return the inserted teacher URI.
-   *
-   * @return The inserted resource URI.
-   */
-  private URI doTeacherPost(User user) {
-    // Now build a PostStudentRequest
-    PostTeacherRequest request = new PostTeacherRequest();
-    request.setTeacherAndPassword(user, user.getSeedPassword());
-
-    // Make a POST to /teachers
-    Invocation post =
-        RestFactory.getAuthenticatedInvocationBuilder(adminForLogin, "teachers")
-            .buildPost(Entity.json(request));
-
-    Response response = post.invoke();
-
-    assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
-
-    URI resourceURI = response.getLocation();
-    assertNotNull(resourceURI);
-    return resourceURI;
   }
 }
