@@ -110,4 +110,59 @@ public class ParentsResource {
     return Response.created(uri).build();
   }
 
+  @Path("{id: [0-9]+}")
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @ParentAdministratorSecured
+  @SameParentSecured
+  public Response getParentById(
+          @PathParam("id") String parentId) {
+    // Fetch User
+    Optional<User> parentOpt = DatabaseHandler.fetchEntityBy(User.class, User_.id, Integer.parseInt(parentId));
+    if (!parentOpt.isPresent()) {
+      return Response.status(Status.NOT_FOUND).entity("Unknown parent id").build();
+    }
+    User parent = parentOpt.get();
+
+    return Response.ok(parent, MediaType.APPLICATION_JSON_TYPE).build();
+  }
+
+  @Path("{id: [0-9]+}")
+  @PUT
+  @Consumes(MediaType.APPLICATION_JSON)
+  @ParentAdministratorSecured
+  @SameParentSecured
+  public Response putParentById(PutParentRequest newParent,
+                                @PathParam("id") String parentId) {
+    Session session = DatabaseHandler.getInstance().getNewSession();
+    session.beginTransaction();
+
+    // Fetch User
+    User parent = session.get(User.class, Integer.parseInt(parentId));
+    if (parent == null) {
+      session.getTransaction().commit();
+      session.close();
+      return Response.status(Status.NOT_FOUND).entity("Unknown parent id").build();
+    }
+
+
+
+    // Update student fields
+    parent.setName(newParent.getName());
+    parent.setSurname(newParent.getSurname());
+    parent.setEmail(newParent.getEmail());
+    parent.setPassword(newParent.getPassword());
+
+    session.getTransaction().commit();
+    session.close();
+
+    // According to HTTP specification:
+    // HTTP status code 200 OK for a successful PUT of an update to an existing resource. No
+    // response body needed.
+    return Response.ok().build();
+  }
+
+
+
+
 }

@@ -45,6 +45,8 @@ public class ParentResourceTest {
 
   @BeforeClass
   public static void setUp() throws Exception {
+    // Truncate DB
+//    DatabaseHandler.getInstance().truncateDatabase();
     // Deploy database scenario
     DatabaseSeeder.deployScenario("scenarioParents");
 
@@ -101,11 +103,187 @@ public class ParentResourceTest {
   @Test
   @Category(TestCategory.ParentsEndpoint.class)
   public void postParents() {
-    URI resourceURI = doParentPost(buildCarlos(0));
+    URI resourceURI = doParentPost(0,buildMarcos(0));
 
     System.out.println(resourceURI);
   }
 
+  @Test
+  @Category(TestCategory.ParentsEndpoint.class)
+  public void getParentByIdFromAdministrator() throws JsonProcessingException {
+    User marcos = buildMarcos(1);
+    URI postMarcos = doParentPost(1,marcos);
+    User admin = get(User.Role.ADMINISTRATOR);
+
+    // Now query /parents/{bob_id} from admin
+    Path fullPath = Paths.get("/", postMarcos.getPath());
+    Path idPath = fullPath.getParent().relativize(fullPath);
+    String marcosID = idPath.toString();
+    Invocation request =
+            RestFactory.getAuthenticatedInvocationBuilder(admin, "parents", marcosID).buildGet();
+
+    Response response = request.invoke();
+    assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+//    System.out.println("HERE1"+response.getStatus());
+    User marcosResponse = response.readEntity(User.class);
+
+    assertTrue(weakEquals(marcosResponse, marcos));
+
+    // Print it
+    ObjectMapper mapper = RestFactory.objectMapper();
+    System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(marcosResponse));
+  }
+
+  @Test
+  @Category(TestCategory.ParentsEndpoint.class)
+  public void getParentByIdFromNotSameParent() throws JsonProcessingException {
+    User seedParent =
+            DatabaseSeeder.getSeedUserByRole("scenarioParents_ToPost1", User.Role.PARENT);
+    assertNotNull(seedParent);
+
+    URI postParent = doParentPost(2,seedParent);
+    User admin = get(User.Role.ADMINISTRATOR);
+
+    // Now query /parents/{bob_id} from admin
+    Path fullPath = Paths.get("/", postParent.getPath());
+    Path idPath = fullPath.getParent().relativize(fullPath);
+    String parentID = idPath.toString();
+
+    User bob = get(User.Role.PARENT);
+    Invocation request =
+            RestFactory.getAuthenticatedInvocationBuilder(bob, "parents", parentID).buildGet();
+
+    Response response = request.invoke();
+//    System.out.println("HERE1"+response.getStatus());
+
+    assertEquals(Response.Status.FORBIDDEN.getStatusCode(), response.getStatus());
+    }
+
+  @Test
+  @Category(TestCategory.ParentsEndpoint.class)
+  public void getParentByIdFromSameParent() throws JsonProcessingException {
+    User seedParent =
+            DatabaseSeeder.getSeedUserByRole("scenarioParents_ToPost2", User.Role.PARENT);
+    assertNotNull(seedParent);
+
+    URI postParent = doParentPost(3,seedParent);
+
+    // Now query /parents/{bob_id} from admin
+    Path fullPath = Paths.get("/", postParent.getPath());
+    Path idPath = fullPath.getParent().relativize(fullPath);
+    String parentID = idPath.toString();
+
+    Invocation request =
+            RestFactory.getAuthenticatedInvocationBuilder(seedParent, "parents", parentID).buildGet();
+
+    Response response = request.invoke();
+//    System.out.println("HERE1"+response.getStatus());
+
+    assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+    User parentResponse = response.readEntity(User.class);
+
+    assertTrue(weakEquals(parentResponse, seedParent));
+
+    // Print it
+    ObjectMapper mapper = RestFactory.objectMapper();
+    System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(parentResponse));
+  }
+
+  @Test
+  @Category(TestCategory.ParentsEndpoint.class)
+  public void putParentByIdFromAdmin() throws JsonProcessingException {
+    // Get an admin
+    User admin = get(User.Role.ADMINISTRATOR);
+
+    User parent = buildMarcos(2);
+    URI parentURI = doParentPost(4, parent);
+
+    Invocation getParent =
+            RestFactory.getAuthenticatedInvocationBuilder(admin, parentURI).buildGet();
+    User parentResponse = getParent.invoke().readEntity(User.class);
+
+    String nameSuffix = "newName";
+    String surnameSuffix = "newSurname";
+    String emailSuffix = "newEmail";
+
+    // Create a PutParent request to change its name
+    PutParentRequest putParentRequest = new PutParentRequest();
+    putParentRequest.setName(parentResponse.getName() + nameSuffix);
+    putParentRequest.setSurname(parentResponse.getSurname() + surnameSuffix);
+    putParentRequest.setEmail(parentResponse.getEmail() + emailSuffix);
+    putParentRequest.setPassword("DontCare");
+
+    // Make a PUT request
+    Invocation putParent =
+            RestFactory.getAuthenticatedInvocationBuilder(admin, parentURI)
+                    .buildPut(Entity.json(putParentRequest));
+    Response putParentResponse = putParent.invoke();
+
+    assertEquals(Response.Status.OK.getStatusCode(), putParentResponse.getStatus());
+
+    // Make a new GET to compare results
+    Invocation newGetParent =
+            RestFactory.getAuthenticatedInvocationBuilder(admin, parentURI).buildGet();
+    User newParentResponse = newGetParent.invoke().readEntity(User.class);
+
+    assertEquals(parentResponse.getName() + nameSuffix, newParentResponse.getName());
+    assertEquals(parentResponse.getSurname() + surnameSuffix, newParentResponse.getSurname());
+    assertEquals(parentResponse.getEmail() + emailSuffix, newParentResponse.getEmail());
+
+    ObjectMapper mapper = RestFactory.objectMapper();
+    System.out.println(
+            mapper.writerWithDefaultPrettyPrinter().writeValueAsString(newParentResponse));
+  }
+
+  @Test
+  @Category(TestCategory.ParentsEndpoint.class)
+  public void putParentByIdFromSameParent() throws JsonProcessingException {
+    // Get an admin
+    User parent = buildMarcos(3);
+    URI parentURI = doParentPost(5, parent);
+    Path fullPath = Paths.get("/", parentURI.getPath());
+    Path idPath = fullPath.getParent().relativize(fullPath);
+    String parentID = idPath.toString();
+    User admin = get(User.Role.ADMINISTRATOR);
+
+    Invocation getParent =
+            RestFactory.getAuthenticatedInvocationBuilder(admin, "parents", parentID).buildGet();
+    User parentResponse = getParent.invoke().readEntity(User.class);
+
+    String nameSuffix = "newName";
+    String surnameSuffix = "newSurname";
+    String emailSuffix = "newEmail";
+
+    // Create a PutParent request to change its name
+    PutParentRequest putParentRequest = new PutParentRequest();
+    putParentRequest.setName(parentResponse.getName() + nameSuffix);
+    putParentRequest.setSurname(parentResponse.getSurname() + surnameSuffix);
+    putParentRequest.setEmail(parentResponse.getEmail() + emailSuffix);
+    putParentRequest.setPassword("DontCare");
+
+//    System.out.println("HERE"+ putParentRequest.getPassword() + putParentRequest.getEmail());
+
+    // Make a PUT request
+    Invocation putParent =
+            RestFactory.getAuthenticatedInvocationBuilder(parent, "parents", parentID).buildPut(Entity.json(putParentRequest));
+    Response putParentResponse = putParent.invoke();
+
+//    System.out.println("HERE"+ putParentResponse);
+    assertEquals(Response.Status.OK.getStatusCode(), putParentResponse.getStatus());
+
+    // Make a new GET to compare results
+    Invocation newGetParent =
+            RestFactory.getAuthenticatedInvocationBuilder(admin, parentURI).buildGet();
+    User newParentResponse = newGetParent.invoke().readEntity(User.class);
+
+    assertEquals(parentResponse.getName() + nameSuffix, newParentResponse.getName());
+    assertEquals(parentResponse.getSurname() + surnameSuffix, newParentResponse.getSurname());
+    assertEquals(parentResponse.getEmail() + emailSuffix, newParentResponse.getEmail());
+
+    ObjectMapper mapper = RestFactory.objectMapper();
+    System.out.println(
+            mapper.writerWithDefaultPrettyPrinter().writeValueAsString(newParentResponse));
+  }
 
 
   private User get(User.Role role) {
@@ -117,12 +295,12 @@ public class ParentResourceTest {
     return usersWithRole.get(0);
   }
 
-  private User getUserByID (int userID) {
+  private User getUserByID (String userID) {
     List<User> users =
             (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioParents", "users.json");
 
     List<User> usersWithID =
-            users.stream().filter(user -> user.getId() == userID).collect(Collectors.toList());
+            users.stream().filter(user -> user.getId()== Integer.parseInt(userID)).collect(Collectors.toList());
     return usersWithID.get(0);
   }
 
@@ -139,7 +317,7 @@ public class ParentResourceTest {
     carlos.setSurname("Hernandez " + copyNumber);
     carlos.setEmail("carlos.hernandez" + copyNumber + "@mail.com");
     carlos.setSeedPassword("carlos_password");
-    carlos.setRole(User.Role.PARENT);
+    carlos.setRole(User.Role.STUDENT);
     carlos.prepareToPersist();
     return carlos;
   }
@@ -150,12 +328,12 @@ public class ParentResourceTest {
     marcos.setSurname("Ferdinand " + copyNumber);
     marcos.setEmail("marcos.ferdinand" + copyNumber + "@mail.com");
     marcos.setSeedPassword("marcos_password");
-    marcos.setRole(User.Role.STUDENT);
+    marcos.setRole(User.Role.PARENT);
     marcos.prepareToPersist();
     return marcos;
   }
 
-  private User getAChild (){
+  private User getAChild (int copynumber){
     List<User> users =
             (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioParents", "users.json");
     List<User> children =
@@ -163,7 +341,7 @@ public class ParentResourceTest {
                     .stream()
                     .filter(user -> user.getRole().equals(User.Role.STUDENT))
                     .collect(Collectors.toList());
-    return children.get(0);
+    return children.get(copynumber);
   }
 
   /**
@@ -171,13 +349,13 @@ public class ParentResourceTest {
    *
    * @return The inserted resource URI.
    */
-  private URI doParentPost(User parent) {
-    User child = getAChild();
+  private URI doParentPost(int copynumber, User parent) {
+    User child = getAChild(copynumber);
     String childEmail =child.getEmail();
 
     // Now build a PostParentRequest
     PostParentRequest request = new PostParentRequest();
-    request.setParent(parent);
+    request.setParentAndPassword(parent, parent.getSeedPassword());
     request.setStudentEmail(childEmail);
 
     User admin = get(User.Role.ADMINISTRATOR);
@@ -188,7 +366,7 @@ public class ParentResourceTest {
                     .buildPost(Entity.json(request));
 
     Response response = post.invoke();
-//    System.out.println("HERE"+ response.toString());
+    System.out.println("HERE POST REQ"+ response.toString());
 
     assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
 

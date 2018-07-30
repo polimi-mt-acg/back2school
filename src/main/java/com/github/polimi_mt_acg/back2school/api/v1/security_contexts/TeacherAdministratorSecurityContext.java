@@ -16,7 +16,7 @@ import javax.ws.rs.ext.Provider;
  * with @ParentAdministratorSecured can only be accessed if: a) the client is authenticated. b) the
  * client role is PARENT or ADMINISTRATOR
  */
-@ParentAdministratorSecured
+@TeacherAdministratorSecured
 @Provider
 @Priority(SecurityContextPriority.TEACHER_ADMINISTRATOR)
 public class TeacherAdministratorSecurityContext implements ContainerRequestFilter {

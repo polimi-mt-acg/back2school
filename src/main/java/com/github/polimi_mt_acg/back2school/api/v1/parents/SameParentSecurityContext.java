@@ -29,18 +29,18 @@ public class SameParentSecurityContext implements ContainerRequestFilter {
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
     session.beginTransaction();
-    User parent = AuthenticationSession.getCurrentUser(requestContext, session);
+    User currentUser = AuthenticationSession.getCurrentUser(requestContext, session);
 
     // Abort the filter chain with a 401 status code response
 
     // if there is no user logged in
-    if (parent == null) {
+    if (currentUser == null) {
       requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
       return;
     }
 
     // if the user logged has not the correct role
-    if (parent.getRole() != Role.PARENT) {
+    if (currentUser.getRole() != Role.PARENT) {
       return; // Move control to next filter
     }
 
@@ -50,29 +50,30 @@ public class SameParentSecurityContext implements ContainerRequestFilter {
 
     if (!pathParameter.containsKey("id")) {
       throw new InvalidTemplateParameterException(
-          "Could not find 'id' template parameter in URI. Maybe you annotated a non /parents/{id}/* REST endpoint?");
+              "Could not find 'id' template parameter in URI. Maybe you annotated a non /parents/{id}/* REST endpoint?");
     }
 
     // Get parent id from request's URI
     int parentId = Integer.parseInt(pathParameter.getFirst("id"));
     List<User> result =
-        DatabaseHandler.getInstance()
-            .getListSelectFromWhereEqual(User.class, User_.id, parentId, session);
+            DatabaseHandler.getInstance()
+                    .getListSelectFromWhereEqual(User.class, User_.id, parentId, session);
     if (result.isEmpty()) {
       requestContext.abortWith(Response.status(Status.NOT_FOUND).build());
     }
 
     // Check is requested parent is the same requesting parent
     boolean isSameParent = false;
-    if (parent.getId() == parentId) {
-        isSameParent = true;
+    if (currentUser.getId() == result.get(0).getId())
+    {
+      isSameParent = true;
     }
 
     session.getTransaction().commit();
     session.close();
 
     if (!isSameParent) {
-      requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
+      requestContext.abortWith(Response.status(Response.Status.FORBIDDEN).build());
     }
   }
 }
