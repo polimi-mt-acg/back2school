@@ -69,7 +69,7 @@ public class SubjectsResourceTest {
   }
 
   @Test
-  @Category(TestCategory.Transient.class)
+  @Category(TestCategory.Endpoint.class)
   public void getSubjects() {
     // Get an admin
     User admin = get(Role.ADMINISTRATOR);
@@ -91,7 +91,7 @@ public class SubjectsResourceTest {
   }
 
   @Test
-  @Category(TestCategory.Transient.class)
+  @Category(TestCategory.Endpoint.class)
   public void postSubjects() {
 
     URI resourceURI = postMate(0);
@@ -100,7 +100,7 @@ public class SubjectsResourceTest {
   }
 
   @Test
-  @Category(TestCategory.Transient.class)
+  @Category(TestCategory.Endpoint.class)
   public void getSubjectID() throws JsonProcessingException {
     // Create a new Classroom in the system
     URI mateURI = postMate(1);
@@ -148,7 +148,7 @@ public class SubjectsResourceTest {
   }
 
   @Test
-  @Category(TestCategory.Transient.class)
+  @Category(TestCategory.Endpoint.class)
   public void putSubjectById() throws JsonProcessingException {
     // Get an admin
     User admin = get(Role.ADMINISTRATOR);

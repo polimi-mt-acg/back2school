@@ -5,18 +5,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.polimi_mt_acg.back2school.model.DeserializeToPersistInterface;
 import com.github.polimi_mt_acg.back2school.model.User;
-import com.github.polimi_mt_acg.back2school.utils.json_mappers.AppointmentsJSONTemplate;
-import com.github.polimi_mt_acg.back2school.utils.json_mappers.AuthenticationSessionJSONTemplate;
-import com.github.polimi_mt_acg.back2school.utils.json_mappers.ClassesJSONTemplate;
-import com.github.polimi_mt_acg.back2school.utils.json_mappers.ClassroomsJSONTemplate;
-import com.github.polimi_mt_acg.back2school.utils.json_mappers.GradesJSONTemplate;
-import com.github.polimi_mt_acg.back2school.utils.json_mappers.JSONTemplateInterface;
-import com.github.polimi_mt_acg.back2school.utils.json_mappers.LecturesJSONTemplate;
-import com.github.polimi_mt_acg.back2school.utils.json_mappers.NotificationsJSONTemplate;
-import com.github.polimi_mt_acg.back2school.utils.json_mappers.NotificationsReadJSONTemplate;
-import com.github.polimi_mt_acg.back2school.utils.json_mappers.PaymentsJSONTemplate;
-import com.github.polimi_mt_acg.back2school.utils.json_mappers.SubjectsJSONTemplate;
-import com.github.polimi_mt_acg.back2school.utils.json_mappers.UsersJSONTemplate;
+import com.github.polimi_mt_acg.back2school.utils.json_mappers.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
@@ -53,6 +43,7 @@ public class DatabaseSeeder {
      * [x] notification_personal_parent
      * [x] notification_personal_teacher
      * [x] notification_read
+     * [x] parent_children
      * [x] payment
      * [x] authentication_session
      */
@@ -62,6 +53,7 @@ public class DatabaseSeeder {
     map.put("users.json", UsersJSONTemplate.class);
 
     // one or more dependency from other entities
+    map.put("parent_children.json", ParentChildrenJSONTemplate.class);
     map.put("payments.json", PaymentsJSONTemplate.class);
     map.put("grades.json", GradesJSONTemplate.class);
     map.put("classes.json", ClassesJSONTemplate.class);
