@@ -304,7 +304,7 @@ public class ParentResourceTest {
                     "parents", parentID, "children").buildGet();
 
     Response response = request.invoke();
-    System.out.println("HERE 2"+response.toString());
+//    System.out.println("HERE 2"+response.toString());
 
     assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
@@ -316,6 +316,84 @@ public class ParentResourceTest {
     ObjectMapper mapper = RestFactory.objectMapper();
     System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(marcosChildren));
   }
+
+  @Test
+  @Category(TestCategory.ParentsEndpoint.class)
+  public void getParentChildrenFromSameParent() throws JsonProcessingException {
+    User parent = buildMarcos(5);
+    URI parentURI = doParentPost(7,parent);
+
+    Path fullPath = Paths.get("/", parentURI.getPath());
+    Path idPath = fullPath.getParent().relativize(fullPath);
+    String parentID = idPath.toString();
+
+    // Now query /parents/{marco_id}/children from admin
+    Invocation request =
+            RestFactory.getAuthenticatedInvocationBuilder(
+                    parent,
+                    "parents", parentID, "children").buildGet();
+
+    Response response = request.invoke();
+//    System.out.println("HERE 2"+response.toString());
+
+    assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+
+    ParentChildrenResponse marcosChildren = response.readEntity(ParentChildrenResponse.class);
+
+    assertTrue(marcosChildren.getChildren().size() > 0);
+
+    // Print it
+    ObjectMapper mapper = RestFactory.objectMapper();
+    System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(marcosChildren));
+  }
+
+  @Test
+  @Category(TestCategory.ParentsEndpoint.class)
+  public void postParentChildrenFromAdmin() throws JsonProcessingException {
+    User parent = buildMarcos(6);
+    URI parentURI = doParentPost(8,parent);
+    User child= getAChild(2);
+
+    Path fullPath = Paths.get("/", parentURI.getPath());
+    Path idPath = fullPath.getParent().relativize(fullPath);
+    String parentID = idPath.toString();
+
+    User admin = get(User.Role.ADMINISTRATOR);
+
+    PostChildrenRequest requestPost = new PostChildrenRequest();
+    requestPost.setParent(parent);
+    requestPost.setStudent(child);
+
+    Invocation request =
+            RestFactory.getAuthenticatedInvocationBuilder(
+                    admin, "parents", parentID, "children")
+                    .buildPost(Entity.json(requestPost));
+
+    Response response = request.invoke();
+//    System.out.println("HERE 2"+response.toString());
+
+    assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+
+    // Now query /parents/{parent_id}/children from admin
+    Invocation requestCheck =
+            RestFactory.getAuthenticatedInvocationBuilder(
+                    admin,
+                    "parents", parentID, "children").buildGet();
+
+    Response responseCheck = requestCheck.invoke();
+
+    assertEquals(Response.Status.OK.getStatusCode(), responseCheck.getStatus());
+
+    ParentChildrenResponse marcosChildren = responseCheck.readEntity(ParentChildrenResponse.class);
+
+    assertTrue(marcosChildren.getChildren().size() > 0);
+
+    // Print it
+    ObjectMapper mapper = RestFactory.objectMapper();
+    System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(marcosChildren));
+  }
+
+
 
 
 
