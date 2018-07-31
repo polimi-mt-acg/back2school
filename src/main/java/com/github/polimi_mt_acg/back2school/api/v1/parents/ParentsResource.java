@@ -26,7 +26,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
+
+import javafx.scene.Parent;
 import org.hibernate.Session;
+
+import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.str;
 
 @Path("parents")
 public class ParentsResource {
@@ -161,6 +165,50 @@ public class ParentsResource {
     // response body needed.
     return Response.ok().build();
   }
+
+  @Path("{id: [0-9]+}/children")
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @ParentAdministratorSecured
+  @SameParentSecured
+  public Response getParentChildren(@PathParam("id") String parentId) {
+
+  // Fetch User
+    Optional<User> parentOpt = DatabaseHandler.fetchEntityBy(User.class, User_.id, Integer.parseInt(parentId));
+    if (!parentOpt.isPresent()) {
+      return Response.status(Status.NOT_FOUND).entity("Unknown parent id").build();
+    }
+    User parent = parentOpt.get();
+
+    DatabaseHandler dbi = DatabaseHandler.getInstance();
+    Session session = dbi.getNewSession();
+    session.beginTransaction();
+
+
+    for(User c : parent.getChildren()){
+      // Check user with child email
+      List<User> child =
+              dbi.getListSelectFromWhereEqual(User.class, User_.email, c.getEmail(), session);
+      if (!child.isEmpty()) {
+
+        session.getTransaction().commit();
+        session.close();
+      }
+
+    }
+
+
+
+    ParentChildrenResponse response = new ParentChildrenResponse();
+
+
+    response.setChildren(parent.getChildren());
+
+
+
+    return Response.ok(response, MediaType.APPLICATION_JSON_TYPE).build();
+  }
+
 
 
 

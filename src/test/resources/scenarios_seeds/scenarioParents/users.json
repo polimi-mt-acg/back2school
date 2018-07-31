@@ -50,6 +50,41 @@
       "seedPassword": "alice_password5"
     },
     {
+      "role": "STUDENT",
+      "name": "Alice6",
+      "surname": "SurnameAlice6",
+      "email": "alice6@email.com",
+      "seedPassword": "alice_password6"
+    },
+    {
+      "role": "STUDENT",
+      "name": "Alice7",
+      "surname": "SurnameAlice7",
+      "email": "alice7@email.com",
+      "seedPassword": "alice_password7"
+    },
+    {
+      "role": "STUDENT",
+      "name": "Alice8",
+      "surname": "SurnameAlice8",
+      "email": "alice8@email.com",
+      "seedPassword": "alice_password8"
+    },
+    {
+      "role": "STUDENT",
+      "name": "Alice9",
+      "surname": "SurnameAlice9",
+      "email": "alice9@email.com",
+      "seedPassword": "alice_password9"
+    },
+    {
+      "role": "STUDENT",
+      "name": "Alice10",
+      "surname": "SurnameAlice10",
+      "email": "alice10@email.com",
+      "seedPassword": "alice_password10"
+    },
+    {
       "role": "PARENT",
       "name": "Bob",
       "surname": "SurnameBob",
