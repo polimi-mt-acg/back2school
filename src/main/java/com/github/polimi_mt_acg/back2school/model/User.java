@@ -68,11 +68,11 @@ public class User implements DeserializeToPersistInterface {
   )
   private List<Notification> notificationsRead = new ArrayList<>();
 
-  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+  @ManyToMany(cascade = CascadeType.ALL)
   @JoinTable(
       name = "parent_children",
-      joinColumns = @JoinColumn(name = "child_id"),
-      inverseJoinColumns = @JoinColumn(name = "user_id"))
+      joinColumns = @JoinColumn(name = "parent_id"),
+      inverseJoinColumns = @JoinColumn(name = "child_id"))
   private List<User> children = new ArrayList<>();
 
   @Override

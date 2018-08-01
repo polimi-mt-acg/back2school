@@ -7,10 +7,8 @@ import static org.junit.Assert.assertTrue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.polimi_mt_acg.back2school.api.v1.auth.AuthenticationResource;
-import com.github.polimi_mt_acg.back2school.api.v1.subjects.*;
 import com.github.polimi_mt_acg.back2school.api.v1.subjects.PutSubjectRequest;
 import com.github.polimi_mt_acg.back2school.api.v1.subjects.SubjectsResponse;
-import com.github.polimi_mt_acg.back2school.model.Class;
 import com.github.polimi_mt_acg.back2school.model.Subject;
 import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.model.User.Role;
@@ -20,7 +18,6 @@ import com.github.polimi_mt_acg.back2school.utils.JacksonCustomMapper;
 import com.github.polimi_mt_acg.back2school.utils.TestCategory;
 import com.github.polimi_mt_acg.back2school.utils.rest.HTTPServerManager;
 import com.github.polimi_mt_acg.back2school.utils.rest.RestFactory;
-import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -28,9 +25,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -63,13 +57,14 @@ public class SubjectsResourceTest {
   public static void tearDown() throws Exception {
     // Truncate DB
     DatabaseHandler.getInstance().truncateDatabase();
+    DatabaseHandler.getInstance().destroy();
 
     // Close HTTP server
     server.shutdownNow();
   }
 
   @Test
-  @Category(TestCategory.Transient.class)
+  @Category(TestCategory.Endpoint.class)
   public void getSubjects() {
     // Get an admin
     User admin = get(Role.ADMINISTRATOR);
@@ -91,7 +86,7 @@ public class SubjectsResourceTest {
   }
 
   @Test
-  @Category(TestCategory.Transient.class)
+  @Category(TestCategory.Endpoint.class)
   public void postSubjects() {
 
     URI resourceURI = postMate(0);
@@ -100,7 +95,7 @@ public class SubjectsResourceTest {
   }
 
   @Test
-  @Category(TestCategory.Transient.class)
+  @Category(TestCategory.Endpoint.class)
   public void getSubjectID() throws JsonProcessingException {
     // Create a new Classroom in the system
     URI mateURI = postMate(1);
@@ -148,7 +143,7 @@ public class SubjectsResourceTest {
   }
 
   @Test
-  @Category(TestCategory.Transient.class)
+  @Category(TestCategory.Endpoint.class)
   public void putSubjectById() throws JsonProcessingException {
     // Get an admin
     User admin = get(Role.ADMINISTRATOR);

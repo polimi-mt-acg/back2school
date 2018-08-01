@@ -46,6 +46,7 @@ public class StudentsResourceTest {
   public static void setUp() throws Exception {
     // Deploy database scenario
     DatabaseSeeder.deployScenario("scenarioStudents");
+    DatabaseHandler.getInstance().destroy();
 
     // Run HTTP server
     server =

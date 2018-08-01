@@ -62,6 +62,7 @@ public class ClassroomsResourceTest {
   public static void tearDown() throws Exception {
     // Truncate DB
     DatabaseHandler.getInstance().truncateDatabase();
+    DatabaseHandler.getInstance().destroy();
 
     // Close HTTP server
     server.shutdownNow();

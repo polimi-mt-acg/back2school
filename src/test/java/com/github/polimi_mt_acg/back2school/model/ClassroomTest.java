@@ -22,6 +22,7 @@ public class ClassroomTest {
   @AfterClass
   public static void tearDownClass() {
     DatabaseHandler.getInstance().truncateDatabase();
+    DatabaseHandler.getInstance().destroy();
   }
 
   @Test
