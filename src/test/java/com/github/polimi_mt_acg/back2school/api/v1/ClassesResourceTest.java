@@ -7,7 +7,6 @@ import com.github.polimi_mt_acg.back2school.api.v1.classes.ClassesResponse;
 import com.github.polimi_mt_acg.back2school.model.Class;
 import com.github.polimi_mt_acg.back2school.model.Class_;
 import com.github.polimi_mt_acg.back2school.model.User;
-import com.github.polimi_mt_acg.back2school.model.User_;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseSeeder;
 import com.github.polimi_mt_acg.back2school.utils.TestCategory;
@@ -48,7 +47,9 @@ public class ClassesResourceTest {
     // Run HTTP server
     server =
         HTTPServerManager.startServer(
-            AuthenticationResource.class, "com.github.polimi_mt_acg.back2school.api.v1.classes");
+            AuthenticationResource.class,
+            "com.github.polimi_mt_acg.back2school.api.v1.classes",
+            "com.github.polimi_mt_acg.back2school.api.v1.security_contexts");
   }
 
   @AfterClass

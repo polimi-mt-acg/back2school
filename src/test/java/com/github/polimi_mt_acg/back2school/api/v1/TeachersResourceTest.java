@@ -1,6 +1,5 @@
 package com.github.polimi_mt_acg.back2school.api.v1;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.polimi_mt_acg.back2school.api.v1.auth.AuthenticationResource;
 import com.github.polimi_mt_acg.back2school.api.v1.teachers.*;
 import com.github.polimi_mt_acg.back2school.model.*;
@@ -48,7 +47,9 @@ public class TeachersResourceTest {
     // Run HTTP server
     server =
         HTTPServerManager.startServer(
-            AuthenticationResource.class, "com.github.polimi_mt_acg.back2school.api.v1.teachers");
+            AuthenticationResource.class,
+            "com.github.polimi_mt_acg.back2school.api.v1.teachers",
+            "com.github.polimi_mt_acg.back2school.api.v1.security_contexts");
   }
 
   @AfterClass

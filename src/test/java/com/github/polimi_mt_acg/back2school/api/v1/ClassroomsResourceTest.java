@@ -53,7 +53,9 @@ public class ClassroomsResourceTest {
     // Run HTTP server
     server =
         HTTPServerManager.startServer(
-            AuthenticationResource.class, "com.github.polimi_mt_acg.back2school.api.v1.classrooms");
+            AuthenticationResource.class,
+            "com.github.polimi_mt_acg.back2school.api.v1.classrooms",
+            "com.github.polimi_mt_acg.back2school.api.v1.security_contexts");
   }
 
   @AfterClass
