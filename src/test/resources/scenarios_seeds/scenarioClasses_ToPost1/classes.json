@@ -1,0 +1,12 @@
+{
+  "classes": [
+    {
+      "academicYear": 2018,
+      "name": "3A",
+      "seedStudentsEmail": [
+        "alice5@email.com",
+        "alice6@email.com"
+      ]
+    }
+  ]
+}

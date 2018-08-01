@@ -7,17 +7,19 @@ import com.github.polimi_mt_acg.back2school.model.Class;
 import com.github.polimi_mt_acg.back2school.model.Class_;
 import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
+import org.hibernate.Session;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import javax.ws.rs.core.Response.Status;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.as_int;
+import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.print;
+import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.str;
 
 /** JAX-RS Resource for class entity. */
 @Path("classes")
@@ -28,29 +30,72 @@ public class ClassesResource {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
-  public Response getClasses() {
+  public Response getClasses(@Context UriInfo uriInfo) {
     // Get classes from DB
     List<Class> classes = DatabaseHandler.getInstance().getListSelectFrom(Class.class);
 
-    UriBuilder builder = uriInfo.getBaseUriBuilder();
-
-    // For each user, build a URI to /students/{id}
-    List<URI> uris = new ArrayList<>();
+    ClassesResponse classesResponse = new ClassesResponse();
     for (Class cls : classes) {
-      URI uri = builder.path(ClassesResource.class).path(String.valueOf(cls.getId())).build();
-      uris.add(uri);
+      ClassesResponse.Entity entity = new ClassesResponse.Entity();
+
+      entity.setName(cls.getName());
+      entity.setAcademicYear(cls.getAcademicYear());
+      entity.setUrlClass(
+          uriInfo
+              .getBaseUriBuilder()
+              .path(this.getClass())
+              .path(this.getClass(), "getClassById")
+              .build(str(cls.getId()))
+              .toString());
+
+      classesResponse.getClasses().add(entity);
+    }
+    return Response.ok(classesResponse, MediaType.APPLICATION_JSON_TYPE).build();
+  }
+
+  @POST
+  @Consumes(MediaType.APPLICATION_JSON)
+  @AdministratorSecured
+  public Response postClasses(ClassRequest request, @Context UriInfo uriInfo) {
+    Session session = DatabaseHandler.getInstance().getNewSession();
+    session.beginTransaction();
+
+    Class aClass = new Class();
+    aClass.setName(request.getName());
+    aClass.setAcademicYear(request.getAcademicYear());
+    aClass.setClassStudents(new ArrayList<>());
+
+    for (Integer studentId : request.getStudentsIds()) {
+      // get student from db
+      User student = session.get(User.class, studentId);
+      if (student == null) {
+        print("Student with id: ", studentId, " NOT known!");
+        return Response.status(Status.BAD_REQUEST)
+            .entity("Student with id: " + str(studentId) + " NOT known!")
+            .build();
+      }
+      aClass.addStudent(student);
     }
 
-    ClassResponse response = new ClassResponse();
-    response.setClasses(uris);
-    return Response.ok(response, MediaType.APPLICATION_JSON_TYPE).build();
+    session.persist(aClass);
+    session.getTransaction().commit();
+    session.close();
+
+    // Now class has the ID field filled by Hibernate
+    URI uri =
+        uriInfo
+            .getBaseUriBuilder()
+            .path(this.getClass())
+            .path(this.getClass(), "getClassById")
+            .build(aClass.getId());
+    return Response.created(uri).build();
   }
 
   @Path("{classId: [0-9]+}")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @TeacherAdministratorSecured
-  public Response getClassById(@PathParam("classId") String classId) {
+  public Response getClassById(@PathParam("classId") String classId, @Context UriInfo uriInfo) {
     // Fetch the class
     Optional<Class> classOpt =
         DatabaseHandler.fetchEntityBy(Class.class, Class_.id, Integer.parseInt(classId));
@@ -58,8 +103,26 @@ public class ClassesResource {
     if (!classOpt.isPresent()) {
       return Response.status(Status.NOT_FOUND).entity("Unknown class id").build();
     }
+    Class aClass = classOpt.get();
 
-    return Response.ok(classOpt.get(), MediaType.APPLICATION_JSON_TYPE).build();
+    ClassResponse classResponse = new ClassResponse();
+    classResponse.setName(aClass.getName());
+    classResponse.setAcademicYear(aClass.getAcademicYear());
+    for (User student : aClass.getClassStudents()) {
+      ClassResponse.Entity entity = new ClassResponse.Entity();
+      entity.setName(student.getName());
+      entity.setSurname(student.getSurname());
+      entity.setEmail(student.getEmail());
+      entity.setUrl(
+          uriInfo
+              .getBaseUriBuilder()
+              .path(StudentsResource.class)
+              .path(StudentsResource.class, "getStudentById")
+              .build(student.getId()));
+      classResponse.getStudents().add(entity);
+    }
+
+    return Response.ok(classResponse, MediaType.APPLICATION_JSON_TYPE).build();
   }
 
   @Path("{classId: [0-9]+}/students")
@@ -69,26 +132,26 @@ public class ClassesResource {
   public Response getClassStudents(@PathParam("classId") String classId) {
     // Fetch the class
     Optional<Class> classOpt =
-        DatabaseHandler.fetchEntityBy(Class.class, Class_.id, Integer.parseInt(classId));
+        DatabaseHandler.fetchEntityBy(Class.class, Class_.id, as_int(classId));
 
     if (!classOpt.isPresent()) {
       return Response.status(Status.NOT_FOUND).entity("Unknown class id").build();
     }
-    Class cls = classOpt.get();
+    Class aClass = classOpt.get();
 
     ClassStudentsResponse classStudentsResponse = new ClassStudentsResponse();
-    for (User u : cls.getClassStudents()) {
-      UriBuilder builder = uriInfo.getBaseUriBuilder();
-      URI studentUri =
-          builder
+    for (User student : aClass.getClassStudents()) {
+      ClassStudentsResponse.Entity entity = new ClassStudentsResponse.Entity();
+      entity.setName(student.getName());
+      entity.setSurname(student.getSurname());
+      entity.setEmail(student.getEmail());
+      entity.setUrl(
+          uriInfo
+              .getBaseUriBuilder()
               .path(StudentsResource.class)
               .path(StudentsResource.class, "getStudentById")
-              .build(u.getId());
-
-      ClassStudentsResponse.Student student =
-          new ClassStudentsResponse.Student(
-              u.getName(), u.getSurname(), u.getEmail(), studentUri.toString());
-      classStudentsResponse.getStudents().add(student);
+              .build(student.getId()));
+      classStudentsResponse.getStudents().add(entity);
     }
     return Response.ok(classStudentsResponse, MediaType.APPLICATION_JSON_TYPE).build();
   }

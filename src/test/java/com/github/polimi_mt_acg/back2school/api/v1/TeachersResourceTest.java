@@ -105,9 +105,8 @@ public class TeachersResourceTest {
       assertTrue(seedTeacher.weakEquals(responseTeacher));
     }
 
-    // Print it
-    System.out.println(
-        new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(response));
+    print("Response of /teachers :\n");
+    print(response);
   }
 
   @Test
@@ -194,7 +193,6 @@ public class TeachersResourceTest {
             .buildPost(Entity.json(request));
 
     Response response = post.invoke();
-
     assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
 
     URI resourceURI = response.getLocation();

@@ -5,14 +5,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClassResponse {
+public class ClassRequest {
 
   private String name;
 
   @JsonProperty("academic_year")
-  private int academicYear;
+  private Integer academicYear;
 
-  private List<Entity> students = new ArrayList<>();
+  @JsonProperty("students_ids")
+  private List<Integer> studentsIds = new ArrayList<>();
 
   public String getName() {
     return name;
@@ -22,21 +23,19 @@ public class ClassResponse {
     this.name = name;
   }
 
-  public int getAcademicYear() {
+  public Integer getAcademicYear() {
     return academicYear;
   }
 
-  public void setAcademicYear(int academicYear) {
+  public void setAcademicYear(Integer academicYear) {
     this.academicYear = academicYear;
   }
 
-  public List<Entity> getStudents() {
-    return students;
+  public List<Integer> getStudentsIds() {
+    return studentsIds;
   }
 
-  public void setStudents(List<Entity> students) {
-    this.students = students;
+  public void setStudentsIds(List<Integer> studentsIds) {
+    this.studentsIds = studentsIds;
   }
-
-  public static class Entity extends ClassStudentsResponse.Entity {}
 }
