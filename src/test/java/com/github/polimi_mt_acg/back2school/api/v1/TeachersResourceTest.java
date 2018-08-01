@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.*;
 import static org.junit.Assert.*;
 
-public class TeacherResourceTest {
+public class TeachersResourceTest {
 
   private static HttpServer server;
   private static User adminForLogin;
@@ -86,7 +86,7 @@ public class TeacherResourceTest {
     Invocation request =
         RestFactory.getAuthenticatedInvocationBuilder(adminForLogin, "teachers").buildGet();
 
-    TeacherResponse response = request.invoke(TeacherResponse.class);
+    TeachersResponse response = request.invoke(TeachersResponse.class);
     assertNotNull(response);
 
     List<User> responseTeachers = response.getTeachers();
@@ -179,7 +179,7 @@ public class TeacherResourceTest {
   }
 
   /**
-   * Do a post an return the inserted teacher URI.
+   * Do a post and return the inserted teacher URI.
    *
    * @return The inserted resource URI.
    */
@@ -219,11 +219,11 @@ public class TeacherResourceTest {
 
     Response response = request.invoke();
     assertEquals(Status.OK.getStatusCode(), response.getStatus());
-    ClassesResponse classesResponse = response.readEntity(ClassesResponse.class);
+    TeacherClassesResponse teacherClassesResponse = response.readEntity(TeacherClassesResponse.class);
 
-    print("Response /teachers/", carl1Teacher.getId(), "/classes:\n", classesResponse);
+    print("Response /teachers/", carl1Teacher.getId(), "/classes:\n", teacherClassesResponse);
 
-    assertEquals(classesResponse.getClasses().size(), 2);
+    assertEquals(teacherClassesResponse.getClasses().size(), 2);
   }
 
   @Test
@@ -247,11 +247,11 @@ public class TeacherResourceTest {
 
     Response response = request.invoke();
     assertEquals(Status.OK.getStatusCode(), response.getStatus());
-    ClassesResponse classesResponse = response.readEntity(ClassesResponse.class);
+    TeacherClassesResponse teacherClassesResponse = response.readEntity(TeacherClassesResponse.class);
 
-    print("Response /teachers/", carl1Teacher.getId(), "/classes:\n", classesResponse);
+    print("Response /teachers/", carl1Teacher.getId(), "/classes:\n", teacherClassesResponse);
 
-    assertEquals(classesResponse.getClasses().size(), 2);
+    assertEquals(teacherClassesResponse.getClasses().size(), 2);
   }
 
   @Test
@@ -280,10 +280,10 @@ public class TeacherResourceTest {
 
     Response response = request.invoke();
     assertEquals(Status.OK.getStatusCode(), response.getStatus());
-    ClassesResponse classesResponse = response.readEntity(ClassesResponse.class);
+    TeacherClassesResponse teacherClassesResponse = response.readEntity(TeacherClassesResponse.class);
 
-    print("Response ", target.getUri().toString(), "\n", classesResponse);
-    assertEquals(classesResponse.getClasses().size(), 1);
+    print("Response ", target.getUri().toString(), "\n", teacherClassesResponse);
+    assertEquals(teacherClassesResponse.getClasses().size(), 1);
   }
 
   @Test
@@ -438,11 +438,11 @@ public class TeacherResourceTest {
 
     Response response = request.invoke();
     assertEquals(Status.OK.getStatusCode(), response.getStatus());
-    AppointmentsResponse appointmentsResponse = response.readEntity(AppointmentsResponse.class);
+    TeacherAppointmentsResponse teacherAppointmentsResponse = response.readEntity(TeacherAppointmentsResponse.class);
 
     print(
-        "Response to /teachers/", carl1Teacher.getId(), "/appointments :\n", appointmentsResponse);
-    assertEquals(appointmentsResponse.getAppointments().size(), 1);
+        "Response to /teachers/", carl1Teacher.getId(), "/appointments :\n", teacherAppointmentsResponse);
+    assertEquals(teacherAppointmentsResponse.getAppointments().size(), 1);
   }
 
   @Test
@@ -498,8 +498,8 @@ public class TeacherResourceTest {
     Response getResponse = getRequest.invoke();
     assertEquals(Status.OK.getStatusCode(), getResponse.getStatus());
 
-    AppointmentsResponse.Entity appointmentResponse =
-        getResponse.readEntity(AppointmentsResponse.Entity.class);
+    TeacherAppointmentsResponse.Entity appointmentResponse =
+        getResponse.readEntity(TeacherAppointmentsResponse.Entity.class);
     print("Response: \n", appointmentResponse);
 
     assertNotNull(appointmentResponse);
@@ -578,8 +578,8 @@ public class TeacherResourceTest {
     Response getResponse = getRequest.invoke();
     assertEquals(Status.OK.getStatusCode(), getResponse.getStatus());
 
-    AppointmentsResponse.Entity appointmentResponse =
-        getResponse.readEntity(AppointmentsResponse.Entity.class);
+    TeacherAppointmentsResponse.Entity appointmentResponse =
+        getResponse.readEntity(TeacherAppointmentsResponse.Entity.class);
     print("Response: \n", appointmentResponse);
 
     assertNotNull(appointmentResponse);

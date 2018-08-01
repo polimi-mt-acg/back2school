@@ -26,17 +26,17 @@ import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunc
 
 /** JAX-RS Resource for teachers entity. */
 @Path("teachers")
-public class TeacherResource {
+public class TeachersResource {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
-  public TeacherResponse getTeachers() {
+  public TeachersResponse getTeachers() {
     List<User> teachers =
         DatabaseHandler.getInstance()
             .getListSelectFromWhereEqual(User.class, User_.role, User.Role.TEACHER);
 
-    return new TeacherResponse(teachers);
+    return new TeachersResponse(teachers);
   }
 
   @POST
@@ -151,9 +151,9 @@ public class TeacherResource {
               .getResultList();
     }
 
-    ClassesResponse classesResponse = new ClassesResponse();
+    TeacherClassesResponse teacherClassesResponse = new TeacherClassesResponse();
     for (Class cls : classes) {
-      ClassesResponse.Entity entity = new ClassesResponse.Entity();
+      TeacherClassesResponse.Entity entity = new TeacherClassesResponse.Entity();
 
       entity.setName(cls.getName());
       entity.setAcademicYear(cls.getAcademicYear());
@@ -174,15 +174,15 @@ public class TeacherResource {
       entity.setUrlClassTimetable(
           uriInfo
               .getBaseUriBuilder()
-              .path(TeacherResource.class)
-              .path(TeacherResource.class, "getTeacherTimetable")
+              .path(TeachersResource.class)
+              .path(TeachersResource.class, "getTeacherTimetable")
               .build(teacherId, cls.getId())
               .toString());
 
       // add the created entity to the response list
-      classesResponse.getClasses().add(entity);
+      teacherClassesResponse.getClasses().add(entity);
     }
-    return Response.ok(classesResponse, MediaType.APPLICATION_JSON_TYPE).build();
+    return Response.ok(teacherClassesResponse, MediaType.APPLICATION_JSON_TYPE).build();
   }
 
   @Path("{teacherId: [0-9]+}/classes/{classId: [0-9]+}/timetable")
@@ -292,9 +292,9 @@ public class TeacherResource {
         DatabaseHandler.getInstance()
             .getListSelectFromWhereEqual(Appointment.class, Appointment_.teacher, teacher);
 
-    AppointmentsResponse appointmentsResponse = new AppointmentsResponse();
+    TeacherAppointmentsResponse teacherAppointmentsResponse = new TeacherAppointmentsResponse();
     for (Appointment appointment : appointments) {
-      AppointmentsResponse.Entity entity = new AppointmentsResponse.Entity();
+      TeacherAppointmentsResponse.Entity entity = new TeacherAppointmentsResponse.Entity();
 
       entity.setId(appointment.getId());
       entity.setDatetimeStart(appointment.getDatetimeStart().toString());
@@ -309,9 +309,9 @@ public class TeacherResource {
               .toString());
 
       // add the created entity to the response list
-      appointmentsResponse.getAppointments().add(entity);
+      teacherAppointmentsResponse.getAppointments().add(entity);
     }
-    return Response.ok(appointmentsResponse, MediaType.APPLICATION_JSON_TYPE).build();
+    return Response.ok(teacherAppointmentsResponse, MediaType.APPLICATION_JSON_TYPE).build();
   }
 
   @Path("{teacherId: [0-9]+}/appointments")
@@ -408,7 +408,7 @@ public class TeacherResource {
     Appointment appointment =
         DatabaseHandler.getInstance().getNewSession().get(Appointment.class, as_int(appointmentId));
 
-    AppointmentsResponse.Entity entity = new AppointmentsResponse.Entity();
+    TeacherAppointmentsResponse.Entity entity = new TeacherAppointmentsResponse.Entity();
     entity.setId(appointment.getId());
     entity.setDatetimeStart(appointment.getDatetimeStart().toString());
     entity.setDatetimeEnd(appointment.getDatetimeEnd().toString());

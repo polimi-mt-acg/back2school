@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClassesResponse {
+public class TeacherClassesResponse {
   private List<Entity> classes = new ArrayList<>();
 
   public List<Entity> getClasses() {
