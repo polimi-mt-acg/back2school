@@ -7,6 +7,7 @@ import com.github.polimi_mt_acg.back2school.model.User;
 import java.util.List;
 import javax.persistence.criteria.CriteriaQuery;
 import org.hibernate.Session;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -18,6 +19,12 @@ public class DatabaseHandlerTest {
   @BeforeClass
   public static void setUpClass() {
     dbh = DatabaseHandler.getInstance();
+  }
+
+  @AfterClass
+  public static void tearDownClass() {
+    dbh.truncateDatabase();
+    dbh.destroy();
   }
 
   @Test
@@ -32,6 +39,7 @@ public class DatabaseHandlerTest {
   public void getNewSession() {
     Session session = dbh.getNewSession();
     assertNotNull(session);
+    session.close();
   }
 
   @Test

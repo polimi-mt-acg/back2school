@@ -20,14 +20,12 @@ import org.hibernate.mapping.Table;
 
 public class DatabaseHandler {
 
-  private static final Logger LOGGER;
-  private static final StandardServiceRegistry registry;
-  private static final SessionFactory sessionFactory;
+  private static final Logger LOGGER = Logger.getLogger(DatabaseHandler.class.getName());
+  private static volatile StandardServiceRegistry registry;
+  private static volatile SessionFactory sessionFactory;
   private static volatile DatabaseHandler instance;
 
-  static {
-    LOGGER = Logger.getLogger(DatabaseHandler.class.getName());
-
+  private DatabaseHandler() {
     // Initialize once the register
     registry =
         new StandardServiceRegistryBuilder()
@@ -45,8 +43,6 @@ public class DatabaseHandler {
       throw e;
     }
   }
-
-  private DatabaseHandler() {}
 
   public static DatabaseHandler getInstance() {
     if (instance == null) {
@@ -220,5 +216,13 @@ public class DatabaseHandler {
       return Optional.empty();
     }
     return Optional.of(res.get(0));
+  }
+
+  /** Destroy the current DatabaseHandler instance by closing also the sessionFactory created. */
+  public void destroy() {
+    sessionFactory.close();
+
+    // empty the current instance
+    instance = null;
   }
 }
