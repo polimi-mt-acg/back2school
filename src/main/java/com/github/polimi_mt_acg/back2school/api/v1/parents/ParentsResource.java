@@ -251,6 +251,43 @@ public class ParentsResource {
     return Response.ok().build();
   }
 
+  @Path("{id: [0-9]+}/appointments")
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @ParentAdministratorSecured
+  @SameParentSecured
+  public Response getParentAppointments(
+          @PathParam("id") String parentId, @Context UriInfo uriInfo) {
+    DatabaseHandler dbi = DatabaseHandler.getInstance();
+    Session session = dbi.getNewSession();
+    session.beginTransaction();
+
+    // Fetch Parent
+    User parent = session.get(User.class, Integer.parseInt(parentId));
+    if (parent == null) {
+      session.close();
+      return Response.status(Status.NOT_FOUND).entity("Unknown parent id").build();
+    }
+
+    // Fetch appointments of parent
+    List<Appointment> appointments =
+            dbi.getListSelectFromWhereEqual(Appointment.class, Appointment_.parent, parent ,session);
+    //ATT: parent
+    ParentAppointmentsResponse response = new ParentAppointmentsResponse();
+    List<URI> appointmentsURIs = new ArrayList<>();
+
+    for (Appointment a : appointments) {
+      UriBuilder builder = uriInfo.getAbsolutePathBuilder();
+      URI uri = builder.path(String.valueOf(a.getId())).build();
+      appointmentsURIs.add(uri);
+    }
+    response.setAppointments(appointmentsURIs);
+
+    session.getTransaction().commit();
+    session.close();
+    return Response.ok(response, MediaType.APPLICATION_JSON_TYPE).build();
+  }
+
 
 
 }

@@ -404,6 +404,36 @@ public class ParentResourceTest {
     System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(marcosChildren));
   }
 
+  @Test
+  @Category(TestCategory.Transient.class)
+  public void getParentAppointmentsFromAdmin() throws JsonProcessingException {
+    User parent = buildMarcos(7);
+    URI parentURI = doParentPost(6, parent);
+
+    Path fullPath = Paths.get("/", parentURI.getPath());
+    Path idPath = fullPath.getParent().relativize(fullPath);
+    String parentID = idPath.toString();
+
+    User admin = get(User.Role.ADMINISTRATOR);
+
+    // Now query /parents/{marco_id}/children from admin
+    Invocation request =
+            RestFactory.getAuthenticatedInvocationBuilder(admin, "parents", parentID, "appointments")
+                    .buildGet();
+
+    Response response = request.invoke();
+    //    System.out.println("HERE 2"+response.toString());
+
+    assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+
+    ParentAppointmentsResponse marcosAppointments = response.readEntity(ParentAppointmentsResponse.class);
+
+    // Print it
+    ObjectMapper mapper = RestFactory.objectMapper();
+    System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(marcosAppointments));
+  }
+
+
   private User get(User.Role role) {
     List<User> users =
         (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioParents", "users.json");

@@ -6,6 +6,13 @@
       "datetimeStart": "2018-04-12T18:30:00",
       "datetimeEnd": "2018-04-12T19:00:00",
       "status": "AGREED"
+    },
+    {
+      "seedTeacherEmail": "carl@email.com",
+      "seedParentEmail": "marco7@email.com",
+      "datetimeStart": "2018-04-12T18:30:00",
+      "datetimeEnd": "2018-04-12T19:00:00",
+      "status": "AGREED"
     }
   ]
 }
