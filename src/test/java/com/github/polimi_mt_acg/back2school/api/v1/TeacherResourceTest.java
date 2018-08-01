@@ -2,20 +2,16 @@ package com.github.polimi_mt_acg.back2school.api.v1;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.polimi_mt_acg.back2school.api.v1.auth.AuthenticationResource;
-import com.github.polimi_mt_acg.back2school.api.v1.teachers.ClassesResponse;
-import com.github.polimi_mt_acg.back2school.api.v1.teachers.PostTeacherRequest;
-import com.github.polimi_mt_acg.back2school.api.v1.teachers.TeacherResponse;
-import com.github.polimi_mt_acg.back2school.api.v1.teachers.TimetableResponse;
+import com.github.polimi_mt_acg.back2school.api.v1.teachers.*;
+import com.github.polimi_mt_acg.back2school.model.*;
 import com.github.polimi_mt_acg.back2school.model.Class;
-import com.github.polimi_mt_acg.back2school.model.Class_;
-import com.github.polimi_mt_acg.back2school.model.User;
-import com.github.polimi_mt_acg.back2school.model.User_;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseSeeder;
 import com.github.polimi_mt_acg.back2school.utils.TestCategory;
 import com.github.polimi_mt_acg.back2school.utils.rest.HTTPServerManager;
 import com.github.polimi_mt_acg.back2school.utils.rest.RestFactory;
 import org.glassfish.grizzly.http.server.HttpServer;
+import org.hibernate.Session;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -31,7 +27,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.*;
@@ -419,5 +417,182 @@ public class TeacherResourceTest {
     print("Response to ", target.getUri().toString(), " :\n", timetableResponse);
     // must be equal to 1 since query param is passed to filter on the year
     assertEquals(timetableResponse.getLectures().size(), 1);
+  }
+
+  @Test
+  @Category(TestCategory.Endpoint.class)
+  public void getTeacherAppointments() {
+    // Get teacher from database
+    User carl1Teacher =
+        DatabaseHandler.getInstance()
+            .getListSelectFromWhereEqual(User.class, User_.email, "carl1@email.com")
+            .get(0);
+    assertNotNull(carl1Teacher);
+
+    // GET - Using admin to log in
+    Invocation request =
+        RestFactory.getAuthenticatedInvocationBuilder(
+                adminForLogin, "teachers", str(carl1Teacher.getId()), "appointments")
+            .buildGet();
+
+    Response response = request.invoke();
+    assertEquals(Status.OK.getStatusCode(), response.getStatus());
+    AppointmentsResponse appointmentsResponse = response.readEntity(AppointmentsResponse.class);
+
+    print(
+        "Response to /teachers/", carl1Teacher.getId(), "/appointments :\n", appointmentsResponse);
+    assertEquals(appointmentsResponse.getAppointments().size(), 1);
+  }
+
+  @Test
+  @Category(TestCategory.Endpoint.class)
+  public void postTeacherAppointments() {
+    Session session = DatabaseHandler.getInstance().getNewSession();
+
+    // get teacher from db
+    Optional<User> teacherOpt =
+        DatabaseHandler.fetchEntityBy(User.class, User_.email, "carl2@email.com", session);
+    assertTrue(teacherOpt.isPresent());
+    User teacher = teacherOpt.get();
+    // set the password in order to let the invocation builder be able to authenticate the user
+    teacher.setSeedPassword("email_password");
+
+    // get parent from db
+    Optional<User> parentOpt =
+        DatabaseHandler.fetchEntityBy(User.class, User_.email, "alice2@email.com", session);
+    assertTrue(parentOpt.isPresent());
+    User parent = parentOpt.get();
+
+    // create new appointment request
+    AppointmentRequest appointmentRequest = new AppointmentRequest();
+    appointmentRequest.setParentId(parent.getId());
+    appointmentRequest.setDatetimeStart(LocalDateTime.parse("2018-06-14T12:15:00"));
+    appointmentRequest.setDatetimeEnd(LocalDateTime.parse("2018-06-14T13:15:00"));
+    appointmentRequest.setStatus(Appointment.Status.REQUESTED);
+
+    // Create POST request
+    Invocation postRequest =
+        RestFactory.getAuthenticatedInvocationBuilder(
+                teacher, "teachers", str(teacher.getId()), "appointments")
+            .buildPost(Entity.json(appointmentRequest));
+
+    Response response = postRequest.invoke();
+    assertNotNull(response);
+    assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
+
+    URI createdEntityURI = response.getLocation();
+
+    Path fullPath = Paths.get("/", createdEntityURI.getPath());
+    Path idPath = fullPath.getParent().relativize(fullPath);
+    String appointmentId = idPath.toString();
+    print("URI: ", fullPath.toString());
+    print("appointmentId: ", appointmentId);
+
+    // Create Get request
+    Invocation getRequest =
+        RestFactory.getAuthenticatedInvocationBuilder(
+                teacher, "teachers", str(teacher.getId()), "appointments", appointmentId)
+            .buildGet();
+
+    Response getResponse = getRequest.invoke();
+    assertEquals(Status.OK.getStatusCode(), getResponse.getStatus());
+
+    AppointmentsResponse.Entity appointmentResponse =
+        getResponse.readEntity(AppointmentsResponse.Entity.class);
+    print("Response: \n", appointmentResponse);
+
+    assertNotNull(appointmentResponse);
+    assertEquals(
+        appointmentRequest.getDatetimeStart().toString(), appointmentResponse.getDatetimeStart());
+    assertEquals(
+        appointmentRequest.getDatetimeEnd().toString(), appointmentResponse.getDatetimeEnd());
+    assertEquals(appointmentRequest.getStatus().toString(), appointmentResponse.getStatus());
+  }
+
+  @Test
+  @Category(TestCategory.Endpoint.class)
+  public void putTeacherAppointment() {
+    Session session = DatabaseHandler.getInstance().getNewSession();
+
+    // get teacher from db
+    Optional<User> teacherOpt =
+        DatabaseHandler.fetchEntityBy(User.class, User_.email, "carl2@email.com", session);
+    assertTrue(teacherOpt.isPresent());
+    User teacher = teacherOpt.get();
+    // set the password in order to let the invocation builder be able to authenticate the user
+    teacher.setSeedPassword("email_password");
+
+    // get parent from db
+    Optional<User> parentOpt =
+        DatabaseHandler.fetchEntityBy(User.class, User_.email, "alice@email.com", session);
+    assertTrue(parentOpt.isPresent());
+    User parent = parentOpt.get();
+
+    // create new appointment request
+    AppointmentRequest appointmentRequest = new AppointmentRequest();
+    appointmentRequest.setParentId(parent.getId());
+    appointmentRequest.setDatetimeStart(LocalDateTime.parse("2018-03-10T16:15:00"));
+    appointmentRequest.setDatetimeEnd(LocalDateTime.parse("2018-03-10T17:15:00"));
+    appointmentRequest.setStatus(Appointment.Status.REQUESTED);
+
+    // Create POST request
+    Invocation postRequest =
+        RestFactory.getAuthenticatedInvocationBuilder(
+                teacher, "teachers", str(teacher.getId()), "appointments")
+            .buildPost(Entity.json(appointmentRequest));
+
+    Response response = postRequest.invoke();
+    assertNotNull(response);
+    assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
+
+    URI createdEntityURI = response.getLocation();
+
+    Path fullPath = Paths.get("/", createdEntityURI.getPath());
+    Path idPath = fullPath.getParent().relativize(fullPath);
+    String appointmentId = idPath.toString();
+    print("URI: ", fullPath.toString());
+    print("appointmentId: ", appointmentId);
+
+    // Create PUT request entity to modify the latter saved appointment
+    AppointmentRequest putAppointmentRequest = new AppointmentRequest();
+    putAppointmentRequest.setParentId(parent.getId());
+    putAppointmentRequest.setDatetimeStart(LocalDateTime.parse("2018-03-12T16:15:00"));
+    putAppointmentRequest.setDatetimeEnd(LocalDateTime.parse("2018-03-12T17:15:00"));
+    putAppointmentRequest.setStatus(Appointment.Status.COUNTERPROPOSED);
+
+    // Create PUT request
+    Invocation putRequest =
+        RestFactory.getAuthenticatedInvocationBuilder(
+                teacher, "teachers", str(teacher.getId()), "appointments", appointmentId)
+            .buildPut(Entity.json(putAppointmentRequest));
+    Response putResponse = putRequest.invoke();
+    assertEquals(Status.OK.getStatusCode(), putResponse.getStatus());
+
+    // Create Get request to very entity to be updated
+    Invocation getRequest =
+        RestFactory.getAuthenticatedInvocationBuilder(
+                teacher, "teachers", str(teacher.getId()), "appointments", appointmentId)
+            .buildGet();
+
+    Response getResponse = getRequest.invoke();
+    assertEquals(Status.OK.getStatusCode(), getResponse.getStatus());
+
+    AppointmentsResponse.Entity appointmentResponse =
+        getResponse.readEntity(AppointmentsResponse.Entity.class);
+    print("Response: \n", appointmentResponse);
+
+    assertNotNull(appointmentResponse);
+    assertNotEquals(
+        appointmentRequest.getDatetimeStart().toString(), appointmentResponse.getDatetimeStart());
+    assertNotEquals(
+        appointmentRequest.getDatetimeEnd().toString(), appointmentResponse.getDatetimeEnd());
+    assertNotEquals(appointmentRequest.getStatus().toString(), appointmentResponse.getStatus());
+
+    assertEquals(
+        putAppointmentRequest.getDatetimeStart().toString(),
+        appointmentResponse.getDatetimeStart());
+    assertEquals(
+        putAppointmentRequest.getDatetimeEnd().toString(), appointmentResponse.getDatetimeEnd());
+    assertEquals(putAppointmentRequest.getStatus().toString(), appointmentResponse.getStatus());
   }
 }

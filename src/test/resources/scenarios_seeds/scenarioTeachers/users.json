@@ -41,6 +41,19 @@
       "surname": "SurnameBob2",
       "email": "bob2@email.com",
       "seedPassword": "email_password"
+    },
+    {
+      "role": "PARENT",
+      "name": "Alice",
+      "surname": "SurnameAlice",
+      "email": "alice@email.com",
+      "seedPassword": "email_password"
+    },
+    {
+      "role": "PARENT",
+      "name": "Alice2",
+      "email": "alice2@email.com",
+      "seedPassword": "email_password"
     }
   ]
 }

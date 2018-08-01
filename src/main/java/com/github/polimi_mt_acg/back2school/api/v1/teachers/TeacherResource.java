@@ -5,12 +5,12 @@ import com.github.polimi_mt_acg.back2school.api.v1.classrooms.ClassroomsResource
 import com.github.polimi_mt_acg.back2school.api.v1.parents_stub.ParentsStubResource;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.AdministratorSecured;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.TeacherAdministratorSecured;
+import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.TeacherSecured;
 import com.github.polimi_mt_acg.back2school.api.v1.subjects.SubjectsResource;
 import com.github.polimi_mt_acg.back2school.model.*;
 import com.github.polimi_mt_acg.back2school.model.Class;
 import com.github.polimi_mt_acg.back2school.model.User.Role;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
-import org.glassfish.jersey.jaxb.internal.XmlJaxbElementProvider;
 import org.hibernate.Session;
 
 import java.net.URI;
@@ -288,8 +288,9 @@ public class TeacherResource {
       return Response.status(Status.FORBIDDEN).entity("Not allowed user").build();
     }
 
-    List<Appointment> appointments = DatabaseHandler.getInstance()
-        .getListSelectFromWhereEqual(Appointment.class, Appointment_.teacher, teacher);
+    List<Appointment> appointments =
+        DatabaseHandler.getInstance()
+            .getListSelectFromWhereEqual(Appointment.class, Appointment_.teacher, teacher);
 
     AppointmentsResponse appointmentsResponse = new AppointmentsResponse();
     for (Appointment appointment : appointments) {
@@ -311,5 +312,176 @@ public class TeacherResource {
       appointmentsResponse.getAppointments().add(entity);
     }
     return Response.ok(appointmentsResponse, MediaType.APPLICATION_JSON_TYPE).build();
+  }
+
+  @Path("{teacherId: [0-9]+}/appointments")
+  @POST
+  @Produces(MediaType.APPLICATION_JSON)
+  @TeacherSecured
+  public Response postTeacherAppointments(
+      AppointmentRequest request,
+      @PathParam("teacherId") String teacherId,
+      @Context ContainerRequestContext crc,
+      @Context UriInfo uriInfo) {
+    User currentUser = AuthenticationSession.getCurrentUser(crc);
+
+    Session session = DatabaseHandler.getInstance().getNewSession();
+    session.beginTransaction();
+
+    // Get teacher who made the request
+    User teacher = AuthenticationSession.getCurrentUser(crc, session);
+    if (teacher == null) {
+      session.getTransaction().commit();
+      session.close();
+      print("Teacher not found!");
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (currentUser.getId() != teacher.getId()) {
+      print("Not allowed user");
+      return Response.status(Status.FORBIDDEN).entity("Not allowed user").build();
+    }
+
+    if (request.getParentId() == null) {
+      session.getTransaction().commit();
+      session.close();
+      print("Invalid request, parent_id not set!");
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    // Fetch parent
+    User parent = session.get(User.class, request.getParentId());
+    if (parent == null) {
+      session.getTransaction().commit();
+      session.close();
+      print("Invalid request, parent not found! Given id: ", request.getParentId());
+      return Response.status(Status.NOT_FOUND).entity("Unknown parent id").build();
+    }
+
+    // Create new appointment
+    Appointment appointment = new Appointment();
+    appointment.setTeacher(teacher);
+    appointment.setParent(parent);
+    appointment.setDatetimeStart(request.getDatetimeStart());
+    appointment.setDatetimeEnd(request.getDatetimeEnd());
+    appointment.setStatus(request.getStatus());
+
+    session.persist(appointment);
+    session.getTransaction().commit();
+    session.close();
+
+    URI uri =
+        uriInfo
+            .getBaseUriBuilder()
+            .path(this.getClass())
+            .path(this.getClass(), "getTeacherAppointmentById")
+            .build(teacherId, appointment.getId());
+
+    return Response.created(uri).build();
+  }
+
+  @Path("{teacherId: [0-9]+}/appointments/{appointmentId: [0-9]+}")
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @TeacherAdministratorSecured
+  public Response getTeacherAppointmentById(
+      @PathParam("teacherId") String teacherId,
+      @PathParam("appointmentId") String appointmentId,
+      @Context ContainerRequestContext crc,
+      @Context UriInfo uriInfo) {
+    User currentUser = AuthenticationSession.getCurrentUser(crc);
+
+    // Fetch request user
+    Optional<User> userOpt = DatabaseHandler.fetchEntityBy(User.class, User_.id, as_int(teacherId));
+    if (!userOpt.isPresent()) {
+      print("User not found");
+      return Response.status(Status.NOT_FOUND).entity("User not found").build();
+    }
+    User teacher = userOpt.get();
+
+    if (currentUser.getRole().equals(Role.TEACHER) && currentUser.getId() != teacher.getId()) {
+      print("Not allowed user");
+      return Response.status(Status.FORBIDDEN).entity("Not allowed user").build();
+    }
+
+    // get appointment from db
+    Appointment appointment =
+        DatabaseHandler.getInstance().getNewSession().get(Appointment.class, as_int(appointmentId));
+
+    AppointmentsResponse.Entity entity = new AppointmentsResponse.Entity();
+    entity.setId(appointment.getId());
+    entity.setDatetimeStart(appointment.getDatetimeStart().toString());
+    entity.setDatetimeEnd(appointment.getDatetimeEnd().toString());
+    entity.setStatus(str(appointment.getStatus()));
+    entity.setUrlParent(
+        uriInfo
+            .getBaseUriBuilder()
+            .path(ParentsStubResource.class)
+            .path(ParentsStubResource.class, "getParentById")
+            .build(appointment.getTeacher().getId())
+            .toString());
+
+    return Response.ok(entity, MediaType.APPLICATION_JSON_TYPE).build();
+  }
+
+  @Path("{teacherId: [0-9]+}/appointments/{appointmentId: [0-9]+}")
+  @PUT
+  @Produces(MediaType.APPLICATION_JSON)
+  @TeacherSecured
+  public Response putTeacherAppointmentById(
+      AppointmentRequest appointmentRequest,
+      @PathParam("teacherId") String teacherId,
+      @PathParam("appointmentId") String appointmentId,
+      @Context ContainerRequestContext crc,
+      @Context UriInfo uriInfo) {
+
+    Session session = DatabaseHandler.getInstance().getNewSession();
+    session.beginTransaction();
+
+    User currentUser = AuthenticationSession.getCurrentUser(crc);
+
+    // Fetch teacher
+    User teacher = session.get(User.class, as_int(teacherId));
+    if (teacher == null) {
+      session.getTransaction().commit();
+      session.close();
+      print("User not found");
+      return Response.status(Status.NOT_FOUND).entity("User not found").build();
+    }
+
+    if (currentUser.getId() != teacher.getId()) {
+      session.getTransaction().commit();
+      session.close();
+      print("Not allowed user");
+      return Response.status(Status.FORBIDDEN).entity("Not allowed user").build();
+    }
+
+    // Fetch parent
+    User parent = session.get(User.class, appointmentRequest.getParentId());
+    if (parent == null) {
+      session.getTransaction().commit();
+      session.close();
+      print("Teacher not found");
+      return Response.status(Status.BAD_REQUEST).entity("Teacher not found").build();
+    }
+
+    // Fetch appointment
+    Appointment appointment = session.get(Appointment.class, as_int(appointmentId));
+    if (appointment == null) {
+      session.getTransaction().commit();
+      session.close();
+      print("Appointment not found");
+      return Response.status(Status.NOT_FOUND).entity("Appointment not found").build();
+    }
+
+    appointment.setParent(parent);
+    appointment.setDatetimeStart(appointmentRequest.getDatetimeStart());
+    appointment.setDatetimeEnd(appointmentRequest.getDatetimeEnd());
+    appointment.setStatus(appointmentRequest.getStatus());
+
+    session.getTransaction().commit();
+    session.close();
+
+    return Response.ok().build();
   }
 }

@@ -11,19 +11,19 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 
 /**
- * TeacherAdministratorSecurityContext implements a request filter for JAX-RS REST APIs. It implements a
- * "Teachers-Administrators-only" security policy. A REST API that is annotated
- * with @TeacherAdministratorSecured can only be accessed if: a) the client is authenticated. b) the
- * client role is TEACHER or ADMINISTRATOR
+ * TeacherSecurityContext implements a request filter for JAX-RS REST APIs. It implements a
+ * "Teachers-only" security policy. A REST API that is annotated
+ * with @TeacherSecured can only be accessed if: a) the client is authenticated. b) the
+ * client role is TEACHER
  */
-@TeacherAdministratorSecured
+@TeacherSecured
 @Provider
-@Priority(SecurityContextPriority.TEACHER_ADMINISTRATOR)
-public class TeacherAdministratorSecurityContext implements ContainerRequestFilter {
+@Priority(SecurityContextPriority.TEACHER)
+public class TeacherSecurityContext implements ContainerRequestFilter {
 
   /**
    * Filter requests that do not match the following security conditions: a) the client is
-   * authenticated. b) the client role is TEACHER/ADMINISTRATOR.
+   * authenticated. b) the client role is TEACHER.
    *
    * <p>To be successfully authenticated, the client must send the auth token in the AUTHORIZATION
    * HTTP header.
@@ -45,7 +45,7 @@ public class TeacherAdministratorSecurityContext implements ContainerRequestFilt
 
     // if the user logged has not the correct role
     Role role = currentUser.getRole();
-    if (!role.equals(Role.TEACHER) && !role.equals(Role.ADMINISTRATOR)) {
+    if (!role.equals(Role.TEACHER)) {
       requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
     }
   }
