@@ -55,6 +55,7 @@ public class TeacherResourceTest {
   public static void oneTimeTearDown() {
     // Truncate DB
     DatabaseHandler.getInstance().truncateDatabase();
+    DatabaseHandler.getInstance().destroy();
 
     // Close HTTP server
     server.shutdownNow();

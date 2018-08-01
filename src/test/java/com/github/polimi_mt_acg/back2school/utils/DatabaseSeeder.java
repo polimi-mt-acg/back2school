@@ -82,8 +82,8 @@ public class DatabaseSeeder {
       List<?> entitiesToPersist = getEntitiesListFromSeed(scenarioFolderName, seedFilename);
 
       if (entitiesToPersist != null) {
-        Session s = DatabaseHandler.getInstance().getNewSession();
-        s.beginTransaction();
+        Session session = DatabaseHandler.getInstance().getNewSession();
+        session.beginTransaction();
         for (Object genericEntity : entitiesToPersist) {
           if (genericEntity instanceof DeserializeToPersistInterface) {
 
@@ -93,12 +93,11 @@ public class DatabaseSeeder {
             // notify the entity that it will be persisted
             entity.prepareToPersist();
 
-            s.persist(entity);
+            session.persist(entity);
           }
         }
-        s.getTransaction().commit();
-        s.close();
-
+        session.getTransaction().commit();
+        session.close();
         //                LOGGER.info(
         //                        String.format(
         //                                "deployed seed file: %s/%s",

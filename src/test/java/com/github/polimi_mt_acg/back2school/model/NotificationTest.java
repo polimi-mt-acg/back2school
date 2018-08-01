@@ -24,6 +24,7 @@ public class NotificationTest {
   @AfterClass
   public static void tearDownClass() {
     DatabaseHandler.getInstance().truncateDatabase();
+    DatabaseHandler.getInstance().destroy();
   }
 
   @Test
@@ -66,7 +67,8 @@ public class NotificationTest {
   @Category(TestCategory.Unit.class)
   public void testNotificationGeneralTeachersEntity() {
     NotificationGeneralTeachers seedEntity = getSeedEntity(NotificationGeneralTeachers.class);
-    NotificationGeneralTeachers databaseEntity = getDatabaseEntity(NotificationGeneralTeachers.class);
+    NotificationGeneralTeachers databaseEntity =
+        getDatabaseEntity(NotificationGeneralTeachers.class);
 
     // common asserts of Notification class
     testNotificationCommonAsserts(seedEntity, databaseEntity);
@@ -89,7 +91,8 @@ public class NotificationTest {
   @Category(TestCategory.Unit.class)
   public void testNotificationPersonalTeacherEntity() {
     NotificationPersonalTeacher seedEntity = getSeedEntity(NotificationPersonalTeacher.class);
-    NotificationPersonalTeacher databaseEntity = getDatabaseEntity(NotificationPersonalTeacher.class);
+    NotificationPersonalTeacher databaseEntity =
+        getDatabaseEntity(NotificationPersonalTeacher.class);
 
     // common asserts of Notification class
     testNotificationCommonAsserts(seedEntity, databaseEntity);

@@ -27,6 +27,7 @@ public class ParentChildrenTest {
   public static void oneTimeTearDown() {
     // Truncate DB
     DatabaseHandler.getInstance().truncateDatabase();
+    DatabaseHandler.getInstance().destroy();
   }
 
   @Test

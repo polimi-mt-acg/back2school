@@ -15,6 +15,7 @@ public class DatabaseSeederTest {
   public void deployScenario() {
     DatabaseSeeder.deployScenario("scenarioA_unit_tests");
     DatabaseHandler.getInstance().truncateDatabase();
+    DatabaseHandler.getInstance().destroy();
   }
 
   @Test
