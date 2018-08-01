@@ -2,6 +2,7 @@ package com.github.polimi_mt_acg.back2school.api.v1.parents;
 
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.AdministratorSecured;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.ParentAdministratorSecured;
+import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.ParentTeacherAdministratorSecured;
 import com.github.polimi_mt_acg.back2school.model.*;
 import com.github.polimi_mt_acg.back2school.model.User.Role;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
@@ -32,7 +33,12 @@ public class ParentsResource {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
-  public Response getParents(@Context UriInfo uriInfo) {
+  public Response getParents(@Context UriInfo uriInfo, @Context ContainerRequestContext crc) {
+    User currentUser = AuthenticationSession.getCurrentUser(crc);
+    if (!currentUser.getRole().equals(User.Role.ADMINISTRATOR)) {
+      return Response.status(Status.UNAUTHORIZED).build();
+    }
+
     // Get parents from DB
     List<User> parents =
         DatabaseHandler.getInstance()
@@ -54,7 +60,11 @@ public class ParentsResource {
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @AdministratorSecured
-  public Response postParents(PostParentRequest request, @Context UriInfo uriInfo) {
+  public Response postParents(PostParentRequest request, @Context UriInfo uriInfo, @Context ContainerRequestContext crc) {
+    User currentUser = AuthenticationSession.getCurrentUser(crc);
+    if (!currentUser.getRole().equals(User.Role.ADMINISTRATOR)) {
+      return Response.status(Status.UNAUTHORIZED).build();
+    }
     User parent = request.getParent();
     String studentEmail = request.getStudentEmail();
 
@@ -240,4 +250,7 @@ public class ParentsResource {
 
     return Response.ok().build();
   }
+
+
+
 }

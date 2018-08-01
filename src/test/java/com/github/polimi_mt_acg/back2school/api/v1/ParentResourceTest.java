@@ -53,13 +53,14 @@ public class ParentResourceTest {
   public static void tearDown() throws Exception {
     // Truncate DB
     DatabaseHandler.getInstance().truncateDatabase();
+    DatabaseHandler.getInstance().destroy();
 
     // Close HTTP server
     server.shutdownNow();
   }
 
   @Test
-  @Category(TestCategory.Transient.class)
+  @Category(TestCategory.Endpoint.class)
   public void getParentsFromAdmin() {
     // Get an admin
     User admin = get(User.Role.ADMINISTRATOR);
@@ -78,7 +79,7 @@ public class ParentResourceTest {
   }
 
   @Test
-  @Category(TestCategory.Transient.class)
+  @Category(TestCategory.Endpoint.class)
   public void getParentsFromParent() {
     // Get a parent
     User parent = get(User.Role.PARENT);
@@ -87,7 +88,7 @@ public class ParentResourceTest {
         RestFactory.getAuthenticatedInvocationBuilder(parent, "parents").buildGet();
 
     Response response = getRequest.invoke();
-    print("ERROR ", response.getStatus());
+//    print("ERROR ", response.getStatus());
     assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
   }
 
@@ -333,6 +334,30 @@ public class ParentResourceTest {
     // Print it
     ObjectMapper mapper = RestFactory.objectMapper();
     System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(marcosChildren));
+  }
+
+  @Test
+  @Category(TestCategory.Endpoint.class)
+  public void getParentChildrenFromNotSameParent() throws JsonProcessingException {
+    User parent = buildMarcos(5);
+    URI parentURI = doParentPost(7, parent);
+
+    User secondParent = buildMarcos(6);
+    URI secondParentURI = doParentPost(3, secondParent);
+
+    Path fullPath = Paths.get("/", parentURI.getPath());
+    Path idPath = fullPath.getParent().relativize(fullPath);
+    String parentID = idPath.toString();
+
+    // Now query /parents/{marco_id}/children from admin
+    Invocation request =
+            RestFactory.getAuthenticatedInvocationBuilder(secondParent, "parents", parentID, "children")
+                    .buildGet();
+
+    Response response = request.invoke();
+    //    System.out.println("HERE 2"+response.toString());
+
+    assertEquals(Response.Status.FORBIDDEN.getStatusCode(), response.getStatus());
   }
 
   @Test
