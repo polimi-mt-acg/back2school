@@ -2,8 +2,6 @@ package com.github.polimi_mt_acg.back2school.api.v1.parents;
 
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.AdministratorSecured;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.ParentAdministratorSecured;
-import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.ParentTeacherAdministratorSecured;
-import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.TeacherAdministratorSecured;
 import com.github.polimi_mt_acg.back2school.model.*;
 import com.github.polimi_mt_acg.back2school.model.User.Role;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
@@ -12,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -27,10 +24,7 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
-import javafx.scene.Parent;
 import org.hibernate.Session;
-
-import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.str;
 
 @Path("parents")
 public class ParentsResource {
@@ -119,10 +113,10 @@ public class ParentsResource {
   @Produces(MediaType.APPLICATION_JSON)
   @ParentAdministratorSecured
   @SameParentSecured
-  public Response getParentById(
-          @PathParam("id") String parentId) {
+  public Response getParentById(@PathParam("id") String parentId) {
     // Fetch User
-    Optional<User> parentOpt = DatabaseHandler.fetchEntityBy(User.class, User_.id, Integer.parseInt(parentId));
+    Optional<User> parentOpt =
+        DatabaseHandler.fetchEntityBy(User.class, User_.id, Integer.parseInt(parentId));
     if (!parentOpt.isPresent()) {
       return Response.status(Status.NOT_FOUND).entity("Unknown parent id").build();
     }
@@ -136,8 +130,7 @@ public class ParentsResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @ParentAdministratorSecured
   @SameParentSecured
-  public Response putParentById(PutParentRequest newParent,
-                                @PathParam("id") String parentId) {
+  public Response putParentById(PutParentRequest newParent, @PathParam("id") String parentId) {
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 
@@ -148,8 +141,6 @@ public class ParentsResource {
       session.close();
       return Response.status(Status.NOT_FOUND).entity("Unknown parent id").build();
     }
-
-
 
     // Update student fields
     parent.setName(newParent.getName());
@@ -178,33 +169,29 @@ public class ParentsResource {
     session.beginTransaction();
 
     // Fetch User
-    Optional<User> parentOpt = DatabaseHandler.fetchEntityBy(User.class, User_.id, Integer.parseInt(parentId), session);
+    Optional<User> parentOpt =
+        DatabaseHandler.fetchEntityBy(User.class, User_.id, Integer.parseInt(parentId), session);
     if (!parentOpt.isPresent()) {
       return Response.status(Status.NOT_FOUND).entity("Unknown parent id").build();
     }
     User parent = parentOpt.get();
 
-
     ParentChildrenResponse response = new ParentChildrenResponse();
-
 
     response.setChildren(parent.getChildren());
 
-
-
     return Response.ok(response, MediaType.APPLICATION_JSON_TYPE).build();
   }
-
 
   @Path("{id: [0-9]+}/children")
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @AdministratorSecured
-  public Response postParentChildren( //is postParentChild a better name?
-                                      PostChildrenRequest request,
-                                      @PathParam("id") String parentId,
-                                      @Context ContainerRequestContext crc,
-                                      @Context UriInfo uriInfo) {
+  public Response postParentChildren( // is postParentChild a better name?
+      PostChildrenRequest request,
+      @PathParam("id") String parentId,
+      @Context ContainerRequestContext crc,
+      @Context UriInfo uriInfo) {
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
     session.beginTransaction();
@@ -227,21 +214,21 @@ public class ParentsResource {
 
     // Fetch the student entity by name
     Optional<User> studentOpt =
-            DatabaseHandler.fetchEntityBy(
-                    User.class, User_.email, request.getStudent().getEmail(), session);
+        DatabaseHandler.fetchEntityBy(
+            User.class, User_.email, request.getStudent().getEmail(), session);
     if (!studentOpt.isPresent()) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND).entity("Unknown student mail").build();
     }
     // Check if student is already a child of the parent
-    for(User child: parent.getChildren())
-    {
-      if(child.getEmail().equals(studentOpt.get().getEmail()))
-      {
+    for (User child : parent.getChildren()) {
+      if (child.getEmail().equals(studentOpt.get().getEmail())) {
         session.getTransaction().commit();
         session.close();
-        return Response.status(Status.CONFLICT).entity("Student already assigned to this parent").build();
+        return Response.status(Status.CONFLICT)
+            .entity("Student already assigned to this parent")
+            .build();
       }
     }
 
@@ -251,13 +238,6 @@ public class ParentsResource {
     session.getTransaction().commit();
     session.close();
 
-
     return Response.ok().build();
   }
-
-
-
-
-
-
 }
