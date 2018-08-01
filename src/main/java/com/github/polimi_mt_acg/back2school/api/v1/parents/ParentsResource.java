@@ -2,7 +2,6 @@ package com.github.polimi_mt_acg.back2school.api.v1.parents;
 
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.AdministratorSecured;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.ParentAdministratorSecured;
-import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.ParentTeacherAdministratorSecured;
 import com.github.polimi_mt_acg.back2school.model.*;
 import com.github.polimi_mt_acg.back2school.model.User.Role;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
@@ -33,13 +32,8 @@ public class ParentsResource {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
-  public Response getParents(@Context UriInfo uriInfo, @Context ContainerRequestContext crc) {
-    User currentUser = AuthenticationSession.getCurrentUser(crc);
-    if (!currentUser.getRole().equals(User.Role.ADMINISTRATOR)) {
-      return Response.status(Status.UNAUTHORIZED).build();
-    }
-
-    // Get parents from DB
+  public Response getParents(@Context UriInfo uriInfo) {
+  // Get parents from DB
     List<User> parents =
         DatabaseHandler.getInstance()
             .getListSelectFromWhereEqual(User.class, User_.role, Role.PARENT);
@@ -60,11 +54,7 @@ public class ParentsResource {
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @AdministratorSecured
-  public Response postParents(PostParentRequest request, @Context UriInfo uriInfo, @Context ContainerRequestContext crc) {
-    User currentUser = AuthenticationSession.getCurrentUser(crc);
-    if (!currentUser.getRole().equals(User.Role.ADMINISTRATOR)) {
-      return Response.status(Status.UNAUTHORIZED).build();
-    }
+  public Response postParents(PostParentRequest request, @Context UriInfo uriInfo) {
     User parent = request.getParent();
     String studentEmail = request.getStudentEmail();
 
@@ -250,44 +240,6 @@ public class ParentsResource {
 
     return Response.ok().build();
   }
-
-  @Path("{id: [0-9]+}/appointments")
-  @GET
-  @Produces(MediaType.APPLICATION_JSON)
-  @ParentAdministratorSecured
-  @SameParentSecured
-  public Response getParentAppointments(
-          @PathParam("id") String parentId, @Context UriInfo uriInfo) {
-    DatabaseHandler dbi = DatabaseHandler.getInstance();
-    Session session = dbi.getNewSession();
-    session.beginTransaction();
-
-    // Fetch Parent
-    User parent = session.get(User.class, Integer.parseInt(parentId));
-    if (parent == null) {
-      session.close();
-      return Response.status(Status.NOT_FOUND).entity("Unknown parent id").build();
-    }
-
-    // Fetch appointments of parent
-    List<Appointment> appointments =
-            dbi.getListSelectFromWhereEqual(Appointment.class, Appointment_.parent, parent ,session);
-    //ATT: parent
-    ParentAppointmentsResponse response = new ParentAppointmentsResponse();
-    List<URI> appointmentsURIs = new ArrayList<>();
-
-    for (Appointment a : appointments) {
-      UriBuilder builder = uriInfo.getAbsolutePathBuilder();
-      URI uri = builder.path(String.valueOf(a.getId())).build();
-      appointmentsURIs.add(uri);
-    }
-    response.setAppointments(appointmentsURIs);
-
-    session.getTransaction().commit();
-    session.close();
-    return Response.ok(response, MediaType.APPLICATION_JSON_TYPE).build();
-  }
-
 
 
 }
