@@ -46,20 +46,18 @@ public class ClassroomsResourceTest {
   private static HttpServer server;
 
   @BeforeClass
-  public static void setUp() throws Exception {
+  public static void oneTimeSetUp() {
     // Deploy database scenario
     DatabaseSeeder.deployScenario("scenarioClassrooms");
 
     // Run HTTP server
     server =
         HTTPServerManager.startServer(
-            AuthenticationResource.class,
-            "com.github.polimi_mt_acg.back2school.api.v1.classrooms",
-            "com.github.polimi_mt_acg.back2school.api.v1.security_contexts");
+            AuthenticationResource.class, "com.github.polimi_mt_acg.back2school.api.v1.classrooms");
   }
 
   @AfterClass
-  public static void tearDown() throws Exception {
+  public static void oneTimeTearDown() {
     // Truncate DB
     DatabaseHandler.getInstance().truncateDatabase();
     DatabaseHandler.getInstance().destroy();
@@ -69,6 +67,7 @@ public class ClassroomsResourceTest {
   }
 
   @Test
+  @Category(TestCategory.Endpoint.class)
   public void getClassrooms() {
     // Get an admin
     User admin = get(Role.ADMINISTRATOR);
@@ -90,14 +89,15 @@ public class ClassroomsResourceTest {
   }
 
   @Test
+  @Category(TestCategory.Endpoint.class)
   public void postClassrooms() {
-
     URI resourceURI = postB11(0);
 
     System.out.println(resourceURI);
   }
 
   @Test
+  @Category(TestCategory.Endpoint.class)
   public void getClassroomById() throws JsonProcessingException {
     // Create a new Classroom in the system
     URI B11URI = postB11(1);
@@ -145,6 +145,7 @@ public class ClassroomsResourceTest {
   }
 
   @Test
+  @Category(TestCategory.Endpoint.class)
   public void putClassroomById() throws JsonProcessingException {
     // Get an admin
     User admin = get(Role.ADMINISTRATOR);
