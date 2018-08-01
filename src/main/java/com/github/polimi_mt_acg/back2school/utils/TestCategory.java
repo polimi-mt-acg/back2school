@@ -27,9 +27,6 @@ public class TestCategory {
   /** Class for /students endpoint tests. */
   public interface StudentsEndpoint {}
 
-  /** Class for /parents endpoint tests. */
-  public interface ParentsEndpoint {}
-
   /** Class for integration tests. */
   public interface Integration {}
 }

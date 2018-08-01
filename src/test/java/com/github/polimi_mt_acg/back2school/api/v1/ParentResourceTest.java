@@ -3,7 +3,6 @@ package com.github.polimi_mt_acg.back2school.api.v1;
 import com.github.polimi_mt_acg.back2school.api.v1.auth.AuthenticationResource;
 import com.github.polimi_mt_acg.back2school.api.v1.parents.ParentsResponse;
 import com.github.polimi_mt_acg.back2school.api.v1.parents.*;
-import com.github.polimi_mt_acg.back2school.model.*;
 import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.model.User_;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
@@ -12,32 +11,27 @@ import com.github.polimi_mt_acg.back2school.utils.TestCategory;
 import com.github.polimi_mt_acg.back2school.utils.rest.HTTPServerManager;
 import com.github.polimi_mt_acg.back2school.utils.rest.RestFactory;
 import org.glassfish.grizzly.http.server.HttpServer;
-import org.hibernate.Session;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.print;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.polimi_mt_acg.back2school.api.v1.parents.*;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Month;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 
 public class ParentResourceTest {
 
@@ -46,16 +40,13 @@ public class ParentResourceTest {
   @BeforeClass
   public static void setUp() throws Exception {
     // Truncate DB
-//    DatabaseHandler.getInstance().truncateDatabase();
     // Deploy database scenario
     DatabaseSeeder.deployScenario("scenarioParents");
 
     // Run HTTP server
     server =
         HTTPServerManager.startServer(
-            AuthenticationResource.class,
-            "com.github.polimi_mt_acg.back2school.api.v1.parents",
-            "com.github.polimi_mt_acg.back2school.api.v1.security_contexts");
+            AuthenticationResource.class, "com.github.polimi_mt_acg.back2school.api.v1.parents");
   }
 
   @AfterClass
@@ -68,7 +59,7 @@ public class ParentResourceTest {
   }
 
   @Test
-  @Category(TestCategory.ParentsEndpoint.class)
+  @Category(TestCategory.Transient.class)
   public void getParentsFromAdmin() {
     // Get an admin
     User admin = get(User.Role.ADMINISTRATOR);
@@ -87,7 +78,7 @@ public class ParentResourceTest {
   }
 
   @Test
-  @Category(TestCategory.ParentsEndpoint.class)
+  @Category(TestCategory.Transient.class)
   public void getParentsFromParent() {
     // Get a parent
     User parent = get(User.Role.PARENT);
@@ -96,23 +87,23 @@ public class ParentResourceTest {
         RestFactory.getAuthenticatedInvocationBuilder(parent, "parents").buildGet();
 
     Response response = getRequest.invoke();
+    print("ERROR ", response.getStatus());
     assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
-//    System.out.println("ERROR "+response.getStatus());
   }
 
   @Test
-  @Category(TestCategory.ParentsEndpoint.class)
+  @Category(TestCategory.Endpoint.class)
   public void postParents() {
-    URI resourceURI = doParentPost(0,buildMarcos(0));
+    URI resourceURI = doParentPost(0, buildMarcos(0));
 
     System.out.println(resourceURI);
   }
 
   @Test
-  @Category(TestCategory.ParentsEndpoint.class)
+  @Category(TestCategory.Endpoint.class)
   public void getParentByIdFromAdministrator() throws JsonProcessingException {
     User marcos = buildMarcos(1);
-    URI postMarcos = doParentPost(1,marcos);
+    URI postMarcos = doParentPost(1, marcos);
     User admin = get(User.Role.ADMINISTRATOR);
 
     // Now query /parents/{bob_id} from admin
@@ -120,11 +111,11 @@ public class ParentResourceTest {
     Path idPath = fullPath.getParent().relativize(fullPath);
     String marcosID = idPath.toString();
     Invocation request =
-            RestFactory.getAuthenticatedInvocationBuilder(admin, "parents", marcosID).buildGet();
+        RestFactory.getAuthenticatedInvocationBuilder(admin, "parents", marcosID).buildGet();
 
     Response response = request.invoke();
     assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-//    System.out.println("HERE1"+response.getStatus());
+    //    System.out.println("HERE1"+response.getStatus());
     User marcosResponse = response.readEntity(User.class);
 
     assertTrue(weakEquals(marcosResponse, marcos));
@@ -135,13 +126,12 @@ public class ParentResourceTest {
   }
 
   @Test
-  @Category(TestCategory.ParentsEndpoint.class)
+  @Category(TestCategory.Endpoint.class)
   public void getParentByIdFromNotSameParent() throws JsonProcessingException {
-    User seedParent =
-            DatabaseSeeder.getSeedUserByRole("scenarioParents_ToPost1", User.Role.PARENT);
+    User seedParent = DatabaseSeeder.getSeedUserByRole("scenarioParents_ToPost1", User.Role.PARENT);
     assertNotNull(seedParent);
 
-    URI postParent = doParentPost(2,seedParent);
+    URI postParent = doParentPost(2, seedParent);
     User admin = get(User.Role.ADMINISTRATOR);
 
     // Now query /parents/{bob_id} from admin
@@ -151,22 +141,21 @@ public class ParentResourceTest {
 
     User bob = get(User.Role.PARENT);
     Invocation request =
-            RestFactory.getAuthenticatedInvocationBuilder(bob, "parents", parentID).buildGet();
+        RestFactory.getAuthenticatedInvocationBuilder(bob, "parents", parentID).buildGet();
 
     Response response = request.invoke();
-//    System.out.println("HERE1"+response.getStatus());
+    //    System.out.println("HERE1"+response.getStatus());
 
     assertEquals(Response.Status.FORBIDDEN.getStatusCode(), response.getStatus());
-    }
+  }
 
   @Test
-  @Category(TestCategory.ParentsEndpoint.class)
+  @Category(TestCategory.Endpoint.class)
   public void getParentByIdFromSameParent() throws JsonProcessingException {
-    User seedParent =
-            DatabaseSeeder.getSeedUserByRole("scenarioParents_ToPost2", User.Role.PARENT);
+    User seedParent = DatabaseSeeder.getSeedUserByRole("scenarioParents_ToPost2", User.Role.PARENT);
     assertNotNull(seedParent);
 
-    URI postParent = doParentPost(3,seedParent);
+    URI postParent = doParentPost(3, seedParent);
 
     // Now query /parents/{bob_id} from admin
     Path fullPath = Paths.get("/", postParent.getPath());
@@ -174,10 +163,10 @@ public class ParentResourceTest {
     String parentID = idPath.toString();
 
     Invocation request =
-            RestFactory.getAuthenticatedInvocationBuilder(seedParent, "parents", parentID).buildGet();
+        RestFactory.getAuthenticatedInvocationBuilder(seedParent, "parents", parentID).buildGet();
 
     Response response = request.invoke();
-//    System.out.println("HERE1"+response.getStatus());
+    //    System.out.println("HERE1"+response.getStatus());
 
     assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     User parentResponse = response.readEntity(User.class);
@@ -190,7 +179,7 @@ public class ParentResourceTest {
   }
 
   @Test
-  @Category(TestCategory.ParentsEndpoint.class)
+  @Category(TestCategory.Endpoint.class)
   public void putParentByIdFromAdmin() throws JsonProcessingException {
     // Get an admin
     User admin = get(User.Role.ADMINISTRATOR);
@@ -199,7 +188,7 @@ public class ParentResourceTest {
     URI parentURI = doParentPost(4, parent);
 
     Invocation getParent =
-            RestFactory.getAuthenticatedInvocationBuilder(admin, parentURI).buildGet();
+        RestFactory.getAuthenticatedInvocationBuilder(admin, parentURI).buildGet();
     User parentResponse = getParent.invoke().readEntity(User.class);
 
     String nameSuffix = "newName";
@@ -215,15 +204,15 @@ public class ParentResourceTest {
 
     // Make a PUT request
     Invocation putParent =
-            RestFactory.getAuthenticatedInvocationBuilder(admin, parentURI)
-                    .buildPut(Entity.json(putParentRequest));
+        RestFactory.getAuthenticatedInvocationBuilder(admin, parentURI)
+            .buildPut(Entity.json(putParentRequest));
     Response putParentResponse = putParent.invoke();
 
     assertEquals(Response.Status.OK.getStatusCode(), putParentResponse.getStatus());
 
     // Make a new GET to compare results
     Invocation newGetParent =
-            RestFactory.getAuthenticatedInvocationBuilder(admin, parentURI).buildGet();
+        RestFactory.getAuthenticatedInvocationBuilder(admin, parentURI).buildGet();
     User newParentResponse = newGetParent.invoke().readEntity(User.class);
 
     assertEquals(parentResponse.getName() + nameSuffix, newParentResponse.getName());
@@ -232,11 +221,11 @@ public class ParentResourceTest {
 
     ObjectMapper mapper = RestFactory.objectMapper();
     System.out.println(
-            mapper.writerWithDefaultPrettyPrinter().writeValueAsString(newParentResponse));
+        mapper.writerWithDefaultPrettyPrinter().writeValueAsString(newParentResponse));
   }
 
   @Test
-  @Category(TestCategory.ParentsEndpoint.class)
+  @Category(TestCategory.Endpoint.class)
   public void putParentByIdFromSameParent() throws JsonProcessingException {
     // Get an admin
     User parent = buildMarcos(3);
@@ -247,7 +236,7 @@ public class ParentResourceTest {
     User admin = get(User.Role.ADMINISTRATOR);
 
     Invocation getParent =
-            RestFactory.getAuthenticatedInvocationBuilder(admin, "parents", parentID).buildGet();
+        RestFactory.getAuthenticatedInvocationBuilder(admin, "parents", parentID).buildGet();
     User parentResponse = getParent.invoke().readEntity(User.class);
 
     String nameSuffix = "newName";
@@ -261,19 +250,20 @@ public class ParentResourceTest {
     putParentRequest.setEmail(parentResponse.getEmail() + emailSuffix);
     putParentRequest.setPassword("DontCare");
 
-//    System.out.println("HERE"+ putParentRequest.getPassword() + putParentRequest.getEmail());
+    //    System.out.println("HERE"+ putParentRequest.getPassword() + putParentRequest.getEmail());
 
     // Make a PUT request
     Invocation putParent =
-            RestFactory.getAuthenticatedInvocationBuilder(parent, "parents", parentID).buildPut(Entity.json(putParentRequest));
+        RestFactory.getAuthenticatedInvocationBuilder(parent, "parents", parentID)
+            .buildPut(Entity.json(putParentRequest));
     Response putParentResponse = putParent.invoke();
 
-//    System.out.println("HERE"+ putParentResponse);
+    //    System.out.println("HERE"+ putParentResponse);
     assertEquals(Response.Status.OK.getStatusCode(), putParentResponse.getStatus());
 
     // Make a new GET to compare results
     Invocation newGetParent =
-            RestFactory.getAuthenticatedInvocationBuilder(admin, parentURI).buildGet();
+        RestFactory.getAuthenticatedInvocationBuilder(admin, parentURI).buildGet();
     User newParentResponse = newGetParent.invoke().readEntity(User.class);
 
     assertEquals(parentResponse.getName() + nameSuffix, newParentResponse.getName());
@@ -282,14 +272,14 @@ public class ParentResourceTest {
 
     ObjectMapper mapper = RestFactory.objectMapper();
     System.out.println(
-            mapper.writerWithDefaultPrettyPrinter().writeValueAsString(newParentResponse));
+        mapper.writerWithDefaultPrettyPrinter().writeValueAsString(newParentResponse));
   }
 
   @Test
-  @Category(TestCategory.ParentsEndpoint.class)
+  @Category(TestCategory.Endpoint.class)
   public void getParentChildrenFromAdmin() throws JsonProcessingException {
     User parent = buildMarcos(4);
-    URI parentURI = doParentPost(6,parent);
+    URI parentURI = doParentPost(6, parent);
 
     Path fullPath = Paths.get("/", parentURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
@@ -299,12 +289,11 @@ public class ParentResourceTest {
 
     // Now query /parents/{marco_id}/children from admin
     Invocation request =
-            RestFactory.getAuthenticatedInvocationBuilder(
-                    admin,
-                    "parents", parentID, "children").buildGet();
+        RestFactory.getAuthenticatedInvocationBuilder(admin, "parents", parentID, "children")
+            .buildGet();
 
     Response response = request.invoke();
-//    System.out.println("HERE 2"+response.toString());
+    //    System.out.println("HERE 2"+response.toString());
 
     assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
@@ -318,10 +307,10 @@ public class ParentResourceTest {
   }
 
   @Test
-  @Category(TestCategory.ParentsEndpoint.class)
+  @Category(TestCategory.Endpoint.class)
   public void getParentChildrenFromSameParent() throws JsonProcessingException {
     User parent = buildMarcos(5);
-    URI parentURI = doParentPost(7,parent);
+    URI parentURI = doParentPost(7, parent);
 
     Path fullPath = Paths.get("/", parentURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
@@ -329,12 +318,11 @@ public class ParentResourceTest {
 
     // Now query /parents/{marco_id}/children from admin
     Invocation request =
-            RestFactory.getAuthenticatedInvocationBuilder(
-                    parent,
-                    "parents", parentID, "children").buildGet();
+        RestFactory.getAuthenticatedInvocationBuilder(parent, "parents", parentID, "children")
+            .buildGet();
 
     Response response = request.invoke();
-//    System.out.println("HERE 2"+response.toString());
+    //    System.out.println("HERE 2"+response.toString());
 
     assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
@@ -348,11 +336,11 @@ public class ParentResourceTest {
   }
 
   @Test
-  @Category(TestCategory.ParentsEndpoint.class)
+  @Category(TestCategory.Endpoint.class)
   public void postParentChildrenFromAdmin() throws JsonProcessingException {
     User parent = buildMarcos(6);
-    URI parentURI = doParentPost(8,parent);
-    User child= getAChild(2);
+    URI parentURI = doParentPost(8, parent);
+    User child = getAChild(2);
 
     Path fullPath = Paths.get("/", parentURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
@@ -365,20 +353,18 @@ public class ParentResourceTest {
     requestPost.setStudent(child);
 
     Invocation request =
-            RestFactory.getAuthenticatedInvocationBuilder(
-                    admin, "parents", parentID, "children")
-                    .buildPost(Entity.json(requestPost));
+        RestFactory.getAuthenticatedInvocationBuilder(admin, "parents", parentID, "children")
+            .buildPost(Entity.json(requestPost));
 
     Response response = request.invoke();
-//    System.out.println("HERE 2"+response.toString());
+    //    System.out.println("HERE 2"+response.toString());
 
     assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
     // Now query /parents/{parent_id}/children from admin
     Invocation requestCheck =
-            RestFactory.getAuthenticatedInvocationBuilder(
-                    admin,
-                    "parents", parentID, "children").buildGet();
+        RestFactory.getAuthenticatedInvocationBuilder(admin, "parents", parentID, "children")
+            .buildGet();
 
     Response responseCheck = requestCheck.invoke();
 
@@ -393,10 +379,6 @@ public class ParentResourceTest {
     System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(marcosChildren));
   }
 
-
-
-
-
   private User get(User.Role role) {
     List<User> users =
         (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioParents", "users.json");
@@ -406,12 +388,15 @@ public class ParentResourceTest {
     return usersWithRole.get(0);
   }
 
-  private User getUserByID (String userID) {
+  private User getUserByID(String userID) {
     List<User> users =
-            (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioParents", "users.json");
+        (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioParents", "users.json");
 
     List<User> usersWithID =
-            users.stream().filter(user -> user.getId()== Integer.parseInt(userID)).collect(Collectors.toList());
+        users
+            .stream()
+            .filter(user -> user.getId() == Integer.parseInt(userID))
+            .collect(Collectors.toList());
     return usersWithID.get(0);
   }
 
@@ -444,14 +429,14 @@ public class ParentResourceTest {
     return marcos;
   }
 
-  private User getAChild (int copynumber){
+  private User getAChild(int copynumber) {
     List<User> users =
-            (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioParents", "users.json");
+        (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioParents", "users.json");
     List<User> children =
-            users
-                    .stream()
-                    .filter(user -> user.getRole().equals(User.Role.STUDENT))
-                    .collect(Collectors.toList());
+        users
+            .stream()
+            .filter(user -> user.getRole().equals(User.Role.STUDENT))
+            .collect(Collectors.toList());
     return children.get(copynumber);
   }
 
@@ -462,7 +447,7 @@ public class ParentResourceTest {
    */
   private URI doParentPost(int copynumber, User parent) {
     User child = getAChild(copynumber);
-    String childEmail =child.getEmail();
+    String childEmail = child.getEmail();
 
     // Now build a PostParentRequest
     PostParentRequest request = new PostParentRequest();
@@ -473,11 +458,11 @@ public class ParentResourceTest {
 
     // Make a POST to /parents
     Invocation post =
-            RestFactory.getAuthenticatedInvocationBuilder(admin, "parents")
-                    .buildPost(Entity.json(request));
+        RestFactory.getAuthenticatedInvocationBuilder(admin, "parents")
+            .buildPost(Entity.json(request));
 
     Response response = post.invoke();
-    System.out.println("HERE POST REQ"+ response.toString());
+    System.out.println("HERE POST REQ" + response.toString());
 
     assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
 
