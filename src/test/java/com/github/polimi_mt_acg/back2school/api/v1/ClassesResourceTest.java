@@ -1,12 +1,11 @@
 package com.github.polimi_mt_acg.back2school.api.v1;
 
 import com.github.polimi_mt_acg.back2school.api.v1.auth.AuthenticationResource;
-import com.github.polimi_mt_acg.back2school.api.v1.classes.ClassRequest;
-import com.github.polimi_mt_acg.back2school.api.v1.classes.ClassResponse;
-import com.github.polimi_mt_acg.back2school.api.v1.classes.ClassesResponse;
+import com.github.polimi_mt_acg.back2school.api.v1.classes.*;
 import com.github.polimi_mt_acg.back2school.model.Class;
 import com.github.polimi_mt_acg.back2school.model.Class_;
 import com.github.polimi_mt_acg.back2school.model.User;
+import com.github.polimi_mt_acg.back2school.model.User_;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseSeeder;
 import com.github.polimi_mt_acg.back2school.utils.TestCategory;
@@ -26,6 +25,7 @@ import javax.ws.rs.core.Response.*;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -163,6 +163,10 @@ public class ClassesResourceTest {
     assertNotNull(classResponse);
     assertEquals(classRequest.getName(), classResponse.getName());
     assertEquals(classRequest.getAcademicYear(), Integer.valueOf(classResponse.getAcademicYear()));
+
+    // restore database status
+    DatabaseHandler.getInstance().truncateDatabase();
+    DatabaseSeeder.deployScenario("scenarioClasses");
   }
 
   @Test
@@ -207,5 +211,185 @@ public class ClassesResourceTest {
     assertNotNull(classResponse);
     assertEquals(aClass.getName(), classResponse.getName());
     assertEquals(aClass.getAcademicYear(), classResponse.getAcademicYear());
+  }
+
+  @Test
+  @Category(TestCategory.Endpoint.class)
+  public void putClassById() {
+    Optional<Class> classOpt = DatabaseHandler.fetchEntityBy(Class.class, Class_.name, "1A");
+    assertTrue(classOpt.isPresent());
+    Class aClass = classOpt.get();
+
+    assertEquals(2, aClass.getClassStudents().size());
+    print("Original class entity with id: ", aClass.getId(), "\n", aClass);
+
+    // create new class request
+    ClassRequest classRequest = new ClassRequest();
+    // let's change the name
+    classRequest.setName("8A");
+    // the year
+    classRequest.setAcademicYear(aClass.getAcademicYear() + 1);
+    // and remove the last student keeping only the first one.
+    classRequest.setStudentsIds(new ArrayList<>());
+    classRequest.getStudentsIds().add(aClass.getClassStudents().get(0).getId());
+
+    // Create PUT request
+    Invocation putRequest =
+        RestFactory.getAuthenticatedInvocationBuilder(adminForLogin, "classes", str(aClass.getId()))
+            .buildPut(Entity.json(classRequest));
+    Response putResponse = putRequest.invoke();
+    assertEquals(Status.OK.getStatusCode(), putResponse.getStatus());
+
+    // Verify that changes have been applied
+    // Create GET request
+    Invocation getRequest =
+        RestFactory.getAuthenticatedInvocationBuilder(adminForLogin, "classes", str(aClass.getId()))
+            .buildGet();
+
+    Response getResponse = getRequest.invoke();
+    assertNotNull(getResponse);
+    assertEquals(Status.OK.getStatusCode(), getResponse.getStatus());
+
+    ClassResponse classResponse = getResponse.readEntity(ClassResponse.class);
+    print("Response to GET at /classes/", aClass.getId(), ": \n", classResponse);
+
+    assertNotNull(classResponse);
+    assertEquals(classRequest.getName(), classResponse.getName());
+    assertEquals(classRequest.getAcademicYear(), Integer.valueOf(classResponse.getAcademicYear()));
+    assertEquals(classRequest.getStudentsIds().size(), classResponse.getStudents().size());
+
+    // restore database status
+    DatabaseHandler.getInstance().truncateDatabase();
+    DatabaseSeeder.deployScenario("scenarioClasses");
+  }
+
+  @Test
+  @Category(TestCategory.Endpoint.class)
+  public void putClassByIdBadStudentId() {
+    Optional<Class> classOpt = DatabaseHandler.fetchEntityBy(Class.class, Class_.name, "2A");
+    assertTrue(classOpt.isPresent());
+    Class aClass = classOpt.get();
+
+    // create new class request
+    ClassRequest classRequest = new ClassRequest();
+    // let's change the name
+    classRequest.setName("10A");
+    // the year
+    classRequest.setAcademicYear(aClass.getAcademicYear() + 1);
+    classRequest.setStudentsIds(new ArrayList<>());
+    // random id which is not (hopefully) on the database
+    classRequest.getStudentsIds().add(1009);
+
+    // Create PUT request
+    Invocation putRequest =
+        RestFactory.getAuthenticatedInvocationBuilder(adminForLogin, "classes", str(aClass.getId()))
+            .buildPut(Entity.json(classRequest));
+    Response putResponse = putRequest.invoke();
+    assertEquals(Status.BAD_REQUEST.getStatusCode(), putResponse.getStatus());
+
+    // restore database status
+    DatabaseHandler.getInstance().truncateDatabase();
+    DatabaseSeeder.deployScenario("scenarioClasses");
+  }
+
+  @Test
+  @Category(TestCategory.Endpoint.class)
+  public void getClassStudents() {
+    Optional<Class> classOpt = DatabaseHandler.fetchEntityBy(Class.class, Class_.name, "1A");
+    assertTrue(classOpt.isPresent());
+    Class aClass = classOpt.get();
+
+    assertEquals(2, aClass.getClassStudents().size());
+
+    // Create GET request
+    Invocation getRequest =
+        RestFactory.getAuthenticatedInvocationBuilder(
+                adminForLogin, "classes", str(aClass.getId()), "students")
+            .buildGet();
+
+    Response getResponse = getRequest.invoke();
+    assertNotNull(getResponse);
+    assertEquals(Status.OK.getStatusCode(), getResponse.getStatus());
+
+    ClassStudentsResponse classStudentsResponse =
+        getResponse.readEntity(ClassStudentsResponse.class);
+    print("Response to GET at /classes/", aClass.getId(), "/students: \n", classStudentsResponse);
+
+    assertNotNull(classStudentsResponse);
+    assertEquals(aClass.getClassStudents().size(), classStudentsResponse.getStudents().size());
+  }
+
+  @Test
+  @Category(TestCategory.Endpoint.class)
+  public void postClassStudents() {
+    Optional<Class> classOpt = DatabaseHandler.fetchEntityBy(Class.class, Class_.name, "2A");
+    assertTrue(classOpt.isPresent());
+    Class aClass = classOpt.get();
+
+    assertEquals(2, aClass.getClassStudents().size());
+
+    // fetch alice1
+    Optional<User> alice1Opt =
+        DatabaseHandler.fetchEntityBy(User.class, User_.email, "alice1@email.com");
+    assertTrue(alice1Opt.isPresent());
+    User alice1 = alice1Opt.get();
+
+    // create new class request
+    ClassStudentsRequest classStudentsRequest = new ClassStudentsRequest();
+    // add the student id to be added to the class
+    classStudentsRequest.setStudentId(alice1.getId());
+
+    // Create POST request
+    Invocation postRequest =
+        RestFactory.getAuthenticatedInvocationBuilder(
+                adminForLogin, "classes", str(aClass.getId()), "students")
+            .buildPost(Entity.json(classStudentsRequest));
+
+    Response putResponse = postRequest.invoke();
+    assertEquals(Status.OK.getStatusCode(), putResponse.getStatus());
+
+    // Verify changes have been applied
+    // Create GET request
+    Invocation getRequest =
+        RestFactory.getAuthenticatedInvocationBuilder(
+                adminForLogin, "classes", str(aClass.getId()), "students")
+            .buildGet();
+
+    Response getResponse = getRequest.invoke();
+    assertNotNull(getResponse);
+    assertEquals(Status.OK.getStatusCode(), getResponse.getStatus());
+
+    ClassStudentsResponse classStudentsResponse =
+        getResponse.readEntity(ClassStudentsResponse.class);
+    print("Response to GET at /classes/", aClass.getId(), "/students: \n", classStudentsResponse);
+
+    assertNotNull(classStudentsResponse);
+    assertEquals(aClass.getClassStudents().size() + 1, classStudentsResponse.getStudents().size());
+
+    // restore database status
+    DatabaseHandler.getInstance().truncateDatabase();
+    DatabaseSeeder.deployScenario("scenarioClasses");
+  }
+
+  @Test
+  @Category(TestCategory.Endpoint.class)
+  public void postClassStudentsBadStudentId() {
+    Optional<Class> classOpt = DatabaseHandler.fetchEntityBy(Class.class, Class_.name, "2A");
+    assertTrue(classOpt.isPresent());
+    Class aClass = classOpt.get();
+
+    // create new class request
+    ClassStudentsRequest classStudentsRequest = new ClassStudentsRequest();
+    // random id which is not (hopefully) on the database
+    classStudentsRequest.setStudentId(90);
+
+    // Create POST request
+    Invocation postRequest =
+        RestFactory.getAuthenticatedInvocationBuilder(
+                adminForLogin, "classes", str(aClass.getId()), "students")
+            .buildPost(Entity.json(classStudentsRequest));
+
+    Response putResponse = postRequest.invoke();
+    assertEquals(Status.BAD_REQUEST.getStatusCode(), putResponse.getStatus());
   }
 }

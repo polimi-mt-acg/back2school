@@ -63,13 +63,14 @@ public class ClassesResource {
     Class aClass = new Class();
     aClass.setName(request.getName());
     aClass.setAcademicYear(request.getAcademicYear());
-    aClass.setClassStudents(new ArrayList<>());
 
     for (Integer studentId : request.getStudentsIds()) {
       // get student from db
       User student = session.get(User.class, studentId);
       if (student == null) {
         print("Student with id: ", studentId, " NOT known!");
+        session.getTransaction().commit();
+        session.close();
         return Response.status(Status.BAD_REQUEST)
             .entity("Student with id: " + str(studentId) + " NOT known!")
             .build();
@@ -125,6 +126,52 @@ public class ClassesResource {
     return Response.ok(classResponse, MediaType.APPLICATION_JSON_TYPE).build();
   }
 
+  @Path("{classId: [0-9]+}")
+  @PUT
+  @Consumes(MediaType.APPLICATION_JSON)
+  @AdministratorSecured
+  public Response putClassById(
+      ClassRequest request, @PathParam("classId") Integer classId, @Context UriInfo uriInfo) {
+    Session session = DatabaseHandler.getInstance().getNewSession();
+    session.beginTransaction();
+    // Fetch the class
+    Class aClass = session.get(Class.class, classId);
+    if (aClass == null) {
+      session.getTransaction().commit();
+      session.close();
+      print("Unknown class id: ", classId);
+      return Response.status(Status.NOT_FOUND).entity("Unknown class id").build();
+    }
+
+    // Update class fields
+    aClass.setName(request.getName());
+    aClass.setAcademicYear(request.getAcademicYear());
+    // reset array of students, so if they're changed it will be updated wi those new
+    aClass.setClassStudents(new ArrayList<>());
+
+    for (Integer studentId : request.getStudentsIds()) {
+      // get student from db
+      User student = session.get(User.class, studentId);
+      if (student == null) {
+        print("Student with id: ", studentId, " NOT known!");
+        session.getTransaction().commit();
+        session.close();
+        return Response.status(Status.BAD_REQUEST)
+            .entity("Student with id: " + str(studentId) + " NOT known!")
+            .build();
+      }
+      aClass.addStudent(student);
+    }
+
+    session.getTransaction().commit();
+    session.close();
+
+    // According to HTTP specification:
+    // HTTP status code 200 OK for a successful PUT of an update to an existing resource. No
+    // response body needed.
+    return Response.ok().build();
+  }
+
   @Path("{classId: [0-9]+}/students")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
@@ -154,5 +201,42 @@ public class ClassesResource {
       classStudentsResponse.getStudents().add(entity);
     }
     return Response.ok(classStudentsResponse, MediaType.APPLICATION_JSON_TYPE).build();
+  }
+
+  @Path("{classId: [0-9]+}/students")
+  @POST
+  @Consumes(MediaType.APPLICATION_JSON)
+  @AdministratorSecured
+  public Response postClassStudents(
+      ClassStudentsRequest request, @PathParam("classId") Integer classId) {
+
+    Session session = DatabaseHandler.getInstance().getNewSession();
+    session.beginTransaction();
+
+    // Fetch the class
+    Class aClass = session.get(Class.class, classId);
+    if (aClass == null) {
+      print("Unknown class id: ", classId);
+      session.getTransaction().commit();
+      session.close();
+      return Response.status(Status.NOT_FOUND).entity("Unknown class id").build();
+    }
+
+    // Fetch the student
+    User student = session.get(User.class, request.getStudentId());
+    if (student == null) {
+      print("Unknown student id: ", request.getStudentId());
+      session.getTransaction().commit();
+      session.close();
+      return Response.status(Status.BAD_REQUEST).entity("Unknown user id").build();
+    }
+
+    // add the student to the class
+    aClass.getClassStudents().add(student);
+
+    session.getTransaction().commit();
+    session.close();
+
+    return Response.ok().build();
   }
 }
