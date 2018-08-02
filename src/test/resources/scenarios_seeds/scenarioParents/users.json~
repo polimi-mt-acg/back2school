@@ -104,27 +104,6 @@
       "surname": "SurnameDavid",
       "email": "david@email.com",
       "seedPassword": "david_password"
-    },
-    {
-      "role": "STUDENT",
-      "name": "Edmond",
-      "surname": "SurnameEdmond",
-      "email": "edmond@email.com",
-      "seedPassword": "edmond_password"
-    },
-    {
-      "role": "STUDENT",
-      "name": "Finn",
-      "surname": "SurnameFinn",
-      "email": "finn@email.com",
-      "seedPassword": "finn_password"
-    },
-    {
-      "role": "PARENT",
-      "name": "Bob2",
-      "surname": "SurnameBob2",
-      "email": "bob2@email.com",
-      "seedPassword": "bob2_password"
     }
   ]
 }
