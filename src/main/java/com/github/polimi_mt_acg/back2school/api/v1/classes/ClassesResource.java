@@ -16,6 +16,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.as_int;
 import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.print;
@@ -234,6 +235,49 @@ public class ClassesResource {
     // add the student to the class
     aClass.getClassStudents().add(student);
 
+    session.getTransaction().commit();
+    session.close();
+
+    return Response.ok().build();
+  }
+
+  @Path("{classId: [0-9]+}/students/{studentId: [0-9]+}")
+  @DELETE
+  @AdministratorSecured
+  public Response deleteClassStudentById(
+      @PathParam("classId") Integer classId, @PathParam("studentId") Integer studentId) {
+
+    Session session = DatabaseHandler.getInstance().getNewSession();
+    session.beginTransaction();
+
+    // Fetch the class
+    Class aClass = session.get(Class.class, classId);
+    if (aClass == null) {
+      print("Unknown class id: ", classId);
+      session.getTransaction().commit();
+      session.close();
+      return Response.status(Status.NOT_FOUND).entity("Unknown class id").build();
+    }
+
+    // get a list of students without the one removed
+    List<User> updatedStudents =
+        aClass
+            .getClassStudents()
+            .stream()
+            .filter(x -> x.getId() != studentId)
+            .collect(Collectors.toList());
+
+    // if size of updated students list is the same: no student was found for
+    // the removed id
+    if (updatedStudents.size() == aClass.getClassStudents().size()) {
+      print("Student with id: ", studentId, " not belonging to the class.");
+      session.getTransaction().commit();
+      session.close();
+      return Response.status(Status.BAD_REQUEST).entity("Student not into the class").build();
+    }
+
+    // update the students list without the removed one to the class
+    aClass.setClassStudents(updatedStudents);
     session.getTransaction().commit();
     session.close();
 

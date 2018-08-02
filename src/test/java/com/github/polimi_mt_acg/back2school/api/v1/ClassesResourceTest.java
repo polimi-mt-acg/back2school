@@ -392,4 +392,67 @@ public class ClassesResourceTest {
     Response putResponse = postRequest.invoke();
     assertEquals(Status.BAD_REQUEST.getStatusCode(), putResponse.getStatus());
   }
+
+  @Test
+  @Category(TestCategory.Endpoint.class)
+  public void deleteClassStudentById() {
+    Optional<Class> classOpt = DatabaseHandler.fetchEntityBy(Class.class, Class_.name, "2A");
+    assertTrue(classOpt.isPresent());
+    Class aClass = classOpt.get();
+
+    assertEquals(2, aClass.getClassStudents().size());
+
+    // take the last student of the class to be removed
+    User studentToRemove = aClass.getClassStudents().get(1);
+
+    // Create DELETE request
+    Invocation deleteRequest =
+        RestFactory.getAuthenticatedInvocationBuilder(
+                adminForLogin,
+                "classes",
+                str(aClass.getId()),
+                "students",
+                str(studentToRemove.getId()))
+            .buildDelete();
+
+    Response deleteResponse = deleteRequest.invoke();
+    assertEquals(Status.OK.getStatusCode(), deleteResponse.getStatus());
+
+    // Verify the class has a student less
+    Optional<Class> classStudRemovedOpt =
+        DatabaseHandler.fetchEntityBy(Class.class, Class_.name, "2A");
+    assertTrue(classStudRemovedOpt.isPresent());
+    Class classStudRemoved = classStudRemovedOpt.get();
+    assertEquals(aClass.getClassStudents().size() - 1, classStudRemoved.getClassStudents().size());
+
+    // restore database status
+    DatabaseHandler.getInstance().truncateDatabase();
+    DatabaseSeeder.deployScenario("scenarioClasses");
+  }
+
+
+  @Test
+  @Category(TestCategory.Endpoint.class)
+  public void deleteClassStudentByIdBadStudentId() {
+    Optional<Class> classOpt = DatabaseHandler.fetchEntityBy(Class.class, Class_.name, "2A");
+    assertTrue(classOpt.isPresent());
+    Class aClass = classOpt.get();
+
+    assertEquals(2, aClass.getClassStudents().size());
+
+    Integer wrongStudentId = 9000;
+
+    // Create DELETE request
+    Invocation deleteRequest =
+        RestFactory.getAuthenticatedInvocationBuilder(
+            adminForLogin,
+            "classes",
+            str(aClass.getId()),
+            "students",
+            str(wrongStudentId))
+            .buildDelete();
+
+    Response deleteResponse = deleteRequest.invoke();
+    assertEquals(Status.BAD_REQUEST.getStatusCode(), deleteResponse.getStatus());
+  }
 }
