@@ -484,5 +484,99 @@ public class ParentsResource {
     return Response.ok().build();
   }
 
+  @Path("{id: [0-9]+}/payments")
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @ParentAdministratorSecured
+  @SameParentSecured
+  public Response getParentPayments(
+          @PathParam("id") String parentId, @Context UriInfo uriInfo) {
+    DatabaseHandler dbi = DatabaseHandler.getInstance();
+    Session session = dbi.getNewSession();
+    session.beginTransaction();
+
+    // Fetch Parent
+    User parent = session.get(User.class, Integer.parseInt(parentId));
+    if (parent == null) {
+      session.close();
+      return Response.status(Status.NOT_FOUND).entity("Unknown parent id").build();
+    }
+
+    // Fetch payments of parent
+    List<Payment> payments =
+            dbi.getListSelectFromWhereEqual(Payment.class, Payment_.placedBy, parent ,session);
+    //ATT: parent
+    ParentPaymentsResponse response = new ParentPaymentsResponse();
+    List<URI> paymentsURIs = new ArrayList<>();
+
+    for (Payment p : payments) {
+      UriBuilder builder = uriInfo.getAbsolutePathBuilder();
+      URI uri = builder.path(String.valueOf(p.getId())).build();
+      paymentsURIs.add(uri);
+    }
+    response.setPayments(paymentsURIs);
+
+    session.getTransaction().commit();
+    session.close();
+    return Response.ok(response, MediaType.APPLICATION_JSON_TYPE).build();
+  }
+
+
+//  @Path("{id: [0-9]+}/appointments")
+//  @POST
+//  @Consumes(MediaType.APPLICATION_JSON)
+//  @AdministratorSecured
+//  public Response postParentPayments(
+//          @PathParam("id") String parentId,
+//          PostParentPaymentRequest request,
+//          @Context UriInfo uriInfo) {
+//
+//    DatabaseHandler dbi = DatabaseHandler.getInstance();
+//    Session session = dbi.getNewSession();
+//    session.beginTransaction();
+//
+//    // Get parent who made the request
+//    User parent = session.get(User.class, Integer.parseInt(parentId));
+//    if (parent == null) {
+//      session.getTransaction().commit();
+//      session.close();
+//      return Response.status(Status.NOT_FOUND).build();
+//    }
+//    if(!parent.getEmail().equals(request.getPlacedByEmail())){
+//      session.getTransaction().commit();
+//      session.close();
+//      return Response.status(Status.CONFLICT).build();
+//    }
+//
+//    // Fetch the admin entity by email
+//    Optional<User> adminOpt =
+//            DatabaseHandler.fetchEntityBy(
+//                    User.class, User_.email, request.getAssignedToEmail(), session);
+//    if (!adminOpt.isPresent()) {
+//      session.getTransaction().commit();
+//      session.close();
+//      return Response.status(Status.NOT_FOUND).entity("Unknown teacher name").build();
+//    }
+//
+//    // Build the Payment entity
+//    Payment payment = new Payment();
+//    payment.setPlacedBy(parent);
+//    payment.setAssignedTo(adminOpt.get());
+//    payment.setAmount(request.getAmount());
+//    payment.setDatetimeDeadline(request.getDatetimeDeadline());
+//    payment.setDatetimeRequested(request.getDatetimeRequested());
+//    payment.setDescription(request.getDescription());
+//    payment.setSubject(request.getSubject());
+//    payment.setDone(false);
+//
+//    session.persist(payment);
+//    session.getTransaction().commit();
+//    session.close();
+//
+//    URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(payment.getId())).build();
+//    return Response.created(uri).build();
+//  }
+//
+
 
 }
