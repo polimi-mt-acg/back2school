@@ -410,230 +410,6 @@ public class ParentResourceTest {
     System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(marcosChildren));
   }
 
-  @Test
-  @Category(TestCategory.Endpoint.class)
-  public void getParentAppointmentsFromAdmin() throws JsonProcessingException {
-    User parent = buildMarcos(9);
-    URI parentURI = doParentPost(2,parent);
-
-    Path fullPath = Paths.get("/", parentURI.getPath());
-    Path idPath = fullPath.getParent().relativize(fullPath);
-    String parentID = idPath.toString();
-
-    User admin = get(User.Role.ADMINISTRATOR);
-
-    Invocation request =
-            RestFactory.getAuthenticatedInvocationBuilder(admin, "parents", parentID, "appointments").buildGet();
-
-    Response response = request.invoke();
-    //    System.out.println("HERE 2"+response.toString());
-
-    assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-
-    ParentAppointmentsResponse parentAppointments = response.readEntity(ParentAppointmentsResponse.class);
-
-    // Print it
-    ObjectMapper mapper = RestFactory.objectMapper();
-    System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(parentAppointments));
-  }
-
-  @Test
-  @Category(TestCategory.Endpoint.class)
-  public void getParentAppointmentsFromSameParent() throws JsonProcessingException {
-    User parent = buildMarcos(10);
-    URI parentURI = doParentPost(2,parent);
-
-    Path fullPath = Paths.get("/", parentURI.getPath());
-    Path idPath = fullPath.getParent().relativize(fullPath);
-    String parentID = idPath.toString();
-
-    Invocation request =
-            RestFactory.getAuthenticatedInvocationBuilder(parent, "parents", parentID, "appointments").buildGet();
-
-    Response response = request.invoke();
-    //    System.out.println("HERE 2"+response.toString());
-
-    assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-
-    ParentAppointmentsResponse parentAppointments = response.readEntity(ParentAppointmentsResponse.class);
-
-    // Print it
-    ObjectMapper mapper = RestFactory.objectMapper();
-    System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(parentAppointments));
-  }
-
-
-  @Test
-  @Category(TestCategory.Endpoint.class)
-  public void postParentAppointmentFromAdmin() throws JsonProcessingException {
-    User parent = buildMarcos(11);
-    URI parentURI = doParentPost(8, parent);
-
-    PostParentAppointmentRequest postParentAppointmentRequest =
-            buildAppointment(1, "carl@email.com");
-
-    Path fullPath = Paths.get("/", parentURI.getPath());
-    Path idPath = fullPath.getParent().relativize(fullPath);
-    String parentID = idPath.toString();
-
-    User admin = get(User.Role.ADMINISTRATOR);
-
-    Invocation request =
-            RestFactory.getAuthenticatedInvocationBuilder(admin, "parents", parentID, "appointments")
-                    .buildPost(Entity.json(postParentAppointmentRequest));
-
-    Response response = request.invoke();
-        System.out.println("HERE 2"+response.toString());
-
-    assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-
-    // Now query /parents/{parent_id}/appointments from admin
-    Invocation requestCheck =
-            RestFactory.getAuthenticatedInvocationBuilder(admin, "parents", parentID, "appointments")
-                    .buildGet();
-
-    Response responseCheck = requestCheck.invoke();
-
-    assertEquals(Response.Status.OK.getStatusCode(), responseCheck.getStatus());
-
-    ParentAppointmentsResponse parentAppointments = responseCheck.readEntity(ParentAppointmentsResponse.class);
-
-    assertTrue(parentAppointments.getAppointments().size() > 0);
-
-    // Print it
-    ObjectMapper mapper = RestFactory.objectMapper();
-    System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(parentAppointments));
-  }
-
-  @Test
-  @Category(TestCategory.Endpoint.class)
-  public void postParentAppointmentFromParent() throws JsonProcessingException {
-    User parent = buildMarcos(12);
-    URI parentURI = doParentPost(8, parent);
-
-    PostParentAppointmentRequest postParentAppointmentRequest =
-            buildAppointment(15, "carl@email.com");
-
-    Path fullPath = Paths.get("/", parentURI.getPath());
-    Path idPath = fullPath.getParent().relativize(fullPath);
-    String parentID = idPath.toString();
-
-    Invocation request =
-            RestFactory.getAuthenticatedInvocationBuilder(parent, "parents", parentID, "appointments")
-                    .buildPost(Entity.json(postParentAppointmentRequest));
-
-    Response response = request.invoke();
-//    System.out.println("HERE 2"+response.toString());
-
-    assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-
-    // Now query /parents/{parent_id}/appointments from admin
-    Invocation requestCheck =
-            RestFactory.getAuthenticatedInvocationBuilder(parent, "parents", parentID, "appointments")
-                    .buildGet();
-
-    Response responseCheck = requestCheck.invoke();
-
-    assertEquals(Response.Status.OK.getStatusCode(), responseCheck.getStatus());
-
-    ParentAppointmentsResponse parentAppointments = responseCheck.readEntity(ParentAppointmentsResponse.class);
-
-    assertTrue(parentAppointments.getAppointments().size() > 0);
-
-    // Print it
-    ObjectMapper mapper = RestFactory.objectMapper();
-    System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(parentAppointments));
-  }
-
-  @Test
-  @Category(TestCategory.Endpoint.class)
-  public void postTwoParentAppointmentsInConflictFromAdmin() throws JsonProcessingException {
-    User parent = buildMarcos(13);
-    URI parentURI = doParentPost(8, parent);
-    Path fullPath = Paths.get("/", parentURI.getPath());
-    Path idPath = fullPath.getParent().relativize(fullPath);
-    String parentID = idPath.toString();
-
-    User admin = get(User.Role.ADMINISTRATOR);
-
-    //We post the first appointment between parent and teacher Carl
-    PostParentAppointmentRequest postParentAppointmentRequest1 =
-            buildAppointment(30, "carl@email.com");
-
-    Invocation request1 =
-            RestFactory.getAuthenticatedInvocationBuilder(admin, "parents", parentID, "appointments")
-                    .buildPost(Entity.json(postParentAppointmentRequest1));
-
-    Response response1 = request1.invoke();
-    System.out.println("HERE 1"+response1.toString());
-
-    assertEquals(Response.Status.CREATED.getStatusCode(), response1.getStatus());
-
-    //Tested conflict between same parent and same teacher
-    PostParentAppointmentRequest postParentAppointmentRequest2 =
-            buildAppointment(35, "carl@email.com");
-
-    Invocation request2 =
-            RestFactory.getAuthenticatedInvocationBuilder(admin, "parents", parentID, "appointments")
-                    .buildPost(Entity.json(postParentAppointmentRequest2));
-    Response response2 = request2.invoke();
-    System.out.println("HERE 2"+response2.toString());
-
-    assertEquals(Response.Status.CONFLICT.getStatusCode(), response2.getStatus());
-
-    //Tested conflict between same parent and different teacher
-    PostParentAppointmentRequest postParentAppointmentRequest3 =
-            buildAppointment(35, "john@email.com");
-
-    Invocation request3 =
-            RestFactory.getAuthenticatedInvocationBuilder(admin, "parents", parentID, "appointments")
-                    .buildPost(Entity.json(postParentAppointmentRequest3));
-    Response response3 = request3.invoke();
-    System.out.println("HERE 3"+response3.toString());
-
-    assertEquals(Response.Status.CONFLICT.getStatusCode(), response3.getStatus());
-
-    //Tested conflict between different parent and same teacher
-    User parent2 = buildMarcos(14);
-    URI parentURI2 = doParentPost(8, parent2);
-
-    PostParentAppointmentRequest postParentAppointmentRequest4 =
-            buildAppointment(30, "carl@email.com");
-
-    Path fullPath2 = Paths.get("/", parentURI2.getPath());
-    Path idPath2 = fullPath2.getParent().relativize(fullPath2);
-    String parentID2 = idPath2.toString();
-
-    Invocation request4 =
-            RestFactory.getAuthenticatedInvocationBuilder(admin, "parents", parentID2, "appointments")
-                    .buildPost(Entity.json(postParentAppointmentRequest4));
-
-    Response response4 = request4.invoke();
-    System.out.println("HERE 4"+response4.toString());
-
-    assertEquals(Response.Status.CONFLICT.getStatusCode(), response4.getStatus());
-
-    // Now query /parents/{parent_id}/appointments from admin
-    //Only the first appointment should be retrieved by the parent
-    Invocation requestCheck =
-            RestFactory.getAuthenticatedInvocationBuilder(admin, "parents", parentID, "appointments")
-                    .buildGet();
-
-    Response responseCheck = requestCheck.invoke();
-
-    assertEquals(Response.Status.OK.getStatusCode(), responseCheck.getStatus());
-
-    ParentAppointmentsResponse parentAppointments = responseCheck.readEntity(ParentAppointmentsResponse.class);
-
-    assertTrue(parentAppointments.getAppointments().size() > 0);
-
-    // Print it
-    ObjectMapper mapper = RestFactory.objectMapper();
-    System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(parentAppointments));
-
-//    System.out.println("ENDED APPOINTMENTS CONFLICT TEST");
-  }
-
 
 
   private User get(User.Role role) {
@@ -739,12 +515,32 @@ public class ParentResourceTest {
         && u.getEmail().equals(p.getEmail());
   }
 
-  private PostParentAppointmentRequest buildAppointment(int initialTime, String teacherEmail) {
+  private PostParentAppointmentRequest buildAppointment(int initialTime,int day, String teacherEmail) {
     PostParentAppointmentRequest appointment = new PostParentAppointmentRequest();
     appointment.setTeacherEmail(teacherEmail);
-    appointment.setDatetimeStart(LocalDateTime.of(2018, Month.JANUARY,22,12,initialTime));
-    appointment.setDatetimeEnd(LocalDateTime.of(2018, Month.JANUARY,22,12,initialTime+10));
+    appointment.setDatetimeStart(LocalDateTime.of(2018, Month.JANUARY,day,12,initialTime));
+    appointment.setDatetimeEnd(LocalDateTime.of(2018, Month.JANUARY,day,12,initialTime+10));
     return appointment;
+  }
+
+  private URI postAppointment(int initialTime, int day, String parentID, String teacherEmail){
+
+    User admin = get(User.Role.ADMINISTRATOR);
+    //We post an appointment between parent and teacher Carl
+    PostParentAppointmentRequest postParentAppointmentRequest =
+            buildAppointment(initialTime, day,teacherEmail);
+
+    Invocation request =
+            RestFactory.getAuthenticatedInvocationBuilder(admin, "parents", parentID, "appointments")
+                    .buildPost(Entity.json(postParentAppointmentRequest));
+
+    Response response = request.invoke();
+    System.out.println(response.toString());
+    assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+
+    URI resourceURI = response.getLocation();
+    assertNotNull(resourceURI);
+    return resourceURI;
   }
 
 

@@ -361,6 +361,26 @@ public class ParentsResource {
     return Response.created(uri).build();
   }
 
+  @Path("{id: [0-9]+}/appointments/{appointment_id: [0-9]+}")
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @ParentAdministratorSecured
+  @SameParentSecured
+  public Response getParentAppointmentById(
+          @PathParam("appointment_id") String appointmentId,@PathParam("id") String parentId, @Context UriInfo uriInfo) {
+
+    // Fetch appointment
+    Optional<Appointment> appointmentOpt = DatabaseHandler.fetchEntityBy(Appointment.class, Appointment_.id, Integer.parseInt(appointmentId));
+    if (!appointmentOpt.isPresent()) {
+      return Response.status(Status.NOT_FOUND).entity("Unknown appointment id").build();
+    }
+
+    if(appointmentOpt.get().getParent().getId() != Integer.parseInt(parentId)){
+      return Response.status(Status.CONFLICT).entity("Not current parent's appointment").build();
+    }
+
+    return Response.ok(appointmentOpt.get(), MediaType.APPLICATION_JSON_TYPE).build();
+  }
 
 
 }
