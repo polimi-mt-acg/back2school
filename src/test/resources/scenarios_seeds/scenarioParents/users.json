@@ -99,6 +99,13 @@
       "seedPassword": "email_password"
     },
     {
+      "role": "TEACHER",
+      "name": "John",
+      "surname": "SurnameJohn",
+      "email": "john@email.com",
+      "seedPassword": "email_password"
+    },
+    {
       "role": "ADMINISTRATOR",
       "name": "David",
       "surname": "SurnameDavid",

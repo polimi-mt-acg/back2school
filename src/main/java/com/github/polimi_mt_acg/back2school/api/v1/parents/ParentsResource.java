@@ -279,4 +279,88 @@ public class ParentsResource {
   }
 
 
+  @Path("{id: [0-9]+}/appointments")
+  @POST
+  @Consumes(MediaType.APPLICATION_JSON)
+  @ParentAdministratorSecured
+  @SameParentSecured
+  public Response postParentAppointments(
+          @PathParam("id") String parentId,
+          PostParentAppointmentRequest request,
+          @Context UriInfo uriInfo) {
+
+    DatabaseHandler dbi = DatabaseHandler.getInstance();
+    Session session = dbi.getNewSession();
+    session.beginTransaction();
+
+    // Get parent who made the request
+    User parent = session.get(User.class, Integer.parseInt(parentId));
+    if (parent == null) {
+      session.getTransaction().commit();
+      session.close();
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    // Fetch the teacher entity by email
+    Optional<User> teacherOpt =
+            DatabaseHandler.fetchEntityBy(
+                    User.class, User_.email, request.getTeacherEmail(), session);
+    if (!teacherOpt.isPresent()) {
+      session.getTransaction().commit();
+      session.close();
+      return Response.status(Status.NOT_FOUND).entity("Unknown teacher name").build();
+    }
+
+    //To check! Do we need to do these checks?
+    //Get appointments of the teacher
+    List<Appointment> resultTeacher =
+            dbi.getListSelectFromWhereEqual(Appointment.class, Appointment_.teacher, teacherOpt.get(), session);
+
+    //Is the teacher available in that time slot?
+    for(Appointment a: resultTeacher){
+      if((a.getDatetimeStart().isBefore(request.getDatetimeStart()) && a.getDatetimeEnd().isAfter(request.getDatetimeStart()))
+              || (a.getDatetimeStart().isAfter(request.getDatetimeStart()) && a.getDatetimeEnd().isBefore(request.getDatetimeEnd()))
+              || (a.getDatetimeStart().isBefore(request.getDatetimeEnd()) && a.getDatetimeEnd().isAfter(request.getDatetimeEnd()))
+              || (a.getDatetimeStart().isEqual(request.getDatetimeStart()) && a.getDatetimeEnd().isEqual(request.getDatetimeEnd()))
+              ){
+        session.getTransaction().commit();
+        session.close();
+        return Response.status(Status.CONFLICT).entity("Teacher has already an appointment in that time slot.").build();
+      }
+    }
+
+    //Get appointments of the parent
+    List<Appointment> resultParent =
+            dbi.getListSelectFromWhereEqual(Appointment.class, Appointment_.parent, parent, session);
+
+    //Is the parent available in that time slot?
+    for(Appointment a: resultParent){
+      if((a.getDatetimeStart().isBefore(request.getDatetimeStart()) && a.getDatetimeEnd().isAfter(request.getDatetimeStart()))
+              || (a.getDatetimeStart().isAfter(request.getDatetimeStart()) && a.getDatetimeEnd().isBefore(request.getDatetimeEnd()))
+              || (a.getDatetimeStart().isBefore(request.getDatetimeEnd()) && a.getDatetimeEnd().isAfter(request.getDatetimeEnd()))
+              || (a.getDatetimeStart().isEqual(request.getDatetimeStart()) && a.getDatetimeEnd().isEqual(request.getDatetimeEnd()))
+              ){
+        session.getTransaction().commit();
+        session.close();
+        return Response.status(Status.CONFLICT).entity("Parent has already an appointment in that time slot.").build();
+      }
+    }
+
+    // Build the Appointment entity
+    Appointment appointment = new Appointment();
+    appointment.setParent(parent);
+    appointment.setTeacher(teacherOpt.get());
+    appointment.setDatetimeStart(request.getDatetimeStart());
+    appointment.setDatetimeEnd(request.getDatetimeEnd());
+
+    session.persist(appointment);
+    session.getTransaction().commit();
+    session.close();
+
+    URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(appointment.getId())).build();
+    return Response.created(uri).build();
+  }
+
+
+
 }
