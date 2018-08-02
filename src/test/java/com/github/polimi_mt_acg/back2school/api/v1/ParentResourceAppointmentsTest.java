@@ -364,6 +364,54 @@ public class ParentResourceAppointmentsTest {
     System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(appointmentResp));
   }
 
+  @Test
+  @Category(TestCategory.Endpoint.class)
+  public void putParentAppointmentFromParent() throws JsonProcessingException {
+    User parent = buildMarcos(9);
+    URI parentURI = doParentPost(2, parent);
+
+    Path fullPath = Paths.get("/", parentURI.getPath());
+    Path idPath = fullPath.getParent().relativize(fullPath);
+    String parentID = idPath.toString();
+
+    URI appointmentURI =
+            postAppointment(15,13,parentID, "carl@email.com");
+
+    Path fullAppPath = Paths.get("/", appointmentURI.getPath());
+    Path idAppPath = fullAppPath.getParent().relativize(fullAppPath);
+    String appointmentID = idAppPath.toString();
+
+    int newInitialTime =20;
+    int newDay= 13;
+
+    PostParentAppointmentRequest putParentAppointmentRequest =
+            buildAppointment(newInitialTime,newDay,"carl@email.com");
+
+    Invocation requestPut =
+            RestFactory.getAuthenticatedInvocationBuilder(parent, "parents", parentID, "appointments",appointmentID )
+                    .buildPut(Entity.json(putParentAppointmentRequest));
+
+    Response responsePut = requestPut.invoke();
+
+    System.out.println("HERE"+ responsePut);
+    assertEquals(Response.Status.OK.getStatusCode(), responsePut.getStatus());
+
+    // Make a new GET to compare results
+    Invocation newGetAppointment =
+            RestFactory.getAuthenticatedInvocationBuilder(parent, appointmentURI).buildGet();
+
+    Appointment newAppointmentResponse = newGetAppointment.invoke().readEntity(Appointment.class);
+
+    assertEquals(newAppointmentResponse.getParent().getEmail() , parent.getEmail());
+    assertEquals(newAppointmentResponse.getTeacher().getEmail() , "carl@email.com");
+    assertEquals(newAppointmentResponse.getDatetimeStart() , LocalDateTime.of(2018, Month.JANUARY,newDay,12,newInitialTime));
+    assertEquals(newAppointmentResponse.getDatetimeEnd() , LocalDateTime.of(2018, Month.JANUARY,newDay,12,newInitialTime+10));
+
+    ObjectMapper mapper = RestFactory.objectMapper();
+    System.out.println(
+            mapper.writerWithDefaultPrettyPrinter().writeValueAsString(newAppointmentResponse));
+  }
+
 
 
   private User get(User.Role role) {
