@@ -75,7 +75,7 @@ public class SubjectsResource {
   @GET
   @Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
   @TeacherAdministratorSecured
-  public Response getSubjectID(@PathParam("id") String subjectId) {
+  public Response getSubjectById(@PathParam("id") String subjectId) {
     // Fetch Subject
     List<Subject> res =
         DatabaseHandler.getInstance()

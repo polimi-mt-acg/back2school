@@ -119,7 +119,7 @@ public class Appointment implements DeserializeToPersistInterface {
     }
   }
 
-  enum Status {
+  public enum Status {
     REQUESTED,
     COUNTERPROPOSED,
     AGREED

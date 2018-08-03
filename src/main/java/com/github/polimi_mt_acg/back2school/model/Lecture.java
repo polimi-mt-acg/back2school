@@ -17,7 +17,6 @@ import javax.persistence.Transient;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import javax.xml.crypto.Data;
 
 @Entity
 @Table(name = "lecture")
