@@ -3,10 +3,7 @@ package com.github.polimi_mt_acg.back2school.api.v1;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.polimi_mt_acg.back2school.api.v1.auth.AuthenticationResource;
-import com.github.polimi_mt_acg.back2school.api.v1.parents.ParentAppointmentsResponse;
-import com.github.polimi_mt_acg.back2school.api.v1.parents.ParentNotificationsResponse;
-import com.github.polimi_mt_acg.back2school.api.v1.parents.PostParentAppointmentRequest;
-import com.github.polimi_mt_acg.back2school.api.v1.parents.PostParentRequest;
+import com.github.polimi_mt_acg.back2school.api.v1.parents.*;
 import com.github.polimi_mt_acg.back2school.model.Appointment;
 import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
@@ -87,49 +84,38 @@ public class ParentResourceNotificationsTest {
     System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(parentNotifications));
   }
 
-//
-//  @Test
-//  @Category(TestCategory.Endpoint.class)
-//  public void postParentAppointmentFromAdmin() throws JsonProcessingException {
-//    User parent = buildMarcos(3);
-//    URI parentURI = doParentPost(8, parent);
-//
-//    PostParentAppointmentRequest postParentAppointmentRequest =
-//            buildAppointment(1,2, "carl@email.com");
-//
-//    Path fullPath = Paths.get("/", parentURI.getPath());
-//    Path idPath = fullPath.getParent().relativize(fullPath);
-//    String parentID = idPath.toString();
-//
-//    User admin = get(User.Role.ADMINISTRATOR);
-//
-//    Invocation request =
-//            RestFactory.getAuthenticatedInvocationBuilder(admin, "parents", parentID, "appointments")
-//                    .buildPost(Entity.json(postParentAppointmentRequest));
-//
-//    Response response = request.invoke();
-//    System.out.println("HERE 2"+response.toString());
-//
-//    assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-//
-//    // Now query /parents/{parent_id}/appointments from admin
-//    Invocation requestCheck =
-//            RestFactory.getAuthenticatedInvocationBuilder(admin, "parents", parentID, "appointments")
-//                    .buildGet();
-//
-//    Response responseCheck = requestCheck.invoke();
-//
-//    assertEquals(Response.Status.OK.getStatusCode(), responseCheck.getStatus());
-//
-//    ParentAppointmentsResponse parentAppointments = responseCheck.readEntity(ParentAppointmentsResponse.class);
-//
-//    assertTrue(parentAppointments.getAppointments().size() > 0);
-//
-//    // Print it
-//    ObjectMapper mapper = RestFactory.objectMapper();
-//    System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(parentAppointments));
-//  }
-//
+  @Test
+  @Category(TestCategory.Endpoint.class)
+  public void postParentNotificationsFromAdmin() throws JsonProcessingException {
+    User parent = buildMarcos(2);
+    URI parentURI = doParentPost(1, parent);
+
+    Path fullPath = Paths.get("/", parentURI.getPath());
+    Path idPath = fullPath.getParent().relativize(fullPath);
+    String parentID = idPath.toString();
+
+    User admin = get(User.Role.ADMINISTRATOR);
+
+    URI notificationURI = postNotification(1,parentID);
+
+    // Now query /parents/{parent_id}/notifications from admin
+    Invocation requestCheck =
+            RestFactory.getAuthenticatedInvocationBuilder(admin, "parents", parentID, "notifications")
+                    .buildGet();
+
+    Response responseCheck = requestCheck.invoke();
+
+    assertEquals(Response.Status.OK.getStatusCode(), responseCheck.getStatus());
+
+    ParentNotificationsResponse parentNotifications = responseCheck.readEntity(ParentNotificationsResponse.class);
+
+    assertTrue(parentNotifications.getNotifications().size() > 0);
+
+    // Print it
+    ObjectMapper mapper = RestFactory.objectMapper();
+    System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(parentNotifications));
+  }
+
 //  @Test
 //  @Category(TestCategory.Endpoint.class)
 //  public void postParentAppointmentFromParent() throws JsonProcessingException {
@@ -487,24 +473,25 @@ public class ParentResourceNotificationsTest {
             && u.getEmail().equals(p.getEmail());
   }
 
-  private PostParentAppointmentRequest buildAppointment(int initialTime,int day, String teacherEmail) {
-    PostParentAppointmentRequest appointment = new PostParentAppointmentRequest();
-    appointment.setTeacherEmail(teacherEmail);
-    appointment.setDatetimeStart(LocalDateTime.of(2018, Month.JANUARY,day,12,initialTime));
-    appointment.setDatetimeEnd(LocalDateTime.of(2018, Month.JANUARY,day,12,initialTime+10));
-    return appointment;
+  private PostParentNotificationRequest buildNotification(int copynumber, String creatorEmail) {
+    PostParentNotificationRequest notification = new PostParentNotificationRequest();
+    notification.setCreatorEmail(creatorEmail);
+    notification.setDatetime(LocalDateTime.now());
+    notification.setSubject("Subject number: "+ String.valueOf(copynumber));
+    notification.setText("Text number: "+ String.valueOf(copynumber));
+    return notification;
   }
 
-  private URI postAppointment(int initialTime, int day, String parentID, String teacherEmail){
+  private URI postNotification( int copynumber, String parentID){
 
     User admin = get(User.Role.ADMINISTRATOR);
-    //We post an appointment between parent and teacher Carl
-    PostParentAppointmentRequest postParentAppointmentRequest =
-            buildAppointment(initialTime, day,teacherEmail);
+    //We post a notification between parent and admin
+    PostParentNotificationRequest postParentNotificationRequest =
+            buildNotification(copynumber, admin.getEmail());
 
     Invocation request =
-            RestFactory.getAuthenticatedInvocationBuilder(admin, "parents", parentID, "appointments")
-                    .buildPost(Entity.json(postParentAppointmentRequest));
+            RestFactory.getAuthenticatedInvocationBuilder(admin, "parents", parentID, "notifications")
+                    .buildPost(Entity.json(postParentNotificationRequest));
 
     Response response = request.invoke();
     System.out.println(response.toString());

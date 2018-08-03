@@ -734,4 +734,54 @@ public class ParentsResource {
   }
 
 
+  @Path("{id: [0-9]+}/notifications")
+  @POST
+  @Consumes(MediaType.APPLICATION_JSON)
+  @AdministratorSecured
+  public Response postParentNotifications(
+          @PathParam("id") String parentId,
+          PostParentNotificationRequest request,
+          @Context UriInfo uriInfo) {
+
+    DatabaseHandler dbi = DatabaseHandler.getInstance();
+    Session session = dbi.getNewSession();
+    session.beginTransaction();
+
+    // Get parent target of the notification
+    User parent = session.get(User.class, Integer.parseInt(parentId));
+    if (parent == null) {
+      session.getTransaction().commit();
+      session.close();
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    //Here the admin can POST only a direct notification to this parent
+
+    // Fetch the admin entity by email
+    Optional<User> adminOpt =
+            DatabaseHandler.fetchEntityBy(
+                    User.class, User_.email, request.getCreatorEmail(), session);
+    if (!adminOpt.isPresent()) {
+      session.getTransaction().commit();
+      session.close();
+      return Response.status(Status.NOT_FOUND).entity("Unknown admin name").build();
+    }
+
+    // Build the Notification entity
+    NotificationPersonalParent npp = new NotificationPersonalParent();
+    npp.setCreator(adminOpt.get());
+    npp.setTargetUser(parent);
+    npp.setDatetime(request.getDatetime());
+    npp.setSubject(request.getSubject());
+    npp.setText(request.getText());
+
+    session.persist(npp);
+    session.getTransaction().commit();
+    session.close();
+
+    URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(npp.getId())).build();
+    return Response.created(uri).build();
+  }
+
+
 }
