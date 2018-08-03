@@ -1,5 +1,5 @@
 {
-  "notificationsRead": [
+  "notifications_read": [
     {
       "seedUserEmail": "carl@email.com",
       "seedNotificationSubject": "Call for too many absences"
