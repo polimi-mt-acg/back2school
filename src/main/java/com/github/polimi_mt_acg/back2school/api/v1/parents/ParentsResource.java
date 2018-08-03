@@ -3,11 +3,13 @@ package com.github.polimi_mt_acg.back2school.api.v1.parents;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.AdministratorSecured;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.ParentAdministratorSecured;
 import com.github.polimi_mt_acg.back2school.model.*;
+import com.github.polimi_mt_acg.back2school.model.Class;
 import com.github.polimi_mt_acg.back2school.model.User.Role;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import javax.ws.rs.Consumes;
@@ -651,5 +653,85 @@ public class ParentsResource {
     //Here the payment done is returned
     return Response.ok(payment, MediaType.APPLICATION_JSON_TYPE).build();
   }
+
+  @Path("{id: [0-9]+}/notifications")
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @ParentAdministratorSecured
+  @SameParentSecured
+  public Response getParentNotifications(
+          @PathParam("id") String parentId, @Context UriInfo uriInfo) {
+    DatabaseHandler dbi = DatabaseHandler.getInstance();
+    Session session = dbi.getNewSession();
+    session.beginTransaction();
+
+    // Fetch Parent
+    User parent = session.get(User.class, Integer.parseInt(parentId));
+    if (parent == null) {
+      session.close();
+      return Response.status(Status.NOT_FOUND).entity("Unknown parent id").build();
+    }
+
+    // Fetch notification for the parent
+    //Three possible notifications type for the parent:
+
+    //1:General Parents
+    List<NotificationGeneralParents> notificationsGP =
+            dbi.getListSelectFrom(NotificationGeneralParents.class);
+
+    //2:Class Parent
+    //Initialized an empty NotificationClassParent list
+    List<NotificationClassParent> notificationsCP = dbi.getListSelectFromWhereEqual(
+            NotificationClassParent.class,
+            NotificationClassParent_.text,
+            "FOO", session);
+    for(User child : parent.getChildren()){
+      List<Class> classes = dbi.getListSelectFrom(Class.class);
+      for(Class cl : classes ){
+        for(User student : cl.getClassStudents()){
+          if (child.getEmail().equals(student.getEmail())){
+            notificationsCP.addAll(
+                    dbi.getListSelectFromWhereEqual(
+                            NotificationClassParent.class,
+                            NotificationClassParent_.targetClass,
+                            cl, session));
+          }
+        }
+      }
+    }
+
+    //3:Personal Parent
+    List<NotificationPersonalParent> notificationPP =
+            dbi.getListSelectFromWhereEqual(NotificationPersonalParent.class,
+                    NotificationPersonalParent_.targetUser,parent,session);
+
+    ParentNotificationsResponse response = new ParentNotificationsResponse();
+    List<URI> notificationsURIs = new ArrayList<>();
+
+    for (NotificationGeneralParents ngp : notificationsGP) {
+      UriBuilder builder = uriInfo.getAbsolutePathBuilder();
+      URI uri = builder.path(String.valueOf(ngp.getId())).build();
+      notificationsURIs.add(uri);
+    }
+
+    for (NotificationClassParent ncp : notificationsCP) {
+      UriBuilder builder = uriInfo.getAbsolutePathBuilder();
+      URI uri = builder.path(String.valueOf(ncp.getId())).build();
+      notificationsURIs.add(uri);
+    }
+
+    for (NotificationPersonalParent npp : notificationPP) {
+      UriBuilder builder = uriInfo.getAbsolutePathBuilder();
+      URI uri = builder.path(String.valueOf(npp.getId())).build();
+      notificationsURIs.add(uri);
+    }
+
+    response.setNotifications(notificationsURIs);
+
+    session.getTransaction().commit();
+    session.close();
+    return Response.ok(response, MediaType.APPLICATION_JSON_TYPE).build();
+  }
+
 
 }
