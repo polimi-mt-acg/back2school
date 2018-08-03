@@ -577,6 +577,28 @@ public class ParentsResource {
     return Response.created(uri).build();
   }
 
+  @Path("{id: [0-9]+}/payments/{payment_id: [0-9]+}")
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @ParentAdministratorSecured
+  @SameParentSecured
+  public Response getParentPaymentById(
+          @PathParam("payment_id") String paymentId,@PathParam("id") String parentId, @Context UriInfo uriInfo) {
+
+    // Fetch appointment
+    Optional<Payment> paymentOpt = DatabaseHandler.fetchEntityBy(Payment.class, Payment_.id, Integer.parseInt(paymentId));
+    if (!paymentOpt.isPresent()) {
+      return Response.status(Status.NOT_FOUND).entity("Unknown payment id").build();
+    }
+
+    if(paymentOpt.get().getPlacedBy().getId() != Integer.parseInt(parentId)){
+      return Response.status(Status.CONFLICT).entity("Not current parent's payment").build();
+    }
+
+    return Response.ok(paymentOpt.get(), MediaType.APPLICATION_JSON_TYPE).build();
+  }
+
+
 
 
 }
