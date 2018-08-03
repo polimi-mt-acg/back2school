@@ -6,6 +6,7 @@ import com.github.polimi_mt_acg.back2school.model.*;
 import com.github.polimi_mt_acg.back2school.model.User.Role;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -598,7 +599,57 @@ public class ParentsResource {
     return Response.ok(paymentOpt.get(), MediaType.APPLICATION_JSON_TYPE).build();
   }
 
+  @Path("{id: [0-9]+}/payments/{payment_id: [0-9]+}/pay")
+  @POST
+  @Consumes(MediaType.APPLICATION_JSON)
+  @ParentSecured
+  @SameParentSecured
+  public Response postParentPaymentPaid(
+          @PathParam("payment_id") String paymentId,
+          @PathParam("id") String parentId,
+          PostParentPaymentPayRequest request,
+          @Context UriInfo uriInfo) {
 
+    DatabaseHandler dbi = DatabaseHandler.getInstance();
+    Session session = dbi.getNewSession();
+    session.beginTransaction();
 
+    // Get parent who made the request
+    User parent = session.get(User.class, Integer.parseInt(parentId));
+    if (parent == null) {
+      session.getTransaction().commit();
+      session.close();
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    // Get payment
+    Payment payment = session.get(Payment.class, Integer.parseInt(paymentId));
+    if (payment == null) {
+      session.getTransaction().commit();
+      session.close();
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if(!parent.getEmail().equals(payment.getPlacedBy().getEmail())){
+      session.getTransaction().commit();
+      session.close();
+      return Response.status(Status.CONFLICT).build();
+    }
+
+    if(!request.isPaid()){
+      session.getTransaction().commit();
+      session.close();
+      return Response.status(Status.CONFLICT).build();
+    }
+
+    payment.setDone(true);
+    payment.setDatetimeDone(LocalDateTime.now());
+
+    session.persist(payment);
+    session.getTransaction().commit();
+    session.close();
+
+    //Here the payment done is returned
+    return Response.ok(payment, MediaType.APPLICATION_JSON_TYPE).build();
+  }
 
 }

@@ -241,54 +241,43 @@ public class ParentResourcePaymentsTest {
     ObjectMapper mapper = RestFactory.objectMapper();
     System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(paymentResp));
   }
-//  @Test
-//  @Category(TestCategory.Endpoint.class)
-//  public void putParentAppointmentFromParent() throws JsonProcessingException {
-//    User parent = buildMarcos(9);
-//    URI parentURI = doParentPost(2, parent);
-//
-//    Path fullPath = Paths.get("/", parentURI.getPath());
-//    Path idPath = fullPath.getParent().relativize(fullPath);
-//    String parentID = idPath.toString();
-//
-//    URI appointmentURI =
-//            postAppointment(15,13,parentID, "carl@email.com");
-//
-//    Path fullAppPath = Paths.get("/", appointmentURI.getPath());
-//    Path idAppPath = fullAppPath.getParent().relativize(fullAppPath);
-//    String appointmentID = idAppPath.toString();
-//
-//    int newInitialTime =20;
-//    int newDay= 13;
-//
-//    PostParentAppointmentRequest putParentAppointmentRequest =
-//            buildAppointment(newInitialTime,newDay,"carl@email.com");
-//
-//    Invocation requestPut =
-//            RestFactory.getAuthenticatedInvocationBuilder(parent, "parents", parentID, "appointments",appointmentID )
-//                    .buildPut(Entity.json(putParentAppointmentRequest));
-//
-//    Response responsePut = requestPut.invoke();
-//
-//    System.out.println("HERE"+ responsePut);
-//    assertEquals(Response.Status.OK.getStatusCode(), responsePut.getStatus());
-//
-//    // Make a new GET to compare results
-//    Invocation newGetAppointment =
-//            RestFactory.getAuthenticatedInvocationBuilder(parent, appointmentURI).buildGet();
-//
-//    Appointment newAppointmentResponse = newGetAppointment.invoke().readEntity(Appointment.class);
-//
-//    assertEquals(newAppointmentResponse.getParent().getEmail() , parent.getEmail());
-//    assertEquals(newAppointmentResponse.getTeacher().getEmail() , "carl@email.com");
-//    assertEquals(newAppointmentResponse.getDatetimeStart() , LocalDateTime.of(2018, Month.JANUARY,newDay,12,newInitialTime));
-//    assertEquals(newAppointmentResponse.getDatetimeEnd() , LocalDateTime.of(2018, Month.JANUARY,newDay,12,newInitialTime+10));
-//
-//    ObjectMapper mapper = RestFactory.objectMapper();
-//    System.out.println(
-//            mapper.writerWithDefaultPrettyPrinter().writeValueAsString(newAppointmentResponse));
-//  }
 
+  @Test
+  @Category(TestCategory.Endpoint.class)
+  public void postParentPaymentsPaidFromParent() throws JsonProcessingException {
+    User parent = buildMarcos(7);
+    URI parentURI = doParentPost(5, parent);
+
+    Path fullPath = Paths.get("/", parentURI.getPath());
+    Path idPath = fullPath.getParent().relativize(fullPath);
+    String parentID = idPath.toString();
+
+    User admin =get(User.Role.ADMINISTRATOR);
+
+    URI paymentURI = postPayment(parent.getEmail(),admin.getEmail(),23,parentID);
+
+    Path fullPayPath = Paths.get("/", paymentURI.getPath());
+    Path idPayPath = fullPayPath.getParent().relativize(fullPayPath);
+    String paymentID = idPayPath.toString();
+
+    //Do the payment
+    PostParentPaymentPayRequest postParentPaymentPayRequest = new PostParentPaymentPayRequest();
+    postParentPaymentPayRequest.setPaid(true);
+    Invocation requestToPay =
+            RestFactory.getAuthenticatedInvocationBuilder(parent, "parents", parentID, "payments", paymentID, "pay")
+                    .buildPost(Entity.json(postParentPaymentPayRequest));
+
+    Response responsePaid = requestToPay.invoke();
+
+
+    assertEquals(Response.Status.OK.getStatusCode(), responsePaid.getStatus());
+
+    Payment paymentDONE = responsePaid.readEntity(Payment.class);
+
+    // Print it
+    ObjectMapper mapper = RestFactory.objectMapper();
+    System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(paymentDONE));
+  }
 
   private User get(User.Role role) {
     List<User> users =
@@ -297,41 +286,6 @@ public class ParentResourcePaymentsTest {
     List<User> usersWithRole =
             users.stream().filter(user -> user.getRole() == role).collect(Collectors.toList());
     return usersWithRole.get(0);
-  }
-
-  private User getUserByID(String userID) {
-    List<User> users =
-            (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioParents", "users.json");
-
-    List<User> usersWithID =
-            users
-                    .stream()
-                    .filter(user -> user.getId() == Integer.parseInt(userID))
-                    .collect(Collectors.toList());
-    return usersWithID.get(0);
-  }
-
-  private User getUserByEmail(String email) {
-    List<User> users =
-            (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioParents", "users.json");
-
-    List<User> usersWithEmail =
-            users
-                    .stream()
-                    .filter(user -> user.getEmail().equals(email) )
-                    .collect(Collectors.toList());
-    return usersWithEmail.get(0);
-  }
-
-  private User buildCarlos(int copyNumber) {
-    User carlos = new User();
-    carlos.setName("Carlos " + copyNumber);
-    carlos.setSurname("Hernandez " + copyNumber);
-    carlos.setEmail("carlos.hernandez" + copyNumber + "@mail.com");
-    carlos.setSeedPassword("carlos_password");
-    carlos.setRole(User.Role.STUDENT);
-    carlos.prepareToPersist();
-    return carlos;
   }
 
   private User buildMarcos(int copyNumber) {
@@ -393,9 +347,6 @@ public class ParentResourcePaymentsTest {
             && u.getEmail().equals(p.getEmail());
   }
 
-
-
-
   private PostParentPaymentRequest buildPayment(String placedByEmail, String assignedToEmail, double amount){
     PostParentPaymentRequest payment = new PostParentPaymentRequest();
     payment.setPlacedByEmail(placedByEmail);
@@ -426,6 +377,4 @@ public class ParentResourcePaymentsTest {
     assertNotNull(resourceURI);
     return resourceURI;
   }
-
-
 }
