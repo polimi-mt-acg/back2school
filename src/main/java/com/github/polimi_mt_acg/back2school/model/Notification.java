@@ -48,7 +48,7 @@ public class Notification implements DeserializeToPersistInterface {
   private User creator;
 
   @Column(name = "datetime")
-  private LocalDateTime datetime;
+  private LocalDateTime datetime = LocalDateTime.now();
 
   @Column(name = "subject")
   private String subject;
@@ -128,6 +128,34 @@ public class Notification implements DeserializeToPersistInterface {
       if (users != null) {
         setCreator(users.get(0));
       }
+    }
+  }
+
+  /**
+   * Notification class to send a new Notification.
+   * Since for any type of notification the strictly required information from
+   * the client side are only the subject and text, the following is a common
+   * request class.
+   */
+  public static class NotificationRequest {
+    private String subject;
+
+    private String text;
+
+    public String getSubject() {
+      return subject;
+    }
+
+    public void setSubject(String subject) {
+      this.subject = subject;
+    }
+
+    public String getText() {
+      return text;
+    }
+
+    public void setText(String text) {
+      this.text = text;
     }
   }
 }

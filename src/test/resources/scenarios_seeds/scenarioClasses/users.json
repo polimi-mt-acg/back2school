@@ -8,6 +8,13 @@
       "seedPassword": "email_password"
     },
     {
+      "role": "ADMINISTRATOR",
+      "name": "AdminDavidUser",
+      "surname": "DavidSurname",
+      "email": "david@email.com",
+      "seedPassword": "email_password"
+    },
+    {
       "role": "STUDENT",
       "name": "Alice1",
       "surname": "SurnameAlice1",

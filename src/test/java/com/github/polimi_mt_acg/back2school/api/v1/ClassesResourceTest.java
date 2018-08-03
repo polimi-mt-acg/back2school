@@ -2,10 +2,8 @@ package com.github.polimi_mt_acg.back2school.api.v1;
 
 import com.github.polimi_mt_acg.back2school.api.v1.auth.AuthenticationResource;
 import com.github.polimi_mt_acg.back2school.api.v1.classes.*;
+import com.github.polimi_mt_acg.back2school.model.*;
 import com.github.polimi_mt_acg.back2school.model.Class;
-import com.github.polimi_mt_acg.back2school.model.Class_;
-import com.github.polimi_mt_acg.back2school.model.User;
-import com.github.polimi_mt_acg.back2school.model.User_;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseSeeder;
 import com.github.polimi_mt_acg.back2school.utils.TestCategory;
@@ -430,7 +428,6 @@ public class ClassesResourceTest {
     DatabaseSeeder.deployScenario("scenarioClasses");
   }
 
-
   @Test
   @Category(TestCategory.Endpoint.class)
   public void deleteClassStudentByIdBadStudentId() {
@@ -445,14 +442,92 @@ public class ClassesResourceTest {
     // Create DELETE request
     Invocation deleteRequest =
         RestFactory.getAuthenticatedInvocationBuilder(
-            adminForLogin,
-            "classes",
-            str(aClass.getId()),
-            "students",
-            str(wrongStudentId))
+                adminForLogin, "classes", str(aClass.getId()), "students", str(wrongStudentId))
             .buildDelete();
 
     Response deleteResponse = deleteRequest.invoke();
     assertEquals(Status.BAD_REQUEST.getStatusCode(), deleteResponse.getStatus());
+  }
+
+  @Test
+  @Category(TestCategory.Endpoint.class)
+  public void sendNotificationToTeachersOfClass() {
+    Optional<Class> classOpt = DatabaseHandler.fetchEntityBy(Class.class, Class_.name, "2A");
+    assertTrue(classOpt.isPresent());
+    Class aClass = classOpt.get();
+
+    String newNotificationSubject = "Notification-to-teachers-of-2A";
+
+    // create new notification request
+    Notification.NotificationRequest notificationRequest = new Notification.NotificationRequest();
+    notificationRequest.setSubject(newNotificationSubject);
+    notificationRequest.setText("This is a message to all the teachers of 2A class!");
+
+    // Create POST request
+    Invocation postRequest =
+        RestFactory.getAuthenticatedInvocationBuilder(
+                adminForLogin, "classes", str(aClass.getId()), "notifications", "send-to-teachers")
+            .buildPost(Entity.json(notificationRequest));
+
+    Response postResponse = postRequest.invoke();
+    assertEquals(Status.OK.getStatusCode(), postResponse.getStatus());
+
+    // verify it has been correctly saved
+    Optional<NotificationClassTeacher> notificationClassTeacherOpt =
+        DatabaseHandler.fetchEntityBy(
+            NotificationClassTeacher.class,
+            NotificationClassTeacher_.subject,
+            newNotificationSubject);
+    assertTrue(notificationClassTeacherOpt.isPresent());
+    NotificationClassTeacher notificationClassTeacher = notificationClassTeacherOpt.get();
+
+    assertEquals(notificationRequest.getSubject(), notificationClassTeacher.getSubject());
+    assertEquals(notificationRequest.getText(), notificationClassTeacher.getText());
+
+    // Assert class is equal
+    assertEquals(aClass.getName(), notificationClassTeacher.getTargetClass().getName());
+    assertEquals(
+        aClass.getAcademicYear(), notificationClassTeacher.getTargetClass().getAcademicYear());
+  }
+
+  @Test
+  @Category(TestCategory.Endpoint.class)
+  public void sendNotificationToParentsOfClass() {
+    Optional<Class> classOpt = DatabaseHandler.fetchEntityBy(Class.class, Class_.name, "2A");
+    assertTrue(classOpt.isPresent());
+    Class aClass = classOpt.get();
+
+    String newNotificationSubject = "Notification-to-parents-of-2A";
+
+    // create new notification request
+    Notification.NotificationRequest notificationRequest = new Notification.NotificationRequest();
+    notificationRequest.setSubject(newNotificationSubject);
+    notificationRequest.setText("This is a message to all the parents of 2A class!");
+
+    // Create POST request
+    Invocation postRequest =
+        RestFactory.getAuthenticatedInvocationBuilder(
+                adminForLogin, "classes", str(aClass.getId()), "notifications", "send-to-parents")
+            .buildPost(Entity.json(notificationRequest));
+
+    Response postResponse = postRequest.invoke();
+    assertEquals(Status.OK.getStatusCode(), postResponse.getStatus());
+
+    // verify it has been correctly saved
+    Optional<NotificationClassParent> NotificationClassParentOpt =
+        DatabaseHandler.fetchEntityBy(
+            NotificationClassParent.class,
+            NotificationClassParent_.subject,
+            newNotificationSubject);
+    assertTrue(NotificationClassParentOpt.isPresent());
+    NotificationClassParent notificationClassParent = NotificationClassParentOpt.get();
+
+    assertEquals(notificationRequest.getSubject(), notificationClassParent.getSubject());
+    assertEquals(notificationRequest.getText(), notificationClassParent.getText());
+
+    // Assert class is equal
+    assertEquals(aClass.getName(), notificationClassParent.getTargetClass().getName());
+    assertEquals(
+        aClass.getAcademicYear(), notificationClassParent.getTargetClass().getAcademicYear());
   }
 }

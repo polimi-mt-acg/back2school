@@ -3,13 +3,13 @@ package com.github.polimi_mt_acg.back2school.api.v1.classes;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.AdministratorSecured;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.TeacherAdministratorSecured;
 import com.github.polimi_mt_acg.back2school.api.v1.students.StudentsResource;
+import com.github.polimi_mt_acg.back2school.model.*;
 import com.github.polimi_mt_acg.back2school.model.Class;
-import com.github.polimi_mt_acg.back2school.model.Class_;
-import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import org.hibernate.Session;
 
 import javax.ws.rs.*;
+import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.*;
 import javax.ws.rs.core.Response.Status;
 import java.net.URI;
@@ -282,5 +282,81 @@ public class ClassesResource {
     session.close();
 
     return Response.ok().build();
+  }
+
+  @Path("{classId: [0-9]+}/notifications/send-to-teachers")
+  @POST
+  @Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
+  @AdministratorSecured
+  public Response sendNotificationToTeachersOfClass(
+      Notification.NotificationRequest request,
+      @PathParam("classId") Integer classId,
+      @Context ContainerRequestContext crc) {
+
+    Session session = DatabaseHandler.getInstance().getNewSession();
+    session.beginTransaction();
+
+    Class aClass = session.get(Class.class, classId);
+    if (aClass == null) {
+      print("Unknown class id: ", classId);
+      session.getTransaction().commit();
+      session.close();
+      return Response.status(Status.NOT_FOUND).entity("Unknown class id").build();
+    }
+
+    // Get the notification creator
+    User creator = AuthenticationSession.getCurrentUser(crc);
+
+    // Create new notification entity from request
+    NotificationClassTeacher notificationClassTeacher = new NotificationClassTeacher();
+    notificationClassTeacher.setCreator(creator);
+    notificationClassTeacher.setSubject(request.getSubject());
+    notificationClassTeacher.setText(request.getText());
+    // notificationClassTeacher.setDatetime() already now
+    notificationClassTeacher.setTargetClass(aClass);
+
+    session.persist(notificationClassTeacher);
+    session.getTransaction().commit();
+    session.close();
+
+    return Response.ok(notificationClassTeacher, MediaType.APPLICATION_JSON).build();
+  }
+
+  @Path("{classId: [0-9]+}/notifications/send-to-parents")
+  @POST
+  @Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
+  @AdministratorSecured
+  public Response sendNotificationToParentsOfClass(
+      Notification.NotificationRequest request,
+      @PathParam("classId") Integer classId,
+      @Context ContainerRequestContext crc) {
+
+    Session session = DatabaseHandler.getInstance().getNewSession();
+    session.beginTransaction();
+
+    Class aClass = session.get(Class.class, classId);
+    if (aClass == null) {
+      print("Unknown class id: ", classId);
+      session.getTransaction().commit();
+      session.close();
+      return Response.status(Status.NOT_FOUND).entity("Unknown class id").build();
+    }
+
+    // Get the notification creator
+    User creator = AuthenticationSession.getCurrentUser(crc);
+
+    // Create new notification entity from request
+    NotificationClassParent notificationClassParent = new NotificationClassParent();
+    notificationClassParent.setCreator(creator);
+    notificationClassParent.setSubject(request.getSubject());
+    notificationClassParent.setText(request.getText());
+    // notificationClassTeacher.setDatetime() already now
+    notificationClassParent.setTargetClass(aClass);
+
+    session.persist(notificationClassParent);
+    session.getTransaction().commit();
+    session.close();
+
+    return Response.ok(notificationClassParent, MediaType.APPLICATION_JSON).build();
   }
 }
