@@ -810,18 +810,18 @@ public class ParentsResource {
       return Response.ok(notificationOptGP.get(), MediaType.APPLICATION_JSON_TYPE).build();
     }
 
-
     if (notificationOptCP.isPresent() ) {
       // Check if the parent can read the notification
       NotificationClassParent notificationCP = notificationOptCP.get();
       Class targetClass = notificationCP.getTargetClass();
-      for (User child : parent.getChildren()) {
+      List<User> children = parent.getChildren();
+      for (User child : children) {
         for (User student : targetClass.getClassStudents()) {
-          if (child.equals(student) ) {
+          if (child.getId() == student.getId() ) {
             return Response.ok(notificationOptCP.get(), MediaType.APPLICATION_JSON_TYPE).build();
           }
-          }
         }
+      }
     }
 
     if(notificationOptPP.isPresent()){
