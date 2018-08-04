@@ -31,6 +31,13 @@
       "subject": "To you carl1!",
       "text": "What's going wrong with your mind?!",
       "seedTargetTeacherEmail": "carl1@email.com"
+    },
+    {
+      "type": "general_teachers",
+      "seedCreatorEmail": "david@email.com",
+      "datetime": "2018-04-12T11:15:11",
+      "subject": "To every teacher!",
+      "text": "Please, be severe with students!"
     }
   ]
 }

@@ -616,7 +616,6 @@ public class TeachersResourceTest {
     carl1Teacher.setSeedPassword("email_password");
 
     // Create Get request
-    // NO FILTER, so all notifications: READ and UNREAD
     Invocation getRequest =
         RestFactory.getAuthenticatedInvocationBuilder(
                 carl1Teacher, "teachers", str(carl1Teacher.getId()), "notifications")
@@ -632,11 +631,11 @@ public class TeachersResourceTest {
         carl1Teacher.getId(),
         "/notifications :\n",
         teacherNotificationsResponse);
-    assertEquals(3, teacherNotificationsResponse.getNotifications().size());
+    assertEquals(4, teacherNotificationsResponse.getNotifications().size());
   }
 
   @Test
-  @Category(TestCategory.Endpoint.class)
+  @Category(TestCategory.Transient.class)
   public void getTeacherNotificationById() {
     // Get teacher from database
     User carl1Teacher =
@@ -664,7 +663,7 @@ public class TeachersResourceTest {
         carl1Teacher.getId(),
         "/notifications :\n",
         teacherNotificationsResponse);
-    assertEquals(3, teacherNotificationsResponse.getNotifications().size());
+    assertEquals(4, teacherNotificationsResponse.getNotifications().size());
 
     TeacherNotificationsResponse.Entity notificationToRead =
         teacherNotificationsResponse.getNotifications().get(0);

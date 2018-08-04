@@ -490,98 +490,83 @@ public class TeachersResource {
   @TeacherAdministratorSecured
   public Response getTeacherNotifications(
       @PathParam("teacherId") String teacherId,
-      @QueryParam("year") Integer year,
       @Context ContainerRequestContext crc,
       @Context UriInfo uriInfo) {
-    try {
-      User currentUser = AuthenticationSession.getCurrentUser(crc);
+    User currentUser = AuthenticationSession.getCurrentUser(crc);
 
-      Session session = DatabaseHandler.getInstance().getNewSession();
-      session.beginTransaction();
+    Session session = DatabaseHandler.getInstance().getNewSession();
+    session.beginTransaction();
 
-      // Fetch request user
-      User teacher = session.get(User.class, as_int(teacherId));
-      if (teacher == null) {
-        print("User not found");
-        session.getTransaction().commit();
-        session.close();
-        return Response.status(Status.NOT_FOUND).entity("User not found").build();
-      }
-
-      if (currentUser.getRole().equals(Role.TEACHER) && currentUser.getId() != teacher.getId()) {
-        print("Not allowed user");
-        session.getTransaction().commit();
-        session.close();
-        return Response.status(Status.FORBIDDEN).entity("Not allowed user").build();
-      }
-
-      // query to get the teacher notifications
-      String queryString =
-          // query for PERSONAL-TEACHER notifications type
-          "SELECT notification.* "
-              + "FROM notification "
-              + "LEFT JOIN lecture "
-              + "ON lecture.class_id = notification.target_class_id "
-              + "LEFT JOIN user "
-              + "ON user.id = lecture.teacher_id "
-              + "WHERE notification.type = :notificationType1 AND notification.target_user_id = :teacherId "
-              + "UNION "
-              // query for CLASS-TEACHER notifications type
-              + "SELECT notification.* "
-              + "FROM notification "
-              + "LEFT JOIN lecture "
-              + "ON lecture.class_id = notification.target_class_id "
-              + "LEFT JOIN user "
-              + "ON user.id = lecture.teacher_id "
-              + "WHERE notification.type = :notificationType2 AND user.id = :teacherId ";
-
-      List<Notification> notifications;
-      if (year == null) {
-        notifications =
-            session
-                .createNativeQuery(queryString, Notification.class)
-                .setParameter("notificationType1", "PERSONAL-TEACHER")
-                .setParameter("notificationType2", "CLASS-TEACHER")
-                .setParameter("teacherId", teacherId)
-                .getResultList();
-      } else {
-        // add the academic_year clause
-        queryString += " AND class.academic_year = :year";
-
-        notifications =
-            session
-                .createNativeQuery(queryString, Notification.class)
-                .setParameter("notificationType1", "PERSONAL-TEACHER")
-                .setParameter("notificationType2", "CLASS-TEACHER")
-                .setParameter("teacherId", teacherId)
-                .setParameter("year", year)
-                .getResultList();
-      }
-
-      TeacherNotificationsResponse teacherNotificationsResponse =
-          new TeacherNotificationsResponse();
-      for (Notification notification : notifications) {
-        TeacherNotificationsResponse.Entity entity = new TeacherNotificationsResponse.Entity();
-
-        entity.setSubject(notification.getSubject());
-        entity.setStatus(notification.getStatusWithRespectTo(teacher));
-        entity.setUrl(
-            uriInfo
-                .getBaseUriBuilder()
-                .path(TeachersResource.class)
-                .path(TeachersResource.class, "getTeacherNotificationById")
-                .build(teacher.getId(), notification.getId()));
-
-        // add the created entity to the response list
-        teacherNotificationsResponse.getNotifications().add(entity);
-      }
+    // Fetch request user
+    User teacher = session.get(User.class, as_int(teacherId));
+    if (teacher == null) {
+      print("User not found");
       session.getTransaction().commit();
       session.close();
-      return Response.ok(teacherNotificationsResponse, MediaType.APPLICATION_JSON_TYPE).build();
-    } catch (Exception e) {
-      e.printStackTrace();
+      return Response.status(Status.NOT_FOUND).entity("User not found").build();
     }
-    return Response.ok().build();
+
+    if (currentUser.getRole().equals(Role.TEACHER) && currentUser.getId() != teacher.getId()) {
+      print("Not allowed user");
+      session.getTransaction().commit();
+      session.close();
+      return Response.status(Status.FORBIDDEN).entity("Not allowed user").build();
+    }
+
+    // query to get the teacher notifications
+    String queryString =
+        // query for PERSONAL-TEACHER notifications type
+        "SELECT notification.* "
+            + "FROM notification "
+            + "WHERE notification.type = :notificationType1 "
+            + "UNION "
+            // query for PERSONAL-TEACHER notifications type
+            + "SELECT notification.* "
+            + "FROM notification "
+            + "LEFT JOIN lecture "
+            + "ON lecture.class_id = notification.target_class_id "
+            + "LEFT JOIN user "
+            + "ON user.id = lecture.teacher_id "
+            + "WHERE notification.type = :notificationType2 AND notification.target_user_id = :teacherId "
+            + "UNION "
+            // query for CLASS-TEACHER notifications type
+            + "SELECT notification.* "
+            + "FROM notification "
+            + "LEFT JOIN lecture "
+            + "ON lecture.class_id = notification.target_class_id "
+            + "LEFT JOIN user "
+            + "ON user.id = lecture.teacher_id "
+            + "WHERE notification.type = :notificationType3 AND user.id = :teacherId ";
+
+    List<Notification> notifications;
+    notifications =
+        session
+            .createNativeQuery(queryString, Notification.class)
+            .setParameter("notificationType1", "GENERAL-TEACHERS")
+            .setParameter("notificationType2", "PERSONAL-TEACHER")
+            .setParameter("notificationType3", "CLASS-TEACHER")
+            .setParameter("teacherId", teacherId)
+            .getResultList();
+
+    TeacherNotificationsResponse teacherNotificationsResponse = new TeacherNotificationsResponse();
+    for (Notification notification : notifications) {
+      TeacherNotificationsResponse.Entity entity = new TeacherNotificationsResponse.Entity();
+
+      entity.setSubject(notification.getSubject());
+      entity.setStatus(notification.getStatusWithRespectTo(teacher));
+      entity.setUrl(
+          uriInfo
+              .getBaseUriBuilder()
+              .path(TeachersResource.class)
+              .path(TeachersResource.class, "getTeacherNotificationById")
+              .build(teacher.getId(), notification.getId()));
+
+      // add the created entity to the response list
+      teacherNotificationsResponse.getNotifications().add(entity);
+    }
+    session.getTransaction().commit();
+    session.close();
+    return Response.ok(teacherNotificationsResponse, MediaType.APPLICATION_JSON_TYPE).build();
   }
 
   @Path("{teacherId: [0-9]+}/notifications/{notificationId: [0-9]+}")
