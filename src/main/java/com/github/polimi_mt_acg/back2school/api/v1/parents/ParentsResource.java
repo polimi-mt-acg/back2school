@@ -172,17 +172,18 @@ public class ParentsResource {
     session.beginTransaction();
 
     // Fetch User
-    Optional<User> parentOpt =
-        DatabaseHandler.fetchEntityBy(User.class, User_.id, Integer.parseInt(parentId), session);
-    if (!parentOpt.isPresent()) {
-      return Response.status(Status.NOT_FOUND).entity("Unknown parent id").build();
-    }
-    User parent = parentOpt.get();
+     User parent = session.get(User.class, Integer.parseInt(parentId));
+     if (parent == null) {
+       session.getTransaction().commit();
+       session.close();
+       return Response.status(Status.NOT_FOUND).build();
+     }
 
     ParentChildrenResponse response = new ParentChildrenResponse();
-
     response.setChildren(parent.getChildren());
 
+    session.getTransaction().commit();
+    session.close();
     return Response.ok(response, MediaType.APPLICATION_JSON_TYPE).build();
   }
 
@@ -733,7 +734,6 @@ public class ParentsResource {
     return Response.ok(response, MediaType.APPLICATION_JSON_TYPE).build();
   }
 
-
   @Path("{id: [0-9]+}/notifications")
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
@@ -792,21 +792,31 @@ public class ParentsResource {
   public Response getParentNotificationById(
           @PathParam("notification_id") String notificationId,@PathParam("id") String parentId, @Context UriInfo uriInfo) {
 
-    Optional<User> parentOpt = DatabaseHandler.fetchEntityBy(User.class, User_.id, Integer.parseInt(parentId));
-    if (!parentOpt.isPresent()) {
-      return Response.status(Status.NOT_FOUND).entity("Unknown parent id").build();
+    DatabaseHandler dbi = DatabaseHandler.getInstance();
+    Session session = dbi.getNewSession();
+    session.beginTransaction();
+
+    // Get parent target of the notification
+    User parent = session.get(User.class, Integer.parseInt(parentId));
+    if (parent == null) {
+      session.getTransaction().commit();
+      session.close();
+      return Response.status(Status.NOT_FOUND).build();
     }
-    User parent = parentOpt.get();
 
     // Fetch notification
-    Optional<NotificationGeneralParents> notificationOptGP = DatabaseHandler.fetchEntityBy(NotificationGeneralParents.class, NotificationGeneralParents_.id, Integer.parseInt(notificationId));
-    Optional<NotificationClassParent> notificationOptCP = DatabaseHandler.fetchEntityBy(NotificationClassParent.class, NotificationClassParent_.id, Integer.parseInt(notificationId));
-    Optional<NotificationPersonalParent> notificationOptPP = DatabaseHandler.fetchEntityBy(NotificationPersonalParent.class, NotificationPersonalParent_.id, Integer.parseInt(notificationId));
+    Optional<NotificationGeneralParents> notificationOptGP = DatabaseHandler.fetchEntityBy(NotificationGeneralParents.class, NotificationGeneralParents_.id, Integer.parseInt(notificationId),session);
+    Optional<NotificationClassParent> notificationOptCP = DatabaseHandler.fetchEntityBy(NotificationClassParent.class, NotificationClassParent_.id, Integer.parseInt(notificationId),session);
+    Optional<NotificationPersonalParent> notificationOptPP = DatabaseHandler.fetchEntityBy(NotificationPersonalParent.class, NotificationPersonalParent_.id, Integer.parseInt(notificationId),session);
     if ((!notificationOptGP.isPresent()) && (!notificationOptCP.isPresent()) && (!notificationOptPP.isPresent())) {
+      session.getTransaction().commit();
+      session.close();
       return Response.status(Status.NOT_FOUND).entity("Unknown notification id").build();
     }
 
     if(notificationOptGP.isPresent()){
+      session.getTransaction().commit();
+      session.close();
       return Response.ok(notificationOptGP.get(), MediaType.APPLICATION_JSON_TYPE).build();
     }
 
@@ -818,6 +828,8 @@ public class ParentsResource {
       for (User child : children) {
         for (User student : targetClass.getClassStudents()) {
           if (child.getId() == student.getId() ) {
+            session.getTransaction().commit();
+            session.close();
             return Response.ok(notificationOptCP.get(), MediaType.APPLICATION_JSON_TYPE).build();
           }
         }
@@ -826,12 +838,14 @@ public class ParentsResource {
 
     if(notificationOptPP.isPresent()){
       if(notificationOptPP.get().getTargetUser().getId() == (parent.getId())){
+        session.getTransaction().commit();
+        session.close();
         return Response.ok(notificationOptPP.get(), MediaType.APPLICATION_JSON_TYPE).build();
       }
     }
 
+    session.getTransaction().commit();
+    session.close();
     return Response.status(Status.UNAUTHORIZED).entity("Current parent can't get the requested notification").build();
-  }
-
-
+ }
 }

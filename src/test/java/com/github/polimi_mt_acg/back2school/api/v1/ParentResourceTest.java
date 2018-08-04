@@ -314,7 +314,7 @@ public class ParentResourceTest {
   }
 
   @Test
-  @Category(TestCategory.Endpoint.class)
+  @Category(TestCategory.Transient.class)
   public void getParentChildrenFromSameParent() throws JsonProcessingException {
     User parent = buildMarcos(5);
     URI parentURI = doParentPost(7, parent);
@@ -367,7 +367,7 @@ public class ParentResourceTest {
   }
 
   @Test
-  @Category(TestCategory.Endpoint.class)
+  @Category(TestCategory.Transient.class)
   public void postParentChildrenFromAdmin() throws JsonProcessingException {
     User parent = buildMarcos(8);
     URI parentURI = doParentPost(8, parent);

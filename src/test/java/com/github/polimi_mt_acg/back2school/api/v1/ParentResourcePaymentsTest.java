@@ -37,8 +37,6 @@ public class ParentResourcePaymentsTest {
 
   @BeforeClass
   public static void setUp() throws Exception {
-    // Truncate DB
-    // Deploy database scenario
     DatabaseSeeder.deployScenario("scenarioParents");
 
     // Run HTTP server
@@ -110,7 +108,6 @@ public class ParentResourcePaymentsTest {
     System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(parentPayments));
   }
 
-
   @Test
   @Category(TestCategory.Endpoint.class)
   public void postParentPaymentsFromAdmin() throws JsonProcessingException {
@@ -166,7 +163,6 @@ public class ParentResourcePaymentsTest {
     assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
   }
 
-
   @Test
   @Category(TestCategory.Endpoint.class)
   public void getParentPaymentByIdFromAdministrator() throws JsonProcessingException {
@@ -203,7 +199,6 @@ public class ParentResourcePaymentsTest {
     ObjectMapper mapper = RestFactory.objectMapper();
     System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(paymentResp));
   }
-
 
   @Test
   @Category(TestCategory.Endpoint.class)
@@ -358,7 +353,6 @@ public class ParentResourcePaymentsTest {
     payment.setDatetimeDeadline(LocalDateTime.now().plusDays(7));
     return payment;
   }
-
 
   private URI postPayment( String placedByEmail, String assignedToEmail, double amount, String parentID){
     User admin = get(User.Role.ADMINISTRATOR);

@@ -118,7 +118,7 @@ public class ParentResourceNotificationsTest {
   }
 
   @Test
-  @Category(TestCategory.Transient.class)
+  @Category(TestCategory.Endpoint.class)
   public void getParentNotificationsByIdFromAdministrator() throws JsonProcessingException {
     User parent = buildMarcos(3);
     URI parentURI = doParentPost(0, parent);
@@ -146,7 +146,7 @@ public class ParentResourceNotificationsTest {
               RestFactory.getAuthenticatedInvocationBuilder(admin, "parents", parentID,"notifications", notificationID).buildGet();
 
       Response response = requestGetNotificationByID.invoke();
-      System.out.println("HERE1"+response);
+//      System.out.println("HERE1"+response);
 
       assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
       Notification notificationResp = response.readEntity(Notification.class);
@@ -161,44 +161,48 @@ public class ParentResourceNotificationsTest {
     }
   }
 
-//  @Test
-//  @Category(TestCategory.Endpoint.class)
-//  public void getParentAppointmentByIdFromSameParent() throws JsonProcessingException {
-//    User parent = buildMarcos(8);
-//    URI parentURI = doParentPost(4, parent);
-//
-//    // Now query /parents/{bob_id} from admin
-//    Path fullPath = Paths.get("/", parentURI.getPath());
-//    Path idPath = fullPath.getParent().relativize(fullPath);
-//    String parentID = idPath.toString();
-//
-//    int initialTimeApp = 10;
-//    int dayApp = 6;
-//
-//    URI appointmentURI = postAppointment(initialTimeApp,dayApp,parentID,"carl@email.com" );
-//
-//    Path fullAppPath = Paths.get("/", appointmentURI.getPath());
-//    Path idAppPath = fullAppPath.getParent().relativize(fullAppPath);
-//    String appointmentID = idAppPath.toString();
-//
-//    Invocation requestGetAppointmentByID =
-//            RestFactory.getAuthenticatedInvocationBuilder(parent, "parents", parentID,"appointments", appointmentID).buildGet();
-//
-//    Response response = requestGetAppointmentByID.invoke();
-//    assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-//    //    System.out.println("HERE1"+response.getStatus());
-//    Appointment appointmentResp = response.readEntity(Appointment.class);
-//
-//    assertTrue(appointmentResp.getTeacher().getEmail().equals("carl@email.com"));
-//    assertTrue(appointmentResp.getParent().getEmail().equals(parent.getEmail()));
-//    assertTrue(appointmentResp.getDatetimeStart().equals(LocalDateTime.of(2018, Month.JANUARY,dayApp,12,initialTimeApp)));
-//
-//    // Print it
-//    ObjectMapper mapper = RestFactory.objectMapper();
-//    System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(appointmentResp));
-//  }
-//
+  @Test
+  @Category(TestCategory.Endpoint.class)
+  public void getParentNotificationsByIdFromSameParent() throws JsonProcessingException {
+    User parent = buildMarcos(4);
+    URI parentURI = doParentPost(0, parent);
+    User admin = get(User.Role.ADMINISTRATOR);
 
+    Path fullPath = Paths.get("/", parentURI.getPath());
+    Path idPath = fullPath.getParent().relativize(fullPath);
+    String parentID = idPath.toString();
+
+    int copynumber=2;
+
+    URI notificationPPURI = postNotification(copynumber,parentID);
+
+    Invocation requestGET =
+            RestFactory.getAuthenticatedInvocationBuilder(admin, "parents", parentID, "notifications").buildGet();
+    Response responseGET = requestGET.invoke();
+    ParentNotificationsResponse parentNotifications = responseGET.readEntity(ParentNotificationsResponse.class);
+
+    for(URI notURI : parentNotifications.getNotifications()){
+      Path fullNotPath = Paths.get("/", notURI.getPath());
+      Path idNotPath = fullNotPath.getParent().relativize(fullNotPath);
+      String notificationID = idNotPath.toString();
+
+      Invocation requestGetNotificationByID =
+              RestFactory.getAuthenticatedInvocationBuilder(parent, "parents", parentID,"notifications", notificationID).buildGet();
+
+      Response response = requestGetNotificationByID.invoke();
+//      System.out.println("HERE1"+response);
+
+      assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+      Notification notificationResp = response.readEntity(Notification.class);
+
+//      assertTrue( notificationResp.getSubject().equals("Subject number: "+ String.valueOf(copynumber)));
+//      assertTrue( notificationResp.getText().equals("Text number: "+ String.valueOf(copynumber)));
+
+      // Print it
+      ObjectMapper mapper = RestFactory.objectMapper();
+      System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(notificationResp));
+    }
+  }
 
   private User get(User.Role role) {
     List<User> users =
@@ -207,41 +211,6 @@ public class ParentResourceNotificationsTest {
     List<User> usersWithRole =
             users.stream().filter(user -> user.getRole() == role).collect(Collectors.toList());
     return usersWithRole.get(0);
-  }
-
-  private User getUserByID(String userID) {
-    List<User> users =
-            (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioParents", "users.json");
-
-    List<User> usersWithID =
-            users
-                    .stream()
-                    .filter(user -> user.getId() == Integer.parseInt(userID))
-                    .collect(Collectors.toList());
-    return usersWithID.get(0);
-  }
-
-  private User getUserByEmail(String email) {
-    List<User> users =
-            (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioParents", "users.json");
-
-    List<User> usersWithEmail =
-            users
-                    .stream()
-                    .filter(user -> user.getEmail().equals(email) )
-                    .collect(Collectors.toList());
-    return usersWithEmail.get(0);
-  }
-
-  private User buildCarlos(int copyNumber) {
-    User carlos = new User();
-    carlos.setName("Carlos " + copyNumber);
-    carlos.setSurname("Hernandez " + copyNumber);
-    carlos.setEmail("carlos.hernandez" + copyNumber + "@mail.com");
-    carlos.setSeedPassword("carlos_password");
-    carlos.setRole(User.Role.STUDENT);
-    carlos.prepareToPersist();
-    return carlos;
   }
 
   private User buildMarcos(int copyNumber) {
@@ -297,12 +266,6 @@ public class ParentResourceNotificationsTest {
     return resourceURI;
   }
 
-  private boolean weakEquals(User u, User p) {
-    return u.getName().equals(p.getName())
-            && u.getSurname().equals(p.getSurname())
-            && u.getEmail().equals(p.getEmail());
-  }
-
   private PostParentNotificationRequest buildNotification(int copynumber, String creatorEmail) {
     PostParentNotificationRequest notification = new PostParentNotificationRequest();
     notification.setCreatorEmail(creatorEmail);
@@ -331,6 +294,4 @@ public class ParentResourceNotificationsTest {
     assertNotNull(resourceURI);
     return resourceURI;
   }
-
-
 }

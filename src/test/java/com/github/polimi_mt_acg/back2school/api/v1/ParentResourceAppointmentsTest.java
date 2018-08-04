@@ -412,8 +412,6 @@ public class ParentResourceAppointmentsTest {
             mapper.writerWithDefaultPrettyPrinter().writeValueAsString(newAppointmentResponse));
   }
 
-
-
   private User get(User.Role role) {
     List<User> users =
             (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioParents", "users.json");
@@ -421,41 +419,6 @@ public class ParentResourceAppointmentsTest {
     List<User> usersWithRole =
             users.stream().filter(user -> user.getRole() == role).collect(Collectors.toList());
     return usersWithRole.get(0);
-  }
-
-  private User getUserByID(String userID) {
-    List<User> users =
-            (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioParents", "users.json");
-
-    List<User> usersWithID =
-            users
-                    .stream()
-                    .filter(user -> user.getId() == Integer.parseInt(userID))
-                    .collect(Collectors.toList());
-    return usersWithID.get(0);
-  }
-
-  private User getUserByEmail(String email) {
-    List<User> users =
-            (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioParents", "users.json");
-
-    List<User> usersWithEmail =
-            users
-                    .stream()
-                    .filter(user -> user.getEmail().equals(email) )
-                    .collect(Collectors.toList());
-    return usersWithEmail.get(0);
-  }
-
-  private User buildCarlos(int copyNumber) {
-    User carlos = new User();
-    carlos.setName("Carlos " + copyNumber);
-    carlos.setSurname("Hernandez " + copyNumber);
-    carlos.setEmail("carlos.hernandez" + copyNumber + "@mail.com");
-    carlos.setSeedPassword("carlos_password");
-    carlos.setRole(User.Role.STUDENT);
-    carlos.prepareToPersist();
-    return carlos;
   }
 
   private User buildMarcos(int copyNumber) {
@@ -511,12 +474,6 @@ public class ParentResourceAppointmentsTest {
     return resourceURI;
   }
 
-  private boolean weakEquals(User u, User p) {
-    return u.getName().equals(p.getName())
-            && u.getSurname().equals(p.getSurname())
-            && u.getEmail().equals(p.getEmail());
-  }
-
   private PostParentAppointmentRequest buildAppointment(int initialTime,int day, String teacherEmail) {
     PostParentAppointmentRequest appointment = new PostParentAppointmentRequest();
     appointment.setTeacherEmail(teacherEmail);
@@ -544,6 +501,4 @@ public class ParentResourceAppointmentsTest {
     assertNotNull(resourceURI);
     return resourceURI;
   }
-
-
 }
