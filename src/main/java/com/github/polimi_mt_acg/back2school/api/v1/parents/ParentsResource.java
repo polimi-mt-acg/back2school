@@ -784,4 +784,54 @@ public class ParentsResource {
   }
 
 
+  @Path("{id: [0-9]+}/notifications/{notification_id: [0-9]+}")
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @ParentAdministratorSecured
+  @SameParentSecured
+  public Response getParentNotificationById(
+          @PathParam("notification_id") String notificationId,@PathParam("id") String parentId, @Context UriInfo uriInfo) {
+
+    Optional<User> parentOpt = DatabaseHandler.fetchEntityBy(User.class, User_.id, Integer.parseInt(parentId));
+    if (!parentOpt.isPresent()) {
+      return Response.status(Status.NOT_FOUND).entity("Unknown parent id").build();
+    }
+    User parent = parentOpt.get();
+
+    // Fetch notification
+    Optional<NotificationGeneralParents> notificationOptGP = DatabaseHandler.fetchEntityBy(NotificationGeneralParents.class, NotificationGeneralParents_.id, Integer.parseInt(notificationId));
+    Optional<NotificationClassParent> notificationOptCP = DatabaseHandler.fetchEntityBy(NotificationClassParent.class, NotificationClassParent_.id, Integer.parseInt(notificationId));
+    Optional<NotificationPersonalParent> notificationOptPP = DatabaseHandler.fetchEntityBy(NotificationPersonalParent.class, NotificationPersonalParent_.id, Integer.parseInt(notificationId));
+    if ((!notificationOptGP.isPresent()) && (!notificationOptCP.isPresent()) && (!notificationOptPP.isPresent())) {
+      return Response.status(Status.NOT_FOUND).entity("Unknown notification id").build();
+    }
+
+    if(notificationOptGP.isPresent()){
+      return Response.ok(notificationOptGP.get(), MediaType.APPLICATION_JSON_TYPE).build();
+    }
+
+
+    if (notificationOptCP.isPresent() ) {
+      // Check if the parent can read the notification
+      NotificationClassParent notificationCP = notificationOptCP.get();
+      Class targetClass = notificationCP.getTargetClass();
+      for (User child : parent.getChildren()) {
+        for (User student : targetClass.getClassStudents()) {
+          if (child.equals(student) ) {
+            return Response.ok(notificationOptCP.get(), MediaType.APPLICATION_JSON_TYPE).build();
+          }
+          }
+        }
+    }
+
+    if(notificationOptPP.isPresent()){
+      if(notificationOptPP.get().getTargetUser().getId() == (parent.getId())){
+        return Response.ok(notificationOptPP.get(), MediaType.APPLICATION_JSON_TYPE).build();
+      }
+    }
+
+    return Response.status(Status.UNAUTHORIZED).entity("Current parent can't get the requested notification").build();
+  }
+
+
 }
