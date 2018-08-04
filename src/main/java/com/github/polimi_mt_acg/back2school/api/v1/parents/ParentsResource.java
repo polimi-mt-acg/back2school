@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import javax.jws.soap.SOAPBinding;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -172,18 +173,18 @@ public class ParentsResource {
     session.beginTransaction();
 
     // Fetch User
-     User parent = session.get(User.class, Integer.parseInt(parentId));
-     if (parent == null) {
+    User parent = session.get(User.class, Integer.parseInt(parentId));
+    if (parent == null) {
        session.getTransaction().commit();
        session.close();
        return Response.status(Status.NOT_FOUND).build();
-     }
+    }
 
     ParentChildrenResponse response = new ParentChildrenResponse();
     response.setChildren(parent.getChildren());
 
-    session.getTransaction().commit();
-    session.close();
+//    session.getTransaction().commit();
+//    session.close();
     return Response.ok(response, MediaType.APPLICATION_JSON_TYPE).build();
   }
 
@@ -199,14 +200,6 @@ public class ParentsResource {
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
     session.beginTransaction();
-
-    // Get admin who made the request
-    User admin = AuthenticationSession.getCurrentUser(crc, session);
-    if (admin == null) {
-      session.getTransaction().commit();
-      session.close();
-      return Response.status(Status.NOT_FOUND).build();
-    }
 
     // Fetch parent
     User parent = session.get(User.class, Integer.parseInt(parentId));
@@ -238,6 +231,7 @@ public class ParentsResource {
 
     // Add the new children to the parent
     parent.addChild(request.getStudent());
+
 
     session.getTransaction().commit();
     session.close();
