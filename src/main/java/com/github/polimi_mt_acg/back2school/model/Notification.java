@@ -132,10 +132,32 @@ public class Notification implements DeserializeToPersistInterface {
   }
 
   /**
-   * Notification class to send a new Notification.
-   * Since for any type of notification the strictly required information from
-   * the client side are only the subject and text, the following is a common
-   * request class.
+   * Get the status (read or unread) with respect to a user.
+   * @param user
+   * @return
+   */
+  public Status getStatusWithRespectTo(User user) {
+    Status status = Status.UNREAD;
+    // if the current notification is found among those already read by the user,
+    // then status is read
+    for (Notification notification: user.getNotificationsRead()) {
+      if (getId() == notification.getId()) {
+        status = Status.READ;
+        break;
+      }
+    }
+    return status;
+  }
+
+  public enum Status {
+    READ,
+    UNREAD
+  }
+
+  /**
+   * Notification class to send a new Notification. Since for any type of notification the strictly
+   * required information from the client side are only the subject and text, the following is a
+   * common request class.
    */
   public static class NotificationRequest {
     private String subject;
