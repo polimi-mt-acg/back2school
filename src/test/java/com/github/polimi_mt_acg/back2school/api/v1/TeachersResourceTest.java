@@ -1,6 +1,5 @@
 package com.github.polimi_mt_acg.back2school.api.v1;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.polimi_mt_acg.back2school.api.v1.auth.AuthenticationResource;
 import com.github.polimi_mt_acg.back2school.api.v1.teachers.*;
 import com.github.polimi_mt_acg.back2school.model.*;
@@ -35,7 +34,7 @@ import java.util.stream.Collectors;
 import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.*;
 import static org.junit.Assert.*;
 
-public class TeacherResourceTest {
+public class TeachersResourceTest {
 
   private static HttpServer server;
   private static User adminForLogin;
@@ -48,7 +47,9 @@ public class TeacherResourceTest {
     // Run HTTP server
     server =
         HTTPServerManager.startServer(
-            AuthenticationResource.class, "com.github.polimi_mt_acg.back2school.api.v1.teachers");
+            AuthenticationResource.class,
+            "com.github.polimi_mt_acg.back2school.api.v1.teachers",
+            "com.github.polimi_mt_acg.back2school.api.v1.security_contexts");
   }
 
   @AfterClass
@@ -86,7 +87,7 @@ public class TeacherResourceTest {
     Invocation request =
         RestFactory.getAuthenticatedInvocationBuilder(adminForLogin, "teachers").buildGet();
 
-    TeacherResponse response = request.invoke(TeacherResponse.class);
+    TeachersResponse response = request.invoke(TeachersResponse.class);
     assertNotNull(response);
 
     List<User> responseTeachers = response.getTeachers();
@@ -105,9 +106,8 @@ public class TeacherResourceTest {
       assertTrue(seedTeacher.weakEquals(responseTeacher));
     }
 
-    // Print it
-    System.out.println(
-        new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(response));
+    print("Response of /teachers :\n");
+    print(response);
   }
 
   @Test
@@ -179,7 +179,7 @@ public class TeacherResourceTest {
   }
 
   /**
-   * Do a post an return the inserted teacher URI.
+   * Do a post and return the inserted teacher URI.
    *
    * @return The inserted resource URI.
    */
@@ -194,7 +194,6 @@ public class TeacherResourceTest {
             .buildPost(Entity.json(request));
 
     Response response = post.invoke();
-
     assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
 
     URI resourceURI = response.getLocation();
@@ -219,11 +218,12 @@ public class TeacherResourceTest {
 
     Response response = request.invoke();
     assertEquals(Status.OK.getStatusCode(), response.getStatus());
-    ClassesResponse classesResponse = response.readEntity(ClassesResponse.class);
+    TeacherClassesResponse teacherClassesResponse =
+        response.readEntity(TeacherClassesResponse.class);
 
-    print("Response /teachers/", carl1Teacher.getId(), "/classes:\n", classesResponse);
+    print("Response /teachers/", carl1Teacher.getId(), "/classes:\n", teacherClassesResponse);
 
-    assertEquals(classesResponse.getClasses().size(), 2);
+    assertEquals(teacherClassesResponse.getClasses().size(), 2);
   }
 
   @Test
@@ -247,11 +247,12 @@ public class TeacherResourceTest {
 
     Response response = request.invoke();
     assertEquals(Status.OK.getStatusCode(), response.getStatus());
-    ClassesResponse classesResponse = response.readEntity(ClassesResponse.class);
+    TeacherClassesResponse teacherClassesResponse =
+        response.readEntity(TeacherClassesResponse.class);
 
-    print("Response /teachers/", carl1Teacher.getId(), "/classes:\n", classesResponse);
+    print("Response /teachers/", carl1Teacher.getId(), "/classes:\n", teacherClassesResponse);
 
-    assertEquals(classesResponse.getClasses().size(), 2);
+    assertEquals(teacherClassesResponse.getClasses().size(), 2);
   }
 
   @Test
@@ -280,10 +281,11 @@ public class TeacherResourceTest {
 
     Response response = request.invoke();
     assertEquals(Status.OK.getStatusCode(), response.getStatus());
-    ClassesResponse classesResponse = response.readEntity(ClassesResponse.class);
+    TeacherClassesResponse teacherClassesResponse =
+        response.readEntity(TeacherClassesResponse.class);
 
-    print("Response ", target.getUri().toString(), "\n", classesResponse);
-    assertEquals(classesResponse.getClasses().size(), 1);
+    print("Response ", target.getUri().toString(), "\n", teacherClassesResponse);
+    assertEquals(teacherClassesResponse.getClasses().size(), 1);
   }
 
   @Test
@@ -438,11 +440,15 @@ public class TeacherResourceTest {
 
     Response response = request.invoke();
     assertEquals(Status.OK.getStatusCode(), response.getStatus());
-    AppointmentsResponse appointmentsResponse = response.readEntity(AppointmentsResponse.class);
+    TeacherAppointmentsResponse teacherAppointmentsResponse =
+        response.readEntity(TeacherAppointmentsResponse.class);
 
     print(
-        "Response to /teachers/", carl1Teacher.getId(), "/appointments :\n", appointmentsResponse);
-    assertEquals(appointmentsResponse.getAppointments().size(), 1);
+        "Response to /teachers/",
+        carl1Teacher.getId(),
+        "/appointments :\n",
+        teacherAppointmentsResponse);
+    assertEquals(teacherAppointmentsResponse.getAppointments().size(), 1);
   }
 
   @Test
@@ -498,8 +504,8 @@ public class TeacherResourceTest {
     Response getResponse = getRequest.invoke();
     assertEquals(Status.OK.getStatusCode(), getResponse.getStatus());
 
-    AppointmentsResponse.Entity appointmentResponse =
-        getResponse.readEntity(AppointmentsResponse.Entity.class);
+    TeacherAppointmentsResponse.Entity appointmentResponse =
+        getResponse.readEntity(TeacherAppointmentsResponse.Entity.class);
     print("Response: \n", appointmentResponse);
 
     assertNotNull(appointmentResponse);
@@ -578,8 +584,8 @@ public class TeacherResourceTest {
     Response getResponse = getRequest.invoke();
     assertEquals(Status.OK.getStatusCode(), getResponse.getStatus());
 
-    AppointmentsResponse.Entity appointmentResponse =
-        getResponse.readEntity(AppointmentsResponse.Entity.class);
+    TeacherAppointmentsResponse.Entity appointmentResponse =
+        getResponse.readEntity(TeacherAppointmentsResponse.Entity.class);
     print("Response: \n", appointmentResponse);
 
     assertNotNull(appointmentResponse);
@@ -595,5 +601,110 @@ public class TeacherResourceTest {
     assertEquals(
         putAppointmentRequest.getDatetimeEnd().toString(), appointmentResponse.getDatetimeEnd());
     assertEquals(putAppointmentRequest.getStatus().toString(), appointmentResponse.getStatus());
+  }
+
+  @Test
+  @Category(TestCategory.Endpoint.class)
+  public void getTeacherNotifications() {
+    // Get teacher from database
+    User carl1Teacher =
+        DatabaseHandler.getInstance()
+            .getListSelectFromWhereEqual(User.class, User_.email, "carl1@email.com")
+            .get(0);
+
+    assertNotNull(carl1Teacher);
+    carl1Teacher.setSeedPassword("email_password");
+
+    // Create Get request
+    Invocation getRequest =
+        RestFactory.getAuthenticatedInvocationBuilder(
+                carl1Teacher, "teachers", str(carl1Teacher.getId()), "notifications")
+            .buildGet();
+
+    Response getResponse = getRequest.invoke();
+    assertEquals(Status.OK.getStatusCode(), getResponse.getStatus());
+    TeacherNotificationsResponse teacherNotificationsResponse =
+        getResponse.readEntity(TeacherNotificationsResponse.class);
+
+    print(
+        "Response to /teachers/",
+        carl1Teacher.getId(),
+        "/notifications :\n",
+        teacherNotificationsResponse);
+    assertEquals(4, teacherNotificationsResponse.getNotifications().size());
+  }
+
+  @Test
+  @Category(TestCategory.Transient.class)
+  public void getTeacherNotificationById() {
+    // Get teacher from database
+    User carl1Teacher =
+        DatabaseHandler.getInstance()
+            .getListSelectFromWhereEqual(User.class, User_.email, "carl1@email.com")
+            .get(0);
+
+    assertNotNull(carl1Teacher);
+    carl1Teacher.setSeedPassword("email_password");
+
+    // Create Get request
+    // NO FILTER, so all notifications: READ and UNREAD
+    Invocation getRequest =
+        RestFactory.getAuthenticatedInvocationBuilder(
+                carl1Teacher, "teachers", str(carl1Teacher.getId()), "notifications")
+            .buildGet();
+
+    Response getResponse = getRequest.invoke();
+    assertEquals(Status.OK.getStatusCode(), getResponse.getStatus());
+    TeacherNotificationsResponse teacherNotificationsResponse =
+        getResponse.readEntity(TeacherNotificationsResponse.class);
+
+    print(
+        "Response to /teachers/",
+        carl1Teacher.getId(),
+        "/notifications :\n",
+        teacherNotificationsResponse);
+    assertEquals(4, teacherNotificationsResponse.getNotifications().size());
+
+    TeacherNotificationsResponse.Entity notificationToRead =
+        teacherNotificationsResponse.getNotifications().get(0);
+
+    // READ NOTIFICATION
+    // Create Get request to read notification
+    Invocation getRequest2 =
+        RestFactory.getAuthenticatedInvocationBuilder(carl1Teacher, notificationToRead.getUrl())
+            .buildGet();
+
+    Response getResponse2 = getRequest2.invoke();
+    assertEquals(Status.OK.getStatusCode(), getResponse2.getStatus());
+    Notification notification = getResponse2.readEntity(Notification.class);
+    print("Response to ", notificationToRead.getUrl().toString(), " :\n", notification);
+    assertEquals(notificationToRead.getSubject(), notification.getSubject());
+
+    // ASSERT notification of before is now READ
+    Invocation getRequest3 =
+        RestFactory.getAuthenticatedInvocationBuilder(
+                carl1Teacher, "teachers", str(carl1Teacher.getId()), "notifications")
+            .buildGet();
+
+    Response getResponse3 = getRequest3.invoke();
+    assertEquals(Status.OK.getStatusCode(), getResponse3.getStatus());
+
+    TeacherNotificationsResponse teacherNotificationsResponse1 =
+        getResponse3.readEntity(TeacherNotificationsResponse.class);
+    print(
+        "Response to teachers/",
+        str(carl1Teacher.getId()),
+        "/notifications :\n",
+        teacherNotificationsResponse1);
+
+    TeacherNotificationsResponse.Entity readNotification =
+        teacherNotificationsResponse1
+            .getNotifications()
+            .stream()
+            .filter(x -> x.getSubject().equals(notificationToRead.getSubject()))
+            .collect(Collectors.toList())
+            .get(0);
+
+    assertEquals(Notification.Status.READ, readNotification.getStatus());
   }
 }

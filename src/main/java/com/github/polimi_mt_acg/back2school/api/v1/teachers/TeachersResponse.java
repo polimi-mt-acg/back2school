@@ -18,18 +18,18 @@ import javax.xml.bind.annotation.XmlRootElement;
  * }</code>
  */
 @XmlRootElement
-public class TeacherResponse {
+public class TeachersResponse {
 
   @XmlElement private List<User> teachers;
 
   /** Empty constructor. */
-  public TeacherResponse() {}
+  public TeachersResponse() {}
 
   /**
-   * Construct a TeacherResponse out of a List of teachers. No copy of {@code
+   * Construct a TeachersResponse out of a List of teachers. No copy of {@code
    * teachers} is performed.
    */
-  public TeacherResponse(List<User> teachers) {
+  public TeachersResponse(List<User> teachers) {
     this.teachers = teachers;
   }
 

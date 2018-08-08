@@ -63,8 +63,8 @@ public class User implements DeserializeToPersistInterface {
   @ManyToMany
   @JoinTable(
     name = "user_notification_read",
-    joinColumns = @JoinColumn(name = "notification_id"),
-    inverseJoinColumns = @JoinColumn(name = "user_id")
+    joinColumns = @JoinColumn(name = "user_id"),
+    inverseJoinColumns = @JoinColumn(name = "notification_id")
   )
   private List<Notification> notificationsRead = new ArrayList<>();
 
@@ -193,6 +193,10 @@ public class User implements DeserializeToPersistInterface {
 
   public void addNotificationsRead(Notification notification) {
     this.notificationsRead.add(notification);
+  }
+
+  public void setNotificationsRead(List<Notification> notificationsRead) {
+    this.notificationsRead = notificationsRead;
   }
 
   @JsonIgnore

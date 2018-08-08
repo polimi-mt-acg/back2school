@@ -2,6 +2,7 @@ package com.github.polimi_mt_acg.back2school.api.v1.teachers;
 
 import com.github.polimi_mt_acg.back2school.api.v1.classes.ClassesResource;
 import com.github.polimi_mt_acg.back2school.api.v1.classrooms.ClassroomsResource;
+import com.github.polimi_mt_acg.back2school.api.v1.notifications.NotificationsResponse;
 import com.github.polimi_mt_acg.back2school.api.v1.parents_stub.ParentsStubResource;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.AdministratorSecured;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.TeacherAdministratorSecured;
@@ -14,9 +15,7 @@ import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import org.hibernate.Session;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import javax.ws.rs.*;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.*;
@@ -26,17 +25,17 @@ import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunc
 
 /** JAX-RS Resource for teachers entity. */
 @Path("teachers")
-public class TeacherResource {
+public class TeachersResource {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
-  public TeacherResponse getTeachers() {
+  public TeachersResponse getTeachers() {
     List<User> teachers =
         DatabaseHandler.getInstance()
             .getListSelectFromWhereEqual(User.class, User_.role, User.Role.TEACHER);
 
-    return new TeacherResponse(teachers);
+    return new TeachersResponse(teachers);
   }
 
   @POST
@@ -151,9 +150,9 @@ public class TeacherResource {
               .getResultList();
     }
 
-    ClassesResponse classesResponse = new ClassesResponse();
+    TeacherClassesResponse teacherClassesResponse = new TeacherClassesResponse();
     for (Class cls : classes) {
-      ClassesResponse.Entity entity = new ClassesResponse.Entity();
+      TeacherClassesResponse.Entity entity = new TeacherClassesResponse.Entity();
 
       entity.setName(cls.getName());
       entity.setAcademicYear(cls.getAcademicYear());
@@ -174,15 +173,15 @@ public class TeacherResource {
       entity.setUrlClassTimetable(
           uriInfo
               .getBaseUriBuilder()
-              .path(TeacherResource.class)
-              .path(TeacherResource.class, "getTeacherTimetable")
+              .path(TeachersResource.class)
+              .path(TeachersResource.class, "getTeacherTimetable")
               .build(teacherId, cls.getId())
               .toString());
 
       // add the created entity to the response list
-      classesResponse.getClasses().add(entity);
+      teacherClassesResponse.getClasses().add(entity);
     }
-    return Response.ok(classesResponse, MediaType.APPLICATION_JSON_TYPE).build();
+    return Response.ok(teacherClassesResponse, MediaType.APPLICATION_JSON_TYPE).build();
   }
 
   @Path("{teacherId: [0-9]+}/classes/{classId: [0-9]+}/timetable")
@@ -292,9 +291,9 @@ public class TeacherResource {
         DatabaseHandler.getInstance()
             .getListSelectFromWhereEqual(Appointment.class, Appointment_.teacher, teacher);
 
-    AppointmentsResponse appointmentsResponse = new AppointmentsResponse();
+    TeacherAppointmentsResponse teacherAppointmentsResponse = new TeacherAppointmentsResponse();
     for (Appointment appointment : appointments) {
-      AppointmentsResponse.Entity entity = new AppointmentsResponse.Entity();
+      TeacherAppointmentsResponse.Entity entity = new TeacherAppointmentsResponse.Entity();
 
       entity.setId(appointment.getId());
       entity.setDatetimeStart(appointment.getDatetimeStart().toString());
@@ -309,9 +308,9 @@ public class TeacherResource {
               .toString());
 
       // add the created entity to the response list
-      appointmentsResponse.getAppointments().add(entity);
+      teacherAppointmentsResponse.getAppointments().add(entity);
     }
-    return Response.ok(appointmentsResponse, MediaType.APPLICATION_JSON_TYPE).build();
+    return Response.ok(teacherAppointmentsResponse, MediaType.APPLICATION_JSON_TYPE).build();
   }
 
   @Path("{teacherId: [0-9]+}/appointments")
@@ -408,7 +407,7 @@ public class TeacherResource {
     Appointment appointment =
         DatabaseHandler.getInstance().getNewSession().get(Appointment.class, as_int(appointmentId));
 
-    AppointmentsResponse.Entity entity = new AppointmentsResponse.Entity();
+    TeacherAppointmentsResponse.Entity entity = new TeacherAppointmentsResponse.Entity();
     entity.setId(appointment.getId());
     entity.setDatetimeStart(appointment.getDatetimeStart().toString());
     entity.setDatetimeEnd(appointment.getDatetimeEnd().toString());
@@ -483,5 +482,138 @@ public class TeacherResource {
     session.close();
 
     return Response.ok().build();
+  }
+
+  @Path("{teacherId: [0-9]+}/notifications")
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @TeacherAdministratorSecured
+  public Response getTeacherNotifications(
+      @PathParam("teacherId") String teacherId,
+      @Context ContainerRequestContext crc,
+      @Context UriInfo uriInfo) {
+    User currentUser = AuthenticationSession.getCurrentUser(crc);
+
+    Session session = DatabaseHandler.getInstance().getNewSession();
+    session.beginTransaction();
+
+    // Fetch request user
+    User teacher = session.get(User.class, as_int(teacherId));
+    if (teacher == null) {
+      print("User not found");
+      session.getTransaction().commit();
+      session.close();
+      return Response.status(Status.NOT_FOUND).entity("User not found").build();
+    }
+
+    if (currentUser.getRole().equals(Role.TEACHER) && currentUser.getId() != teacher.getId()) {
+      print("Not allowed user");
+      session.getTransaction().commit();
+      session.close();
+      return Response.status(Status.FORBIDDEN).entity("Not allowed user").build();
+    }
+
+    // query to get the teacher notifications
+    String queryString =
+        // query for PERSONAL-TEACHER notifications type
+        "SELECT notification.* "
+            + "FROM notification "
+            + "WHERE notification.type = :notificationType1 "
+            + "UNION "
+            // query for PERSONAL-TEACHER notifications type
+            + "SELECT notification.* "
+            + "FROM notification "
+            + "LEFT JOIN lecture "
+            + "ON lecture.class_id = notification.target_class_id "
+            + "LEFT JOIN user "
+            + "ON user.id = lecture.teacher_id "
+            + "WHERE notification.type = :notificationType2 AND notification.target_user_id = :teacherId "
+            + "UNION "
+            // query for CLASS-TEACHER notifications type
+            + "SELECT notification.* "
+            + "FROM notification "
+            + "LEFT JOIN lecture "
+            + "ON lecture.class_id = notification.target_class_id "
+            + "LEFT JOIN user "
+            + "ON user.id = lecture.teacher_id "
+            + "WHERE notification.type = :notificationType3 AND user.id = :teacherId ";
+
+    List<Notification> notifications;
+    notifications =
+        session
+            .createNativeQuery(queryString, Notification.class)
+            .setParameter("notificationType1", "GENERAL-TEACHERS")
+            .setParameter("notificationType2", "PERSONAL-TEACHER")
+            .setParameter("notificationType3", "CLASS-TEACHER")
+            .setParameter("teacherId", teacherId)
+            .getResultList();
+
+    TeacherNotificationsResponse teacherNotificationsResponse = new TeacherNotificationsResponse();
+    for (Notification notification : notifications) {
+      TeacherNotificationsResponse.Entity entity = new TeacherNotificationsResponse.Entity();
+
+      entity.setSubject(notification.getSubject());
+      entity.setStatus(notification.getStatusWithRespectTo(teacher));
+      entity.setUrl(
+          uriInfo
+              .getBaseUriBuilder()
+              .path(TeachersResource.class)
+              .path(TeachersResource.class, "getTeacherNotificationById")
+              .build(teacher.getId(), notification.getId()));
+
+      // add the created entity to the response list
+      teacherNotificationsResponse.getNotifications().add(entity);
+    }
+    session.getTransaction().commit();
+    session.close();
+    return Response.ok(teacherNotificationsResponse, MediaType.APPLICATION_JSON_TYPE).build();
+  }
+
+  @Path("{teacherId: [0-9]+}/notifications/{notificationId: [0-9]+}")
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @TeacherAdministratorSecured
+  public Response getTeacherNotificationById(
+      @PathParam("teacherId") Integer teacherId,
+      @PathParam("notificationId") Integer notificationId,
+      @Context ContainerRequestContext crc) {
+    User currentUser = AuthenticationSession.getCurrentUser(crc);
+    Session session = DatabaseHandler.getInstance().getNewSession();
+    session.beginTransaction();
+
+    // Fetch teacher
+    User teacher = session.get(User.class, teacherId);
+    if (teacher == null) {
+      print("User not found");
+      session.getTransaction().commit();
+      session.close();
+      return Response.status(Status.NOT_FOUND).entity("User not found").build();
+    }
+
+    if (currentUser.getRole().equals(Role.TEACHER) && currentUser.getId() != teacher.getId()) {
+      print("Not allowed user");
+      session.getTransaction().commit();
+      session.close();
+      return Response.status(Status.FORBIDDEN).entity("Not allowed user").build();
+    }
+
+    // Fetch notification
+    Notification notification = session.get(Notification.class, notificationId);
+    if (notification == null) {
+      print("Notification not found");
+      session.getTransaction().commit();
+      session.close();
+      return Response.status(Status.NOT_FOUND).entity("Notification not found").build();
+    }
+
+    // mark notification as read if it is the teachers visiting it
+    if (currentUser.getRole().equals(Role.TEACHER)) {
+      teacher.addNotificationsRead(notification);
+    }
+
+    session.getTransaction().commit();
+    session.close();
+
+    return Response.ok(notification, MediaType.APPLICATION_JSON).build();
   }
 }

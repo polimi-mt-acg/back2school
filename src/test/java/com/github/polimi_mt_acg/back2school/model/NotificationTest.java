@@ -2,13 +2,18 @@ package com.github.polimi_mt_acg.back2school.model;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseSeeder;
 import com.github.polimi_mt_acg.back2school.utils.TestCategory;
 import java.lang.Class;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
+import com.github.polimi_mt_acg.back2school.utils.json_mappers.SeedEntityNotificationRead;
+import org.hibernate.Session;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -104,10 +109,25 @@ public class NotificationTest {
   @Test
   @Category(TestCategory.Unit.class)
   public void testNotificationsRead() {
-    System.out.println("-------------- TODO testNotificationsRead --------------");
-    // TODO
-    // before this, it must work:
-    // com.github.polimi_mt_acg.back2school.utils.json_mappers.SeedEntityNotificationRead$seedAssociateNotificationToUser()
+    // load the notification read from seeds
+    SeedEntityNotificationRead seedEntityNotificationRead =
+        (SeedEntityNotificationRead)
+            DatabaseSeeder.getEntitiesListFromSeed(
+                    "scenarioA_unit_tests", "notifications_read.json")
+                .get(0);
+
+    // load user with notification read from DB
+    Session session = DatabaseHandler.getInstance().getNewSession();
+    Optional<User> carlOpt =
+        DatabaseHandler.fetchEntityBy(User.class, User_.email, "carl@email.com", session);
+    assertTrue(carlOpt.isPresent());
+    User carl = carlOpt.get();
+
+    assertEquals(1, carl.getNotificationsRead().size());
+
+    Notification notificationRead = carl.getNotificationsRead().get(0);
+    assertEquals(seedEntityNotificationRead.seedNotificationSubject, notificationRead.getSubject());
+    session.close();
   }
 
   /**
