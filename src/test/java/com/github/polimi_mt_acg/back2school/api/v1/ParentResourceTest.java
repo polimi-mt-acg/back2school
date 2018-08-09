@@ -421,41 +421,6 @@ public class ParentResourceTest {
     return usersWithRole.get(0);
   }
 
-  private User getUserByID(String userID) {
-    List<User> users =
-        (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioParents", "users.json");
-
-    List<User> usersWithID =
-        users
-            .stream()
-            .filter(user -> user.getId() == Integer.parseInt(userID))
-            .collect(Collectors.toList());
-    return usersWithID.get(0);
-  }
-
-  private User getUserByEmail(String email) {
-    List<User> users =
-            (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioParents", "users.json");
-
-    List<User> usersWithEmail =
-            users
-                    .stream()
-                    .filter(user -> user.getEmail().equals(email) )
-                    .collect(Collectors.toList());
-    return usersWithEmail.get(0);
-  }
-
-  private User buildCarlos(int copyNumber) {
-    User carlos = new User();
-    carlos.setName("Carlos " + copyNumber);
-    carlos.setSurname("Hernandez " + copyNumber);
-    carlos.setEmail("carlos.hernandez" + copyNumber + "@mail.com");
-    carlos.setSeedPassword("carlos_password");
-    carlos.setRole(User.Role.STUDENT);
-    carlos.prepareToPersist();
-    return carlos;
-  }
-
   private User buildMarcos(int copyNumber) {
     User marcos = new User();
     marcos.setName("Marcos " + copyNumber);
@@ -542,6 +507,4 @@ public class ParentResourceTest {
     assertNotNull(resourceURI);
     return resourceURI;
   }
-
-
 }

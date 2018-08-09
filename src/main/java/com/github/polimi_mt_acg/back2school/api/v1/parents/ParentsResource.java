@@ -166,8 +166,7 @@ public class ParentsResource {
   @Produces(MediaType.APPLICATION_JSON)
   @ParentAdministratorSecured
   @SameParentSecured
-  public Response getParentChildren(@PathParam("id") String parentId) {
-
+  public Response getParentChildren(@PathParam("id") String parentId, @Context UriInfo uriInfo) {
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
     session.beginTransaction();
@@ -175,7 +174,6 @@ public class ParentsResource {
     // Fetch User
     User parent = session.get(User.class, Integer.parseInt(parentId));
     if (parent == null) {
-       session.getTransaction().commit();
        session.close();
        return Response.status(Status.NOT_FOUND).build();
     }
@@ -183,8 +181,16 @@ public class ParentsResource {
     ParentChildrenResponse response = new ParentChildrenResponse();
     response.setChildren(parent.getChildren());
 
-//    session.getTransaction().commit();
-//    session.close();
+    List<URI> childrenURI = new ArrayList<>();
+
+    for (User c : parent.getChildren()) {
+      UriBuilder builder = uriInfo.getAbsolutePathBuilder();
+      URI uri = builder.path(String.valueOf(c.getId())).build();
+      childrenURI.add(uri);
+    }
+
+    session.getTransaction().commit();
+    session.close();
     return Response.ok(response, MediaType.APPLICATION_JSON_TYPE).build();
   }
 
