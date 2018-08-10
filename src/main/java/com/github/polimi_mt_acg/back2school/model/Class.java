@@ -1,5 +1,6 @@
 package com.github.polimi_mt_acg.back2school.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ import org.hibernate.annotations.FetchMode;
 public class Class implements DeserializeToPersistInterface {
 
   private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
+
   @Transient public List<String> seedStudentsEmail = new ArrayList<>();
 
   @Id
@@ -72,6 +74,15 @@ public class Class implements DeserializeToPersistInterface {
 
   public void setClassStudents(List<User> classStudents) {
     this.classStudents = classStudents;
+  }
+
+  @JsonIgnore
+  public List<String> getSeedStudentsEmail() {
+    return seedStudentsEmail;
+  }
+
+  public void setSeedStudentsEmail(List<String> seedStudentsEmail) {
+    this.seedStudentsEmail = seedStudentsEmail;
   }
 
   public void addStudent(User student) {

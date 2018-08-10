@@ -11,10 +11,10 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 
 /**
- * AdministratorSecurityContext implements a request filter for JAX-RS REST APIs. It implements a
- * "Parents-Administrators-only" security policy. A REST API that is annotated
- * with @ParentAdministratorSecured can only be accessed if: a) the client is authenticated. b) the
- * client role is PARENT or ADMINISTRATOR
+ * TeacherAdministratorSecurityContext implements a request filter for JAX-RS REST APIs. It implements a
+ * "Teachers-Administrators-only" security policy. A REST API that is annotated
+ * with @TeacherAdministratorSecured can only be accessed if: a) the client is authenticated. b) the
+ * client role is TEACHER or ADMINISTRATOR
  */
 @TeacherAdministratorSecured
 @Provider
@@ -23,7 +23,7 @@ public class TeacherAdministratorSecurityContext implements ContainerRequestFilt
 
   /**
    * Filter requests that do not match the following security conditions: a) the client is
-   * authenticated. b) the client role is PARENT/ADMINISTRATOR.
+   * authenticated. b) the client role is TEACHER/ADMINISTRATOR.
    *
    * <p>To be successfully authenticated, the client must send the auth token in the AUTHORIZATION
    * HTTP header.

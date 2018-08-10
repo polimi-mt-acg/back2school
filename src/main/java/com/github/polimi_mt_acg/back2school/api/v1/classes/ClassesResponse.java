@@ -1,11 +1,11 @@
-package com.github.polimi_mt_acg.back2school.api.v1.teachers;
+package com.github.polimi_mt_acg.back2school.api.v1.classes;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TeacherClassesResponse {
+public class ClassesResponse {
   private List<Entity> classes = new ArrayList<>();
 
   public List<Entity> getClasses() {
@@ -16,7 +16,8 @@ public class TeacherClassesResponse {
     this.classes = classes;
   }
 
-  public static class Entity {
+  public  static class Entity {
+
     private String name;
 
     @JsonProperty("academic_year")
@@ -24,12 +25,6 @@ public class TeacherClassesResponse {
 
     @JsonProperty("url_class")
     private String urlClass;
-
-    @JsonProperty("url_class_students")
-    private String urlClassStudents;
-
-    @JsonProperty("url_class_timetable")
-    private String urlClassTimetable;
 
     public String getName() {
       return name;
@@ -53,22 +48,6 @@ public class TeacherClassesResponse {
 
     public void setUrlClass(String urlClass) {
       this.urlClass = urlClass;
-    }
-
-    public String getUrlClassStudents() {
-      return urlClassStudents;
-    }
-
-    public void setUrlClassStudents(String urlClassStudents) {
-      this.urlClassStudents = urlClassStudents;
-    }
-
-    public String getUrlClassTimetable() {
-      return urlClassTimetable;
-    }
-
-    public void setUrlClassTimetable(String urlClassTimetable) {
-      this.urlClassTimetable = urlClassTimetable;
     }
   }
 }

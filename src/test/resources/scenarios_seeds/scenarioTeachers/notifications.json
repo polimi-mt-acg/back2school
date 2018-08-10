@@ -1,0 +1,43 @@
+{
+  "notifications": [
+    {
+      "type": "class_parent",
+      "seedCreatorEmail": "david@email.com",
+      "datetime": "2018-04-12T16:15:11",
+      "subject": "Congratulations to the best class ever!",
+      "text": "Hi 1A's parents,\nI want to congratulate with you and your sons because they're are the best class we've ever seen at the back2school institute!!\n\nRegards,\nThe headmaster.",
+      "seedTargetClassName": "1B"
+    },
+    {
+      "type": "class_teacher",
+      "seedCreatorEmail": "david@email.com",
+      "datetime": "2018-04-12T16:15:11",
+      "subject": "Congratulations for the best class ever!",
+      "text": "Hi 1A's teachers,\nI want to congratulate with you because results of the 1A class are amazing!\nGood job! Please keep on teaching in this way.\n\nRegards,\nThe headmaster.",
+      "seedTargetClassName": "1B"
+    },
+    {
+      "type": "class_teacher",
+      "seedCreatorEmail": "david@email.com",
+      "datetime": "2018-04-12T18:15:11",
+      "subject": "Second class notification!",
+      "text": "Hi to everybody! Second notification...",
+      "seedTargetClassName": "2B"
+    },
+    {
+      "type": "personal_teacher",
+      "seedCreatorEmail": "david@email.com",
+      "datetime": "2018-04-12T16:15:11",
+      "subject": "To you carl1!",
+      "text": "What's going wrong with your mind?!",
+      "seedTargetTeacherEmail": "carl1@email.com"
+    },
+    {
+      "type": "general_teachers",
+      "seedCreatorEmail": "david@email.com",
+      "datetime": "2018-04-12T11:15:11",
+      "subject": "To every teacher!",
+      "text": "Please, be severe with students!"
+    }
+  ]
+}

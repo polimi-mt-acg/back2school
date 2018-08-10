@@ -1,31 +1,25 @@
 package com.github.polimi_mt_acg.back2school.api.v1.classes;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ClassStudentsResponse {
-  private List<Student> students = new ArrayList<>();
+  private List<Entity> students = new ArrayList<>();
 
-  public List<Student> getStudents() {
+  public List<Entity> getStudents() {
     return students;
   }
 
-  public void setStudents(List<Student> students) {
+  public void setStudents(List<Entity> students) {
     this.students = students;
   }
 
-  public static class Student {
+  public static class Entity {
     private String name;
     private String surname;
     private String email;
-    private String url;
-
-    public Student(String name, String surname, String email, String url) {
-      this.name = name;
-      this.surname = surname;
-      this.email = email;
-      this.url = url;
-    }
+    private URI url;
 
     public String getName() {
       return name;
@@ -51,13 +45,12 @@ public class ClassStudentsResponse {
       this.email = email;
     }
 
-    public String getUrl() {
+    public URI getUrl() {
       return url;
     }
 
-    public void setUrl(String url) {
+    public void setUrl(URI url) {
       this.url = url;
     }
-
   }
 }

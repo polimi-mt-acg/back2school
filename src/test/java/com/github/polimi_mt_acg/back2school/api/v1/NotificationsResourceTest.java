@@ -41,7 +41,8 @@ public class NotificationsResourceTest {
     server =
         HTTPServerManager.startServer(
             AuthenticationResource.class,
-            "com.github.polimi_mt_acg.back2school.api.v1.notifications");
+            "com.github.polimi_mt_acg.back2school.api.v1.notifications",
+            "com.github.polimi_mt_acg.back2school.api.v1.security_contexts");
   }
 
   @AfterClass

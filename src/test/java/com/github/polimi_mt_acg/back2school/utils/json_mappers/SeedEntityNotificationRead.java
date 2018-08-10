@@ -1,8 +1,14 @@
 package com.github.polimi_mt_acg.back2school.utils.json_mappers;
 
-import com.github.polimi_mt_acg.back2school.model.SeedDummy;
+import com.github.polimi_mt_acg.back2school.model.*;
+import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
+import org.hibernate.Session;
+
 import javax.persistence.Entity;
 import javax.persistence.Transient;
+import java.util.Optional;
+
+import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.print;
 
 @Entity
 public class SeedEntityNotificationRead extends SeedDummy {
@@ -18,24 +24,42 @@ public class SeedEntityNotificationRead extends SeedDummy {
   }
 
   private void seedAssociateNotificationToUser() {
-    //        DatabaseHandler dhi = DatabaseHandler.getInstance();
-    //        List<User> users = dhi.getListSelectFromWhereEqual(User.class, User_.email,
-    // seedUserEmail);
-    //        List<Notification> notifications = dhi.getListSelectFromWhereEqual(Notification.class,
-    // Notification_.subject, seedNotificationSubject);
-    //
-    //        if (users != null && notifications != null && users.size() > 0 && notifications.size()
-    // > 0) {
-    //            User user = users.get(0);
-    //            Notification notification = notifications.get(0);
-    //
-    //            user.addNotificationsRead(notification);
-    //
-    //            Session session = DatabaseHandler.getInstance().getNewSession();
-    //            session.beginTransaction();
-    //            session.persist(user);
-    //            session.getTransaction().commit();
-    //            session.close();
-    //        }
+    Session session = DatabaseHandler.getInstance().getNewSession();
+
+    session.beginTransaction();
+
+    Optional<User> userOpt =
+        DatabaseHandler.fetchEntityBy(User.class, User_.email, seedUserEmail, session);
+
+    Optional<Notification> notificationOpt =
+        DatabaseHandler.fetchEntityBy(
+            Notification.class, Notification_.subject, seedNotificationSubject, session);
+
+    // if the user is not found into the database
+    if (!userOpt.isPresent()) {
+      print(
+          "WARNING! notifications_read.json found seedUserEmail: ",
+          seedUserEmail,
+          " BUT there IS NO corresponding user in the database.");
+      print("NOTIFICATION-READ relation NOT created!");
+      return;
+    }
+
+    // if the notification is not found into the database
+    if (!notificationOpt.isPresent()) {
+      print(
+          "WARNING! notifications_read.json found seedNotificationSubject: ",
+          seedNotificationSubject,
+          " BUT there IS NO corresponding user in the database.");
+      print("NOTIFICATION-READ relation NOT created!");
+      return;
+    }
+
+    User user = userOpt.get();
+    Notification notification = notificationOpt.get();
+
+    user.addNotificationsRead(notification);
+    session.getTransaction().commit();
+    session.close();
   }
 }

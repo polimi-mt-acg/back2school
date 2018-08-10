@@ -2,6 +2,7 @@ package com.github.polimi_mt_acg.back2school.api.v1.security_contexts;
 
 import com.github.polimi_mt_acg.back2school.model.AuthenticationSession;
 import com.github.polimi_mt_acg.back2school.model.User;
+import com.github.polimi_mt_acg.back2school.model.User.Role;
 import java.io.IOException;
 import javax.annotation.Priority;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -10,18 +11,19 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 
 /**
- * AdministratorSecurityContext implements a request filter for JAX-RS REST APIs. It implements a
- * "Administrators-only" security policy. A REST API that is annotated with @AdministratorSecured
- * can only be accessed if: a) the client is authenticated. b) the client role is ADMINISTRATOR
+ * TeacherSecurityContext implements a request filter for JAX-RS REST APIs. It implements a
+ * "Teachers-only" security policy. A REST API that is annotated
+ * with @TeacherSecured can only be accessed if: a) the client is authenticated. b) the
+ * client role is TEACHER
  */
-@AdministratorSecured
+@TeacherSecured
 @Provider
-@Priority(SecurityContextPriority.ADMINISTRATOR)
-public class AdministratorSecurityContext implements ContainerRequestFilter {
+@Priority(SecurityContextPriority.TEACHER)
+public class TeacherSecurityContext implements ContainerRequestFilter {
 
   /**
    * Filter requests that do not match the following security conditions: a) the client is
-   * authenticated. b) the client role is ADMINISTRATOR.
+   * authenticated. b) the client role is TEACHER.
    *
    * <p>To be successfully authenticated, the client must send the auth token in the AUTHORIZATION
    * HTTP header.
@@ -42,9 +44,9 @@ public class AdministratorSecurityContext implements ContainerRequestFilter {
     }
 
     // if the user logged has not the correct role
-    if (!currentUser.getRole().equals(User.Role.ADMINISTRATOR)) {
+    Role role = currentUser.getRole();
+    if (!role.equals(Role.TEACHER)) {
       requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
-      return;
     }
   }
 }

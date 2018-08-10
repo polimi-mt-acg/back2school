@@ -7,6 +7,7 @@ public class SecurityContextPriority {
   public static final int PARENT_ADMINISTRATOR = 2002;
   public static final int TEACHER_ADMINISTRATOR = 2003;
   public static final int ADMINISTRATOR = 2010;
+  public static final int TEACHER = 2020;
   public static final int PARENT_OF_STUDENT = 2030;
   public static final int TEACHER_OF_STUDENT = 2031;
   public static final int SAME_PARENT = 2032;
