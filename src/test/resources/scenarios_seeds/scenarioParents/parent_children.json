@@ -1,0 +1,16 @@
+{
+  "parent_children": [
+    {
+      "seedParentEmail": "bob@email.com",
+      "seedChildEmail": "edmond@email.com"
+    },
+    {
+      "seedParentEmail": "bob@email.com",
+      "seedChildEmail": "finn@email.com"
+    },
+    {
+      "seedParentEmail": "bob2@email.com",
+      "seedChildEmail": "alice1@email.com"
+    }
+  ]
+}

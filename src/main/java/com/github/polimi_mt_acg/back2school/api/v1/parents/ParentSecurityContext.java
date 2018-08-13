@@ -1,28 +1,29 @@
-package com.github.polimi_mt_acg.back2school.api.v1.security_contexts;
+package com.github.polimi_mt_acg.back2school.api.v1.parents;
 
+import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.SecurityContextPriority;
 import com.github.polimi_mt_acg.back2school.model.AuthenticationSession;
 import com.github.polimi_mt_acg.back2school.model.User;
-import com.github.polimi_mt_acg.back2school.model.User.Role;
-import java.io.IOException;
+
 import javax.annotation.Priority;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
+import java.io.IOException;
 
 /**
  * AdministratorSecurityContext implements a request filter for JAX-RS REST APIs. It implements a
- * "Administrators-only" security policy. A REST API that is annotated with @ParentAdministratorSecured
- * can only be accessed if: a) the client is authenticated. b) the client role is ADMINISTRATOR or PARENT
+ * "Administrators-only" security policy. A REST API that is annotated with @AdministratorSecured
+ * can only be accessed if: a) the client is authenticated. b) the client role is ADMINISTRATOR
  */
-@ParentAdministratorSecured
+@ParentSecured
 @Provider
-@Priority(SecurityContextPriority.PARENT_ADMINISTRATOR)
-public class ParentAdministratorSecurityContext implements ContainerRequestFilter {
+@Priority(SecurityContextPriority.ADMINISTRATOR)
+public class ParentSecurityContext implements ContainerRequestFilter {
 
   /**
    * Filter requests that do not match the following security conditions: a) the client is
-   * authenticated. b) the client role is PARENT/ADMINISTRATOR.
+   * authenticated. b) the client role is PARENT.
    *
    * <p>To be successfully authenticated, the client must send the auth token in the AUTHORIZATION
    * HTTP header.
@@ -42,11 +43,11 @@ public class ParentAdministratorSecurityContext implements ContainerRequestFilte
       return;
     }
 
+    System.out.println("Security context got ROLE: " + String.valueOf(currentUser.getRole()));
     // if the user logged has not the correct role
-    Role role = currentUser.getRole();
-    if (!role.equals(Role.PARENT)
-            && !role.equals(Role.ADMINISTRATOR)) {
+    if (!currentUser.getRole().equals(User.Role.PARENT)) {
       requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
+      return;
     }
   }
 }
