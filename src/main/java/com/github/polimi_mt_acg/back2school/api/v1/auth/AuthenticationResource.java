@@ -6,6 +6,7 @@ import com.github.polimi_mt_acg.back2school.model.User_;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import java.util.List;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -58,7 +59,7 @@ public class AuthenticationResource {
     return Response.ok(token).build();
   }
 
-  @POST
+  @GET
   @Path("logout")
   public LogoutResponse userLogout(ContainerRequestContext requestContext) {
     User currentUser = AuthenticationSession.getCurrentUser(requestContext);
