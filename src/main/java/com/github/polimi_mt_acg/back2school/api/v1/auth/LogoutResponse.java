@@ -14,7 +14,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class LogoutResponse {
 
   @XmlElement
-  private String status = "ok";
+  private String status = "logged out";
+  private String reason = "user request";
 
   public LogoutResponse() {}
+
+  public LogoutResponse(String reason) {
+    this.reason = reason;
+  }
 }

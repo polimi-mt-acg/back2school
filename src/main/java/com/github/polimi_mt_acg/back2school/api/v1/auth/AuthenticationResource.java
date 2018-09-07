@@ -56,24 +56,27 @@ public class AuthenticationResource {
 
 
     String token = authSession.getToken();
-    return Response.ok(token).build();
+
+    return Response.ok(new LoginResponse("authenticated", token)).build();
   }
 
   @GET
   @Path("logout")
-  public LogoutResponse userLogout(ContainerRequestContext requestContext) {
+  @Consumes(MediaType.TEXT_PLAIN)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response userLogout(ContainerRequestContext requestContext) {
     User currentUser = AuthenticationSession.getCurrentUser(requestContext);
 
     // if the user is null because session expired or other reasons
     if (currentUser == null)
-      return new LogoutResponse();
+      return Response.ok(new LogoutResponse("invalid session")).build();
 
     Session session = DatabaseHandler.getInstance().getNewSession();
     // invalidate all the still valid user sessions
     AuthenticationSession.invalidateAllAuthenticationSession(currentUser, session);
     session.close();
 
-    return new LogoutResponse();
+    return Response.ok(new LogoutResponse()).build();
   }
 
 
