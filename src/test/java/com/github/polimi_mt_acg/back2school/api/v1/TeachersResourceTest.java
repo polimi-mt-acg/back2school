@@ -635,7 +635,7 @@ public class TeachersResourceTest {
   }
 
   @Test
-  @Category(TestCategory.Transient.class)
+  @Category(TestCategory.Endpoint.class)
   public void getTeacherNotificationById() {
     // Get teacher from database
     User carl1Teacher =
