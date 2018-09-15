@@ -6,7 +6,6 @@ import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import com.github.polimi_mt_acg.back2school.utils.JacksonCustomMapper;
 
 import javax.ws.rs.ApplicationPath;
-import javax.xml.crypto.Data;
 
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;

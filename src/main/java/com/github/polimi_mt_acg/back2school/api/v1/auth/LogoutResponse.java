@@ -18,10 +18,6 @@ public class LogoutResponse {
 
   public LogoutResponse() {}
 
-  public LogoutResponse(String reason) {
-    this.reason = reason;
-  }
-
   public String getStatus() {
     return status;
   }

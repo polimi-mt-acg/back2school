@@ -6,26 +6,54 @@
 	},
 	"item": [
 		{
-			"name": "authentication",
+			"name": "Authentication",
 			"description": "",
 			"item": [
 				{
-					"name": "login",
+					"name": "auth/login",
 					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"admin@email.com\",\n\t\"password\": \"admin\"\n}"
+						},
 						"url": {
-							"raw": ""
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"auth",
+								"login"
+							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "logout",
+					"name": "auth/logout",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "98d7ee5b18ab4ddc969fc404056b2575"
+							}
+						],
 						"body": {},
 						"url": {
 							"raw": "http://localhost:8080/back2school-0.1/api/v1/auth/logout",
@@ -40,6 +68,43 @@
 								"v1",
 								"auth",
 								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Students",
+			"description": "",
+			"item": [
+				{
+					"name": "students",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "98d7ee5b18ab4ddc969fc404056b2575"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/students",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"students"
 							]
 						}
 					},

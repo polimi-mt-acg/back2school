@@ -11,7 +11,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -64,7 +63,7 @@ public class AuthenticationResource {
 
     // if the user is null because session expired or other reasons
     if (currentUser == null)
-      return Response.ok(new LogoutResponse("invalid session")).build();
+      return Response.status(Response.Status.BAD_REQUEST).build();
 
     Session session = DatabaseHandler.getInstance().getNewSession();
     // invalidate all the still valid user sessions
