@@ -4,6 +4,7 @@ import com.github.polimi_mt_acg.back2school.model.AuthenticationSession;
 import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.model.User_;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
+
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -13,16 +14,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import org.hibernate.Session;
-
-
-/**
- * Replies to a HTTP POST to /auth/logout endpoint.
- *
- * @return The session token is the user is authenticated.
- */
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
 
 /**
  * JAX-RS resource for HTTP client authentication. Check authenticateUser() for additional details
@@ -60,9 +53,9 @@ public class AuthenticationResource {
     return Response.ok(new LoginResponse("authenticated", token)).build();
   }
 
+
   @GET
   @Path("logout")
-  @Consumes(MediaType.TEXT_PLAIN)
   @Produces(MediaType.APPLICATION_JSON)
   public Response userLogout(ContainerRequestContext requestContext) {
     User currentUser = AuthenticationSession.getCurrentUser(requestContext);
