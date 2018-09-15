@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 
 import org.hibernate.Session;
 
-import static org.junit.Assert.assertNotNull;
 
 public class DatabaseSeeder {
 
@@ -150,7 +149,6 @@ public class DatabaseSeeder {
   public static User getSeedUserByRole(String seedFolder, User.Role role) {
     List<User> seedUsers =
         (List<User>) DatabaseSeeder.getEntitiesListFromSeed(seedFolder, "users.json");
-    assertNotNull(seedUsers);
     return seedUsers
         .stream()
         .filter(user -> user.getRole().equals(role))
