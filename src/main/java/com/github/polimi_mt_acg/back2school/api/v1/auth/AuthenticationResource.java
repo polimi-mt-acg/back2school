@@ -51,7 +51,7 @@ public class AuthenticationResource {
 
     String token = authSession.getToken();
 
-    return Response.ok(new LoginResponse("authenticated", token)).build();
+    return Response.ok(new LoginResponse("AUTHENTICATED", token)).build();
   }
 
 

@@ -141,8 +141,7 @@ public class AuthenticationSession implements DeserializeToPersistInterface {
   public static User getCurrentUser(ContainerRequestContext requestContext, Session session) {
     if (requestContext == null) return null;
     String bearerAuthorizationToken = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
-    String authorizationToken = bearerAuthorizationToken.replace("Bearer ", "");
-    return getUserFromToken(authorizationToken, session);
+    return getUserFromToken(bearerAuthorizationToken, session);
   }
 
 
@@ -183,15 +182,16 @@ public class AuthenticationSession implements DeserializeToPersistInterface {
   /**
    * Get the current authenticated user, if any, according to the given token.
    *
-   * @param authorizationToken The token corresponding to the session.
+   * @param bearerAuthorizationToken The token with prefix "Bearer " corresponding to the session.
    * @param session            The Hibernate session to use.
    * @return
    */
-  public static User getUserFromToken(String authorizationToken, Session session) {
+  public static User getUserFromToken(String bearerAuthorizationToken, Session session) {
     // Validate the Authorization token
-    if (authorizationToken == null) return null;
-    String token = authorizationToken.trim();
-    if (authorizationToken.isEmpty()) return null;
+    if (bearerAuthorizationToken == null) return null;
+    String token = bearerAuthorizationToken.replace("Bearer ", "");
+    token = token.trim();
+    if (token.isEmpty()) return null;
 
     // query to get the last valid AuthenticationSession corresponding to the token
     // ------------------------------------
