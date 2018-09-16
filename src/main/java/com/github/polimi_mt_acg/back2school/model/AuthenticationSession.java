@@ -140,7 +140,8 @@ public class AuthenticationSession implements DeserializeToPersistInterface {
 
   public static User getCurrentUser(ContainerRequestContext requestContext, Session session) {
     if (requestContext == null) return null;
-    String authorizationToken = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
+    String bearerAuthorizationToken = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
+    String authorizationToken = bearerAuthorizationToken.replace("Bearer ", "");
     return getUserFromToken(authorizationToken, session);
   }
 
