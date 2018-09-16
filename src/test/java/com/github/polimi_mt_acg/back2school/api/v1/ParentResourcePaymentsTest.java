@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.polimi_mt_acg.back2school.api.v1.auth.AuthenticationResource;
 import com.github.polimi_mt_acg.back2school.api.v1.parents.*;
-import com.github.polimi_mt_acg.back2school.model.Appointment;
 import com.github.polimi_mt_acg.back2school.model.Payment;
 import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
@@ -25,7 +24,6 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -60,7 +58,7 @@ public class ParentResourcePaymentsTest {
   @Category(TestCategory.Endpoint.class)
   public void getParentPaymentsFromAdmin() throws JsonProcessingException {
     User parent = buildMarcos(1);
-    URI parentURI = doParentPost(1,parent);
+    URI parentURI = doParentPost(parent);
 
     Path fullPath = Paths.get("/", parentURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
@@ -87,7 +85,7 @@ public class ParentResourcePaymentsTest {
   @Category(TestCategory.Endpoint.class)
   public void getParentPaymentsFromSameParent() throws JsonProcessingException {
     User parent = buildMarcos(2);
-    URI parentURI = doParentPost(2,parent);
+    URI parentURI = doParentPost(parent);
 
     Path fullPath = Paths.get("/", parentURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
@@ -112,7 +110,7 @@ public class ParentResourcePaymentsTest {
   @Category(TestCategory.Endpoint.class)
   public void postParentPaymentsFromAdmin() throws JsonProcessingException {
     User parent = buildMarcos(3);
-    URI parentURI = doParentPost(8, parent);
+    URI parentURI = doParentPost(parent);
 
     Path fullPath = Paths.get("/", parentURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
@@ -144,7 +142,7 @@ public class ParentResourcePaymentsTest {
   @Category(TestCategory.Endpoint.class)
   public void postParentPaymentsFromParent() throws JsonProcessingException {
     User parent = buildMarcos(4);
-    URI parentURI = doParentPost(3, parent);
+    URI parentURI = doParentPost(parent);
 
     Path fullPath = Paths.get("/", parentURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
@@ -167,7 +165,7 @@ public class ParentResourcePaymentsTest {
   @Category(TestCategory.Endpoint.class)
   public void getParentPaymentByIdFromAdministrator() throws JsonProcessingException {
     User parent = buildMarcos(5);
-    URI parentURI = doParentPost(3, parent);
+    URI parentURI = doParentPost(parent);
     User admin = get(User.Role.ADMINISTRATOR);
 
     // Now query /parents/{bob_id} from admin
@@ -204,7 +202,7 @@ public class ParentResourcePaymentsTest {
   @Category(TestCategory.Endpoint.class)
   public void getParentPaymentByIdFromSameParent() throws JsonProcessingException {
     User parent = buildMarcos(6);
-    URI parentURI = doParentPost(7, parent);
+    URI parentURI = doParentPost(parent);
     User admin = get(User.Role.ADMINISTRATOR);
 
     // Now query /parents/{bob_id} from admin
@@ -241,7 +239,7 @@ public class ParentResourcePaymentsTest {
   @Category(TestCategory.Endpoint.class)
   public void postParentPaymentsPaidFromParent() throws JsonProcessingException {
     User parent = buildMarcos(7);
-    URI parentURI = doParentPost(5, parent);
+    URI parentURI = doParentPost(parent);
 
     Path fullPath = Paths.get("/", parentURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
@@ -310,14 +308,11 @@ public class ParentResourcePaymentsTest {
    *
    * @return The inserted resource URI.
    */
-  private URI doParentPost(int copynumber, User parent) {
-    User child = getAChild(copynumber);
-    String childEmail = child.getEmail();
-
-    // Now build a PostParentRequest
-    PostParentRequest request = new PostParentRequest();
-    request.setParentAndPassword(parent, parent.getSeedPassword());
-    request.setStudentEmail(childEmail);
+  private URI doParentPost(User parent) {
+    // Now build a PostUserRequest
+    PostUserRequest request = new PostUserRequest();
+    request.setUser(parent);
+    request.setPassword(parent.getSeedPassword());
 
     User admin = get(User.Role.ADMINISTRATOR);
 

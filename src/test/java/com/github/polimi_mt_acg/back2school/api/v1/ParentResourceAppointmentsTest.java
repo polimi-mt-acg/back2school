@@ -1,11 +1,9 @@
 package com.github.polimi_mt_acg.back2school.api.v1;
 
 import com.github.polimi_mt_acg.back2school.api.v1.auth.AuthenticationResource;
-import com.github.polimi_mt_acg.back2school.api.v1.parents.ParentsResponse;
 import com.github.polimi_mt_acg.back2school.api.v1.parents.*;
 import com.github.polimi_mt_acg.back2school.model.Appointment;
 import com.github.polimi_mt_acg.back2school.model.User;
-import com.github.polimi_mt_acg.back2school.model.User_;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseSeeder;
 import com.github.polimi_mt_acg.back2school.utils.TestCategory;
@@ -17,7 +15,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.print;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -35,7 +32,6 @@ import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Response;
 
 import java.time.LocalDateTime;
-import java.time.LocalDate;
 import java.time.Month;
 
 public class ParentResourceAppointmentsTest {
@@ -69,7 +65,7 @@ public class ParentResourceAppointmentsTest {
   @Category(TestCategory.Endpoint.class)
   public void getParentAppointmentsFromAdmin() throws JsonProcessingException {
     User parent = buildMarcos(1);
-    URI parentURI = doParentPost(2,parent);
+    URI parentURI = doParentPost(parent);
 
     Path fullPath = Paths.get("/", parentURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
@@ -96,7 +92,7 @@ public class ParentResourceAppointmentsTest {
   @Category(TestCategory.Endpoint.class)
   public void getParentAppointmentsFromSameParent() throws JsonProcessingException {
     User parent = buildMarcos(2);
-    URI parentURI = doParentPost(2,parent);
+    URI parentURI = doParentPost(parent);
 
     Path fullPath = Paths.get("/", parentURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
@@ -122,7 +118,7 @@ public class ParentResourceAppointmentsTest {
   @Category(TestCategory.Endpoint.class)
   public void postParentAppointmentFromAdmin() throws JsonProcessingException {
     User parent = buildMarcos(3);
-    URI parentURI = doParentPost(8, parent);
+    URI parentURI = doParentPost(parent);
 
     PostParentAppointmentRequest postParentAppointmentRequest =
             buildAppointment(1,2, "carl@email.com");
@@ -164,7 +160,7 @@ public class ParentResourceAppointmentsTest {
   @Category(TestCategory.Endpoint.class)
   public void postParentAppointmentFromParent() throws JsonProcessingException {
     User parent = buildMarcos(4);
-    URI parentURI = doParentPost(8, parent);
+    URI parentURI = doParentPost(parent);
 
     PostParentAppointmentRequest postParentAppointmentRequest =
             buildAppointment(15,3, "carl@email.com");
@@ -204,7 +200,7 @@ public class ParentResourceAppointmentsTest {
   @Category(TestCategory.Endpoint.class)
   public void postTwoParentAppointmentsInConflictFromAdmin() throws JsonProcessingException {
     User parent = buildMarcos(5);
-    URI parentURI = doParentPost(8, parent);
+    URI parentURI = doParentPost(parent);
     Path fullPath = Paths.get("/", parentURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
     String parentID = idPath.toString();
@@ -250,7 +246,7 @@ public class ParentResourceAppointmentsTest {
 
     //Tested conflict between different parent and same teacher
     User parent2 = buildMarcos(6);
-    URI parentURI2 = doParentPost(5, parent2);
+    URI parentURI2 = doParentPost(parent2);
 
     PostParentAppointmentRequest postParentAppointmentRequest4 =
             buildAppointment(30, 1,"carl@email.com");
@@ -293,7 +289,7 @@ public class ParentResourceAppointmentsTest {
   @Category(TestCategory.Endpoint.class)
   public void getParentAppointmentByIdFromAdministrator() throws JsonProcessingException {
     User parent = buildMarcos(7);
-    URI parentURI = doParentPost(3, parent);
+    URI parentURI = doParentPost(parent);
     User admin = get(User.Role.ADMINISTRATOR);
 
     // Now query /parents/{bob_id} from admin
@@ -331,7 +327,7 @@ public class ParentResourceAppointmentsTest {
   @Category(TestCategory.Endpoint.class)
   public void getParentAppointmentByIdFromSameParent() throws JsonProcessingException {
     User parent = buildMarcos(8);
-    URI parentURI = doParentPost(4, parent);
+    URI parentURI = doParentPost(parent);
 
     // Now query /parents/{bob_id} from admin
     Path fullPath = Paths.get("/", parentURI.getPath());
@@ -368,7 +364,7 @@ public class ParentResourceAppointmentsTest {
   @Category(TestCategory.Endpoint.class)
   public void putParentAppointmentFromParent() throws JsonProcessingException {
     User parent = buildMarcos(9);
-    URI parentURI = doParentPost(2, parent);
+    URI parentURI = doParentPost(parent);
 
     Path fullPath = Paths.get("/", parentURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
@@ -448,14 +444,11 @@ public class ParentResourceAppointmentsTest {
    *
    * @return The inserted resource URI.
    */
-  private URI doParentPost(int copynumber, User parent) {
-    User child = getAChild(copynumber);
-    String childEmail = child.getEmail();
-
-    // Now build a PostParentRequest
-    PostParentRequest request = new PostParentRequest();
-    request.setParentAndPassword(parent, parent.getSeedPassword());
-    request.setStudentEmail(childEmail);
+  private URI doParentPost(User parent) {
+    // Now build a PostUserRequest
+    PostUserRequest request = new PostUserRequest();
+    request.setUser(parent);
+    request.setPassword(parent.getSeedPassword());
 
     User admin = get(User.Role.ADMINISTRATOR);
 

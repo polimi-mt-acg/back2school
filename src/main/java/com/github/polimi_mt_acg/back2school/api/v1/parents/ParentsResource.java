@@ -1,18 +1,18 @@
 package com.github.polimi_mt_acg.back2school.api.v1.parents;
 
+import com.github.polimi_mt_acg.back2school.api.v1.PostUserRequest;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.AdministratorSecured;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.ParentAdministratorSecured;
 import com.github.polimi_mt_acg.back2school.model.*;
 import com.github.polimi_mt_acg.back2school.model.Class;
 import com.github.polimi_mt_acg.back2school.model.User.Role;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
+
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import javax.jws.soap.SOAPBinding;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -37,7 +37,7 @@ public class ParentsResource {
   @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
   public Response getParents(@Context UriInfo uriInfo) {
-  // Get parents from DB
+    // Get parents from DB
     List<User> parents =
         DatabaseHandler.getInstance()
             .getListSelectFromWhereEqual(User.class, User_.role, Role.PARENT);
@@ -58,49 +58,24 @@ public class ParentsResource {
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @AdministratorSecured
-  public Response postParents(PostParentRequest request, @Context UriInfo uriInfo) {
-    User parent = request.getParent();
-    String studentEmail = request.getStudentEmail();
+  public Response postParents(PostUserRequest request, @Context UriInfo uriInfo) {
+    User parent = request.getUser();
 
-    DatabaseHandler dbi = DatabaseHandler.getInstance();
-    Session session = dbi.getNewSession();
+    Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 
-    // Check if input user is a parent
-    if (parent.getRole() != Role.PARENT) {
-      return Response.status(Status.BAD_REQUEST).entity("Not a parent.").build();
-    }
-
     // Check if a user with same email already exists, if so, do nothing
-    List<User> result =
-        dbi.getListSelectFromWhereEqual(User.class, User_.email, parent.getEmail(), session);
-    if (!result.isEmpty()) {
+    Optional<User> userOpt =
+        DatabaseHandler.fetchEntityBy(User.class, User_.email, parent.getEmail(), session);
+    if (userOpt.isPresent()) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.CONFLICT).entity("Parent already exists.").build();
+      return Response.status(Status.CONFLICT).entity("User already exists.").build();
     }
+    // force to be a parent since this endpoint meaning
+    parent.setRole(Role.PARENT);
 
-    // Otherwise we accept the request. First we fetch Student entity
-    List<User> studentRes =
-        dbi.getListSelectFromWhereEqual(User.class, User_.email, studentEmail, session);
-    if (studentRes.isEmpty()) {
-      // User with studentEmail email not found
-      session.getTransaction().commit();
-      session.close();
-      return Response.status(Status.BAD_REQUEST).entity("Unregistered student email.").build();
-    }
-
-    User student = studentRes.get(0);
-    if (student.getRole() != Role.STUDENT) {
-      // studentEmail does not belong to a STUDENT
-      session.getTransaction().commit();
-      session.close();
-      return Response.status(Status.BAD_REQUEST).entity("Not a student.").build();
-    }
-
-    parent.addChild(student);
     parent.prepareToPersist();
-
     session.persist(parent);
 
     session.getTransaction().commit(); // Makes parent persisted.
@@ -174,8 +149,8 @@ public class ParentsResource {
     // Fetch User
     User parent = session.get(User.class, Integer.parseInt(parentId));
     if (parent == null) {
-       session.close();
-       return Response.status(Status.NOT_FOUND).build();
+      session.close();
+      return Response.status(Status.NOT_FOUND).build();
     }
 
     ParentChildrenResponse response = new ParentChildrenResponse();
@@ -238,7 +213,6 @@ public class ParentsResource {
     // Add the new children to the parent
     parent.addChild(request.getStudent());
 
-
     session.getTransaction().commit();
     session.close();
 
@@ -251,7 +225,7 @@ public class ParentsResource {
   @ParentAdministratorSecured
   @SameParentSecured
   public Response getParentAppointments(
-          @PathParam("id") String parentId, @Context UriInfo uriInfo) {
+      @PathParam("id") String parentId, @Context UriInfo uriInfo) {
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
     session.beginTransaction();
@@ -265,8 +239,8 @@ public class ParentsResource {
 
     // Fetch appointments of parent
     List<Appointment> appointments =
-            dbi.getListSelectFromWhereEqual(Appointment.class, Appointment_.parent, parent ,session);
-    //ATT: parent
+        dbi.getListSelectFromWhereEqual(Appointment.class, Appointment_.parent, parent, session);
+    // ATT: parent
     ParentAppointmentsResponse response = new ParentAppointmentsResponse();
     List<URI> appointmentsURIs = new ArrayList<>();
 
@@ -282,16 +256,15 @@ public class ParentsResource {
     return Response.ok(response, MediaType.APPLICATION_JSON_TYPE).build();
   }
 
-
   @Path("{id: [0-9]+}/appointments")
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @ParentAdministratorSecured
   @SameParentSecured
   public Response postParentAppointments(
-          @PathParam("id") String parentId,
-          PostParentAppointmentRequest request,
-          @Context UriInfo uriInfo) {
+      @PathParam("id") String parentId,
+      PostParentAppointmentRequest request,
+      @Context UriInfo uriInfo) {
 
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
@@ -307,46 +280,56 @@ public class ParentsResource {
 
     // Fetch the teacher entity by email
     Optional<User> teacherOpt =
-            DatabaseHandler.fetchEntityBy(
-                    User.class, User_.email, request.getTeacherEmail(), session);
+        DatabaseHandler.fetchEntityBy(User.class, User_.email, request.getTeacherEmail(), session);
     if (!teacherOpt.isPresent()) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND).entity("Unknown teacher name").build();
     }
 
-    //To check! Do we need to do these checks?
-    //Get appointments of the teacher
+    // To check! Do we need to do these checks?
+    // Get appointments of the teacher
     List<Appointment> resultTeacher =
-            dbi.getListSelectFromWhereEqual(Appointment.class, Appointment_.teacher, teacherOpt.get(), session);
+        dbi.getListSelectFromWhereEqual(
+            Appointment.class, Appointment_.teacher, teacherOpt.get(), session);
 
-    //Is the teacher available in that time slot?
-    for(Appointment a: resultTeacher){
-      if((a.getDatetimeStart().isBefore(request.getDatetimeStart()) && a.getDatetimeEnd().isAfter(request.getDatetimeStart()))
-              || (a.getDatetimeStart().isAfter(request.getDatetimeStart()) && a.getDatetimeEnd().isBefore(request.getDatetimeEnd()))
-              || (a.getDatetimeStart().isBefore(request.getDatetimeEnd()) && a.getDatetimeEnd().isAfter(request.getDatetimeEnd()))
-              || (a.getDatetimeStart().isEqual(request.getDatetimeStart()) && a.getDatetimeEnd().isEqual(request.getDatetimeEnd()))
-              ){
+    // Is the teacher available in that time slot?
+    for (Appointment a : resultTeacher) {
+      if ((a.getDatetimeStart().isBefore(request.getDatetimeStart())
+              && a.getDatetimeEnd().isAfter(request.getDatetimeStart()))
+          || (a.getDatetimeStart().isAfter(request.getDatetimeStart())
+              && a.getDatetimeEnd().isBefore(request.getDatetimeEnd()))
+          || (a.getDatetimeStart().isBefore(request.getDatetimeEnd())
+              && a.getDatetimeEnd().isAfter(request.getDatetimeEnd()))
+          || (a.getDatetimeStart().isEqual(request.getDatetimeStart())
+              && a.getDatetimeEnd().isEqual(request.getDatetimeEnd()))) {
         session.getTransaction().commit();
         session.close();
-        return Response.status(Status.CONFLICT).entity("Teacher has already an appointment in that time slot.").build();
+        return Response.status(Status.CONFLICT)
+            .entity("Teacher has already an appointment in that time slot.")
+            .build();
       }
     }
 
-    //Get appointments of the parent
+    // Get appointments of the parent
     List<Appointment> resultParent =
-            dbi.getListSelectFromWhereEqual(Appointment.class, Appointment_.parent, parent, session);
+        dbi.getListSelectFromWhereEqual(Appointment.class, Appointment_.parent, parent, session);
 
-    //Is the parent available in that time slot?
-    for(Appointment a: resultParent){
-      if((a.getDatetimeStart().isBefore(request.getDatetimeStart()) && a.getDatetimeEnd().isAfter(request.getDatetimeStart()))
-              || (a.getDatetimeStart().isAfter(request.getDatetimeStart()) && a.getDatetimeEnd().isBefore(request.getDatetimeEnd()))
-              || (a.getDatetimeStart().isBefore(request.getDatetimeEnd()) && a.getDatetimeEnd().isAfter(request.getDatetimeEnd()))
-              || (a.getDatetimeStart().isEqual(request.getDatetimeStart()) && a.getDatetimeEnd().isEqual(request.getDatetimeEnd()))
-              ){
+    // Is the parent available in that time slot?
+    for (Appointment a : resultParent) {
+      if ((a.getDatetimeStart().isBefore(request.getDatetimeStart())
+              && a.getDatetimeEnd().isAfter(request.getDatetimeStart()))
+          || (a.getDatetimeStart().isAfter(request.getDatetimeStart())
+              && a.getDatetimeEnd().isBefore(request.getDatetimeEnd()))
+          || (a.getDatetimeStart().isBefore(request.getDatetimeEnd())
+              && a.getDatetimeEnd().isAfter(request.getDatetimeEnd()))
+          || (a.getDatetimeStart().isEqual(request.getDatetimeStart())
+              && a.getDatetimeEnd().isEqual(request.getDatetimeEnd()))) {
         session.getTransaction().commit();
         session.close();
-        return Response.status(Status.CONFLICT).entity("Parent has already an appointment in that time slot.").build();
+        return Response.status(Status.CONFLICT)
+            .entity("Parent has already an appointment in that time slot.")
+            .build();
       }
     }
 
@@ -371,21 +354,24 @@ public class ParentsResource {
   @ParentAdministratorSecured
   @SameParentSecured
   public Response getParentAppointmentById(
-          @PathParam("appointment_id") String appointmentId,@PathParam("id") String parentId, @Context UriInfo uriInfo) {
+      @PathParam("appointment_id") String appointmentId,
+      @PathParam("id") String parentId,
+      @Context UriInfo uriInfo) {
 
     // Fetch appointment
-    Optional<Appointment> appointmentOpt = DatabaseHandler.fetchEntityBy(Appointment.class, Appointment_.id, Integer.parseInt(appointmentId));
+    Optional<Appointment> appointmentOpt =
+        DatabaseHandler.fetchEntityBy(
+            Appointment.class, Appointment_.id, Integer.parseInt(appointmentId));
     if (!appointmentOpt.isPresent()) {
       return Response.status(Status.NOT_FOUND).entity("Unknown appointment id").build();
     }
 
-    if(appointmentOpt.get().getParent().getId() != Integer.parseInt(parentId)){
+    if (appointmentOpt.get().getParent().getId() != Integer.parseInt(parentId)) {
       return Response.status(Status.CONFLICT).entity("Not current parent's appointment").build();
     }
 
     return Response.ok(appointmentOpt.get(), MediaType.APPLICATION_JSON_TYPE).build();
   }
-
 
   @Path("{id: [0-9]+}/appointments/{appointment_id: [0-9]+}")
   @PUT
@@ -393,11 +379,11 @@ public class ParentsResource {
   @ParentSecured
   @SameParentSecured
   public Response putParentAppointmentById(
-          PostParentAppointmentRequest request,
-          @PathParam("id") String parentId,
-          @PathParam("appointment_id") String appointmentId,
-          @Context ContainerRequestContext crc,
-          @Context UriInfo uriInfo) {
+      PostParentAppointmentRequest request,
+      @PathParam("id") String parentId,
+      @PathParam("appointment_id") String appointmentId,
+      @Context ContainerRequestContext crc,
+      @Context UriInfo uriInfo) {
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
     session.beginTransaction();
@@ -412,8 +398,7 @@ public class ParentsResource {
 
     // Fetch the teacher entity by email
     Optional<User> teacherOpt =
-            DatabaseHandler.fetchEntityBy(
-                    User.class, User_.email, request.getTeacherEmail(), session);
+        DatabaseHandler.fetchEntityBy(User.class, User_.email, request.getTeacherEmail(), session);
     if (!teacherOpt.isPresent()) {
       session.getTransaction().commit();
       session.close();
@@ -442,43 +427,56 @@ public class ParentsResource {
       return Response.notModified().entity("You cannot modify this appointment.").build();
     }
 
-    //Checks like in POST!But we don't check over the modified appointment!
+    // Checks like in POST!But we don't check over the modified appointment!
 
-    //Get appointments of the teacher
+    // Get appointments of the teacher
     List<Appointment> resultTeacher =
-            dbi.getListSelectFromWhereEqual(Appointment.class, Appointment_.teacher, teacherOpt.get(), session);
-    //Is the teacher available in that time slot?
-    for(Appointment a: resultTeacher){
-      if(((a.getDatetimeStart().isBefore(request.getDatetimeStart()) && a.getDatetimeEnd().isAfter(request.getDatetimeStart()))
-              || (a.getDatetimeStart().isAfter(request.getDatetimeStart()) && a.getDatetimeEnd().isBefore(request.getDatetimeEnd()))
-              || (a.getDatetimeStart().isBefore(request.getDatetimeEnd()) && a.getDatetimeEnd().isAfter(request.getDatetimeEnd()))
-              || (a.getDatetimeStart().isEqual(request.getDatetimeStart()) && a.getDatetimeEnd().isEqual(request.getDatetimeEnd()))
-              )&& a.getId()!= appointment.getId()){
+        dbi.getListSelectFromWhereEqual(
+            Appointment.class, Appointment_.teacher, teacherOpt.get(), session);
+    // Is the teacher available in that time slot?
+    for (Appointment a : resultTeacher) {
+      if (((a.getDatetimeStart().isBefore(request.getDatetimeStart())
+                  && a.getDatetimeEnd().isAfter(request.getDatetimeStart()))
+              || (a.getDatetimeStart().isAfter(request.getDatetimeStart())
+                  && a.getDatetimeEnd().isBefore(request.getDatetimeEnd()))
+              || (a.getDatetimeStart().isBefore(request.getDatetimeEnd())
+                  && a.getDatetimeEnd().isAfter(request.getDatetimeEnd()))
+              || (a.getDatetimeStart().isEqual(request.getDatetimeStart())
+                  && a.getDatetimeEnd().isEqual(request.getDatetimeEnd())))
+          && a.getId() != appointment.getId()) {
         session.getTransaction().commit();
         session.close();
-        return Response.status(Status.CONFLICT).entity("Teacher has already an appointment in that time slot.").build();
+        return Response.status(Status.CONFLICT)
+            .entity("Teacher has already an appointment in that time slot.")
+            .build();
       }
     }
 
-    //Get appointments of the parent
+    // Get appointments of the parent
     List<Appointment> resultParent =
-            dbi.getListSelectFromWhereEqual(Appointment.class, Appointment_.parent, parent, session);
-    //Is the parent available in that time slot?
-    for(Appointment a: resultParent){
-      if(((a.getDatetimeStart().isBefore(request.getDatetimeStart()) && a.getDatetimeEnd().isAfter(request.getDatetimeStart()))
-              || (a.getDatetimeStart().isAfter(request.getDatetimeStart()) && a.getDatetimeEnd().isBefore(request.getDatetimeEnd()))
-              || (a.getDatetimeStart().isBefore(request.getDatetimeEnd()) && a.getDatetimeEnd().isAfter(request.getDatetimeEnd()))
-              || (a.getDatetimeStart().isEqual(request.getDatetimeStart()) && a.getDatetimeEnd().isEqual(request.getDatetimeEnd()))
-              )&& a.getId()!= appointment.getId()){
+        dbi.getListSelectFromWhereEqual(Appointment.class, Appointment_.parent, parent, session);
+    // Is the parent available in that time slot?
+    for (Appointment a : resultParent) {
+      if (((a.getDatetimeStart().isBefore(request.getDatetimeStart())
+                  && a.getDatetimeEnd().isAfter(request.getDatetimeStart()))
+              || (a.getDatetimeStart().isAfter(request.getDatetimeStart())
+                  && a.getDatetimeEnd().isBefore(request.getDatetimeEnd()))
+              || (a.getDatetimeStart().isBefore(request.getDatetimeEnd())
+                  && a.getDatetimeEnd().isAfter(request.getDatetimeEnd()))
+              || (a.getDatetimeStart().isEqual(request.getDatetimeStart())
+                  && a.getDatetimeEnd().isEqual(request.getDatetimeEnd())))
+          && a.getId() != appointment.getId()) {
         session.getTransaction().commit();
         session.close();
-        return Response.status(Status.CONFLICT).entity("Parent has already an appointment in that time slot.").build();
+        return Response.status(Status.CONFLICT)
+            .entity("Parent has already an appointment in that time slot.")
+            .build();
       }
     }
 
     // Update appointment fields
-//    appointment.setParent(parent); //Remain the same
-//    appointment.setTeacher(teacherOpt.get()); //Remain the same
+    //    appointment.setUser(parent); //Remain the same
+    //    appointment.setTeacher(teacherOpt.get()); //Remain the same
     appointment.setDatetimeStart(request.getDatetimeStart());
     appointment.setDatetimeEnd(request.getDatetimeEnd());
 
@@ -493,8 +491,7 @@ public class ParentsResource {
   @Produces(MediaType.APPLICATION_JSON)
   @ParentAdministratorSecured
   @SameParentSecured
-  public Response getParentPayments(
-          @PathParam("id") String parentId, @Context UriInfo uriInfo) {
+  public Response getParentPayments(@PathParam("id") String parentId, @Context UriInfo uriInfo) {
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
     session.beginTransaction();
@@ -508,8 +505,8 @@ public class ParentsResource {
 
     // Fetch payments of parent
     List<Payment> payments =
-            dbi.getListSelectFromWhereEqual(Payment.class, Payment_.placedBy, parent ,session);
-    //ATT: parent
+        dbi.getListSelectFromWhereEqual(Payment.class, Payment_.placedBy, parent, session);
+    // ATT: parent
     ParentPaymentsResponse response = new ParentPaymentsResponse();
     List<URI> paymentsURIs = new ArrayList<>();
 
@@ -525,15 +522,14 @@ public class ParentsResource {
     return Response.ok(response, MediaType.APPLICATION_JSON_TYPE).build();
   }
 
-
   @Path("{id: [0-9]+}/payments")
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @AdministratorSecured
   public Response postParentPayments(
-          @PathParam("id") String parentId,
-          PostParentPaymentRequest request,
-          @Context UriInfo uriInfo) {
+      @PathParam("id") String parentId,
+      PostParentPaymentRequest request,
+      @Context UriInfo uriInfo) {
 
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
@@ -546,7 +542,7 @@ public class ParentsResource {
       session.close();
       return Response.status(Status.NOT_FOUND).build();
     }
-    if(!parent.getEmail().equals(request.getPlacedByEmail())){
+    if (!parent.getEmail().equals(request.getPlacedByEmail())) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.CONFLICT).build();
@@ -554,8 +550,8 @@ public class ParentsResource {
 
     // Fetch the admin entity by email
     Optional<User> adminOpt =
-            DatabaseHandler.fetchEntityBy(
-                    User.class, User_.email, request.getAssignedToEmail(), session);
+        DatabaseHandler.fetchEntityBy(
+            User.class, User_.email, request.getAssignedToEmail(), session);
     if (!adminOpt.isPresent()) {
       session.getTransaction().commit();
       session.close();
@@ -587,15 +583,18 @@ public class ParentsResource {
   @ParentAdministratorSecured
   @SameParentSecured
   public Response getParentPaymentById(
-          @PathParam("payment_id") String paymentId,@PathParam("id") String parentId, @Context UriInfo uriInfo) {
+      @PathParam("payment_id") String paymentId,
+      @PathParam("id") String parentId,
+      @Context UriInfo uriInfo) {
 
     // Fetch appointment
-    Optional<Payment> paymentOpt = DatabaseHandler.fetchEntityBy(Payment.class, Payment_.id, Integer.parseInt(paymentId));
+    Optional<Payment> paymentOpt =
+        DatabaseHandler.fetchEntityBy(Payment.class, Payment_.id, Integer.parseInt(paymentId));
     if (!paymentOpt.isPresent()) {
       return Response.status(Status.NOT_FOUND).entity("Unknown payment id").build();
     }
 
-    if(paymentOpt.get().getPlacedBy().getId() != Integer.parseInt(parentId)){
+    if (paymentOpt.get().getPlacedBy().getId() != Integer.parseInt(parentId)) {
       return Response.status(Status.CONFLICT).entity("Not current parent's payment").build();
     }
 
@@ -608,10 +607,10 @@ public class ParentsResource {
   @ParentSecured
   @SameParentSecured
   public Response postParentPaymentPaid(
-          @PathParam("payment_id") String paymentId,
-          @PathParam("id") String parentId,
-          PostParentPaymentPayRequest request,
-          @Context UriInfo uriInfo) {
+      @PathParam("payment_id") String paymentId,
+      @PathParam("id") String parentId,
+      PostParentPaymentPayRequest request,
+      @Context UriInfo uriInfo) {
 
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
@@ -632,13 +631,13 @@ public class ParentsResource {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    if(!parent.getEmail().equals(payment.getPlacedBy().getEmail())){
+    if (!parent.getEmail().equals(payment.getPlacedBy().getEmail())) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.CONFLICT).build();
     }
 
-    if(!request.isPaid()){
+    if (!request.isPaid()) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.CONFLICT).build();
@@ -651,7 +650,7 @@ public class ParentsResource {
     session.getTransaction().commit();
     session.close();
 
-    //Here the payment done is returned
+    // Here the payment done is returned
     return Response.ok(payment, MediaType.APPLICATION_JSON_TYPE).build();
   }
 
@@ -661,7 +660,7 @@ public class ParentsResource {
   @ParentAdministratorSecured
   @SameParentSecured
   public Response getParentNotifications(
-          @PathParam("id") String parentId, @Context UriInfo uriInfo) {
+      @PathParam("id") String parentId, @Context UriInfo uriInfo) {
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
     session.beginTransaction();
@@ -674,37 +673,40 @@ public class ParentsResource {
     }
 
     // Fetch notification for the parent
-    //Three possible notifications type for the parent:
+    // Three possible notifications type for the parent:
 
-    //1:General Parents
+    // 1:General Parents
     List<NotificationGeneralParents> notificationsGP =
-            dbi.getListSelectFrom(NotificationGeneralParents.class);
+        dbi.getListSelectFrom(NotificationGeneralParents.class);
 
-    //2:Class Parent
-    //Initialized an empty NotificationClassParent list
-    List<NotificationClassParent> notificationsCP = dbi.getListSelectFromWhereEqual(
-            NotificationClassParent.class,
-            NotificationClassParent_.text,
-            "FOO", session);
-    for(User child : parent.getChildren()){
+    // 2:Class Parent
+    // Initialized an empty NotificationClassParent list
+    List<NotificationClassParent> notificationsCP =
+        dbi.getListSelectFromWhereEqual(
+            NotificationClassParent.class, NotificationClassParent_.text, "FOO", session);
+    for (User child : parent.getChildren()) {
       List<Class> classes = dbi.getListSelectFrom(Class.class);
-      for(Class cl : classes ){
-        for(User student : cl.getClassStudents()){
-          if (child.getEmail().equals(student.getEmail())){
+      for (Class cl : classes) {
+        for (User student : cl.getClassStudents()) {
+          if (child.getEmail().equals(student.getEmail())) {
             notificationsCP.addAll(
-                    dbi.getListSelectFromWhereEqual(
-                            NotificationClassParent.class,
-                            NotificationClassParent_.targetClass,
-                            cl, session));
+                dbi.getListSelectFromWhereEqual(
+                    NotificationClassParent.class,
+                    NotificationClassParent_.targetClass,
+                    cl,
+                    session));
           }
         }
       }
     }
 
-    //3:Personal Parent
+    // 3:Personal Parent
     List<NotificationPersonalParent> notificationPP =
-            dbi.getListSelectFromWhereEqual(NotificationPersonalParent.class,
-                    NotificationPersonalParent_.targetUser,parent,session);
+        dbi.getListSelectFromWhereEqual(
+            NotificationPersonalParent.class,
+            NotificationPersonalParent_.targetUser,
+            parent,
+            session);
 
     ParentNotificationsResponse response = new ParentNotificationsResponse();
     List<URI> notificationsURIs = new ArrayList<>();
@@ -739,9 +741,9 @@ public class ParentsResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @AdministratorSecured
   public Response postParentNotifications(
-          @PathParam("id") String parentId,
-          PostParentNotificationRequest request,
-          @Context UriInfo uriInfo) {
+      @PathParam("id") String parentId,
+      PostParentNotificationRequest request,
+      @Context UriInfo uriInfo) {
 
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
@@ -755,12 +757,11 @@ public class ParentsResource {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    //Here the admin can POST only a direct notification to this parent
+    // Here the admin can POST only a direct notification to this parent
 
     // Fetch the admin entity by email
     Optional<User> adminOpt =
-            DatabaseHandler.fetchEntityBy(
-                    User.class, User_.email, request.getCreatorEmail(), session);
+        DatabaseHandler.fetchEntityBy(User.class, User_.email, request.getCreatorEmail(), session);
     if (!adminOpt.isPresent()) {
       session.getTransaction().commit();
       session.close();
@@ -783,14 +784,15 @@ public class ParentsResource {
     return Response.created(uri).build();
   }
 
-
   @Path("{id: [0-9]+}/notifications/{notification_id: [0-9]+}")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @ParentAdministratorSecured
   @SameParentSecured
   public Response getParentNotificationById(
-          @PathParam("notification_id") String notificationId,@PathParam("id") String parentId, @Context UriInfo uriInfo) {
+      @PathParam("notification_id") String notificationId,
+      @PathParam("id") String parentId,
+      @Context UriInfo uriInfo) {
 
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
@@ -805,29 +807,46 @@ public class ParentsResource {
     }
 
     // Fetch notification
-    Optional<NotificationGeneralParents> notificationOptGP = DatabaseHandler.fetchEntityBy(NotificationGeneralParents.class, NotificationGeneralParents_.id, Integer.parseInt(notificationId),session);
-    Optional<NotificationClassParent> notificationOptCP = DatabaseHandler.fetchEntityBy(NotificationClassParent.class, NotificationClassParent_.id, Integer.parseInt(notificationId),session);
-    Optional<NotificationPersonalParent> notificationOptPP = DatabaseHandler.fetchEntityBy(NotificationPersonalParent.class, NotificationPersonalParent_.id, Integer.parseInt(notificationId),session);
-    if ((!notificationOptGP.isPresent()) && (!notificationOptCP.isPresent()) && (!notificationOptPP.isPresent())) {
+    Optional<NotificationGeneralParents> notificationOptGP =
+        DatabaseHandler.fetchEntityBy(
+            NotificationGeneralParents.class,
+            NotificationGeneralParents_.id,
+            Integer.parseInt(notificationId),
+            session);
+    Optional<NotificationClassParent> notificationOptCP =
+        DatabaseHandler.fetchEntityBy(
+            NotificationClassParent.class,
+            NotificationClassParent_.id,
+            Integer.parseInt(notificationId),
+            session);
+    Optional<NotificationPersonalParent> notificationOptPP =
+        DatabaseHandler.fetchEntityBy(
+            NotificationPersonalParent.class,
+            NotificationPersonalParent_.id,
+            Integer.parseInt(notificationId),
+            session);
+    if ((!notificationOptGP.isPresent())
+        && (!notificationOptCP.isPresent())
+        && (!notificationOptPP.isPresent())) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND).entity("Unknown notification id").build();
     }
 
-    if(notificationOptGP.isPresent()){
+    if (notificationOptGP.isPresent()) {
       session.getTransaction().commit();
       session.close();
       return Response.ok(notificationOptGP.get(), MediaType.APPLICATION_JSON_TYPE).build();
     }
 
-    if (notificationOptCP.isPresent() ) {
+    if (notificationOptCP.isPresent()) {
       // Check if the parent can read the notification
       NotificationClassParent notificationCP = notificationOptCP.get();
       Class targetClass = notificationCP.getTargetClass();
       List<User> children = parent.getChildren();
       for (User child : children) {
         for (User student : targetClass.getClassStudents()) {
-          if (child.getId() == student.getId() ) {
+          if (child.getId() == student.getId()) {
             session.getTransaction().commit();
             session.close();
             return Response.ok(notificationOptCP.get(), MediaType.APPLICATION_JSON_TYPE).build();
@@ -836,8 +855,8 @@ public class ParentsResource {
       }
     }
 
-    if(notificationOptPP.isPresent()){
-      if(notificationOptPP.get().getTargetUser().getId() == (parent.getId())){
+    if (notificationOptPP.isPresent()) {
+      if (notificationOptPP.get().getTargetUser().getId() == (parent.getId())) {
         session.getTransaction().commit();
         session.close();
         return Response.ok(notificationOptPP.get(), MediaType.APPLICATION_JSON_TYPE).build();
@@ -846,6 +865,8 @@ public class ParentsResource {
 
     session.getTransaction().commit();
     session.close();
-    return Response.status(Status.UNAUTHORIZED).entity("Current parent can't get the requested notification").build();
- }
+    return Response.status(Status.UNAUTHORIZED)
+        .entity("Current parent can't get the requested notification")
+        .build();
+  }
 }

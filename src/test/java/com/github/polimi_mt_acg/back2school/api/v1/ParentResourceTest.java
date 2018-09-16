@@ -3,9 +3,7 @@ package com.github.polimi_mt_acg.back2school.api.v1;
 import com.github.polimi_mt_acg.back2school.api.v1.auth.AuthenticationResource;
 import com.github.polimi_mt_acg.back2school.api.v1.parents.ParentsResponse;
 import com.github.polimi_mt_acg.back2school.api.v1.parents.*;
-import com.github.polimi_mt_acg.back2school.model.Appointment;
 import com.github.polimi_mt_acg.back2school.model.User;
-import com.github.polimi_mt_acg.back2school.model.User_;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseSeeder;
 import com.github.polimi_mt_acg.back2school.utils.TestCategory;
@@ -17,7 +15,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.print;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -35,7 +32,6 @@ import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Response;
 
 import java.time.LocalDateTime;
-import java.time.LocalDate;
 import java.time.Month;
 
 public class ParentResourceTest {
@@ -101,7 +97,7 @@ public class ParentResourceTest {
   @Test
   @Category(TestCategory.Endpoint.class)
   public void postParents() {
-    URI resourceURI = doParentPost(0, buildMarcos(0));
+    URI resourceURI = doParentPost(buildMarcos(0));
 
     System.out.println(resourceURI);
   }
@@ -110,7 +106,7 @@ public class ParentResourceTest {
   @Category(TestCategory.Endpoint.class)
   public void getParentByIdFromAdministrator() throws JsonProcessingException {
     User marcos = buildMarcos(1);
-    URI postMarcos = doParentPost(1, marcos);
+    URI postMarcos = doParentPost(marcos);
     User admin = get(User.Role.ADMINISTRATOR);
 
     // Now query /parents/{bob_id} from admin
@@ -138,7 +134,7 @@ public class ParentResourceTest {
     User seedParent = DatabaseSeeder.getSeedUserByRole("scenarioParents_ToPost1", User.Role.PARENT);
     assertNotNull(seedParent);
 
-    URI postParent = doParentPost(2, seedParent);
+    URI postParent = doParentPost(seedParent);
     User admin = get(User.Role.ADMINISTRATOR);
 
     // Now query /parents/{bob_id} from admin
@@ -162,7 +158,7 @@ public class ParentResourceTest {
     User seedParent = DatabaseSeeder.getSeedUserByRole("scenarioParents_ToPost2", User.Role.PARENT);
     assertNotNull(seedParent);
 
-    URI postParent = doParentPost(3, seedParent);
+    URI postParent = doParentPost(seedParent);
 
     // Now query /parents/{bob_id} from admin
     Path fullPath = Paths.get("/", postParent.getPath());
@@ -192,7 +188,7 @@ public class ParentResourceTest {
     User admin = get(User.Role.ADMINISTRATOR);
 
     User parent = buildMarcos(2);
-    URI parentURI = doParentPost(4, parent);
+    URI parentURI = doParentPost(parent);
 
     Invocation getParent =
         RestFactory.getAuthenticatedInvocationBuilder(admin, parentURI).buildGet();
@@ -236,7 +232,7 @@ public class ParentResourceTest {
   public void putParentByIdFromSameParent() throws JsonProcessingException {
     // Get an admin
     User parent = buildMarcos(3);
-    URI parentURI = doParentPost(5, parent);
+    URI parentURI = doParentPost(parent);
     Path fullPath = Paths.get("/", parentURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
     String parentID = idPath.toString();
@@ -286,13 +282,23 @@ public class ParentResourceTest {
   @Category(TestCategory.Endpoint.class)
   public void getParentChildrenFromAdmin() throws JsonProcessingException {
     User parent = buildMarcos(4);
-    URI parentURI = doParentPost(6, parent);
+    URI parentURI = doParentPost(parent);
+    User child = getAChild(6);
 
     Path fullPath = Paths.get("/", parentURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
     String parentID = idPath.toString();
 
     User admin = get(User.Role.ADMINISTRATOR);
+
+    PostChildrenRequest requestPost = new PostChildrenRequest();
+    requestPost.setParent(parent);
+    requestPost.setStudent(child);
+
+    Response postResponse =
+        RestFactory.getAuthenticatedInvocationBuilder(admin, "parents", parentID, "children")
+            .buildPost(Entity.json(requestPost)).invoke();
+    assertEquals(Response.Status.OK.getStatusCode(), postResponse.getStatus());
 
     // Now query /parents/{marco_id}/children from admin
     Invocation request =
@@ -317,11 +323,23 @@ public class ParentResourceTest {
   @Category(TestCategory.Endpoint.class)
   public void getParentChildrenFromSameParent() throws JsonProcessingException {
     User parent = buildMarcos(5);
-    URI parentURI = doParentPost(7, parent);
+    URI parentURI = doParentPost(parent);
+    User child = getAChild(7);
 
     Path fullPath = Paths.get("/", parentURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
     String parentID = idPath.toString();
+
+    User admin = get(User.Role.ADMINISTRATOR);
+
+    PostChildrenRequest requestPost = new PostChildrenRequest();
+    requestPost.setParent(parent);
+    requestPost.setStudent(child);
+
+    Response postResponse =
+        RestFactory.getAuthenticatedInvocationBuilder(admin, "parents", parentID, "children")
+            .buildPost(Entity.json(requestPost)).invoke();
+    assertEquals(Response.Status.OK.getStatusCode(), postResponse.getStatus());
 
     // Now query /parents/{marco_id}/children from admin
     Invocation request =
@@ -346,10 +364,10 @@ public class ParentResourceTest {
   @Category(TestCategory.Endpoint.class)
   public void getParentChildrenFromNotSameParent() throws JsonProcessingException {
     User parent = buildMarcos(6);
-    URI parentURI = doParentPost(7, parent);
+    URI parentURI = doParentPost(parent);
 
     User secondParent = buildMarcos(7);
-    URI secondParentURI = doParentPost(3, secondParent);
+    URI secondParentURI = doParentPost(secondParent);
 
     Path fullPath = Paths.get("/", parentURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
@@ -370,7 +388,7 @@ public class ParentResourceTest {
   @Category(TestCategory.Endpoint.class)
   public void postParentChildrenFromAdmin() throws JsonProcessingException {
     User parent = buildMarcos(8);
-    URI parentURI = doParentPost(8, parent);
+    URI parentURI = doParentPost(parent);
     User child = getAChild(2);
 
     Path fullPath = Paths.get("/", parentURI.getPath());
@@ -448,14 +466,11 @@ public class ParentResourceTest {
    *
    * @return The inserted resource URI.
    */
-  private URI doParentPost(int copynumber, User parent) {
-    User child = getAChild(copynumber);
-    String childEmail = child.getEmail();
-
-    // Now build a PostParentRequest
-    PostParentRequest request = new PostParentRequest();
-    request.setParentAndPassword(parent, parent.getSeedPassword());
-    request.setStudentEmail(childEmail);
+  private URI doParentPost(User parent) {
+    // Now build a PostUserRequest
+    PostUserRequest request = new PostUserRequest();
+    request.setUser(parent);
+    request.setPassword(parent.getSeedPassword());
 
     User admin = get(User.Role.ADMINISTRATOR);
 

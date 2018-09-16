@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.polimi_mt_acg.back2school.api.v1.auth.AuthenticationResource;
 import com.github.polimi_mt_acg.back2school.api.v1.parents.*;
-import com.github.polimi_mt_acg.back2school.model.Appointment;
 import com.github.polimi_mt_acg.back2school.model.Notification;
 import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
@@ -25,7 +24,6 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -62,7 +60,7 @@ public class ParentResourceNotificationsTest {
   @Category(TestCategory.Endpoint.class)
   public void getParentNotificationsFromAdmin() throws JsonProcessingException {
     User parent = buildMarcos(1);
-    URI parentURI = doParentPost(0,parent);
+    URI parentURI = doParentPost(parent);
 
     Path fullPath = Paths.get("/", parentURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
@@ -89,7 +87,7 @@ public class ParentResourceNotificationsTest {
   @Category(TestCategory.Endpoint.class)
   public void postParentNotificationsFromAdmin() throws JsonProcessingException {
     User parent = buildMarcos(2);
-    URI parentURI = doParentPost(1, parent);
+    URI parentURI = doParentPost(parent);
 
     Path fullPath = Paths.get("/", parentURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
@@ -121,7 +119,7 @@ public class ParentResourceNotificationsTest {
   @Category(TestCategory.Endpoint.class)
   public void getParentNotificationsByIdFromAdministrator() throws JsonProcessingException {
     User parent = buildMarcos(3);
-    URI parentURI = doParentPost(0, parent);
+    URI parentURI = doParentPost(parent);
     User admin = get(User.Role.ADMINISTRATOR);
 
     Path fullPath = Paths.get("/", parentURI.getPath());
@@ -165,7 +163,7 @@ public class ParentResourceNotificationsTest {
   @Category(TestCategory.Endpoint.class)
   public void getParentNotificationsByIdFromSameParent() throws JsonProcessingException {
     User parent = buildMarcos(4);
-    URI parentURI = doParentPost(0, parent);
+    URI parentURI = doParentPost(parent);
     User admin = get(User.Role.ADMINISTRATOR);
 
     Path fullPath = Paths.get("/", parentURI.getPath());
@@ -240,14 +238,11 @@ public class ParentResourceNotificationsTest {
    *
    * @return The inserted resource URI.
    */
-  private URI doParentPost(int copynumber, User parent) {
-    User child = getAChild(copynumber);
-    String childEmail = child.getEmail();
-
-    // Now build a PostParentRequest
-    PostParentRequest request = new PostParentRequest();
-    request.setParentAndPassword(parent, parent.getSeedPassword());
-    request.setStudentEmail(childEmail);
+  private URI doParentPost(User parent) {
+    // Now build a PostUserRequest
+    PostUserRequest request = new PostUserRequest();
+    request.setUser(parent);
+    request.setPassword(parent.getSeedPassword());
 
     User admin = get(User.Role.ADMINISTRATOR);
 
