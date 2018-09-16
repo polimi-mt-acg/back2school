@@ -1,0 +1,16 @@
+{
+  "subjects": [
+    {
+      "name": "English",
+      "description": "English teach students the grammar"
+    },
+    {
+      "name": "History",
+      "description": "The history teach students what happened in the past"
+    },
+    {
+      "name": "Mathematics",
+      "description": "Teach how to do basic calculations"
+    }
+  ]
+}

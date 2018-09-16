@@ -1,13 +1,23 @@
 package com.github.polimi_mt_acg.back2school.api.v1.demo_utils;
 
-public class DeployDemoDataResponse {
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.ArrayList;
+import java.util.List;
+
+public class DemoUtilsActionResponse {
+
+  @JsonProperty("performed_actions")
+  private List<String> actions = new ArrayList<>();
   private String status;
   private String duration;
 
-  DeployDemoDataResponse(String status, String duration) {
-    this.status = status;
-    this.duration = duration;
+  public List<String> getActions() {
+    return actions;
+  }
+
+  public void addAction(String action) {
+    this.actions.add(action);
   }
 
   public String getStatus() {
