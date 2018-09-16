@@ -2,8 +2,7 @@ package com.github.polimi_mt_acg.back2school.api.v1.teachers;
 
 import com.github.polimi_mt_acg.back2school.api.v1.classes.ClassesResource;
 import com.github.polimi_mt_acg.back2school.api.v1.classrooms.ClassroomsResource;
-import com.github.polimi_mt_acg.back2school.api.v1.notifications.NotificationsResponse;
-import com.github.polimi_mt_acg.back2school.api.v1.parents_stub.ParentsStubResource;
+import com.github.polimi_mt_acg.back2school.api.v1.parents.ParentsResource;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.AdministratorSecured;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.TeacherAdministratorSecured;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.TeacherSecured;
@@ -302,8 +301,8 @@ public class TeachersResource {
       entity.setUrlParent(
           uriInfo
               .getBaseUriBuilder()
-              .path(ParentsStubResource.class)
-              .path(ParentsStubResource.class, "getParentById")
+              .path(ParentsResource.class)
+              .path(ParentsResource.class, "getParentById")
               .build(appointment.getTeacher().getId())
               .toString());
 
@@ -415,8 +414,8 @@ public class TeachersResource {
     entity.setUrlParent(
         uriInfo
             .getBaseUriBuilder()
-            .path(ParentsStubResource.class)
-            .path(ParentsStubResource.class, "getParentById")
+            .path(ParentsResource.class)
+            .path(ParentsResource.class, "getParentById")
             .build(appointment.getTeacher().getId())
             .toString());
 
