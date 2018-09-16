@@ -10,8 +10,35 @@
 			"description": "",
 			"item": [
 				{
-					"name": "auth/login",
+					"name": "/auth/login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "672e12b1-6bfd-4d03-aa9e-306748205bd0",
+								"type": "text/javascript",
+								"exec": [
+									"/* --------- SET back2school_token GLOBAL VARIABLE ----------- ",
+									"After a login request, set the global variable back2school_token in Postman ecosystem.",
+									"This variable is used in the Authorization of the folders containing endpoints which requires authentication.",
+									"Look at the folders configuration (at the right of folder name:  ...) to inspect the variable usage. ",
+									"",
+									"Look at logout request for the variable unsetting.",
+									"*/",
+									"if (responseBody) {",
+									"    var jsonData = JSON.parse(responseBody);",
+									"    if (jsonData.status == \"AUTHENTICATED\") {",
+									"        pm.globals.set(\"back2school_token\", jsonData.token);",
+									"    }",
+									"}"
+								]
+							}
+						}
+					],
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -42,7 +69,31 @@
 					"response": []
 				},
 				{
-					"name": "auth/logout",
+					"name": "/auth/logout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a622039b-7f16-48ce-82e1-d51fc5c085ff",
+								"type": "text/javascript",
+								"exec": [
+									"/* --------- UNSET back2school_token GLOBAL VARIABLE ----------- ",
+									"After a logout request, unset the global variable back2school_token in Postman ecosystem.",
+									"This variable is used in the Authorization of the folders containing endpoints which requires authentication.",
+									"Look at the folders configuration (at the right of folder name:  ...) to inspect the variable usage. ",
+									"",
+									"Look at login request for the variable setting.",
+									"*/",
+									"if (responseBody) {",
+									"    var jsonData = JSON.parse(responseBody);",
+									"    if (jsonData.status == \"LOGGED_OUT\") {",
+									"        pm.globals.unset(\"back2school_token\");",
+									"    }",
+									"}"
+								]
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "noauth"
@@ -51,7 +102,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "98d7ee5b18ab4ddc969fc404056b2575"
+								"value": "{{back2school_token}}"
 							}
 						],
 						"body": {},
@@ -76,20 +127,126 @@
 			]
 		},
 		{
+			"name": "Demo utils",
+			"description": "",
+			"item": [
+				{
+					"name": "/demo-utils",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/demo-utils",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"demo-utils"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/demo-utils/deploy-demo-data",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/demo-utils/deploy-demo-data",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"demo-utils",
+								"deploy-demo-data"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/demo-utils/empty-database",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/demo-utils/empty-database",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"demo-utils",
+								"empty-database"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{back2school_token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "7f6082c8-fa39-4c2d-8b89-bee40a73bfb2",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "a0c52286-9a6e-4ce2-b256-7f35029a22da",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
 			"name": "Students",
 			"description": "",
 			"item": [
 				{
-					"name": "students",
+					"name": "/students",
 					"request": {
-						"auth": {
-							"type": "noauth"
-						},
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "98d7ee5b18ab4ddc969fc404056b2575"
+								"value": "ab2d9ba20e8449afa735c3735f2662fc"
 							}
 						],
 						"body": {},
@@ -109,8 +266,118 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "/students",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"parentEmail\": \"alice@email.com\",\n\t\"student\": {\n\t\t\"name\": \"Postman Student Name\",\n\t\t\"surname\": \"Surname\",\n\t\t\"email\": \"student@postman.comt\",\n\t\t\"password\": \"password\"\n\t}\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/students",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"students"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/students/{id: [0-9]+}",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/students/13",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"students",
+								"13"
+							]
+						},
+						"description": "Student information."
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{back2school_token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "76ffdbdd-dcb8-4303-aafa-6f53178b3705",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "30ab0676-af57-44f6-9b4a-c865de4c44f3",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
 				}
 			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "4b973391-0e19-4e48-b38d-ee3eb24c723b",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "e4b02893-da5d-43af-9cd4-97eade9b08d7",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
 		}
 	]
 }
