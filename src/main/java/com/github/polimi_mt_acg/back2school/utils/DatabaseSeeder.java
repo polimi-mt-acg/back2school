@@ -5,18 +5,21 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.polimi_mt_acg.back2school.model.DeserializeToPersistInterface;
 import com.github.polimi_mt_acg.back2school.model.User;
+import com.github.polimi_mt_acg.back2school.model.User_;
 import com.github.polimi_mt_acg.back2school.utils.json_mappers.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.hibernate.Session;
+
+import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.print;
 
 
 public class DatabaseSeeder {
@@ -97,34 +100,43 @@ public class DatabaseSeeder {
         }
         session.getTransaction().commit();
         session.close();
-        //                LOGGER.info(
-        //                        String.format(
-        //                                "deployed seed file: %s/%s",
-        //                                scenarioFolderName,
-        //                                seedFilename
-        //                        )
-        //                );
+//        LOGGER.info(
+//            String.format(
+//                "deployed seed file: %s/%s",
+//                scenarioFolderName,
+//                seedFilename
+//            )
+//        );
       }
     }
   }
+
 
   public static List<?> getEntitiesListFromSeed(String scenarioFolderName, String seedFilename) {
     final ObjectMapper mapper = new ObjectMapper();
     mapper.findAndRegisterModules();
     mapper.enable(JsonParser.Feature.ALLOW_COMMENTS);
 
-    String seedFilePath =
-        "src/test/resources/scenarios_seeds/" + scenarioFolderName + "/" + seedFilename;
-    File f = new File(seedFilePath);
+    StringBuilder seedFilePath = new StringBuilder();
+    seedFilePath.append("scenarios_seeds");
+    seedFilePath.append(File.separator);
+    seedFilePath.append(scenarioFolderName);
+    seedFilePath.append(File.separator);
+    seedFilePath.append(seedFilename);
+
+    URL fileURL = DatabaseSeeder.class.getClassLoader().getResource(seedFilePath.toString());
 
     try {
-      if (f.exists() && !f.isDirectory()) {
+      if (fileURL != null) {
         Class entitiesTemplateClass = (Class) seedsMap.get(seedFilename);
+        InputStream inputStream = DatabaseSeeder.class.getClassLoader().getResourceAsStream(seedFilePath.toString());
 
         JSONTemplateInterface entitiesTemplate =
-            (JSONTemplateInterface) mapper.readValue(f, entitiesTemplateClass);
+            (JSONTemplateInterface) mapper.readValue(inputStream, entitiesTemplateClass);
+        List<?> entities = entitiesTemplate.getEntities();
+        inputStream.close();
 
-        return entitiesTemplate.getEntities();
+        return entities;
       }
 
     } catch (com.fasterxml.jackson.core.JsonParseException e) {
@@ -154,5 +166,34 @@ public class DatabaseSeeder {
         .filter(user -> user.getRole().equals(role))
         .collect(Collectors.toList())
         .get(0);
+  }
+
+
+  /**
+   * Ensure at least one admin user is preset. If not, this method creates it
+   * as amin@email.com:admin
+   *
+   */
+  public static void ensureAdminUserPresent() {
+    Session session = DatabaseHandler.getInstance().getNewSession();
+    session.beginTransaction();
+
+    Optional<User> optAdminUser = DatabaseHandler.fetchEntityBy(User.class, User_.role, User.Role.ADMINISTRATOR, session);
+
+    if (!optAdminUser.isPresent()) {
+      // create new admin user
+      User defaultAdminUser = new User();
+      defaultAdminUser.setRole(User.Role.ADMINISTRATOR);
+      defaultAdminUser.setName("Admin");
+      defaultAdminUser.setSurname("Admin surname");
+      defaultAdminUser.setEmail("admin@email.com");
+      defaultAdminUser.setPassword("admin");
+
+      // save the created user
+      session.persist(defaultAdminUser);
+    }
+
+    session.getTransaction().commit();
+    session.close();
   }
 }
