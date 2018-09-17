@@ -1,5 +1,6 @@
 package com.github.polimi_mt_acg.back2school.api.v1;
 
+import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.str;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -68,7 +69,7 @@ public class StudentsResourceTest {
   @Category(TestCategory.StudentsEndpoint.class)
   public void getStudentsFromAdmin() {
     // Get an admin
-    User admin = get(Role.ADMINISTRATOR);
+    User admin = DatabaseSeeder.getSeedUserByRole("scenarioStudents", Role.ADMINISTRATOR);
 
     Invocation getRequest =
         RestFactory.getAuthenticatedInvocationBuilder(admin, "students").buildGet();
@@ -87,7 +88,7 @@ public class StudentsResourceTest {
   @Category(TestCategory.StudentsEndpoint.class)
   public void getStudentsFromTeacher() {
     // Get a teacher
-    User teacher = get(Role.TEACHER);
+    User teacher = DatabaseSeeder.getSeedUserByRole("scenarioStudents", Role.TEACHER);
 
     Invocation getRequest =
         RestFactory.getAuthenticatedInvocationBuilder(teacher, "students").buildGet();
@@ -100,7 +101,7 @@ public class StudentsResourceTest {
   @Category(TestCategory.StudentsEndpoint.class)
   public void getStudentsFromParent() {
     // Get a teacher
-    User parent = get(Role.PARENT);
+    User parent = DatabaseSeeder.getSeedUserByRole("scenarioStudents", Role.PARENT);
 
     Invocation getRequest =
         RestFactory.getAuthenticatedInvocationBuilder(parent, "students").buildGet();
@@ -139,7 +140,7 @@ public class StudentsResourceTest {
     assertEquals(Status.OK.getStatusCode(), response.getStatus());
     User carlosResponse = response.readEntity(User.class);
 
-    assertTrue(weakEquals(carlosResponse, buildCarlos(1)));
+    assertTrue(carlosResponse.weakEquals(buildCarlos(1)));
 
     // Print it
     ObjectMapper mapper = RestFactory.objectMapper();
@@ -161,7 +162,7 @@ public class StudentsResourceTest {
     assertEquals(Status.OK.getStatusCode(), response.getStatus());
     User aliceResponse = response.readEntity(User.class);
 
-    assertTrue(weakEquals(aliceResponse, alice));
+    assertTrue(aliceResponse.weakEquals(alice));
 
     // Print it
     ObjectMapper mapper = RestFactory.objectMapper();
@@ -188,7 +189,7 @@ public class StudentsResourceTest {
   @Category(TestCategory.StudentsEndpoint.class)
   public void putStudentById() throws JsonProcessingException {
     // Get an admin
-    User admin = get(Role.ADMINISTRATOR);
+    User admin = DatabaseSeeder.getSeedUserByRole("scenarioStudents", Role.ADMINISTRATOR);
 
     URI studentURI = postCarlos(2);
 
@@ -378,15 +379,6 @@ public class StudentsResourceTest {
     assertEquals(Status.NOT_FOUND.getStatusCode(), notFoundResponse.getStatus());
   }
 
-  private User get(Role role) {
-    List<User> users =
-        (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioStudents", "users.json");
-
-    List<User> usersWithRole =
-        users.stream().filter(user -> user.getRole() == role).collect(Collectors.toList());
-    return usersWithRole.get(0);
-  }
-
   private User getCarlosDad() {
     List<User> users =
         (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioStudents", "users.json");
@@ -439,24 +431,14 @@ public class StudentsResourceTest {
     String email = dad.getEmail();
 
     // Get an admin to register Carlos in the system
-    User admin = get(Role.ADMINISTRATOR);
+    User admin = DatabaseSeeder.getSeedUserByRole("scenarioStudents", Role.ADMINISTRATOR);
 
     // Now build a PostStudentRequest
     PostStudentRequest request = new PostStudentRequest();
     request.setStudent(carlos);
     request.setParentEmail(email);
 
-    // Make a POST to /students
-    Invocation post =
-        RestFactory.getAuthenticatedInvocationBuilder(admin, "students")
-            .buildPost(Entity.json(request));
-
-    Response response = post.invoke();
-    assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
-
-    URI resourceURI = response.getLocation();
-    assertNotNull(resourceURI);
-    return resourceURI;
+    return RestFactory.doPostRequest(admin, "students", request);
   }
 
   private User buildCarlos(int copyNumber) {
@@ -481,15 +463,8 @@ public class StudentsResourceTest {
     User alice = getUserByEmail("alice@email.com");
     String aliceId = String.valueOf(alice.getId());
 
-    Invocation post =
-        RestFactory.getAuthenticatedInvocationBuilder(teacher, "students", aliceId, "grades")
-            .buildPost(Entity.json(grade));
-
-    Response response = post.invoke();
-    assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
-
-    URI resourceURI = response.getLocation();
-    assertNotNull(resourceURI);
+    String endpoint = "students/" + str(aliceId) + "/grades";
+    URI resourceURI = RestFactory.doPostRequest(teacher, endpoint, grade);
 
     Invocation getGrade =
         RestFactory.getAuthenticatedInvocationBuilder(teacher, resourceURI).buildGet();
@@ -511,11 +486,5 @@ public class StudentsResourceTest {
     grade.setDate(LocalDate.now());
     grade.setSubjectName("Middleware Technologies");
     return grade;
-  }
-
-  private boolean weakEquals(User u, User p) {
-    return u.getName().equals(p.getName())
-        && u.getSurname().equals(p.getSurname())
-        && u.getEmail().equals(p.getEmail());
   }
 }
