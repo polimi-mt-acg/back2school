@@ -40,39 +40,36 @@ public class TeachersResource {
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @AdministratorSecured
-  public Response postTeachers(PostTeacherRequest request, @Context UriInfo uriInfo) {
-    User teacher = request.getTeacher();
+  public Response postTeachers(User newUser, @Context UriInfo uriInfo) {
+    if (newUser.getEmail() == null || newUser.getEmail().isEmpty()) {
+      return Response.status(Status.BAD_REQUEST).entity("User must have an email address.").build();
+    }
 
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 
-    // Check if input user is a teacher
-    if (teacher.getRole() != User.Role.TEACHER) {
-      return Response.status(Status.BAD_REQUEST)
-          .entity("Provided user error: not a teacher")
-          .build();
-    }
-
     // Check if a user with same email already exists, if so, do nothing
-    Optional<User> result =
-        DatabaseHandler.fetchEntityBy(User.class, User_.email, teacher.getEmail());
-    if (result.isPresent()) {
+    Optional<User> userOpt =
+        DatabaseHandler.fetchEntityBy(User.class, User_.email, newUser.getEmail(), session);
+
+    if (userOpt.isPresent()) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.CONFLICT)
-          .entity("An account with this email already exists.")
+          .entity("A user with this email already exists.")
           .build();
     }
+    // force to be a parent since this endpoint meaning
+    newUser.setRole(Role.TEACHER);
 
-    teacher.prepareToPersist();
-
-    session.persist(teacher);
+    newUser.prepareToPersist();
+    session.persist(newUser);
     session.getTransaction().commit();
     session.close();
 
     // Now the teacher has the ID field filled by the ORM
     UriBuilder builder = uriInfo.getAbsolutePathBuilder();
-    URI uri = builder.path(str(teacher.getId())).build();
+    URI uri = builder.path(str(newUser.getId())).build();
     return Response.created(uri).build();
   }
 

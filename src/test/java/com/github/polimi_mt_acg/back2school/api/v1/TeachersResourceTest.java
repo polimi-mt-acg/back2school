@@ -120,8 +120,7 @@ public class TeachersResourceTest {
 
     URI insertedTeacherURI = doTeacherPost(carlosPost);
 
-    System.out.println("Inserted teacher URI:");
-    System.out.println(insertedTeacherURI);
+    print("Inserted teacher URI: ", insertedTeacherURI);
   }
 
   @Test
@@ -159,13 +158,12 @@ public class TeachersResourceTest {
     assertNotNull(seedTeacher);
 
     URI insertedTeacherURI = doTeacherPost(seedTeacher);
-    System.out.println(
-        "seedTeacher.getSeedPassword: " + String.valueOf(seedTeacher.getNewPassword()));
+    print("seedTeacher.getSeedPassword: " + String.valueOf(seedTeacher.getNewPassword()));
     Path fullPath = Paths.get("/", insertedTeacherURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
     String teacherID = idPath.toString();
 
-    System.out.println("New inserted teacher id: " + teacherID);
+    print("New inserted teacher id: " + teacherID);
 
     // GET - Using teacher to log in
     Invocation request =
@@ -184,14 +182,10 @@ public class TeachersResourceTest {
    * @return The inserted resource URI.
    */
   private URI doTeacherPost(User user) {
-    // Now build a PostStudentRequest
-    PostTeacherRequest request = new PostTeacherRequest();
-    request.setTeacherAndPassword(user, user.getNewPassword());
-
     // Make a POST to /teachers
     Invocation post =
         RestFactory.getAuthenticatedInvocationBuilder(adminForLogin, "teachers")
-            .buildPost(Entity.json(request));
+            .buildPost(Entity.json(user));
 
     Response response = post.invoke();
     assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
