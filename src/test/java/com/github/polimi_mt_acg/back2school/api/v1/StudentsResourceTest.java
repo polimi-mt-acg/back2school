@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.polimi_mt_acg.back2school.api.v1.auth.AuthenticationResource;
 import com.github.polimi_mt_acg.back2school.api.v1.students.PostGradeRequest;
 import com.github.polimi_mt_acg.back2school.api.v1.students.PostStudentRequest;
-import com.github.polimi_mt_acg.back2school.api.v1.students.PutStudentRequest;
 import com.github.polimi_mt_acg.back2school.api.v1.students.StudentGradesResponse;
 import com.github.polimi_mt_acg.back2school.api.v1.students.StudentsResponse;
 import com.github.polimi_mt_acg.back2school.model.Grade;
@@ -202,17 +201,17 @@ public class StudentsResourceTest {
     String emailSuffix = "newEmail";
 
     // Create a PutStudent request to change its name
-    PutStudentRequest putStudentRequest = new PutStudentRequest();
-    putStudentRequest.setName(studentResponse.getName() + nameSuffix);
-    putStudentRequest.setSurname(studentResponse.getSurname() + surnameSuffix);
-    putStudentRequest.setEmail(studentResponse.getEmail() + emailSuffix);
-    putStudentRequest.setPassword("DontCare");
+    User putStudent = new User();
+    putStudent.setName(studentResponse.getName() + nameSuffix);
+    putStudent.setSurname(studentResponse.getSurname() + surnameSuffix);
+    putStudent.setEmail(studentResponse.getEmail() + emailSuffix);
+    putStudent.setNewPassword("DontCare");
 
     // Make a PUT request
-    Invocation putStudent =
+    Invocation putStudentRequest =
         RestFactory.getAuthenticatedInvocationBuilder(admin, studentURI)
-            .buildPut(Entity.json(putStudentRequest));
-    Response putStudentResponse = putStudent.invoke();
+            .buildPut(Entity.json(putStudent));
+    Response putStudentResponse = putStudentRequest.invoke();
 
     assertEquals(Status.OK.getStatusCode(), putStudentResponse.getStatus());
 

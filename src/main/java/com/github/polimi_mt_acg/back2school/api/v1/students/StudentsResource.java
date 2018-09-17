@@ -122,7 +122,7 @@ public class StudentsResource {
     // Fetch User
     Optional<User> studentOpt =
         DatabaseHandler.fetchEntityBy(User.class, User_.id, Integer.parseInt(studentId));
-    if (!studentOpt.isPresent()) {
+    if (!studentOpt.isPresent() || !studentOpt.get().getRole().equals(Role.STUDENT)) {
       return Response.status(Status.NOT_FOUND).entity("Unknown student id").build();
     }
     return Response.ok(studentOpt.get(), MediaType.APPLICATION_JSON_TYPE).build();
@@ -133,7 +133,7 @@ public class StudentsResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @ParentAdministratorSecured
   @ParentOfStudentSecured
-  public Response putStudentById(PutStudentRequest newStudent, @PathParam("id") String studentId) {
+  public Response putStudentById(User newUser, @PathParam("id") String studentId) {
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 
@@ -146,10 +146,10 @@ public class StudentsResource {
     }
 
     // Update student fields
-    student.setName(newStudent.getName());
-    student.setSurname(newStudent.getSurname());
-    student.setEmail(newStudent.getEmail());
-    student.setPassword(newStudent.getPassword());
+    student.setName(newUser.getName());
+    student.setSurname(newUser.getSurname());
+    student.setEmail(newUser.getEmail());
+    student.setPassword(newUser.getNewPassword());
 
     session.getTransaction().commit();
     session.close();
