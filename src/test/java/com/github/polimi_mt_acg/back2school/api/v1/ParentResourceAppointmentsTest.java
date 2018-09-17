@@ -422,7 +422,7 @@ public class ParentResourceAppointmentsTest {
     marcos.setName("Marcos " + copyNumber);
     marcos.setSurname("Ferdinand " + copyNumber);
     marcos.setEmail("marcos.ferdinand" + copyNumber + "@mail.com");
-    marcos.setSeedPassword("marcos_password");
+    marcos.setNewPassword("marcos_password");
     marcos.setRole(User.Role.PARENT);
     marcos.prepareToPersist();
     return marcos;
@@ -448,7 +448,7 @@ public class ParentResourceAppointmentsTest {
     // Now build a PostUserRequest
     PostUserRequest request = new PostUserRequest();
     request.setUser(parent);
-    request.setPassword(parent.getSeedPassword());
+    request.setPassword(parent.getNewPassword());
 
     User admin = get(User.Role.ADMINISTRATOR);
 

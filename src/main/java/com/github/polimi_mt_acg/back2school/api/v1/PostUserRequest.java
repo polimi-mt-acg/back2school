@@ -10,7 +10,7 @@ public class PostUserRequest {
   private String password;
 
   public User getUser() {
-    this.user.setSeedPassword(this.password);
+    this.user.setNewPassword(this.password);
     return user;
   }
 

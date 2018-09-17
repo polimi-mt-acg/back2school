@@ -5,7 +5,7 @@
       "name": "CarlPost",
       "surname": "SurnameCarlPost",
       "email": "carl-post@email.com",
-      "seedPassword": "email_password"
+      "new_password": "email_password"
     }
   ]
 }

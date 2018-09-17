@@ -10,7 +10,7 @@ public class PostTeacherRequest {
   private String userPassword;
 
   public User getTeacher() {
-    this.teacher.setSeedPassword(this.userPassword);
+    this.teacher.setNewPassword(this.userPassword);
     return teacher;
   }
 

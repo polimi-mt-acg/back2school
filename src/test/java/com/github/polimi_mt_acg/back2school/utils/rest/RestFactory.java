@@ -97,7 +97,7 @@ public class RestFactory {
    */
   public static Invocation.Builder getAuthenticatedInvocationBuilder(User user, WebTarget target) {
     // Authenticate
-    String token = RestFactory.doLoginGetToken(user.getEmail(), user.getSeedPassword());
+    String token = RestFactory.doLoginGetToken(user.getEmail(), user.getNewPassword());
     assertNotNull(token);
     assertTrue(!token.isEmpty());
 
@@ -106,7 +106,7 @@ public class RestFactory {
 
   public static Invocation.Builder getAuthenticatedInvocationBuilder(User user, URI uri) {
     // Authenticate
-    String token = RestFactory.doLoginGetToken(user.getEmail(), user.getSeedPassword());
+    String token = RestFactory.doLoginGetToken(user.getEmail(), user.getNewPassword());
     assertNotNull(token);
     assertTrue(!token.isEmpty());
 

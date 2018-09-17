@@ -34,7 +34,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class User implements DeserializeToPersistInterface {
 
   private static final Logger LOGGER = Logger.getLogger(User.class.getName());
-  @Transient private String seedPassword;
+
+  @Transient
+  private String newPassword;
 
   @Id
   @GeneratedValue
@@ -77,8 +79,8 @@ public class User implements DeserializeToPersistInterface {
 
   @Override
   public void prepareToPersist() {
-    if (seedPassword != null) {
-      setPassword(this.seedPassword);
+    if (newPassword != null) {
+      setPassword(this.newPassword);
     }
   }
 
@@ -177,13 +179,13 @@ public class User implements DeserializeToPersistInterface {
   }
 
   @JsonIgnore
-  public String getSeedPassword() {
-    return seedPassword;
+  public String getNewPassword() {
+    return newPassword;
   }
 
-  @JsonProperty
-  public void setSeedPassword(String seedPassword) {
-    this.seedPassword = seedPassword;
+  @JsonProperty("new_password")
+  public void setNewPassword(String newPassword) {
+    this.newPassword = newPassword;
   }
 
   @JsonIgnore

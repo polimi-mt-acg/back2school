@@ -160,7 +160,7 @@ public class TeachersResourceTest {
 
     URI insertedTeacherURI = doTeacherPost(seedTeacher);
     System.out.println(
-        "seedTeacher.getSeedPassword: " + String.valueOf(seedTeacher.getSeedPassword()));
+        "seedTeacher.getSeedPassword: " + String.valueOf(seedTeacher.getNewPassword()));
     Path fullPath = Paths.get("/", insertedTeacherURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
     String teacherID = idPath.toString();
@@ -186,7 +186,7 @@ public class TeachersResourceTest {
   private URI doTeacherPost(User user) {
     // Now build a PostStudentRequest
     PostTeacherRequest request = new PostTeacherRequest();
-    request.setTeacherAndPassword(user, user.getSeedPassword());
+    request.setTeacherAndPassword(user, user.getNewPassword());
 
     // Make a POST to /teachers
     Invocation post =
@@ -237,7 +237,7 @@ public class TeachersResourceTest {
     assertNotNull(carl1Teacher);
     assertEquals(carl1Teacher.getEmail(), "carl1@email.com");
     // set the password in order to let the invocation builder be able to authenticate the user
-    carl1Teacher.setSeedPassword("email_password");
+    carl1Teacher.setNewPassword("email_password");
 
     // GET - Using teacher to log in
     Invocation request =
@@ -341,7 +341,7 @@ public class TeachersResourceTest {
     assertNotNull(carl2Teacher);
     assertEquals(carl2Teacher.getEmail(), "carl2@email.com");
     // set the password in order to let the invocation builder be able to authenticate the user
-    carl2Teacher.setSeedPassword("email_password");
+    carl2Teacher.setNewPassword("email_password");
 
     // Get class from database
     Class class3B =
@@ -462,7 +462,7 @@ public class TeachersResourceTest {
     assertTrue(teacherOpt.isPresent());
     User teacher = teacherOpt.get();
     // set the password in order to let the invocation builder be able to authenticate the user
-    teacher.setSeedPassword("email_password");
+    teacher.setNewPassword("email_password");
 
     // get parent from db
     Optional<User> parentOpt =
@@ -527,7 +527,7 @@ public class TeachersResourceTest {
     assertTrue(teacherOpt.isPresent());
     User teacher = teacherOpt.get();
     // set the password in order to let the invocation builder be able to authenticate the user
-    teacher.setSeedPassword("email_password");
+    teacher.setNewPassword("email_password");
 
     // get parent from db
     Optional<User> parentOpt =
@@ -613,7 +613,7 @@ public class TeachersResourceTest {
             .get(0);
 
     assertNotNull(carl1Teacher);
-    carl1Teacher.setSeedPassword("email_password");
+    carl1Teacher.setNewPassword("email_password");
 
     // Create Get request
     Invocation getRequest =
@@ -644,7 +644,7 @@ public class TeachersResourceTest {
             .get(0);
 
     assertNotNull(carl1Teacher);
-    carl1Teacher.setSeedPassword("email_password");
+    carl1Teacher.setNewPassword("email_password");
 
     // Create Get request
     // NO FILTER, so all notifications: READ and UNREAD

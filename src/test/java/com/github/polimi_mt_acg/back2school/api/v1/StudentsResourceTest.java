@@ -465,7 +465,7 @@ public class StudentsResourceTest {
     carlos.setName("Carlos " + copyNumber);
     carlos.setSurname("Hernandez " + copyNumber);
     carlos.setEmail("carlos.hernandez" + copyNumber + "@mail.com");
-    carlos.setSeedPassword("carlos_password");
+    carlos.setNewPassword("carlos_password");
     carlos.setRole(Role.STUDENT);
     carlos.prepareToPersist();
     return carlos;
