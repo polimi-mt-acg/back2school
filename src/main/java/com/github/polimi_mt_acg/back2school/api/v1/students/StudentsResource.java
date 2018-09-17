@@ -70,19 +70,19 @@ public class StudentsResource {
     Session session = dbi.getNewSession();
     session.beginTransaction();
 
-    // Check if input user is a student
-    if (student.getRole() != Role.STUDENT) {
-      return Response.status(Status.BAD_REQUEST).entity("Not a student.").build();
-    }
-
     // Check if a user with same email already exists, if so, do nothing
-    List<User> result =
-        dbi.getListSelectFromWhereEqual(User.class, User_.email, student.getEmail(), session);
-    if (!result.isEmpty()) {
+    Optional<User> userOpt =
+        DatabaseHandler.fetchEntityBy(User.class, User_.email, student.getEmail(), session);
+
+    if (userOpt.isPresent()) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.CONFLICT).entity("Student already exists.").build();
+      return Response.status(Status.CONFLICT)
+          .entity("A user with this email already exists.")
+          .build();
     }
+    // force to be a parent since this endpoint meaning
+    student.setRole(Role.STUDENT);
 
     // Otherwise we accept the request. First we fetch Parent entity
     List<User> parentRes =
@@ -120,7 +120,8 @@ public class StudentsResource {
   @TeacherOfStudentSecured
   public Response getStudentById(@PathParam("id") String studentId) {
     // Fetch User
-    Optional<User> studentOpt = DatabaseHandler.fetchEntityBy(User.class, User_.id, Integer.parseInt(studentId));
+    Optional<User> studentOpt =
+        DatabaseHandler.fetchEntityBy(User.class, User_.id, Integer.parseInt(studentId));
     if (!studentOpt.isPresent()) {
       return Response.status(Status.NOT_FOUND).entity("Unknown student id").build();
     }
@@ -262,7 +263,8 @@ public class StudentsResource {
       @PathParam("grade_id") String gradeId, @Context UriInfo uriInfo) {
 
     // Fetch grade
-    Optional<Grade> gradeOpt = DatabaseHandler.fetchEntityBy(Grade.class, Grade_.id, Integer.parseInt(gradeId));
+    Optional<Grade> gradeOpt =
+        DatabaseHandler.fetchEntityBy(Grade.class, Grade_.id, Integer.parseInt(gradeId));
     if (!gradeOpt.isPresent()) {
       return Response.status(Status.NOT_FOUND).entity("Unknown grade id").build();
     }
