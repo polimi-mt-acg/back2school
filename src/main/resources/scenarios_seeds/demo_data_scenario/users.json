@@ -9,77 +9,77 @@
       "name": "Alice",
       "surname": "SurnameAlice",
       "email": "alice@email.com",
-      "seedPassword": "password"
+      "new_password": "password"
     },
     {
       "role": "STUDENT",
       "name": "Alice1",
       "surname": "SurnameAlice1",
       "email": "alice1@email.com",
-      "seedPassword": "password"
+      "new_password": "password"
     },
     {
       "role": "STUDENT",
       "name": "Alice2",
       "surname": "SurnameAlice2",
       "email": "alice1@email.com",
-      "seedPassword": "password"
+      "new_password": "password"
     },
     {
       "role": "PARENT",
       "name": "Bob",
       "surname": "SurnameBob",
       "email": "bob@email.com",
-      "seedPassword": "password"
+      "new_password": "password"
     },
     {
       "role": "PARENT",
       "name": "Bob1",
       "surname": "SurnameBob1",
       "email": "bob1@email.com",
-      "seedPassword": "password"
+      "new_password": "password"
     },
     {
       "role": "PARENT",
       "name": "Bob2",
       "surname": "SurnameBob2",
       "email": "bob2@email.com",
-      "seedPassword": "password"
+      "new_password": "password"
     },
     {
       "role": "TEACHER",
       "name": "Carl",
       "surname": "SurnameCarl",
       "email": "carl@email.com",
-      "seedPassword": "password"
+      "new_password": "password"
     },
     {
       "role": "TEACHER",
       "name": "Carl1",
       "surname": "SurnameCarl1",
       "email": "carl1@email.com",
-      "seedPassword": "password"
+      "new_password": "password"
     },
     {
       "role": "TEACHER",
       "name": "Carl2",
       "surname": "SurnameCarl2",
       "email": "carl2@email.com",
-      "seedPassword": "password"
+      "new_password": "password"
     },
     {
       "role": "TEACHER",
       "name": "Carl3",
       "surname": "SurnameCarl3",
       "email": "carl3@email.com",
-      "seedPassword": "password"
+      "new_password": "password"
     },
     {
       "role": "ADMINISTRATOR",
       "name": "David",
       "surname": "SurnameDavid",
       "email": "david@email.com",
-      "seedPassword": "password"
+      "new_password": "password"
     }
   ]
 }
