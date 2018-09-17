@@ -1,6 +1,7 @@
 package com.github.polimi_mt_acg.back2school.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.polimi_mt_acg.back2school.utils.RandomStringGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -12,31 +13,21 @@ import java.util.List;
 import java.util.logging.Logger;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
 @Table(name = "user")
 @XmlRootElement
+// skip null fields when serializing (e.g. newPassword field)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class User implements DeserializeToPersistInterface {
 
   private static final Logger LOGGER = Logger.getLogger(User.class.getName());
 
   @Transient
-  private String newPassword;
+  @JsonProperty("new_password")
+  protected String newPassword;
 
   @Id
   @GeneratedValue
@@ -79,7 +70,7 @@ public class User implements DeserializeToPersistInterface {
 
   @Override
   public void prepareToPersist() {
-    if (newPassword != null) {
+    if (getNewPassword() != null) {
       setPassword(this.newPassword);
     }
   }
@@ -171,6 +162,7 @@ public class User implements DeserializeToPersistInterface {
    */
   public boolean passwordEqualsTo(String passwordToCheck) {
     if (this.salt == null || this.password == null) {
+      System.err.println("[ERROR] Password check on NULL password. User.email: " + this.getEmail());
       return false;
     }
 
@@ -178,12 +170,10 @@ public class User implements DeserializeToPersistInterface {
     return this.password.equals(hashOfPasswordToCheck);
   }
 
-  @JsonIgnore
   public String getNewPassword() {
-    return newPassword;
+    return this.newPassword;
   }
 
-  @JsonProperty("new_password")
   public void setNewPassword(String newPassword) {
     this.newPassword = newPassword;
   }

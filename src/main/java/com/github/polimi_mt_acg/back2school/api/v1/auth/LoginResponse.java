@@ -8,11 +8,11 @@ public class LoginResponse {
   public String token;
 
   @JsonProperty("authorization_header")
-  public String authorizationHeader;
+  private String authorizationHeader;
 
   public LoginResponse() {}
 
-  public LoginResponse(String status, String token) {
+  LoginResponse(String status, String token) {
     this.status = status;
     this.token = token;
     this.authorizationHeader = "Bearer " + token;
