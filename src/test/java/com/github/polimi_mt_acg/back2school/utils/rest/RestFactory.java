@@ -1,5 +1,6 @@
 package com.github.polimi_mt_acg.back2school.utils.rest;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -13,6 +14,8 @@ import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.utils.JacksonCustomMapper;
 
 import java.net.URI;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -20,14 +23,13 @@ import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.glassfish.jersey.jackson.JacksonFeature;
 
 public class RestFactory {
 
-  /**
-   * The base URI of all the REST APIs
-   */
+  /** The base URI of all the REST APIs */
   public static final String BASE_URI = "http://localhost:8080/api/v1/";
 
   private static ObjectMapper mapper = null;
@@ -36,7 +38,7 @@ public class RestFactory {
    * A convenient method to create a client requesting the login to the endpoint /auth/login getting
    * back session token.
    *
-   * @param email    The user login email.
+   * @param email The user login email.
    * @param password The user login password.
    * @return The session token if {@code email} and {@code password} are valid.
    * @throws javax.ws.rs.ForbiddenException if {@code email} and {@code password} are not valid.
@@ -45,10 +47,11 @@ public class RestFactory {
     Client client = buildClient();
     WebTarget target = client.target(URI.create(BASE_URI)).path("auth").path("login");
 
-    LoginResponse response = target
-        .request(MediaType.APPLICATION_JSON)
-        .buildPost(Entity.json(new LoginRequest(email, password)))
-        .invoke(LoginResponse.class);
+    LoginResponse response =
+        target
+            .request(MediaType.APPLICATION_JSON)
+            .buildPost(Entity.json(new LoginRequest(email, password)))
+            .invoke(LoginResponse.class);
 
     assertNotNull(response);
     assertNotNull(response.token);
@@ -132,5 +135,27 @@ public class RestFactory {
         .register(JacksonFeature.class)
         .register(JacksonCustomMapper.class)
         .build();
+  }
+
+  /**
+   * A convenient method to perform a one-line post request.
+   *
+   * @param userForLogin The user to be used for authentication.
+   * @param endpoint The endpoint to issue the request at.
+   * @param requestEntity The entity to be sent.
+   * @return URI of the create resource.
+   */
+  public static URI doPostRequest(User userForLogin, String endpoint, Object requestEntity) {
+    // Make a POST request
+    Invocation post =
+        RestFactory.getAuthenticatedInvocationBuilder(userForLogin, endpoint)
+            .buildPost(Entity.json(requestEntity));
+
+    Response response = post.invoke();
+    assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+
+    URI resourceURI = response.getLocation();
+    assertNotNull(resourceURI);
+    return resourceURI;
   }
 }
