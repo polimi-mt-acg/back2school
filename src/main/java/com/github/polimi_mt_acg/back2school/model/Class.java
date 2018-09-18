@@ -1,6 +1,7 @@
 package com.github.polimi_mt_acg.back2school.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import java.util.ArrayList;
 import java.util.List;
@@ -81,6 +82,7 @@ public class Class implements DeserializeToPersistInterface {
     return seedStudentsEmail;
   }
 
+  @JsonProperty
   public void setSeedStudentsEmail(List<String> seedStudentsEmail) {
     this.seedStudentsEmail = seedStudentsEmail;
   }
