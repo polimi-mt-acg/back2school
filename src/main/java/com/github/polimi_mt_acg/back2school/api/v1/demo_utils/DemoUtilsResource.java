@@ -9,9 +9,7 @@ import javax.ws.rs.core.*;
 import java.time.Duration;
 import java.time.Instant;
 
-/**
- * JAX-RS Resource for teachers entity.
- */
+/** JAX-RS Resource for teachers entity. */
 @Path("demo-utils")
 public class DemoUtilsResource {
 
@@ -26,20 +24,17 @@ public class DemoUtilsResource {
             .getBaseUriBuilder()
             .path(this.getClass())
             .path(this.getClass(), "getDeployDemoData")
-            .build()
-    );
+            .build());
 
     demoUtilsResponse.setUrlEmptyDatabase(
         uriInfo
             .getBaseUriBuilder()
             .path(this.getClass())
             .path(this.getClass(), "getEmptyDatabase")
-            .build()
-    );
+            .build());
 
     return Response.ok(demoUtilsResponse, MediaType.APPLICATION_JSON_TYPE).build();
   }
-
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
@@ -53,7 +48,7 @@ public class DemoUtilsResource {
     demoUtilsActionResponse.addAction("TRUNCATE_DATABASE");
 
     DatabaseSeeder.ensureAdminUserPresent();
-    demoUtilsActionResponse.addAction("ENSURE_ADMIN_PRESET");
+    demoUtilsActionResponse.addAction("ENSURE_ADMIN_PRESENT");
 
     DatabaseSeeder.deployScenario("demo_data_scenario");
     demoUtilsActionResponse.addAction("DEPLOY_DATABASE_SCENARIO(demo_data_scenario)");
@@ -64,7 +59,6 @@ public class DemoUtilsResource {
 
     return Response.ok(demoUtilsActionResponse, MediaType.APPLICATION_JSON_TYPE).build();
   }
-
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
@@ -78,7 +72,7 @@ public class DemoUtilsResource {
     demoUtilsActionResponse.addAction("TRUNCATE_DATABASE");
 
     DatabaseSeeder.ensureAdminUserPresent();
-    demoUtilsActionResponse.addAction("ENSURE_ADMIN_PRESET");
+    demoUtilsActionResponse.addAction("ENSURE_ADMIN_PRESENT");
     Instant end = Instant.now();
 
     demoUtilsActionResponse.setStatus("SUCCESS");
@@ -86,5 +80,4 @@ public class DemoUtilsResource {
 
     return Response.ok(demoUtilsActionResponse, MediaType.APPLICATION_JSON_TYPE).build();
   }
-
 }

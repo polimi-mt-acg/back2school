@@ -73,7 +73,12 @@ public class NotificationsResource {
     // Persist the notification
     saveNotificationWithCreator(notification, creator);
 
-    URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(notification.getId())).build();
+    URI uri =
+        uriInfo
+            .getBaseUriBuilder()
+            .path(NotificationsResource.class)
+            .path(NotificationsResource.class, "getNotificationById")
+            .build(notification.getId());
     return Response.created(uri).entity(new StatusResponse(Response.Status.CREATED)).build();
   }
 
@@ -91,7 +96,12 @@ public class NotificationsResource {
     // Persist the notification
     saveNotificationWithCreator(notification, creator);
 
-    URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(notification.getId())).build();
+    URI uri =
+        uriInfo
+            .getBaseUriBuilder()
+            .path(NotificationsResource.class)
+            .path(NotificationsResource.class, "getNotificationById")
+            .build(notification.getId());
     return Response.created(uri).entity(new StatusResponse(Response.Status.CREATED)).build();
   }
 
