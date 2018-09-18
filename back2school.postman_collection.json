@@ -68,7 +68,7 @@
 					},
 					"response": [
 						{
-							"id": "20cfb995-b968-4519-b964-deff3824a2a5",
+							"id": "30de1af4-f009-40c1-adcd-44189ac92a5b",
 							"name": "/auth/login",
 							"originalRequest": {
 								"method": "POST",
@@ -201,7 +201,7 @@
 					},
 					"response": [
 						{
-							"id": "b0539625-a0ca-4d16-b95d-8e7903231169",
+							"id": "2cb8ff8e-7865-4318-b3aa-a966e3b1eddd",
 							"name": "/auth/logout",
 							"originalRequest": {
 								"method": "GET",
@@ -304,7 +304,7 @@
 					},
 					"response": [
 						{
-							"id": "18f54487-8ae8-4586-8de6-7ec9472447a6",
+							"id": "97be33eb-facc-41de-8a9a-84fac8c480a5",
 							"name": "/demo-utils",
 							"originalRequest": {
 								"method": "GET",
@@ -395,7 +395,7 @@
 					},
 					"response": [
 						{
-							"id": "7fd7051b-8ebb-423f-b91e-1bb6a090ea7b",
+							"id": "1e2892a6-8b27-4701-8289-7d403a34626d",
 							"name": "/demo-utils/deploy-demo-data",
 							"originalRequest": {
 								"method": "GET",
@@ -487,7 +487,7 @@
 					},
 					"response": [
 						{
-							"id": "bf8d6267-4b56-4ab3-a37d-74357e29eae9",
+							"id": "7e127df0-5f40-410b-8ea5-ebb4d7acfebe",
 							"name": "/demo-utils/empty-database",
 							"originalRequest": {
 								"method": "GET",
@@ -652,7 +652,7 @@
 					},
 					"response": [
 						{
-							"id": "fe9345a1-c7fd-4cf3-b70d-51efd3548c73",
+							"id": "8155c5f4-b65e-4e36-a605-b2b18378b1e7",
 							"name": "/students",
 							"originalRequest": {
 								"method": "POST",
@@ -753,7 +753,7 @@
 					},
 					"response": [
 						{
-							"id": "c29d78ac-6cc1-4bf3-898b-b2aef1d3cbbb",
+							"id": "076a69a2-7157-4b1d-b9b1-d4c37440a0e7",
 							"name": "S2 /students/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -976,7 +976,7 @@
 					},
 					"response": [
 						{
-							"id": "6bcd3195-400d-4f5b-83b2-69c863562215",
+							"id": "55c58055-8e45-4eea-bf5b-1c441aa403d0",
 							"name": "/parents/11",
 							"originalRequest": {
 								"method": "GET",
@@ -1783,7 +1783,7 @@
 			"description": "",
 			"item": [
 				{
-					"name": "/subjects",
+					"name": "NT1 /notifications",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -1805,6 +1805,107 @@
 								"api",
 								"v1",
 								"notifications"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NT2 /notifications/{id: [0-9]+}",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "ab2d9ba20e8449afa735c3735f2662fc"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/notifications/46",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"notifications",
+								"46"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NT3 /notifications/send-to-teachers",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "ab2d9ba20e8449afa735c3735f2662fc"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"type\": \"general_teachers\",\n\t\"subject\": \"New general communication to all the teachers\",\n\t\"text\": \"Good job, but slow down with the punishments to the students. I'm receiving many complaints from parents...\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/notifications/send-to-teachers",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"notifications",
+								"send-to-teachers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NT4 /notifications/send-to-parents",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "ab2d9ba20e8449afa735c3735f2662fc"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"type\": \"general_parents\",\n\t\"subject\": \"New general communication to all the parents\",\n\t\"text\": \"Good morning,\\nwe wanted to inform you that all the lectures have been anticipated at 8.00.\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/notifications/send-to-parents",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"notifications",
+								"send-to-parents"
 							]
 						}
 					},

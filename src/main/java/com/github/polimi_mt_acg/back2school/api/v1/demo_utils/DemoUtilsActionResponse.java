@@ -9,6 +9,7 @@ public class DemoUtilsActionResponse {
 
   @JsonProperty("performed_actions")
   private List<String> actions = new ArrayList<>();
+
   private String status;
   private String duration;
   private String info = "All previously active sessions has been terminated. Please, login again.";
@@ -35,5 +36,13 @@ public class DemoUtilsActionResponse {
 
   public void setDuration(String duration) {
     this.duration = duration;
+  }
+
+  public String getInfo() {
+    return info;
+  }
+
+  public void setInfo(String info) {
+    this.info = info;
   }
 }
