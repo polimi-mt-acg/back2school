@@ -33,6 +33,20 @@
       "new_password": "password"
     },
     {
+      "role": "STUDENT",
+      "name": "Alice4",
+      "surname": "SurnameAlice4",
+      "email": "alice4@email.com",
+      "new_password": "password"
+    },
+    {
+      "role": "STUDENT",
+      "name": "Alice5",
+      "surname": "SurnameAlice5",
+      "email": "alice5@email.com",
+      "new_password": "password"
+    },
+    {
       "role": "PARENT",
       "name": "Bob",
       "surname": "SurnameBob",
