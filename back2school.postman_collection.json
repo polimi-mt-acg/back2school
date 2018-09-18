@@ -68,7 +68,7 @@
 					},
 					"response": [
 						{
-							"id": "8514f9dd-64d9-4c9f-ad61-07e1802b5ecc",
+							"id": "20cfb995-b968-4519-b964-deff3824a2a5",
 							"name": "/auth/login",
 							"originalRequest": {
 								"method": "POST",
@@ -201,7 +201,7 @@
 					},
 					"response": [
 						{
-							"id": "41304936-8273-4cca-b7a4-85929f2455f7",
+							"id": "b0539625-a0ca-4d16-b95d-8e7903231169",
 							"name": "/auth/logout",
 							"originalRequest": {
 								"method": "GET",
@@ -304,7 +304,7 @@
 					},
 					"response": [
 						{
-							"id": "123c33bd-9f8f-42dc-8826-3f075158f262",
+							"id": "18f54487-8ae8-4586-8de6-7ec9472447a6",
 							"name": "/demo-utils",
 							"originalRequest": {
 								"method": "GET",
@@ -395,7 +395,7 @@
 					},
 					"response": [
 						{
-							"id": "301c1aed-006d-42ad-8f37-583bc769270f",
+							"id": "7fd7051b-8ebb-423f-b91e-1bb6a090ea7b",
 							"name": "/demo-utils/deploy-demo-data",
 							"originalRequest": {
 								"method": "GET",
@@ -487,7 +487,7 @@
 					},
 					"response": [
 						{
-							"id": "60520664-ec95-433c-b600-63e6ccbe10e7",
+							"id": "bf8d6267-4b56-4ab3-a37d-74357e29eae9",
 							"name": "/demo-utils/empty-database",
 							"originalRequest": {
 								"method": "GET",
@@ -652,7 +652,7 @@
 					},
 					"response": [
 						{
-							"id": "d0be6fcc-81db-43ec-861c-353b486a3f60",
+							"id": "fe9345a1-c7fd-4cf3-b70d-51efd3548c73",
 							"name": "/students",
 							"originalRequest": {
 								"method": "POST",
@@ -753,7 +753,7 @@
 					},
 					"response": [
 						{
-							"id": "2c2b2937-561b-4b34-bae0-9370f4dcd94d",
+							"id": "c29d78ac-6cc1-4bf3-898b-b2aef1d3cbbb",
 							"name": "S2 /students/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -976,7 +976,7 @@
 					},
 					"response": [
 						{
-							"id": "f4165645-1716-40a8-8dfa-7db04c8b208d",
+							"id": "6bcd3195-400d-4f5b-83b2-69c863562215",
 							"name": "/parents/11",
 							"originalRequest": {
 								"method": "GET",
@@ -1551,7 +1551,7 @@
 			"description": "",
 			"item": [
 				{
-					"name": "/classroms",
+					"name": "CR1 /classroms",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -1573,6 +1573,106 @@
 								"api",
 								"v1",
 								"classrooms"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CR1 /classroms",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "ab2d9ba20e8449afa735c3735f2662fc"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"4.1.5\",\n\t\"floor\": 1,\n\t\"building\": \"Building 4\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/classrooms",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"classrooms"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CR2 /classroms/{id: [0-9]+}",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "ab2d9ba20e8449afa735c3735f2662fc"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/classrooms/4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"classrooms",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CR2 /classroms/{id: [0-9]+}",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "ab2d9ba20e8449afa735c3735f2662fc"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"5.2.3\",\n\t\"floor\": 2,\n\t\"building\": \"Building 5\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/classrooms/4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"classrooms",
+								"4"
 							]
 						}
 					},
