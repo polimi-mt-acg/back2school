@@ -248,6 +248,19 @@ public class ClassesResource {
           .build();
     }
 
+    // check if the student already belongs to the class
+    List<User> usersAlreadyBelonging =
+        aClass
+            .getClassStudents()
+            .stream()
+            .filter(x -> x.getId() == student.getId())
+            .collect(Collectors.toList());
+    if (usersAlreadyBelonging.size() > 0) {
+      return Response.status(Status.CONFLICT)
+          .entity(new StatusResponse(Status.CONFLICT, "Student already belongs to class"))
+          .build();
+    }
+
     // add the student to the class
     aClass.getClassStudents().add(student);
 
@@ -293,7 +306,7 @@ public class ClassesResource {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.BAD_REQUEST)
-          .entity(new StatusResponse(Status.BAD_REQUEST, "Student not into the class"))
+          .entity(new StatusResponse(Status.BAD_REQUEST, "Student not belonging to class"))
           .build();
     }
 

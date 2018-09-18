@@ -11,6 +11,7 @@ public class DemoUtilsActionResponse {
   private List<String> actions = new ArrayList<>();
   private String status;
   private String duration;
+  private String info = "All previously active sessions has been terminated. Please, login again.";
 
   public List<String> getActions() {
     return actions;
