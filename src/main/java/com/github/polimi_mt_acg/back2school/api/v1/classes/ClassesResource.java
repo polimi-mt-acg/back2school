@@ -1,5 +1,6 @@
 package com.github.polimi_mt_acg.back2school.api.v1.classes;
 
+import com.github.polimi_mt_acg.back2school.api.v1.StatusResponse;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.AdministratorSecured;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.TeacherAdministratorSecured;
 import com.github.polimi_mt_acg.back2school.api.v1.students.StudentsResource;
@@ -9,7 +10,6 @@ import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import org.hibernate.Session;
 
 import javax.ws.rs.*;
-import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.*;
 import javax.ws.rs.core.Response.Status;
 import java.net.URI;
@@ -56,6 +56,7 @@ public class ClassesResource {
 
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
   public Response postClasses(ClassRequest request, @Context UriInfo uriInfo) {
     Session session = DatabaseHandler.getInstance().getNewSession();
@@ -73,7 +74,9 @@ public class ClassesResource {
         session.getTransaction().commit();
         session.close();
         return Response.status(Status.BAD_REQUEST)
-            .entity("Student with id: " + str(studentId) + " NOT known!")
+            .entity(
+                new StatusResponse(
+                    Status.BAD_REQUEST, "Student with id: " + str(studentId) + " NOT known!"))
             .build();
       }
       aClass.addStudent(student);
@@ -90,7 +93,7 @@ public class ClassesResource {
             .path(this.getClass())
             .path(this.getClass(), "getClassById")
             .build(aClass.getId());
-    return Response.created(uri).build();
+    return Response.created(uri).entity(new StatusResponse(Status.CREATED)).build();
   }
 
   @Path("{classId: [0-9]+}")
@@ -103,7 +106,9 @@ public class ClassesResource {
         DatabaseHandler.fetchEntityBy(Class.class, Class_.id, Integer.parseInt(classId));
 
     if (!classOpt.isPresent()) {
-      return Response.status(Status.NOT_FOUND).entity("Unknown class id").build();
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown class id"))
+          .build();
     }
     Class aClass = classOpt.get();
 
@@ -130,6 +135,7 @@ public class ClassesResource {
   @Path("{classId: [0-9]+}")
   @PUT
   @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
   public Response putClassById(
       ClassRequest request, @PathParam("classId") Integer classId, @Context UriInfo uriInfo) {
@@ -141,7 +147,9 @@ public class ClassesResource {
       session.getTransaction().commit();
       session.close();
       print("Unknown class id: ", classId);
-      return Response.status(Status.NOT_FOUND).entity("Unknown class id").build();
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown class id"))
+          .build();
     }
 
     // Update class fields
@@ -154,11 +162,13 @@ public class ClassesResource {
       // get student from db
       User student = session.get(User.class, studentId);
       if (student == null) {
-        print("Student with id: ", studentId, " NOT known!");
+        print("Unknown student id ", studentId);
         session.getTransaction().commit();
         session.close();
         return Response.status(Status.BAD_REQUEST)
-            .entity("Student with id: " + str(studentId) + " NOT known!")
+            .entity(
+                new StatusResponse(
+                    Status.BAD_REQUEST, "Unknown student id " + str(studentId)))
             .build();
       }
       aClass.addStudent(student);
@@ -170,7 +180,7 @@ public class ClassesResource {
     // According to HTTP specification:
     // HTTP status code 200 OK for a successful PUT of an update to an existing resource. No
     // response body needed.
-    return Response.ok().build();
+    return Response.ok().entity(new StatusResponse(Status.OK)).build();
   }
 
   @Path("{classId: [0-9]+}/students")
@@ -183,7 +193,9 @@ public class ClassesResource {
         DatabaseHandler.fetchEntityBy(Class.class, Class_.id, as_int(classId));
 
     if (!classOpt.isPresent()) {
-      return Response.status(Status.NOT_FOUND).entity("Unknown class id").build();
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown class id"))
+          .build();
     }
     Class aClass = classOpt.get();
 
@@ -207,6 +219,7 @@ public class ClassesResource {
   @Path("{classId: [0-9]+}/students")
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
   public Response postClassStudents(
       ClassStudentsRequest request, @PathParam("classId") Integer classId) {
@@ -220,7 +233,9 @@ public class ClassesResource {
       print("Unknown class id: ", classId);
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND).entity("Unknown class id").build();
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown class id"))
+          .build();
     }
 
     // Fetch the student
@@ -229,7 +244,9 @@ public class ClassesResource {
       print("Unknown student id: ", request.getStudentId());
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.BAD_REQUEST).entity("Unknown user id").build();
+      return Response.status(Status.BAD_REQUEST)
+          .entity(new StatusResponse(Status.BAD_REQUEST, "Unknown user id"))
+          .build();
     }
 
     // add the student to the class
@@ -238,11 +255,12 @@ public class ClassesResource {
     session.getTransaction().commit();
     session.close();
 
-    return Response.ok().build();
+    return Response.ok().entity(new StatusResponse(Status.CREATED)).build();
   }
 
   @Path("{classId: [0-9]+}/students/{studentId: [0-9]+}")
   @DELETE
+  @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
   public Response deleteClassStudentById(
       @PathParam("classId") Integer classId, @PathParam("studentId") Integer studentId) {
@@ -256,7 +274,9 @@ public class ClassesResource {
       print("Unknown class id: ", classId);
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND).entity("Unknown class id").build();
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown class id"))
+          .build();
     }
 
     // get a list of students without the one removed
@@ -273,7 +293,9 @@ public class ClassesResource {
       print("Student with id: ", studentId, " not belonging to the class.");
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.BAD_REQUEST).entity("Student not into the class").build();
+      return Response.status(Status.BAD_REQUEST)
+          .entity(new StatusResponse(Status.BAD_REQUEST, "Student not into the class"))
+          .build();
     }
 
     // update the students list without the removed one to the class
@@ -281,17 +303,18 @@ public class ClassesResource {
     session.getTransaction().commit();
     session.close();
 
-    return Response.ok().build();
+    return Response.ok().entity(new StatusResponse(Status.OK)).build();
   }
 
   @Path("{classId: [0-9]+}/notifications/send-to-teachers")
   @POST
   @Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
+  @Produces(javax.ws.rs.core.MediaType.APPLICATION_JSON)
   @AdministratorSecured
   public Response sendNotificationToTeachersOfClass(
       Notification.NotificationRequest request,
       @PathParam("classId") Integer classId,
-      @Context ContainerRequestContext crc) {
+      @Context HttpHeaders httpHeaders) {
 
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
@@ -301,11 +324,13 @@ public class ClassesResource {
       print("Unknown class id: ", classId);
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND).entity("Unknown class id").build();
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.BAD_REQUEST, "Unknown class id"))
+          .build();
     }
 
     // Get the notification creator
-    User creator = AuthenticationSession.getCurrentUser(crc);
+    User creator = AuthenticationSession.getCurrentUser(httpHeaders);
 
     // Create new notification entity from request
     NotificationClassTeacher notificationClassTeacher = new NotificationClassTeacher();
@@ -325,11 +350,12 @@ public class ClassesResource {
   @Path("{classId: [0-9]+}/notifications/send-to-parents")
   @POST
   @Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
+  @Produces(javax.ws.rs.core.MediaType.APPLICATION_JSON)
   @AdministratorSecured
   public Response sendNotificationToParentsOfClass(
       Notification.NotificationRequest request,
       @PathParam("classId") Integer classId,
-      @Context ContainerRequestContext crc) {
+      @Context HttpHeaders httpHeaders) {
 
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
@@ -339,11 +365,13 @@ public class ClassesResource {
       print("Unknown class id: ", classId);
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND).entity("Unknown class id").build();
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown class id"))
+          .build();
     }
 
     // Get the notification creator
-    User creator = AuthenticationSession.getCurrentUser(crc);
+    User creator = AuthenticationSession.getCurrentUser(httpHeaders);
 
     // Create new notification entity from request
     NotificationClassParent notificationClassParent = new NotificationClassParent();
