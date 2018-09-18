@@ -1,6 +1,7 @@
 package com.github.polimi_mt_acg.back2school.api.v1.classes;
 
 import com.github.polimi_mt_acg.back2school.api.v1.StatusResponse;
+import com.github.polimi_mt_acg.back2school.api.v1.notifications.NotificationsResource;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.AdministratorSecured;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.TeacherAdministratorSecured;
 import com.github.polimi_mt_acg.back2school.api.v1.students.StudentsResource;
@@ -166,9 +167,7 @@ public class ClassesResource {
         session.getTransaction().commit();
         session.close();
         return Response.status(Status.BAD_REQUEST)
-            .entity(
-                new StatusResponse(
-                    Status.BAD_REQUEST, "Unknown student id " + str(studentId)))
+            .entity(new StatusResponse(Status.BAD_REQUEST, "Unknown student id " + str(studentId)))
             .build();
       }
       aClass.addStudent(student);
@@ -344,7 +343,13 @@ public class ClassesResource {
     session.getTransaction().commit();
     session.close();
 
-    return Response.ok(notificationClassTeacher, MediaType.APPLICATION_JSON).build();
+    URI uri =
+        uriInfo
+            .getBaseUriBuilder()
+            .path(NotificationsResource.class)
+            .path(NotificationsResource.class, "getNotificationById")
+            .build(notificationClassTeacher.getId());
+    return Response.created(uri).entity(new StatusResponse(Status.CREATED)).build();
   }
 
   @Path("{classId: [0-9]+}/notifications/send-to-parents")
@@ -385,6 +390,12 @@ public class ClassesResource {
     session.getTransaction().commit();
     session.close();
 
-    return Response.ok(notificationClassParent, MediaType.APPLICATION_JSON).build();
+    URI uri =
+        uriInfo
+            .getBaseUriBuilder()
+            .path(NotificationsResource.class)
+            .path(NotificationsResource.class, "getNotificationById")
+            .build(notificationClassParent.getId());
+    return Response.created(uri).entity(new StatusResponse(Status.CREATED)).build();
   }
 }

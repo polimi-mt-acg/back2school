@@ -8,11 +8,7 @@ import com.github.polimi_mt_acg.back2school.model.NotificationGeneralTeachers;
 import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import java.util.List;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -31,6 +27,15 @@ public class NotificationsResource {
         DatabaseHandler.getInstance().getListSelectFrom(Notification.class);
 
     return new NotificationsResponse(notifications);
+  }
+
+  @GET
+  @Path("{id: [0-9]+}")
+  @Produces(javax.ws.rs.core.MediaType.APPLICATION_JSON)
+  @AdministratorSecured
+  public Response getNotificationById(@PathParam("id") String id) {
+    // TODO
+    return Response.ok().build();
   }
 
   @Path("send-to-teachers")
