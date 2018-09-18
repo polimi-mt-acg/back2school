@@ -22,7 +22,14 @@
       "role": "STUDENT",
       "name": "Alice2",
       "surname": "SurnameAlice2",
-      "email": "alice1@email.com",
+      "email": "alice2@email.com",
+      "new_password": "password"
+    },
+    {
+      "role": "STUDENT",
+      "name": "Alice3",
+      "surname": "SurnameAlice3",
+      "email": "alice3@email.com",
       "new_password": "password"
     },
     {

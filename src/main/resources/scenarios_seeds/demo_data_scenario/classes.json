@@ -11,17 +11,17 @@
     {
       "academicYear": 2018,
       "name": "1B",
-      "seedStudentsEmail": ["bob1@email.com", "bob2@email.com"]
+      "seedStudentsEmail": ["alice1@email.com", "alice2@email.com"]
     },
     {
       "academicYear": 2017,
       "name": "2B",
-      "seedStudentsEmail": ["bob1@email.com"]
+      "seedStudentsEmail": ["alice3@email.com"]
     },
     {
       "academicYear": 2018,
       "name": "3B",
-      "seedStudentsEmail": ["bob1@email.com", "bob2@email.com"]
+      "seedStudentsEmail": ["alice1@email.com", "alice2@email.com", "alice3@email.com"]
     }
   ]
 }

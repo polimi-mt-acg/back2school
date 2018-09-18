@@ -1,0 +1,28 @@
+{
+  "grades": [
+    {
+      "seedSubjectName": "English",
+      "seedTeacherEmail": "carl1@email.com",
+      "seedStudentEmail": "alice@email.com",
+      "date": "2018-04-10",
+      "title": "1st grammar test",
+      "grade": 4.5
+    },
+    {
+      "seedSubjectName": "English",
+      "seedTeacherEmail": "carl1@email.com",
+      "seedStudentEmail": "alice@email.com",
+      "date": "2018-06-10",
+      "title": "2nd grammar test",
+      "grade": 8
+    },
+    {
+      "seedSubjectName": "Mathematics",
+      "seedTeacherEmail": "carl2@email.com",
+      "seedStudentEmail": "alice2@email.com",
+      "date": "2018-04-22",
+      "title": "Differential equations",
+      "grade": 8.5
+    }
+  ]
+}

@@ -14,6 +14,11 @@
       "name": "0.4",
       "floor": 0,
       "building": "Laboratory building"
+    },
+    {
+      "name": "5.1",
+      "floor": 1,
+      "building": "Secondary building"
     }
   ]
 }

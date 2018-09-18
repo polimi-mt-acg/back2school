@@ -66,7 +66,84 @@
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"id": "3155a4df-974e-4d68-a9c5-db57fe88d4d0",
+							"name": "/auth/login",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": false
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"email\": \"admin@email.com\",\n\t\"password\": \"admin\"\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8080/back2school-0.1/api/v1/auth/login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"back2school-0.1",
+										"api",
+										"v1",
+										"auth",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Connection",
+									"value": "keep-alive",
+									"name": "Connection",
+									"description": "Options that are desired for the connection"
+								},
+								{
+									"key": "Content-Length",
+									"value": "150",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 16 Sep 2018 13:45:15 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "WildFly/11",
+									"name": "Server",
+									"description": "A name for the server"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Undertow/1",
+									"name": "X-Powered-By",
+									"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"status\" : \"AUTHENTICATED\",\n  \"token\" : \"af8d112bbd5644f0ba067200ffbc37d6\",\n  \"authorization_header\" : \"Bearer af8d112bbd5644f0ba067200ffbc37d6\"\n}"
+						}
+					]
 				},
 				{
 					"name": "/auth/logout",
@@ -122,7 +199,81 @@
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"id": "d25f4a0d-7440-4ace-9fc8-fcc9767e17ea",
+							"name": "/auth/logout",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{back2school_token}}",
+										"disabled": false
+									}
+								],
+								"body": {},
+								"url": {
+									"raw": "http://localhost:8080/back2school-0.1/api/v1/auth/logout",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"back2school-0.1",
+										"api",
+										"v1",
+										"auth",
+										"logout"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Connection",
+									"value": "keep-alive",
+									"name": "Connection",
+									"description": "Options that are desired for the connection"
+								},
+								{
+									"key": "Content-Length",
+									"value": "58",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 16 Sep 2018 13:47:33 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "WildFly/11",
+									"name": "Server",
+									"description": "A name for the server"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Undertow/1",
+									"name": "X-Powered-By",
+									"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"status\" : \"LOGGED_OUT\",\n  \"reason\" : \"USER_REQUEST\"\n}"
+						}
+					]
 				}
 			]
 		},
@@ -151,7 +302,74 @@
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"id": "27244ebb-b133-4dfa-9e6e-c22df3c79d68",
+							"name": "/demo-utils",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "http://localhost:8080/back2school-0.1/api/v1/demo-utils",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"back2school-0.1",
+										"api",
+										"v1",
+										"demo-utils"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Connection",
+									"value": "keep-alive",
+									"name": "Connection",
+									"description": "Options that are desired for the connection"
+								},
+								{
+									"key": "Content-Length",
+									"value": "518",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 16 Sep 2018 13:47:50 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "WildFly/11",
+									"name": "Server",
+									"description": "A name for the server"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Undertow/1",
+									"name": "X-Powered-By",
+									"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"information\" : \"This utilities should be used for demo purposes. Please, notice that a deploy of demo data (/demo-utils/deploy-demo-data) will also empty the database before the new data insertion. This will end the current session and reset the admin account data. A new login will be required.\",\n  \"urls\" : {\n    \"empty_database\" : \"http://localhost:8080/back2school-0.1/api/v1/demo-utils/empty-database\",\n    \"deploy_demo_data\" : \"http://localhost:8080/back2school-0.1/api/v1/demo-utils/deploy-demo-data\"\n  }\n}"
+						}
+					]
 				},
 				{
 					"name": "/demo-utils/deploy-demo-data",
@@ -175,7 +393,75 @@
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"id": "0bf997a2-cd89-4a26-ae93-1a266106a94b",
+							"name": "/demo-utils/deploy-demo-data",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "http://localhost:8080/back2school-0.1/api/v1/demo-utils/deploy-demo-data",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"back2school-0.1",
+										"api",
+										"v1",
+										"demo-utils",
+										"deploy-demo-data"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Connection",
+									"value": "keep-alive",
+									"name": "Connection",
+									"description": "Options that are desired for the connection"
+								},
+								{
+									"key": "Content-Length",
+									"value": "173",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 16 Sep 2018 13:48:08 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "WildFly/11",
+									"name": "Server",
+									"description": "A name for the server"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Undertow/1",
+									"name": "X-Powered-By",
+									"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"status\" : \"SUCCESS\",\n  \"duration\" : \"PT3.282S\",\n  \"performed_actions\" : [ \"TRUNCATE_DATABASE\", \"ENSURE_ADMIN_PRESET\", \"DEPLOY_DATABASE_SCENARIO(demo_data_scenario)\" ]\n}"
+						}
+					]
 				},
 				{
 					"name": "/demo-utils/empty-database",
@@ -199,7 +485,75 @@
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"id": "e6e51956-bd1c-450a-88a5-4ee0ebbd25b1",
+							"name": "/demo-utils/empty-database",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "http://localhost:8080/back2school-0.1/api/v1/demo-utils/empty-database",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"back2school-0.1",
+										"api",
+										"v1",
+										"demo-utils",
+										"empty-database"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Connection",
+									"value": "keep-alive",
+									"name": "Connection",
+									"description": "Options that are desired for the connection"
+								},
+								{
+									"key": "Content-Length",
+									"value": "125",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 16 Sep 2018 13:48:21 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "WildFly/11",
+									"name": "Server",
+									"description": "A name for the server"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Undertow/1",
+									"name": "X-Powered-By",
+									"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"status\" : \"SUCCESS\",\n  \"duration\" : \"PT0.536S\",\n  \"performed_actions\" : [ \"TRUNCATE_DATABASE\", \"ENSURE_ADMIN_PRESET\" ]\n}"
+						}
+					]
 				}
 			],
 			"auth": {
@@ -240,7 +594,7 @@
 			"description": "",
 			"item": [
 				{
-					"name": "/students",
+					"name": "S1 /students",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -268,7 +622,7 @@
 					"response": []
 				},
 				{
-					"name": "/students",
+					"name": "S1 /students",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -279,7 +633,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"parentEmail\": \"alice@email.com\",\n\t\"student\": {\n\t\t\"name\": \"Postman Student Name\",\n\t\t\"surname\": \"Surname\",\n\t\t\"email\": \"student@postman.comt\",\n\t\t\"password\": \"password\"\n\t}\n}"
+							"raw": "{\n\t\"parentEmail\": \"bob1@email.com\",\n\t\"student\": {\n\t\t\"name\": \"Postman Student Name\",\n\t\t\"surname\": \"Surname\",\n\t\t\"email\": \"student@postman.comt\",\n\t\t\"new_password\": \"password\"\n\t}\n}"
 						},
 						"url": {
 							"raw": "http://localhost:8080/back2school-0.1/api/v1/students",
@@ -296,12 +650,404 @@
 							]
 						}
 					},
+					"response": [
+						{
+							"id": "8c4f824c-2870-4447-867b-a66877608f5c",
+							"name": "/students",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": false
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"parentEmail\": \"bob1@email.com\",\n\t\"student\": {\n\t\t\"name\": \"Postman Student Name\",\n\t\t\"surname\": \"Surname\",\n\t\t\"email\": \"student@postman.comt\",\n\t\t\"new_password\": \"password\"\n\t}\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8080/back2school-0.1/api/v1/students",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"back2school-0.1",
+										"api",
+										"v1",
+										"students"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "plain",
+							"header": [
+								{
+									"key": "Connection",
+									"value": "keep-alive",
+									"name": "Connection",
+									"description": "Options that are desired for the connection"
+								},
+								{
+									"key": "Content-Length",
+									"value": "0",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 17 Sep 2018 15:20:00 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Location",
+									"value": "http://localhost:8080/back2school-0.1/api/v1/students/35",
+									"name": "Location",
+									"description": "Used in redirection, or when a new resource has been created."
+								},
+								{
+									"key": "Server",
+									"value": "WildFly/11",
+									"name": "Server",
+									"description": "A name for the server"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Undertow/1",
+									"name": "X-Powered-By",
+									"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+								}
+							],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "S2 /students/{id: [0-9]+}",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/students/8",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"students",
+								"8"
+							]
+						},
+						"description": "Student information."
+					},
+					"response": [
+						{
+							"id": "acf88d2c-5b2d-46f0-920d-ed4dd8975b0f",
+							"name": "S2 /students/{id: [0-9]+}",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "http://localhost:8080/back2school-0.1/api/v1/students/8",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"back2school-0.1",
+										"api",
+										"v1",
+										"students",
+										"8"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Connection",
+									"value": "keep-alive",
+									"name": "Connection",
+									"description": "Options that are desired for the connection"
+								},
+								{
+									"key": "Content-Length",
+									"value": "105",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 17 Sep 2018 15:34:55 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "WildFly/11",
+									"name": "Server",
+									"description": "A name for the server"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Undertow/1",
+									"name": "X-Powered-By",
+									"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"role\" : \"STUDENT\",\n  \"name\" : \"Alice\",\n  \"surname\" : \"SurnameAlice\",\n  \"email\" : \"alice@email.com\"\n}"
+						}
+					]
+				},
+				{
+					"name": "S2 /students/{id: [0-9]+}",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Postman Student\",\n\t\"surname\": \"SurnameChanged\",\n\t\"email\": \"student@postman.comt\",\n\t\"new_password\": \"password2\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/students/8",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"students",
+								"8"
+							]
+						},
+						"description": "Student information."
+					},
 					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{back2school_token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "76ffdbdd-dcb8-4303-aafa-6f53178b3705",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "30ab0676-af57-44f6-9b4a-c865de4c44f3",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Parents",
+			"description": "",
+			"item": [
+				{
+					"name": "/parents",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "ab2d9ba20e8449afa735c3735f2662fc"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/parents",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"parents"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/parents",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"userPassword\": \"\",\n\t\"user\": {}\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/parents",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"parents"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/parents/{id: [0-9]+}",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/parents/11",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"parents",
+								"11"
+							]
+						},
+						"description": "Student information."
+					},
+					"response": [
+						{
+							"id": "1fb15a64-1640-4d3f-8e6d-e1fbbdb77265",
+							"name": "/parents/11",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "http://localhost:8080/back2school-0.1/api/v1/parents/11",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"back2school-0.1",
+										"api",
+										"v1",
+										"parents",
+										"11"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Connection",
+									"value": "keep-alive",
+									"name": "Connection",
+									"description": "Options that are desired for the connection"
+								},
+								{
+									"key": "Content-Length",
+									"value": "98",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 16 Sep 2018 13:51:15 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "WildFly/11",
+									"name": "Server",
+									"description": "A name for the server"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Undertow/1",
+									"name": "X-Powered-By",
+									"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"role\" : \"PARENT\",\n  \"name\" : \"Bob\",\n  \"surname\" : \"SurnameBob\",\n  \"email\" : \"bob@email.com\"\n}"
+						}
+					]
 				},
 				{
 					"name": "/students/{id: [0-9]+}",
 					"request": {
-						"method": "GET",
+						"method": "PUT",
 						"header": [],
 						"body": {},
 						"url": {
@@ -320,6 +1066,402 @@
 							]
 						},
 						"description": "Student information."
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{back2school_token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "76ffdbdd-dcb8-4303-aafa-6f53178b3705",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "30ab0676-af57-44f6-9b4a-c865de4c44f3",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Teachers",
+			"description": "",
+			"item": [
+				{
+					"name": "/teachers",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "ab2d9ba20e8449afa735c3735f2662fc"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/teachers",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"teachers"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{back2school_token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "76ffdbdd-dcb8-4303-aafa-6f53178b3705",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "30ab0676-af57-44f6-9b4a-c865de4c44f3",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Administrators",
+			"description": "",
+			"item": [
+				{
+					"name": "/administrators",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "ab2d9ba20e8449afa735c3735f2662fc"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/administrators",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"administrators"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{back2school_token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "76ffdbdd-dcb8-4303-aafa-6f53178b3705",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "30ab0676-af57-44f6-9b4a-c865de4c44f3",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Classes",
+			"description": "",
+			"item": [
+				{
+					"name": "/classes",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "ab2d9ba20e8449afa735c3735f2662fc"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/classes",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"classes"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{back2school_token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "76ffdbdd-dcb8-4303-aafa-6f53178b3705",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "30ab0676-af57-44f6-9b4a-c865de4c44f3",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Classrooms",
+			"description": "",
+			"item": [
+				{
+					"name": "/classroms",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "ab2d9ba20e8449afa735c3735f2662fc"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/classrooms",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"classrooms"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{back2school_token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "76ffdbdd-dcb8-4303-aafa-6f53178b3705",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "30ab0676-af57-44f6-9b4a-c865de4c44f3",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Subjects",
+			"description": "",
+			"item": [
+				{
+					"name": "/subjects",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "ab2d9ba20e8449afa735c3735f2662fc"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/subjects",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"subjects"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{back2school_token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "76ffdbdd-dcb8-4303-aafa-6f53178b3705",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "30ab0676-af57-44f6-9b4a-c865de4c44f3",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Notifications",
+			"description": "",
+			"item": [
+				{
+					"name": "/subjects",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "ab2d9ba20e8449afa735c3735f2662fc"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/notifications",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"notifications"
+							]
+						}
 					},
 					"response": []
 				}
