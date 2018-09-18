@@ -1,5 +1,6 @@
 package com.github.polimi_mt_acg.back2school.api.v1.auth;
 
+import com.github.polimi_mt_acg.back2school.api.v1.StatusResponse;
 import com.github.polimi_mt_acg.back2school.model.AuthenticationSession;
 import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.model.User_;
@@ -41,19 +42,17 @@ public class AuthenticationResource {
 
     // if the user is null: invalid credentials or user does not exist
     if (user == null)
-      return Response.status(Response.Status.BAD_REQUEST).build();
-
+      return Response.status(Response.Status.BAD_REQUEST)
+          .entity(new StatusResponse(Response.Status.BAD_REQUEST, "Invalid credentials."))
+          .build();
 
     // create a new AuthenticationSession and return back the token to the client
-    AuthenticationSession authSession =
-        AuthenticationSession.startNewAuthenticationSession(user);
-
+    AuthenticationSession authSession = AuthenticationSession.startNewAuthenticationSession(user);
 
     String token = authSession.getToken();
 
     return Response.ok(new LoginResponse("AUTHENTICATED", token)).build();
   }
-
 
   @GET
   @Path("logout")
@@ -63,7 +62,9 @@ public class AuthenticationResource {
 
     // if the user is null because session expired or other reasons
     if (currentUser == null)
-      return Response.status(Response.Status.BAD_REQUEST).build();
+      return Response.status(Response.Status.BAD_REQUEST)
+          .entity(new StatusResponse(Response.Status.BAD_REQUEST, "Invalid authenticated session."))
+          .build();
 
     Session session = DatabaseHandler.getInstance().getNewSession();
     // invalidate all the still valid user sessions
@@ -72,7 +73,6 @@ public class AuthenticationResource {
 
     return Response.ok(new LogoutResponse()).build();
   }
-
 
   private User getAuthenticatedUser(String email, String password) {
     // Authenticate against the database
@@ -91,4 +91,3 @@ public class AuthenticationResource {
     return user;
   }
 }
-
