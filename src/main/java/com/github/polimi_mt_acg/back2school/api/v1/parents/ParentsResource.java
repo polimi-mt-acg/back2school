@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -30,6 +31,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.hibernate.Session;
 
+import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.print;
 import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.str;
 
 @Path("parents")
@@ -189,18 +191,16 @@ public class ParentsResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
-  public Response postParentChildren( // is postParentChild a better name?
-      PostChildrenRequest request,
-      @PathParam("id") String parentId,
-      @Context ContainerRequestContext crc,
-      @Context UriInfo uriInfo) {
-    DatabaseHandler dbi = DatabaseHandler.getInstance();
-    Session session = dbi.getNewSession();
+  public Response postParentChildren(
+      ParentsChildrenRequest request, @PathParam("id") Integer parentId) {
+
+    Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 
-    // Fetch parent
-    User parent = session.get(User.class, Integer.parseInt(parentId));
+    // Fetch the parent
+    User parent = session.get(User.class, parentId);
     if (parent == null) {
+      print("Unknown parent id: ", parentId);
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND)
@@ -208,35 +208,35 @@ public class ParentsResource {
           .build();
     }
 
-    // Fetch the student entity by name
-    Optional<User> studentOpt =
-        DatabaseHandler.fetchEntityBy(
-            User.class, User_.email, request.getStudent().getEmail(), session);
-    if (!studentOpt.isPresent()) {
+    // Fetch the child
+    User newChild = session.get(User.class, request.getChildId());
+    if (newChild == null) {
+      print("Unknown child id: ", request.getChildId());
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND)
-          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown student mail"))
+      return Response.status(Status.BAD_REQUEST)
+          .entity(new StatusResponse(Status.BAD_REQUEST, "Unknown child id"))
           .build();
     }
+
     // Check if student is already a child of the parent
     for (User child : parent.getChildren()) {
-      if (child.getEmail().equals(studentOpt.get().getEmail())) {
+      if (child.getId() == newChild.getId()) {
         session.getTransaction().commit();
         session.close();
         return Response.status(Status.CONFLICT)
-            .entity("Student already assigned to this parent")
+            .entity(new StatusResponse(Status.CONFLICT, "Student already assigned to this parent"))
             .build();
       }
     }
 
-    // Add the new children to the parent
-    parent.addChild(request.getStudent());
+    // add the student to the class
+    parent.addChild(newChild);
 
     session.getTransaction().commit();
     session.close();
 
-    return Response.ok().build();
+    return Response.ok().entity(new StatusResponse(Status.OK)).build();
   }
 
   @Path("{id: [0-9]+}/appointments")

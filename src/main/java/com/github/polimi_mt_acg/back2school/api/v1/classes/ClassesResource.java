@@ -238,8 +238,8 @@ public class ClassesResource {
     }
 
     // Fetch the student
-    User student = session.get(User.class, request.getStudentId());
-    if (student == null) {
+    User newStudent = session.get(User.class, request.getStudentId());
+    if (newStudent == null) {
       print("Unknown student id: ", request.getStudentId());
       session.getTransaction().commit();
       session.close();
@@ -249,20 +249,18 @@ public class ClassesResource {
     }
 
     // check if the student already belongs to the class
-    List<User> usersAlreadyBelonging =
-        aClass
-            .getClassStudents()
-            .stream()
-            .filter(x -> x.getId() == student.getId())
-            .collect(Collectors.toList());
-    if (usersAlreadyBelonging.size() > 0) {
-      return Response.status(Status.CONFLICT)
-          .entity(new StatusResponse(Status.CONFLICT, "Student already belongs to class"))
-          .build();
+    for (User student : aClass.getClassStudents()) {
+      if (student.getId() == newStudent.getId()) {
+        session.getTransaction().commit();
+        session.close();
+        return Response.status(Status.CONFLICT)
+            .entity(new StatusResponse(Status.CONFLICT, "Student already belongs to class"))
+            .build();
+      }
     }
 
     // add the student to the class
-    aClass.getClassStudents().add(student);
+    aClass.addStudent(newStudent);
 
     session.getTransaction().commit();
     session.close();

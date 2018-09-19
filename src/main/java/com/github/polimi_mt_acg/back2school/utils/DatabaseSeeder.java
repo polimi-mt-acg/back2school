@@ -153,19 +153,46 @@ public class DatabaseSeeder {
 
 
   /**
-   * Retrieve a user from seeds by its role
+   * Retrieve a user from seeds by its role, first element returned.
+   *
    * @param seedFolder The seed folder from which to load users
    * @param role The role to select.
    * @return The first user with the role given is returned.
    */
   public static User getSeedUserByRole(String seedFolder, User.Role role) {
+    return getSeedUserByRole(seedFolder, role, 0);
+  }
+
+  /**
+   * Retrieve a user from seeds by its role and position.
+   * @param seedFolder The seed folder from which to load users
+   * @param role The role to select.
+   * @param copyNumber The position of the element to be returned.
+   * @return The user at position copyNumber, with the role given is returned.
+   */
+  public static User getSeedUserByRole(String seedFolder, User.Role role, int copyNumber) {
     List<User> seedUsers =
         (List<User>) DatabaseSeeder.getEntitiesListFromSeed(seedFolder, "users.json");
+
+    // check seed users null
+    if (seedUsers == null) {
+      print("ERROR!!! seedUsers list in getSeedUserByRole() is null! Scenario: ", seedFolder);
+      System.exit(-1);
+      return null;
+    }
+
+    // check valid copy number
+    if (copyNumber >= seedUsers.size()) {
+      print("ERROR!!! copyNumber given to getSeedUserByRole() exceed the retrieved users seed list size! Scenario: ", seedFolder);
+      System.exit(-1);
+      return null;
+    }
+
     return seedUsers
         .stream()
         .filter(user -> user.getRole().equals(role))
         .collect(Collectors.toList())
-        .get(0);
+        .get(copyNumber);
   }
 
 

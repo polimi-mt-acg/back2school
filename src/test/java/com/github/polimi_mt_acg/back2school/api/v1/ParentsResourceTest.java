@@ -4,6 +4,7 @@ import com.github.polimi_mt_acg.back2school.api.v1.auth.AuthenticationResource;
 import com.github.polimi_mt_acg.back2school.api.v1.parents.ParentsResponse;
 import com.github.polimi_mt_acg.back2school.api.v1.parents.*;
 import com.github.polimi_mt_acg.back2school.model.User;
+import com.github.polimi_mt_acg.back2school.model.User_;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseSeeder;
 import com.github.polimi_mt_acg.back2school.utils.TestCategory;
@@ -15,6 +16,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.as_int;
 import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.print;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -29,9 +31,6 @@ import java.util.stream.Collectors;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Response;
-
-import java.time.LocalDateTime;
-import java.time.Month;
 
 public class ParentsResourceTest {
 
@@ -49,6 +48,7 @@ public class ParentsResourceTest {
         HTTPServerManager.startServer(
             AuthenticationResource.class,
             "com.github.polimi_mt_acg.back2school.api.v1.parents",
+            "com.github.polimi_mt_acg.back2school.api.v1.students",
             "com.github.polimi_mt_acg.back2school.api.v1.security_contexts");
 
     // load admin for authentication
@@ -264,41 +264,87 @@ public class ParentsResourceTest {
     print(newParentResponse);
   }
 
+
   @Test
   @Category(TestCategory.Endpoint.class)
-  public void getParentChildrenFromAdmin() {
-    User parent = buildMarcos(4);
+  public void postParentChildrenFromAdmin() {
+    // add a parent to the database
+    User parent = buildMarcos(8);
     URI parentURI = doParentPost(adminForAuth, parent);
-    User child = getAChild(6);
 
-    Path fullPath = Paths.get("/", parentURI.getPath());
-    Path idPath = fullPath.getParent().relativize(fullPath);
-    String parentID = idPath.toString();
+    Path fullPathParent = Paths.get("/", parentURI.getPath());
+    Path idPathParent = fullPathParent.getParent().relativize(fullPathParent);
+    String parentId = idPathParent.toString();
 
-    PostChildrenRequest requestPost = new PostChildrenRequest();
-    requestPost.setParent(parent);
-    requestPost.setStudent(child);
+    // get a child from the database
+    User child =
+        DatabaseHandler.getInstance()
+            .getListSelectFromWhereEqual(User.class, User_.role, User.Role.STUDENT).get(2);
 
+    // create request to associate parent and child and invoke it
+    ParentsChildrenRequest requestPost = new ParentsChildrenRequest();
+    requestPost.setChildId(child.getId());
     Response postResponse =
-        RestFactory.getAuthenticatedInvocationBuilder(adminForAuth, "parents", parentID, "children")
+        RestFactory.getAuthenticatedInvocationBuilder(adminForAuth, "parents", parentId, "children")
             .buildPost(Entity.json(requestPost))
             .invoke();
     assertEquals(Response.Status.OK.getStatusCode(), postResponse.getStatus());
 
-    // Now query /parents/{marco_id}/children from admin
-    Invocation request =
-        RestFactory.getAuthenticatedInvocationBuilder(adminForAuth, "parents", parentID, "children")
-            .buildGet();
+    // Now query /parents/{parent_id}/children from admin
+    Response getResponse =
+        RestFactory.getAuthenticatedInvocationBuilder(adminForAuth, "parents", parentId, "children")
+            .buildGet()
+            .invoke();
 
-    Response response = request.invoke();
+    assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
 
-    assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-
-    ParentChildrenResponse marcosChildren = response.readEntity(ParentChildrenResponse.class);
-
+    ParentChildrenResponse marcosChildren = getResponse.readEntity(ParentChildrenResponse.class);
     assertTrue(marcosChildren.getChildren().size() > 0);
 
-    print("GET /parents/", parentID, "/children");
+    print("GET /parents/", parentId, "/children");
+    print("Response: ");
+    print(marcosChildren);
+  }
+
+  @Test
+  @Category(TestCategory.Endpoint.class)
+  public void getParentChildrenFromAdmin() {
+    // add a parent to the database
+    User parent = buildMarcos(4);
+    URI parentURI = doParentPost(adminForAuth, parent);
+
+    Path fullPathParent = Paths.get("/", parentURI.getPath());
+    Path idPathParent = fullPathParent.getParent().relativize(fullPathParent);
+    String parentId = idPathParent.toString();
+
+    // get a child from the database
+    User child =
+        DatabaseHandler.getInstance()
+            .getListSelectFromWhereEqual(User.class, User_.role, User.Role.STUDENT).get(6);
+
+    // create request to associate parent and child and invoke it
+    ParentsChildrenRequest requestPost = new ParentsChildrenRequest();
+    requestPost.setChildId(child.getId());
+    Response postResponse =
+        RestFactory.getAuthenticatedInvocationBuilder(adminForAuth, "parents", parentId, "children")
+            .buildPost(Entity.json(requestPost))
+            .invoke();
+    assertEquals(Response.Status.OK.getStatusCode(), postResponse.getStatus());
+
+    // now query /parents/{marco_id}/children from admin
+    Response getResponse =
+        RestFactory.getAuthenticatedInvocationBuilder(adminForAuth, "parents", parentId, "children")
+            .buildGet()
+            .invoke();
+
+    assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
+
+    ParentChildrenResponse marcosChildren = getResponse.readEntity(ParentChildrenResponse.class);
+
+    // and check its size is increased at more than 0
+    assertTrue(marcosChildren.getChildren().size() > 0);
+
+    print("GET /parents/", parentId, "/children");
     print("Response: ");
     print(marcosChildren);
   }
@@ -306,38 +352,42 @@ public class ParentsResourceTest {
   @Test
   @Category(TestCategory.Endpoint.class)
   public void getParentChildrenFromSameParent() {
+    // add a parent to the database
     User parent = buildMarcos(5);
     URI parentURI = doParentPost(adminForAuth, parent);
-    User child = getAChild(7);
 
-    Path fullPath = Paths.get("/", parentURI.getPath());
-    Path idPath = fullPath.getParent().relativize(fullPath);
-    String parentID = idPath.toString();
+    Path fullPathParent = Paths.get("/", parentURI.getPath());
+    Path idPathParent = fullPathParent.getParent().relativize(fullPathParent);
+    String parentId = idPathParent.toString();
 
-    PostChildrenRequest requestPost = new PostChildrenRequest();
-    requestPost.setParent(parent);
-    requestPost.setStudent(child);
 
+    // get a child from the database
+    User child =
+        DatabaseHandler.getInstance()
+            .getListSelectFromWhereEqual(User.class, User_.role, User.Role.STUDENT).get(7);
+
+    // create request to associate parent and child and invoke it
+    ParentsChildrenRequest requestPost = new ParentsChildrenRequest();
+    requestPost.setChildId(child.getId());
     Response postResponse =
-        RestFactory.getAuthenticatedInvocationBuilder(adminForAuth, "parents", parentID, "children")
+        RestFactory.getAuthenticatedInvocationBuilder(adminForAuth, "parents", parentId, "children")
             .buildPost(Entity.json(requestPost))
             .invoke();
     assertEquals(Response.Status.OK.getStatusCode(), postResponse.getStatus());
 
-    // Now query /parents/{marco_id}/children from admin
-    Invocation request =
-        RestFactory.getAuthenticatedInvocationBuilder(parent, "parents", parentID, "children")
-            .buildGet();
+    // Now query /parents/{marco_id}/children from the parent
+    Response getResponse =
+        RestFactory.getAuthenticatedInvocationBuilder(parent, "parents", parentId, "children")
+            .buildGet()
+            .invoke();
 
-    Response response = request.invoke();
+    assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
 
-    assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-
-    ParentChildrenResponse marcosChildren = response.readEntity(ParentChildrenResponse.class);
+    ParentChildrenResponse marcosChildren = getResponse.readEntity(ParentChildrenResponse.class);
 
     assertTrue(marcosChildren.getChildren().size() > 0);
 
-    print("GET /parents/", parentID, "/children");
+    print("GET /parents/", parentId, "/children");
     print("Response: ");
     print(marcosChildren);
   }
@@ -365,56 +415,6 @@ public class ParentsResourceTest {
     assertEquals(Response.Status.FORBIDDEN.getStatusCode(), response.getStatus());
   }
 
-  @Test
-  @Category(TestCategory.Endpoint.class)
-  public void postParentChildrenFromAdmin() {
-    User parent = buildMarcos(8);
-    URI parentURI = doParentPost(adminForAuth, parent);
-    User child = getAChild(2);
-
-    Path fullPath = Paths.get("/", parentURI.getPath());
-    Path idPath = fullPath.getParent().relativize(fullPath);
-    String parentID = idPath.toString();
-
-    PostChildrenRequest requestPost = new PostChildrenRequest();
-    requestPost.setParent(parent);
-    requestPost.setStudent(child);
-
-    Invocation request =
-        RestFactory.getAuthenticatedInvocationBuilder(adminForAuth, "parents", parentID, "children")
-            .buildPost(Entity.json(requestPost));
-
-    Response response = request.invoke();
-
-    assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-
-    // Now query /parents/{parent_id}/children from admin
-    Invocation requestCheck =
-        RestFactory.getAuthenticatedInvocationBuilder(adminForAuth, "parents", parentID, "children")
-            .buildGet();
-
-    Response responseCheck = requestCheck.invoke();
-
-    assertEquals(Response.Status.OK.getStatusCode(), responseCheck.getStatus());
-
-    ParentChildrenResponse marcosChildren = responseCheck.readEntity(ParentChildrenResponse.class);
-
-    assertTrue(marcosChildren.getChildren().size() > 0);
-
-    print("GET /parents/", parentID, "/children");
-    print("Response: ");
-    print(marcosChildren);
-  }
-
-  private User get(User.Role role) {
-    List<User> users =
-        (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioParents", "users.json");
-
-    List<User> usersWithRole =
-        users.stream().filter(user -> user.getRole() == role).collect(Collectors.toList());
-    return usersWithRole.get(0);
-  }
-
   public static User buildMarcos(int copyNumber) {
     User marcos = new User();
     marcos.setName("Marcos " + copyNumber);
@@ -423,17 +423,6 @@ public class ParentsResourceTest {
     marcos.setNewPassword("marcos_password");
     marcos.setRole(User.Role.PARENT);
     return marcos;
-  }
-
-  private User getAChild(int copynumber) {
-    List<User> users =
-        (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioParents", "users.json");
-    List<User> children =
-        users
-            .stream()
-            .filter(user -> user.getRole().equals(User.Role.STUDENT))
-            .collect(Collectors.toList());
-    return children.get(copynumber);
   }
 
   /**
