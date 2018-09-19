@@ -68,6 +68,13 @@
       "new_password": "password"
     },
     {
+      "role": "PARENT",
+      "name": "Bob3",
+      "surname": "SurnameBob3",
+      "email": "bob3@email.com",
+      "new_password": "password"
+    },
+    {
       "role": "TEACHER",
       "name": "Carl",
       "surname": "SurnameCarl",

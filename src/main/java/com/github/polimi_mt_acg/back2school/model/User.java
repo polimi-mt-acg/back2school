@@ -25,6 +25,16 @@ public class User implements DeserializeToPersistInterface {
 
   private static final Logger LOGGER = Logger.getLogger(User.class.getName());
 
+  /**
+   * The newPassword field: - is deserialized when received in a request or as outcome of a JSON
+   * mapping - is NOT serialized when it is null. Since it is Transient it will never be persisted
+   * on the database and anytime the User entity is retrieved back from the database this field will
+   * be null. By the annotation @JsonInclude(JsonInclude.Include.NON_NULL) on top of this entity,
+   * when a field is null it won't be serialized.
+   *
+   * <p>Further explanation: it is required to be also serializable otherwise the field won't behave
+   * correctly on User entity serialization while performing post requests on tests.
+   */
   @Transient
   @JsonProperty("new_password")
   protected String newPassword;
@@ -55,10 +65,9 @@ public class User implements DeserializeToPersistInterface {
 
   @ManyToMany
   @JoinTable(
-    name = "user_notification_read",
-    joinColumns = @JoinColumn(name = "user_id"),
-    inverseJoinColumns = @JoinColumn(name = "notification_id")
-  )
+      name = "user_notification_read",
+      joinColumns = @JoinColumn(name = "user_id"),
+      inverseJoinColumns = @JoinColumn(name = "notification_id"))
   private List<Notification> notificationsRead = new ArrayList<>();
 
   @ManyToMany(cascade = CascadeType.ALL)
