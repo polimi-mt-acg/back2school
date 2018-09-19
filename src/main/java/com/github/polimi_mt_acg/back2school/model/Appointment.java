@@ -1,5 +1,7 @@
 package com.github.polimi_mt_acg.back2school.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,6 +19,7 @@ import javax.persistence.Transient;
 
 @Entity
 @Table(name = "appointment")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Appointment implements DeserializeToPersistInterface {
 
   @Transient public String seedTeacherEmail;
@@ -45,6 +48,7 @@ public class Appointment implements DeserializeToPersistInterface {
   @Column(name = "status")
   private Status status = Status.REQUESTED;
 
+  @JsonIgnore
   public int getId() {
     return id;
   }

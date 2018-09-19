@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -286,8 +285,8 @@ public class ParentsResource {
   @ParentAdministratorSecured
   @SameParentSecured
   public Response postParentAppointments(
-      @PathParam("id") String parentId,
-      PostParentAppointmentRequest request,
+      ParentAppointmentRequest request,
+      @PathParam("id") Integer parentId,
       @Context UriInfo uriInfo) {
 
     DatabaseHandler dbi = DatabaseHandler.getInstance();
@@ -295,7 +294,7 @@ public class ParentsResource {
     session.beginTransaction();
 
     // Get parent who made the request
-    User parent = session.get(User.class, Integer.parseInt(parentId));
+    User parent = session.get(User.class, parentId);
     if (parent == null) {
       session.getTransaction().commit();
       session.close();
@@ -304,25 +303,23 @@ public class ParentsResource {
           .build();
     }
 
-    // Fetch the teacher entity by email
-    Optional<User> teacherOpt =
-        DatabaseHandler.fetchEntityBy(User.class, User_.email, request.getTeacherEmail(), session);
-    if (!teacherOpt.isPresent()) {
+    // Fetch the teacher
+    User teacher = session.get(User.class, request.getTeacherId());
+    if (teacher == null) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND)
-          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown teacher name"))
+      return Response.status(Status.BAD_REQUEST)
+          .entity(new StatusResponse(Status.BAD_REQUEST, "Unknown teacher id"))
           .build();
     }
 
     // To check! Do we need to do these checks?
     // Get appointments of the teacher
-    List<Appointment> resultTeacher =
-        dbi.getListSelectFromWhereEqual(
-            Appointment.class, Appointment_.teacher, teacherOpt.get(), session);
+    List<Appointment> teacherAppointments =
+        dbi.getListSelectFromWhereEqual(Appointment.class, Appointment_.teacher, teacher, session);
 
     // Is the teacher available in that time slot?
-    for (Appointment a : resultTeacher) {
+    for (Appointment a : teacherAppointments) {
       if ((a.getDatetimeStart().isBefore(request.getDatetimeStart())
               && a.getDatetimeEnd().isAfter(request.getDatetimeStart()))
           || (a.getDatetimeStart().isAfter(request.getDatetimeStart())
@@ -336,17 +333,17 @@ public class ParentsResource {
         return Response.status(Status.CONFLICT)
             .entity(
                 new StatusResponse(
-                    Status.CONFLICT, "Teacher has already an appointment in that time slot."))
+                    Status.CONFLICT, "Teacher has already an appointment in selected time slot."))
             .build();
       }
     }
 
     // Get appointments of the parent
-    List<Appointment> resultParent =
+    List<Appointment> parentAppointments =
         dbi.getListSelectFromWhereEqual(Appointment.class, Appointment_.parent, parent, session);
 
     // Is the parent available in that time slot?
-    for (Appointment a : resultParent) {
+    for (Appointment a : parentAppointments) {
       if ((a.getDatetimeStart().isBefore(request.getDatetimeStart())
               && a.getDatetimeEnd().isAfter(request.getDatetimeStart()))
           || (a.getDatetimeStart().isAfter(request.getDatetimeStart())
@@ -360,7 +357,7 @@ public class ParentsResource {
         return Response.status(Status.CONFLICT)
             .entity(
                 new StatusResponse(
-                    Status.CONFLICT, "Parent has already an appointment in that time slot."))
+                    Status.CONFLICT, "Parent has already an appointment in selected time slot."))
             .build();
       }
     }
@@ -368,9 +365,11 @@ public class ParentsResource {
     // Build the Appointment entity
     Appointment appointment = new Appointment();
     appointment.setParent(parent);
-    appointment.setTeacher(teacherOpt.get());
+    appointment.setTeacher(teacher);
     appointment.setDatetimeStart(request.getDatetimeStart());
     appointment.setDatetimeEnd(request.getDatetimeEnd());
+    // forced requested since created first time
+    appointment.setStatus(Appointment.Status.REQUESTED);
     appointment.prepareToPersist();
 
     session.persist(appointment);
@@ -410,23 +409,24 @@ public class ParentsResource {
     return Response.ok(appointmentOpt.get(), MediaType.APPLICATION_JSON_TYPE).build();
   }
 
-  @Path("{id: [0-9]+}/appointments/{appointment_id: [0-9]+}")
+  @Path("{id: [0-9]+}/appointments/{appointmentId: [0-9]+}")
   @PUT
   @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
   @ParentSecured
   @SameParentSecured
   public Response putParentAppointmentById(
-      PostParentAppointmentRequest request,
-      @PathParam("id") String parentId,
-      @PathParam("appointment_id") String appointmentId,
+      ParentAppointmentRequest request,
+      @PathParam("id") Integer parentId,
+      @PathParam("appointmentId") Integer appointmentId,
       @Context ContainerRequestContext crc,
       @Context UriInfo uriInfo) {
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
     session.beginTransaction();
 
-    // Fetch parent
-    User parent = session.get(User.class, Integer.parseInt(parentId));
+    // Get parent who made the request
+    User parent = session.get(User.class, parentId);
     if (parent == null) {
       session.getTransaction().commit();
       session.close();
@@ -435,19 +435,18 @@ public class ParentsResource {
           .build();
     }
 
-    // Fetch the teacher entity by email
-    Optional<User> teacherOpt =
-        DatabaseHandler.fetchEntityBy(User.class, User_.email, request.getTeacherEmail(), session);
-    if (!teacherOpt.isPresent()) {
+    // Fetch the teacher
+    User teacher = session.get(User.class, request.getTeacherId());
+    if (teacher == null) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND)
-          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown teacher name"))
+      return Response.status(Status.BAD_REQUEST)
+          .entity(new StatusResponse(Status.BAD_REQUEST, "Unknown teacher id"))
           .build();
     }
 
     // Fetch Appointment entity
-    Appointment appointment = session.get(Appointment.class, Integer.parseInt(appointmentId));
+    Appointment appointment = session.get(Appointment.class, appointmentId);
     if (appointment == null) {
       session.getTransaction().commit();
       session.close();
@@ -456,28 +455,38 @@ public class ParentsResource {
           .build();
     }
 
-    // Check if 'parent' is the same that created the Appointment entity
-    if (!parent.getEmail().equals(appointment.getParent().getEmail())) {
+    // Check if 'parent' is valid
+    if (parent.getId() != appointment.getParent().getId()) {
       session.getTransaction().commit();
       session.close();
-      return Response.notModified().entity("You cannot modify this appointment.").build();
+      return Response.status(Status.BAD_REQUEST)
+          .entity(
+              new StatusResponse(
+                  Status.BAD_REQUEST,
+                  "Invalid parentId. It does not correspond to the previous one"))
+          .build();
     }
 
-    // Check if 'parent' is the same that created the Appointment entity
-    if (!teacherOpt.get().getEmail().equals(appointment.getTeacher().getEmail())) {
+    // Check if 'teacher' is valid
+    if (teacher.getId() != appointment.getTeacher().getId()) {
       session.getTransaction().commit();
       session.close();
-      return Response.notModified().entity("You cannot modify this appointment.").build();
+      return Response.notModified()
+          .entity(
+              new StatusResponse(
+                  Status.BAD_REQUEST,
+                  "Invalid parentId. It does not correspond to the previous one"))
+          .build();
     }
 
-    // Checks like in POST!But we don't check over the modified appointment!
+    // Checks like in POST! But we don't check over the modified appointment!
 
     // Get appointments of the teacher
-    List<Appointment> resultTeacher =
+    List<Appointment> teacherAppointments =
         dbi.getListSelectFromWhereEqual(
-            Appointment.class, Appointment_.teacher, teacherOpt.get(), session);
+            Appointment.class, Appointment_.teacher, teacher  , session);
     // Is the teacher available in that time slot?
-    for (Appointment a : resultTeacher) {
+    for (Appointment a : teacherAppointments) {
       if (((a.getDatetimeStart().isBefore(request.getDatetimeStart())
                   && a.getDatetimeEnd().isAfter(request.getDatetimeStart()))
               || (a.getDatetimeStart().isAfter(request.getDatetimeStart())
@@ -492,16 +501,16 @@ public class ParentsResource {
         return Response.status(Status.CONFLICT)
             .entity(
                 new StatusResponse(
-                    Status.CONFLICT, "Teacher has already an appointment in that time slot."))
+                    Status.CONFLICT, "Teacher has already an appointment in the selected time slot."))
             .build();
       }
     }
 
     // Get appointments of the parent
-    List<Appointment> resultParent =
+    List<Appointment> parentAppointments =
         dbi.getListSelectFromWhereEqual(Appointment.class, Appointment_.parent, parent, session);
     // Is the parent available in that time slot?
-    for (Appointment a : resultParent) {
+    for (Appointment a : parentAppointments) {
       if (((a.getDatetimeStart().isBefore(request.getDatetimeStart())
                   && a.getDatetimeEnd().isAfter(request.getDatetimeStart()))
               || (a.getDatetimeStart().isAfter(request.getDatetimeStart())
@@ -516,21 +525,22 @@ public class ParentsResource {
         return Response.status(Status.CONFLICT)
             .entity(
                 new StatusResponse(
-                    Status.CONFLICT, "Parent has already an appointment in that time slot."))
+                    Status.CONFLICT, "Parent has already an appointment in selected time slot."))
             .build();
       }
     }
 
     // Update appointment fields
-    //    appointment.setUser(parent); //Remain the same
-    //    appointment.setTeacher(teacherOpt.get()); //Remain the same
+    // appointment.setUser(parent);  is the the same
+    // appointment.setTeacher(teacherOpt.get()); is the same
     appointment.setDatetimeStart(request.getDatetimeStart());
     appointment.setDatetimeEnd(request.getDatetimeEnd());
+    appointment.setStatus(request.getStatus());
 
     session.getTransaction().commit();
     session.close();
 
-    return Response.ok().build();
+    return Response.ok().entity(new StatusResponse(Status.OK)).build();
   }
 
   @Path("{id: [0-9]+}/payments")
