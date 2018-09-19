@@ -1,6 +1,5 @@
 package com.github.polimi_mt_acg.back2school.api.v1.parents;
 
-import com.github.polimi_mt_acg.back2school.api.v1.PostUserRequest;
 import com.github.polimi_mt_acg.back2school.api.v1.StatusResponse;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.AdministratorSecured;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.ParentAdministratorSecured;
@@ -31,6 +30,8 @@ import javax.ws.rs.core.UriInfo;
 
 import org.hibernate.Session;
 
+import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.str;
+
 @Path("parents")
 public class ParentsResource {
 
@@ -60,34 +61,36 @@ public class ParentsResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
-  public Response postParents(PostUserRequest request, @Context UriInfo uriInfo) {
-    User parent = request.getUser();
+  public Response postParents(User newUser, @Context UriInfo uriInfo) {
+    if (newUser.getEmail() == null || newUser.getEmail().isEmpty()) {
+      return Response.status(Status.BAD_REQUEST).entity("User must have an email address.").build();
+    }
 
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 
     // Check if a user with same email already exists, if so, do nothing
     Optional<User> userOpt =
-        DatabaseHandler.fetchEntityBy(User.class, User_.email, parent.getEmail(), session);
+        DatabaseHandler.fetchEntityBy(User.class, User_.email, newUser.getEmail(), session);
+
     if (userOpt.isPresent()) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.CONFLICT)
-          .entity(new StatusResponse(Status.CONFLICT, "User already exists"))
+          .entity(new StatusResponse(Status.CONFLICT, "A user with this email already exists"))
           .build();
     }
     // force to be a parent since this endpoint meaning
-    parent.setRole(Role.PARENT);
+    newUser.setRole(Role.PARENT);
 
-    parent.prepareToPersist();
-    session.persist(parent);
-
-    session.getTransaction().commit(); // Makes parent persisted.
+    newUser.prepareToPersist();
+    session.persist(newUser);
+    session.getTransaction().commit();
     session.close();
 
-    // Now parent has the ID field filled by the ORM
+    // Now the teacher has the ID field filled by the ORM
     UriBuilder builder = uriInfo.getAbsolutePathBuilder();
-    URI uri = builder.path(String.valueOf(parent.getId())).build();
+    URI uri = builder.path(str(newUser.getId())).build();
     return Response.created(uri).entity(new StatusResponse(Status.CREATED)).build();
   }
 
@@ -924,7 +927,9 @@ public class ParentsResource {
     session.getTransaction().commit();
     session.close();
     return Response.status(Status.UNAUTHORIZED)
-        .entity(new StatusResponse(Status.UNAUTHORIZED, "Current parent can't get the requested notification"))
+        .entity(
+            new StatusResponse(
+                Status.UNAUTHORIZED, "Current parent can't get the requested notification"))
         .build();
   }
 }

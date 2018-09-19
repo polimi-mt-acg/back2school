@@ -15,12 +15,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.print;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -37,9 +36,10 @@ import java.time.Month;
 public class ParentsResourceTest {
 
   private static HttpServer server;
+  private static User adminForAuth;
 
   @BeforeClass
-  public static void setUp() throws Exception {
+  public static void setUp() {
     // Truncate DB
     // Deploy database scenario
     DatabaseSeeder.deployScenario("scenarioParents");
@@ -47,12 +47,16 @@ public class ParentsResourceTest {
     // Run HTTP server
     server =
         HTTPServerManager.startServer(
-            AuthenticationResource.class, "com.github.polimi_mt_acg.back2school.api.v1.parents",
-                "com.github.polimi_mt_acg.back2school.api.v1.security_contexts");
+            AuthenticationResource.class,
+            "com.github.polimi_mt_acg.back2school.api.v1.parents",
+            "com.github.polimi_mt_acg.back2school.api.v1.security_contexts");
+
+    // load admin for authentication
+    adminForAuth = DatabaseSeeder.getSeedUserByRole("scenarioParents", User.Role.ADMINISTRATOR);
   }
 
   @AfterClass
-  public static void tearDown() throws Exception {
+  public static void tearDown() {
     // Truncate DB
     DatabaseHandler.getInstance().truncateDatabase();
     DatabaseHandler.getInstance().destroy();
@@ -64,11 +68,8 @@ public class ParentsResourceTest {
   @Test
   @Category(TestCategory.Endpoint.class)
   public void getParentsFromAdmin() {
-    // Get an admin
-    User admin = get(User.Role.ADMINISTRATOR);
-
     Invocation getRequest =
-        RestFactory.getAuthenticatedInvocationBuilder(admin, "parents").buildGet();
+        RestFactory.getAuthenticatedInvocationBuilder(adminForAuth, "parents").buildGet();
 
     Response response = getRequest.invoke();
     assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
@@ -84,81 +85,73 @@ public class ParentsResourceTest {
   @Category(TestCategory.Endpoint.class)
   public void getParentsFromParent() {
     // Get a parent
-    User parent = get(User.Role.PARENT);
+    User parent = DatabaseSeeder.getSeedUserByRole("scenarioParents", User.Role.PARENT);
 
     Invocation getRequest =
         RestFactory.getAuthenticatedInvocationBuilder(parent, "parents").buildGet();
 
     Response response = getRequest.invoke();
-//    print("ERROR ", response.getStatus());
     assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
   }
 
   @Test
   @Category(TestCategory.Endpoint.class)
   public void postParents() {
-    URI resourceURI = doParentPost(buildMarcos(0));
-
-    System.out.println(resourceURI);
+    doParentPost(adminForAuth, buildMarcos(0));
   }
 
   @Test
   @Category(TestCategory.Endpoint.class)
-  public void getParentByIdFromAdministrator() throws JsonProcessingException {
+  public void getParentByIdFromAdministrator() {
     User marcos = buildMarcos(1);
-    URI postMarcos = doParentPost(marcos);
-    User admin = get(User.Role.ADMINISTRATOR);
+    URI marcosURI = doParentPost(adminForAuth, marcos);
 
     // Now query /parents/{bob_id} from admin
-    Path fullPath = Paths.get("/", postMarcos.getPath());
+    Path fullPath = Paths.get("/", marcosURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
     String marcosID = idPath.toString();
     Invocation request =
-        RestFactory.getAuthenticatedInvocationBuilder(admin, "parents", marcosID).buildGet();
+        RestFactory.getAuthenticatedInvocationBuilder(adminForAuth, "parents", marcosID).buildGet();
 
     Response response = request.invoke();
     assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-    //    System.out.println("HERE1"+response.getStatus());
     User marcosResponse = response.readEntity(User.class);
 
-    assertTrue(weakEquals(marcosResponse, marcos));
+    assertTrue(marcosResponse.weakEquals(marcos));
 
-    // Print it
-    ObjectMapper mapper = RestFactory.objectMapper();
-    System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(marcosResponse));
+    print("GET /parents", marcosID);
+    print("Response: ");
+    print(marcosResponse);
   }
 
   @Test
   @Category(TestCategory.Endpoint.class)
-  public void getParentByIdFromNotSameParent() throws JsonProcessingException {
+  public void getParentByIdFromNotSameParent() {
     User seedParent = DatabaseSeeder.getSeedUserByRole("scenarioParents_ToPost1", User.Role.PARENT);
     assertNotNull(seedParent);
 
-    URI postParent = doParentPost(seedParent);
-    User admin = get(User.Role.ADMINISTRATOR);
+    URI parentURI = doParentPost(adminForAuth, seedParent);
 
     // Now query /parents/{bob_id} from admin
-    Path fullPath = Paths.get("/", postParent.getPath());
+    Path fullPath = Paths.get("/", parentURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
     String parentID = idPath.toString();
 
-    User bob = get(User.Role.PARENT);
+    User bob = DatabaseSeeder.getSeedUserByRole("scenarioParents", User.Role.PARENT);
     Invocation request =
         RestFactory.getAuthenticatedInvocationBuilder(bob, "parents", parentID).buildGet();
 
     Response response = request.invoke();
-    //    System.out.println("HERE1"+response.getStatus());
-
     assertEquals(Response.Status.FORBIDDEN.getStatusCode(), response.getStatus());
   }
 
   @Test
   @Category(TestCategory.Endpoint.class)
-  public void getParentByIdFromSameParent() throws JsonProcessingException {
+  public void getParentByIdFromSameParent() {
     User seedParent = DatabaseSeeder.getSeedUserByRole("scenarioParents_ToPost2", User.Role.PARENT);
     assertNotNull(seedParent);
 
-    URI postParent = doParentPost(seedParent);
+    URI postParent = doParentPost(adminForAuth, seedParent);
 
     // Now query /parents/{bob_id} from admin
     Path fullPath = Paths.get("/", postParent.getPath());
@@ -169,29 +162,25 @@ public class ParentsResourceTest {
         RestFactory.getAuthenticatedInvocationBuilder(seedParent, "parents", parentID).buildGet();
 
     Response response = request.invoke();
-    //    System.out.println("HERE1"+response.getStatus());
 
     assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     User parentResponse = response.readEntity(User.class);
 
-    assertTrue(weakEquals(parentResponse, seedParent));
+    assertTrue(parentResponse.weakEquals(seedParent));
 
-    // Print it
-    ObjectMapper mapper = RestFactory.objectMapper();
-    System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(parentResponse));
+    print("GET /parents", parentID);
+    print("Response: ");
+    print(parentResponse);
   }
 
   @Test
   @Category(TestCategory.Endpoint.class)
-  public void putParentByIdFromAdmin() throws JsonProcessingException {
-    // Get an admin
-    User admin = get(User.Role.ADMINISTRATOR);
-
+  public void putParentByIdFromAdmin() {
     User parent = buildMarcos(2);
-    URI parentURI = doParentPost(parent);
+    URI parentURI = doParentPost(adminForAuth, parent);
 
     Invocation getParent =
-        RestFactory.getAuthenticatedInvocationBuilder(admin, parentURI).buildGet();
+        RestFactory.getAuthenticatedInvocationBuilder(adminForAuth, parentURI).buildGet();
     User parentResponse = getParent.invoke().readEntity(User.class);
 
     String nameSuffix = "newName";
@@ -207,7 +196,7 @@ public class ParentsResourceTest {
 
     // Make a PUT request
     Invocation putParent =
-        RestFactory.getAuthenticatedInvocationBuilder(admin, parentURI)
+        RestFactory.getAuthenticatedInvocationBuilder(adminForAuth, parentURI)
             .buildPut(Entity.json(putParentRequest));
     Response putParentResponse = putParent.invoke();
 
@@ -215,31 +204,30 @@ public class ParentsResourceTest {
 
     // Make a new GET to compare results
     Invocation newGetParent =
-        RestFactory.getAuthenticatedInvocationBuilder(admin, parentURI).buildGet();
+        RestFactory.getAuthenticatedInvocationBuilder(adminForAuth, parentURI).buildGet();
     User newParentResponse = newGetParent.invoke().readEntity(User.class);
 
     assertEquals(parentResponse.getName() + nameSuffix, newParentResponse.getName());
     assertEquals(parentResponse.getSurname() + surnameSuffix, newParentResponse.getSurname());
     assertEquals(parentResponse.getEmail() + emailSuffix, newParentResponse.getEmail());
 
-    ObjectMapper mapper = RestFactory.objectMapper();
-    System.out.println(
-        mapper.writerWithDefaultPrettyPrinter().writeValueAsString(newParentResponse));
+    print("GET ", parentURI);
+    print("Response: ");
+    print(newParentResponse);
   }
 
   @Test
   @Category(TestCategory.Endpoint.class)
-  public void putParentByIdFromSameParent() throws JsonProcessingException {
+  public void putParentByIdFromSameParent() {
     // Get an admin
     User parent = buildMarcos(3);
-    URI parentURI = doParentPost(parent);
+    URI parentURI = doParentPost(adminForAuth, parent);
     Path fullPath = Paths.get("/", parentURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
     String parentID = idPath.toString();
-    User admin = get(User.Role.ADMINISTRATOR);
 
     Invocation getParent =
-        RestFactory.getAuthenticatedInvocationBuilder(admin, "parents", parentID).buildGet();
+        RestFactory.getAuthenticatedInvocationBuilder(adminForAuth, "parents", parentID).buildGet();
     User parentResponse = getParent.invoke().readEntity(User.class);
 
     String nameSuffix = "newName";
@@ -252,8 +240,6 @@ public class ParentsResourceTest {
     putParentRequest.setSurname(parentResponse.getSurname() + surnameSuffix);
     putParentRequest.setEmail(parentResponse.getEmail() + emailSuffix);
     putParentRequest.setPassword("DontCare");
-
-    //    System.out.println("HERE"+ putParentRequest.getPassword() + putParentRequest.getEmail());
 
     // Make a PUT request
     Invocation putParent =
@@ -266,47 +252,45 @@ public class ParentsResourceTest {
 
     // Make a new GET to compare results
     Invocation newGetParent =
-        RestFactory.getAuthenticatedInvocationBuilder(admin, parentURI).buildGet();
+        RestFactory.getAuthenticatedInvocationBuilder(adminForAuth, parentURI).buildGet();
     User newParentResponse = newGetParent.invoke().readEntity(User.class);
 
     assertEquals(parentResponse.getName() + nameSuffix, newParentResponse.getName());
     assertEquals(parentResponse.getSurname() + surnameSuffix, newParentResponse.getSurname());
     assertEquals(parentResponse.getEmail() + emailSuffix, newParentResponse.getEmail());
 
-    ObjectMapper mapper = RestFactory.objectMapper();
-    System.out.println(
-        mapper.writerWithDefaultPrettyPrinter().writeValueAsString(newParentResponse));
+    print("GET ", parentURI);
+    print("Response: ");
+    print(newParentResponse);
   }
 
   @Test
   @Category(TestCategory.Endpoint.class)
-  public void getParentChildrenFromAdmin() throws JsonProcessingException {
+  public void getParentChildrenFromAdmin() {
     User parent = buildMarcos(4);
-    URI parentURI = doParentPost(parent);
+    URI parentURI = doParentPost(adminForAuth, parent);
     User child = getAChild(6);
 
     Path fullPath = Paths.get("/", parentURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
     String parentID = idPath.toString();
 
-    User admin = get(User.Role.ADMINISTRATOR);
-
     PostChildrenRequest requestPost = new PostChildrenRequest();
     requestPost.setParent(parent);
     requestPost.setStudent(child);
 
     Response postResponse =
-        RestFactory.getAuthenticatedInvocationBuilder(admin, "parents", parentID, "children")
-            .buildPost(Entity.json(requestPost)).invoke();
+        RestFactory.getAuthenticatedInvocationBuilder(adminForAuth, "parents", parentID, "children")
+            .buildPost(Entity.json(requestPost))
+            .invoke();
     assertEquals(Response.Status.OK.getStatusCode(), postResponse.getStatus());
 
     // Now query /parents/{marco_id}/children from admin
     Invocation request =
-        RestFactory.getAuthenticatedInvocationBuilder(admin, "parents", parentID, "children")
+        RestFactory.getAuthenticatedInvocationBuilder(adminForAuth, "parents", parentID, "children")
             .buildGet();
 
     Response response = request.invoke();
-    //    System.out.println("HERE 2"+response.toString());
 
     assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
@@ -314,31 +298,30 @@ public class ParentsResourceTest {
 
     assertTrue(marcosChildren.getChildren().size() > 0);
 
-    // Print it
-    ObjectMapper mapper = RestFactory.objectMapper();
-    System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(marcosChildren));
+    print("GET /parents/", parentID, "/children");
+    print("Response: ");
+    print(marcosChildren);
   }
 
   @Test
   @Category(TestCategory.Endpoint.class)
-  public void getParentChildrenFromSameParent() throws JsonProcessingException {
+  public void getParentChildrenFromSameParent() {
     User parent = buildMarcos(5);
-    URI parentURI = doParentPost(parent);
+    URI parentURI = doParentPost(adminForAuth, parent);
     User child = getAChild(7);
 
     Path fullPath = Paths.get("/", parentURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
     String parentID = idPath.toString();
 
-    User admin = get(User.Role.ADMINISTRATOR);
-
     PostChildrenRequest requestPost = new PostChildrenRequest();
     requestPost.setParent(parent);
     requestPost.setStudent(child);
 
     Response postResponse =
-        RestFactory.getAuthenticatedInvocationBuilder(admin, "parents", parentID, "children")
-            .buildPost(Entity.json(requestPost)).invoke();
+        RestFactory.getAuthenticatedInvocationBuilder(adminForAuth, "parents", parentID, "children")
+            .buildPost(Entity.json(requestPost))
+            .invoke();
     assertEquals(Response.Status.OK.getStatusCode(), postResponse.getStatus());
 
     // Now query /parents/{marco_id}/children from admin
@@ -347,7 +330,6 @@ public class ParentsResourceTest {
             .buildGet();
 
     Response response = request.invoke();
-    //    System.out.println("HERE 2"+response.toString());
 
     assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
@@ -355,19 +337,19 @@ public class ParentsResourceTest {
 
     assertTrue(marcosChildren.getChildren().size() > 0);
 
-    // Print it
-    ObjectMapper mapper = RestFactory.objectMapper();
-    System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(marcosChildren));
+    print("GET /parents/", parentID, "/children");
+    print("Response: ");
+    print(marcosChildren);
   }
 
   @Test
   @Category(TestCategory.Endpoint.class)
-  public void getParentChildrenFromNotSameParent() throws JsonProcessingException {
+  public void getParentChildrenFromNotSameParent() {
     User parent = buildMarcos(6);
-    URI parentURI = doParentPost(parent);
+    URI parentURI = doParentPost(adminForAuth, parent);
 
     User secondParent = buildMarcos(7);
-    URI secondParentURI = doParentPost(secondParent);
+    doParentPost(adminForAuth, secondParent);
 
     Path fullPath = Paths.get("/", parentURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
@@ -375,44 +357,40 @@ public class ParentsResourceTest {
 
     // Now query /parents/{marco_id}/children from admin
     Invocation request =
-            RestFactory.getAuthenticatedInvocationBuilder(secondParent, "parents", parentID, "children")
-                    .buildGet();
+        RestFactory.getAuthenticatedInvocationBuilder(secondParent, "parents", parentID, "children")
+            .buildGet();
 
     Response response = request.invoke();
-    //    System.out.println("HERE 2"+response.toString());
 
     assertEquals(Response.Status.FORBIDDEN.getStatusCode(), response.getStatus());
   }
 
   @Test
   @Category(TestCategory.Endpoint.class)
-  public void postParentChildrenFromAdmin() throws JsonProcessingException {
+  public void postParentChildrenFromAdmin() {
     User parent = buildMarcos(8);
-    URI parentURI = doParentPost(parent);
+    URI parentURI = doParentPost(adminForAuth, parent);
     User child = getAChild(2);
 
     Path fullPath = Paths.get("/", parentURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
     String parentID = idPath.toString();
 
-    User admin = get(User.Role.ADMINISTRATOR);
-
     PostChildrenRequest requestPost = new PostChildrenRequest();
     requestPost.setParent(parent);
     requestPost.setStudent(child);
 
     Invocation request =
-        RestFactory.getAuthenticatedInvocationBuilder(admin, "parents", parentID, "children")
+        RestFactory.getAuthenticatedInvocationBuilder(adminForAuth, "parents", parentID, "children")
             .buildPost(Entity.json(requestPost));
 
     Response response = request.invoke();
-    //    System.out.println("HERE 2"+response.toString());
 
     assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
     // Now query /parents/{parent_id}/children from admin
     Invocation requestCheck =
-        RestFactory.getAuthenticatedInvocationBuilder(admin, "parents", parentID, "children")
+        RestFactory.getAuthenticatedInvocationBuilder(adminForAuth, "parents", parentID, "children")
             .buildGet();
 
     Response responseCheck = requestCheck.invoke();
@@ -423,12 +401,10 @@ public class ParentsResourceTest {
 
     assertTrue(marcosChildren.getChildren().size() > 0);
 
-    // Print it
-    ObjectMapper mapper = RestFactory.objectMapper();
-    System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(marcosChildren));
+    print("GET /parents/", parentID, "/children");
+    print("Response: ");
+    print(marcosChildren);
   }
-
-
 
   private User get(User.Role role) {
     List<User> users =
@@ -439,14 +415,13 @@ public class ParentsResourceTest {
     return usersWithRole.get(0);
   }
 
-  private User buildMarcos(int copyNumber) {
+  public static User buildMarcos(int copyNumber) {
     User marcos = new User();
     marcos.setName("Marcos " + copyNumber);
     marcos.setSurname("Ferdinand " + copyNumber);
     marcos.setEmail("marcos.ferdinand" + copyNumber + "@mail.com");
     marcos.setNewPassword("marcos_password");
     marcos.setRole(User.Role.PARENT);
-    marcos.prepareToPersist();
     return marcos;
   }
 
@@ -466,59 +441,18 @@ public class ParentsResourceTest {
    *
    * @return The inserted resource URI.
    */
-  private URI doParentPost(User parent) {
-    // Now build a PostUserRequest
-    PostUserRequest request = new PostUserRequest();
-    request.setUser(parent);
-    request.setPassword(parent.getNewPassword());
-
-    User admin = get(User.Role.ADMINISTRATOR);
-
+  public static URI doParentPost(User userForAuth, User parent) {
     // Make a POST to /parents
-    Invocation post =
-        RestFactory.getAuthenticatedInvocationBuilder(admin, "parents")
-            .buildPost(Entity.json(request));
+    Invocation postRequest =
+        RestFactory.getAuthenticatedInvocationBuilder(userForAuth, "parents")
+            .buildPost(Entity.json(parent));
 
-    Response response = post.invoke();
-    System.out.println("HERE POST REQ" + response.toString());
+    Response postResponse = postRequest.invoke();
+    print("POST /parents. Response location: ", postResponse.getLocation());
 
-    assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+    assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
 
-    URI resourceURI = response.getLocation();
-    assertNotNull(resourceURI);
-    return resourceURI;
-  }
-
-  private boolean weakEquals(User u, User p) {
-    return u.getName().equals(p.getName())
-        && u.getSurname().equals(p.getSurname())
-        && u.getEmail().equals(p.getEmail());
-  }
-
-  private PostParentAppointmentRequest buildAppointment(int initialTime,int day, String teacherEmail) {
-    PostParentAppointmentRequest appointment = new PostParentAppointmentRequest();
-    appointment.setTeacherEmail(teacherEmail);
-    appointment.setDatetimeStart(LocalDateTime.of(2018, Month.JANUARY,day,12,initialTime));
-    appointment.setDatetimeEnd(LocalDateTime.of(2018, Month.JANUARY,day,12,initialTime+10));
-    return appointment;
-  }
-
-  private URI postAppointment(int initialTime, int day, String parentID, String teacherEmail){
-
-    User admin = get(User.Role.ADMINISTRATOR);
-    //We post an appointment between parent and teacher Carl
-    PostParentAppointmentRequest postParentAppointmentRequest =
-            buildAppointment(initialTime, day,teacherEmail);
-
-    Invocation request =
-            RestFactory.getAuthenticatedInvocationBuilder(admin, "parents", parentID, "appointments")
-                    .buildPost(Entity.json(postParentAppointmentRequest));
-
-    Response response = request.invoke();
-    System.out.println(response.toString());
-    assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-
-    URI resourceURI = response.getLocation();
+    URI resourceURI = postResponse.getLocation();
     assertNotNull(resourceURI);
     return resourceURI;
   }

@@ -5,13 +5,14 @@ import java.net.URI;
 import java.util.List;
 
 public class ParentsResponse {
-  private List<URI> parents;
 
-  @JsonProperty public List<URI> getParents() {
+  @JsonProperty private List<URI> parents;
+
+  public List<URI> getParents() {
     return parents;
   }
 
-  @JsonProperty public void setParents(List<URI> parents) {
+  public void setParents(List<URI> parents) {
     this.parents = parents;
   }
 }
