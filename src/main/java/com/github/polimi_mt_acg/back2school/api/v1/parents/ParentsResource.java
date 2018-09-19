@@ -1,6 +1,7 @@
 package com.github.polimi_mt_acg.back2school.api.v1.parents;
 
 import com.github.polimi_mt_acg.back2school.api.v1.PostUserRequest;
+import com.github.polimi_mt_acg.back2school.api.v1.StatusResponse;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.AdministratorSecured;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.ParentAdministratorSecured;
 import com.github.polimi_mt_acg.back2school.model.*;
@@ -57,6 +58,7 @@ public class ParentsResource {
 
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
   public Response postParents(PostUserRequest request, @Context UriInfo uriInfo) {
     User parent = request.getUser();
@@ -70,7 +72,9 @@ public class ParentsResource {
     if (userOpt.isPresent()) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.CONFLICT).entity("User already exists.").build();
+      return Response.status(Status.CONFLICT)
+          .entity(new StatusResponse(Status.CONFLICT, "User already exists"))
+          .build();
     }
     // force to be a parent since this endpoint meaning
     parent.setRole(Role.PARENT);
@@ -84,7 +88,7 @@ public class ParentsResource {
     // Now parent has the ID field filled by the ORM
     UriBuilder builder = uriInfo.getAbsolutePathBuilder();
     URI uri = builder.path(String.valueOf(parent.getId())).build();
-    return Response.created(uri).build();
+    return Response.created(uri).entity(new StatusResponse(Status.CREATED)).build();
   }
 
   @Path("{id: [0-9]+}")
@@ -97,7 +101,9 @@ public class ParentsResource {
     Optional<User> parentOpt =
         DatabaseHandler.fetchEntityBy(User.class, User_.id, Integer.parseInt(parentId));
     if (!parentOpt.isPresent()) {
-      return Response.status(Status.NOT_FOUND).entity("Unknown parent id").build();
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown parent id"))
+          .build();
     }
     User parent = parentOpt.get();
 
@@ -118,7 +124,9 @@ public class ParentsResource {
     if (parent == null) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND).entity("Unknown parent id").build();
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown parent id"))
+          .build();
     }
 
     // Update student fields
@@ -133,7 +141,7 @@ public class ParentsResource {
     // According to HTTP specification:
     // HTTP status code 200 OK for a successful PUT of an update to an existing resource. No
     // response body needed.
-    return Response.ok().build();
+    return Response.ok().entity(new StatusResponse(Status.OK)).build();
   }
 
   @Path("{id: [0-9]+}/children")
@@ -142,15 +150,17 @@ public class ParentsResource {
   @ParentAdministratorSecured
   @SameParentSecured
   public Response getParentChildren(@PathParam("id") String parentId, @Context UriInfo uriInfo) {
-    DatabaseHandler dbi = DatabaseHandler.getInstance();
-    Session session = dbi.getNewSession();
+    Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 
     // Fetch User
     User parent = session.get(User.class, Integer.parseInt(parentId));
     if (parent == null) {
+      session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND).build();
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown parent id"))
+          .build();
     }
 
     ParentChildrenResponse response = new ParentChildrenResponse();
@@ -172,6 +182,7 @@ public class ParentsResource {
   @Path("{id: [0-9]+}/children")
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
   public Response postParentChildren( // is postParentChild a better name?
       PostChildrenRequest request,
@@ -187,7 +198,9 @@ public class ParentsResource {
     if (parent == null) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND).entity("Unknown parent id").build();
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown parent id"))
+          .build();
     }
 
     // Fetch the student entity by name
@@ -197,7 +210,9 @@ public class ParentsResource {
     if (!studentOpt.isPresent()) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND).entity("Unknown student mail").build();
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown student mail"))
+          .build();
     }
     // Check if student is already a child of the parent
     for (User child : parent.getChildren()) {
@@ -233,8 +248,11 @@ public class ParentsResource {
     // Fetch Parent
     User parent = session.get(User.class, Integer.parseInt(parentId));
     if (parent == null) {
+      session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND).entity("Unknown parent id").build();
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown parent id"))
+          .build();
     }
 
     // Fetch appointments of parent
@@ -259,6 +277,7 @@ public class ParentsResource {
   @Path("{id: [0-9]+}/appointments")
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
   @ParentAdministratorSecured
   @SameParentSecured
   public Response postParentAppointments(
@@ -275,7 +294,9 @@ public class ParentsResource {
     if (parent == null) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND).build();
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown parent id"))
+          .build();
     }
 
     // Fetch the teacher entity by email
@@ -284,7 +305,9 @@ public class ParentsResource {
     if (!teacherOpt.isPresent()) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND).entity("Unknown teacher name").build();
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown teacher name"))
+          .build();
     }
 
     // To check! Do we need to do these checks?
@@ -306,7 +329,9 @@ public class ParentsResource {
         session.getTransaction().commit();
         session.close();
         return Response.status(Status.CONFLICT)
-            .entity("Teacher has already an appointment in that time slot.")
+            .entity(
+                new StatusResponse(
+                    Status.CONFLICT, "Teacher has already an appointment in that time slot."))
             .build();
       }
     }
@@ -328,7 +353,9 @@ public class ParentsResource {
         session.getTransaction().commit();
         session.close();
         return Response.status(Status.CONFLICT)
-            .entity("Parent has already an appointment in that time slot.")
+            .entity(
+                new StatusResponse(
+                    Status.CONFLICT, "Parent has already an appointment in that time slot."))
             .build();
       }
     }
@@ -345,7 +372,7 @@ public class ParentsResource {
     session.close();
 
     URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(appointment.getId())).build();
-    return Response.created(uri).build();
+    return Response.created(uri).entity(new StatusResponse(Status.CREATED)).build();
   }
 
   @Path("{id: [0-9]+}/appointments/{appointment_id: [0-9]+}")
@@ -363,11 +390,15 @@ public class ParentsResource {
         DatabaseHandler.fetchEntityBy(
             Appointment.class, Appointment_.id, Integer.parseInt(appointmentId));
     if (!appointmentOpt.isPresent()) {
-      return Response.status(Status.NOT_FOUND).entity("Unknown appointment id").build();
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown appointment id"))
+          .build();
     }
 
     if (appointmentOpt.get().getParent().getId() != Integer.parseInt(parentId)) {
-      return Response.status(Status.CONFLICT).entity("Not current parent's appointment").build();
+      return Response.status(Status.CONFLICT)
+          .entity(new StatusResponse(Status.CONFLICT, "Not current parent's appointment"))
+          .build();
     }
 
     return Response.ok(appointmentOpt.get(), MediaType.APPLICATION_JSON_TYPE).build();
@@ -393,7 +424,9 @@ public class ParentsResource {
     if (parent == null) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND).entity("Unknown parent id").build();
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown parent id"))
+          .build();
     }
 
     // Fetch the teacher entity by email
@@ -402,7 +435,9 @@ public class ParentsResource {
     if (!teacherOpt.isPresent()) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND).entity("Unknown teacher name").build();
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown teacher name"))
+          .build();
     }
 
     // Fetch Appointment entity
@@ -410,7 +445,9 @@ public class ParentsResource {
     if (appointment == null) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND).entity("Unknown appointment id").build();
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown appointment id"))
+          .build();
     }
 
     // Check if 'parent' is the same that created the Appointment entity
@@ -447,7 +484,9 @@ public class ParentsResource {
         session.getTransaction().commit();
         session.close();
         return Response.status(Status.CONFLICT)
-            .entity("Teacher has already an appointment in that time slot.")
+            .entity(
+                new StatusResponse(
+                    Status.CONFLICT, "Teacher has already an appointment in that time slot."))
             .build();
       }
     }
@@ -469,7 +508,9 @@ public class ParentsResource {
         session.getTransaction().commit();
         session.close();
         return Response.status(Status.CONFLICT)
-            .entity("Parent has already an appointment in that time slot.")
+            .entity(
+                new StatusResponse(
+                    Status.CONFLICT, "Parent has already an appointment in that time slot."))
             .build();
       }
     }
@@ -500,7 +541,9 @@ public class ParentsResource {
     User parent = session.get(User.class, Integer.parseInt(parentId));
     if (parent == null) {
       session.close();
-      return Response.status(Status.NOT_FOUND).entity("Unknown parent id").build();
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown parent id"))
+          .build();
     }
 
     // Fetch payments of parent
@@ -525,6 +568,7 @@ public class ParentsResource {
   @Path("{id: [0-9]+}/payments")
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
   public Response postParentPayments(
       @PathParam("id") String parentId,
@@ -540,12 +584,12 @@ public class ParentsResource {
     if (parent == null) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND).build();
+      return Response.status(Status.NOT_FOUND).entity(new StatusResponse(Status.NOT_FOUND)).build();
     }
     if (!parent.getEmail().equals(request.getPlacedByEmail())) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.CONFLICT).build();
+      return Response.status(Status.CONFLICT).entity(new StatusResponse(Status.CONFLICT)).build();
     }
 
     // Fetch the admin entity by email
@@ -555,7 +599,9 @@ public class ParentsResource {
     if (!adminOpt.isPresent()) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND).entity("Unknown teacher name").build();
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown teacher name"))
+          .build();
     }
 
     // Build the Payment entity
@@ -574,7 +620,7 @@ public class ParentsResource {
     session.close();
 
     URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(payment.getId())).build();
-    return Response.created(uri).build();
+    return Response.created(uri).entity(new StatusResponse(Status.CREATED)).build();
   }
 
   @Path("{id: [0-9]+}/payments/{payment_id: [0-9]+}")
@@ -591,11 +637,15 @@ public class ParentsResource {
     Optional<Payment> paymentOpt =
         DatabaseHandler.fetchEntityBy(Payment.class, Payment_.id, Integer.parseInt(paymentId));
     if (!paymentOpt.isPresent()) {
-      return Response.status(Status.NOT_FOUND).entity("Unknown payment id").build();
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown payment id"))
+          .build();
     }
 
     if (paymentOpt.get().getPlacedBy().getId() != Integer.parseInt(parentId)) {
-      return Response.status(Status.CONFLICT).entity("Not current parent's payment").build();
+      return Response.status(Status.CONFLICT)
+          .entity(new StatusResponse(Status.CONFLICT, "Not current parent's payment"))
+          .build();
     }
 
     return Response.ok(paymentOpt.get(), MediaType.APPLICATION_JSON_TYPE).build();
@@ -604,6 +654,7 @@ public class ParentsResource {
   @Path("{id: [0-9]+}/payments/{payment_id: [0-9]+}/pay")
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
   @ParentSecured
   @SameParentSecured
   public Response postParentPaymentPaid(
@@ -621,26 +672,26 @@ public class ParentsResource {
     if (parent == null) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND).build();
+      return Response.status(Status.NOT_FOUND).entity(new StatusResponse(Status.NOT_FOUND)).build();
     }
     // Get payment
     Payment payment = session.get(Payment.class, Integer.parseInt(paymentId));
     if (payment == null) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND).build();
+      return Response.status(Status.NOT_FOUND).entity(new StatusResponse(Status.NOT_FOUND)).build();
     }
 
     if (!parent.getEmail().equals(payment.getPlacedBy().getEmail())) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.CONFLICT).build();
+      return Response.status(Status.CONFLICT).entity(new StatusResponse(Status.CONFLICT)).build();
     }
 
     if (!request.isPaid()) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.CONFLICT).build();
+      return Response.status(Status.CONFLICT).entity(new StatusResponse(Status.CONFLICT)).build();
     }
 
     payment.setDone(true);
@@ -669,7 +720,9 @@ public class ParentsResource {
     User parent = session.get(User.class, Integer.parseInt(parentId));
     if (parent == null) {
       session.close();
-      return Response.status(Status.NOT_FOUND).entity("Unknown parent id").build();
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown parent id"))
+          .build();
     }
 
     // Fetch notification for the parent
@@ -739,6 +792,7 @@ public class ParentsResource {
   @Path("{id: [0-9]+}/notifications")
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
   public Response postParentNotifications(
       @PathParam("id") String parentId,
@@ -754,7 +808,7 @@ public class ParentsResource {
     if (parent == null) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND).build();
+      return Response.status(Status.NOT_FOUND).entity(new StatusResponse(Status.NOT_FOUND)).build();
     }
 
     // Here the admin can POST only a direct notification to this parent
@@ -765,7 +819,9 @@ public class ParentsResource {
     if (!adminOpt.isPresent()) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND).entity("Unknown admin name").build();
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown admin name"))
+          .build();
     }
 
     // Build the Notification entity
@@ -781,7 +837,7 @@ public class ParentsResource {
     session.close();
 
     URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(npp.getId())).build();
-    return Response.created(uri).build();
+    return Response.created(uri).entity(new StatusResponse(Status.CREATED)).build();
   }
 
   @Path("{id: [0-9]+}/notifications/{notification_id: [0-9]+}")
@@ -803,7 +859,7 @@ public class ParentsResource {
     if (parent == null) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND).build();
+      return Response.status(Status.NOT_FOUND).entity(new StatusResponse(Status.NOT_FOUND)).build();
     }
 
     // Fetch notification
@@ -830,7 +886,9 @@ public class ParentsResource {
         && (!notificationOptPP.isPresent())) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND).entity("Unknown notification id").build();
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown notification id"))
+          .build();
     }
 
     if (notificationOptGP.isPresent()) {
@@ -866,7 +924,7 @@ public class ParentsResource {
     session.getTransaction().commit();
     session.close();
     return Response.status(Status.UNAUTHORIZED)
-        .entity("Current parent can't get the requested notification")
+        .entity(new StatusResponse(Status.UNAUTHORIZED, "Current parent can't get the requested notification"))
         .build();
   }
 }
