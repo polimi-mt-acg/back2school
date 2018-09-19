@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
-public class ParentResourcePaymentsTest {
+public class ParentsResourcePaymentsTest {
 
   private static HttpServer server;
 

@@ -34,7 +34,7 @@ import javax.ws.rs.core.Response;
 import java.time.LocalDateTime;
 import java.time.Month;
 
-public class ParentResourceTest {
+public class ParentsResourceTest {
 
   private static HttpServer server;
 
