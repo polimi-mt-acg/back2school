@@ -188,17 +188,17 @@ public class ParentsResourceTest {
     String emailSuffix = "newEmail";
 
     // Create a PutParent request to change its name
-    PutParentRequest putParentRequest = new PutParentRequest();
-    putParentRequest.setName(parentResponse.getName() + nameSuffix);
-    putParentRequest.setSurname(parentResponse.getSurname() + surnameSuffix);
-    putParentRequest.setEmail(parentResponse.getEmail() + emailSuffix);
-    putParentRequest.setPassword("DontCare");
+    User putParent = new User();
+    putParent.setName(parentResponse.getName() + nameSuffix);
+    putParent.setSurname(parentResponse.getSurname() + surnameSuffix);
+    putParent.setEmail(parentResponse.getEmail() + emailSuffix);
+    putParent.setNewPassword("DontCare");
 
     // Make a PUT request
-    Invocation putParent =
+    Invocation putParentRequest =
         RestFactory.getAuthenticatedInvocationBuilder(adminForAuth, parentURI)
-            .buildPut(Entity.json(putParentRequest));
-    Response putParentResponse = putParent.invoke();
+            .buildPut(Entity.json(putParent));
+    Response putParentResponse = putParentRequest.invoke();
 
     assertEquals(Response.Status.OK.getStatusCode(), putParentResponse.getStatus());
 
@@ -235,17 +235,17 @@ public class ParentsResourceTest {
     String emailSuffix = "newEmail";
 
     // Create a PutParent request to change its name
-    PutParentRequest putParentRequest = new PutParentRequest();
-    putParentRequest.setName(parentResponse.getName() + nameSuffix);
-    putParentRequest.setSurname(parentResponse.getSurname() + surnameSuffix);
-    putParentRequest.setEmail(parentResponse.getEmail() + emailSuffix);
-    putParentRequest.setPassword("DontCare");
+    User putParent = new User();
+    putParent.setName(parentResponse.getName() + nameSuffix);
+    putParent.setSurname(parentResponse.getSurname() + surnameSuffix);
+    putParent.setEmail(parentResponse.getEmail() + emailSuffix);
+    putParent.setNewPassword("DontCare");
 
     // Make a PUT request
-    Invocation putParent =
+    Invocation putParentRequest =
         RestFactory.getAuthenticatedInvocationBuilder(parent, "parents", parentID)
-            .buildPut(Entity.json(putParentRequest));
-    Response putParentResponse = putParent.invoke();
+            .buildPut(Entity.json(putParent));
+    Response putParentResponse = putParentRequest.invoke();
 
     //    System.out.println("HERE"+ putParentResponse);
     assertEquals(Response.Status.OK.getStatusCode(), putParentResponse.getStatus());

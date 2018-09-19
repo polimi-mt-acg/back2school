@@ -82,8 +82,8 @@ public class ParentsResource {
     }
     // force to be a parent since this endpoint meaning
     newUser.setRole(Role.PARENT);
-
     newUser.prepareToPersist();
+
     session.persist(newUser);
     session.getTransaction().commit();
     session.close();
@@ -116,9 +116,10 @@ public class ParentsResource {
   @Path("{id: [0-9]+}")
   @PUT
   @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
   @ParentAdministratorSecured
   @SameParentSecured
-  public Response putParentById(PutParentRequest newParent, @PathParam("id") String parentId) {
+  public Response putParentById(User newParent, @PathParam("id") String parentId) {
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 
@@ -136,7 +137,8 @@ public class ParentsResource {
     parent.setName(newParent.getName());
     parent.setSurname(newParent.getSurname());
     parent.setEmail(newParent.getEmail());
-    parent.setPassword(newParent.getPassword());
+    parent.setNewPassword(newParent.getNewPassword());
+    parent.prepareToPersist();
 
     session.getTransaction().commit();
     session.close();
@@ -369,6 +371,7 @@ public class ParentsResource {
     appointment.setTeacher(teacherOpt.get());
     appointment.setDatetimeStart(request.getDatetimeStart());
     appointment.setDatetimeEnd(request.getDatetimeEnd());
+    appointment.prepareToPersist();
 
     session.persist(appointment);
     session.getTransaction().commit();
@@ -617,6 +620,7 @@ public class ParentsResource {
     payment.setDescription(request.getDescription());
     payment.setSubject(request.getSubject());
     payment.setDone(false);
+    payment.prepareToPersist();
 
     session.persist(payment);
     session.getTransaction().commit();
@@ -699,6 +703,7 @@ public class ParentsResource {
 
     payment.setDone(true);
     payment.setDatetimeDone(LocalDateTime.now());
+    payment.prepareToPersist();
 
     session.persist(payment);
     session.getTransaction().commit();
@@ -834,6 +839,7 @@ public class ParentsResource {
     npp.setDatetime(request.getDatetime());
     npp.setSubject(request.getSubject());
     npp.setText(request.getText());
+    npp.prepareToPersist();
 
     session.persist(npp);
     session.getTransaction().commit();
