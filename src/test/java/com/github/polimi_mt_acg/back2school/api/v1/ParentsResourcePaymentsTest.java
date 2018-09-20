@@ -2,6 +2,7 @@ package com.github.polimi_mt_acg.back2school.api.v1;
 
 import com.github.polimi_mt_acg.back2school.api.v1.auth.AuthenticationResource;
 import com.github.polimi_mt_acg.back2school.api.v1.parents.*;
+import com.github.polimi_mt_acg.back2school.model.Appointment;
 import com.github.polimi_mt_acg.back2school.model.Payment;
 import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
@@ -144,12 +145,11 @@ public class ParentsResourcePaymentsTest {
     Path idPath = fullPath.getParent().relativize(fullPath);
     String parentID = idPath.toString();
 
-    PostParentPaymentRequest postParentPaymentRequest =
-        buildPayment(parent.getEmail(), adminForAuth.getEmail(), 50);
+    ParentPaymentRequest parentPaymentRequest = buildPayment(Payment.Type.MATERIAL, 50);
 
     Invocation request =
         RestFactory.getAuthenticatedInvocationBuilder(parent, "parents", parentID, "payments")
-            .buildPost(Entity.json(postParentPaymentRequest));
+            .buildPost(Entity.json(parentPaymentRequest));
 
     Response response = request.invoke();
     assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
@@ -245,46 +245,41 @@ public class ParentsResourcePaymentsTest {
     String paymentID = idPayPath.toString();
 
     // Do the payment
-    PostParentPaymentPayRequest postParentPaymentPayRequest = new PostParentPaymentPayRequest();
-    postParentPaymentPayRequest.setPaid(true);
     Invocation requestToPay =
         RestFactory.getAuthenticatedInvocationBuilder(
                 parent, "parents", parentID, "payments", paymentID, "pay")
-            .buildPost(Entity.json(postParentPaymentPayRequest));
+            .buildPost(Entity.json("{}"));
 
     Response responsePaid = requestToPay.invoke();
-
     assertEquals(Response.Status.OK.getStatusCode(), responsePaid.getStatus());
 
-    Payment paymentDONE = responsePaid.readEntity(Payment.class);
-
     // Print it
-    print(paymentDONE);
+    print("POST /parents/", parentID, "/payments/", paymentID, "/pay");
+    print(responsePaid.readEntity(String.class));
   }
 
-  private PostParentPaymentRequest buildPayment(
-      String placedByEmail, String assignedToEmail, double amount) {
-    PostParentPaymentRequest payment = new PostParentPaymentRequest();
-    payment.setPlacedByEmail(placedByEmail);
-    payment.setAssignedToEmail(assignedToEmail);
-    payment.setAmount(amount);
-    payment.setSubject("New english book");
-    payment.setDescription("The new english book sold directly by the school");
-    payment.setDatetimeRequested(LocalDateTime.now());
-    payment.setDatetimeDeadline(LocalDateTime.now().plusDays(7));
-    return payment;
+  private ParentPaymentRequest buildPayment(Payment.Type type, double amount) {
+    ParentPaymentRequest paymentRequest = new ParentPaymentRequest();
+    paymentRequest.setType(type);
+    paymentRequest.setDatetimeRequested(LocalDateTime.now());
+    // paymentRequest.setDatetimeDone(null);
+    paymentRequest.setDatetimeDeadline(LocalDateTime.now().plusDays(7));
+    // paymentRequest.setDone(false);
+    paymentRequest.setSubject("New english book");
+    paymentRequest.setDescription("The new english book sold directly by the school");
+    paymentRequest.setAmount(amount);
+    return paymentRequest;
   }
 
   private URI postPayment(
       String placedByEmail, String assignedToEmail, double amount, String parentID) {
 
     // We post a payment between parent and admin
-    PostParentPaymentRequest postParentPaymentRequest =
-        buildPayment(placedByEmail, assignedToEmail, amount);
+    ParentPaymentRequest parentPaymentRequest = buildPayment(Payment.Type.TRIP, amount);
 
     Invocation request =
         RestFactory.getAuthenticatedInvocationBuilder(adminForAuth, "parents", parentID, "payments")
-            .buildPost(Entity.json(postParentPaymentRequest));
+            .buildPost(Entity.json(parentPaymentRequest));
 
     Response response = request.invoke();
     System.out.println("HERE Payment Post: " + response.toString());

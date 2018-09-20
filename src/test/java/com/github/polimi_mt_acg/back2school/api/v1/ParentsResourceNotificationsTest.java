@@ -1,8 +1,10 @@
 package com.github.polimi_mt_acg.back2school.api.v1;
 
 import com.github.polimi_mt_acg.back2school.api.v1.auth.AuthenticationResource;
+import com.github.polimi_mt_acg.back2school.api.v1.notifications.NotificationsResponse;
 import com.github.polimi_mt_acg.back2school.api.v1.parents.*;
 import com.github.polimi_mt_acg.back2school.model.Notification;
+import com.github.polimi_mt_acg.back2school.model.NotificationPersonalParent;
 import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseSeeder;
@@ -80,8 +82,7 @@ public class ParentsResourceNotificationsTest {
 
     assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
-    ParentNotificationsResponse parentNotifications =
-        response.readEntity(ParentNotificationsResponse.class);
+    NotificationsResponse parentNotifications = response.readEntity(NotificationsResponse.class);
 
     // Print it
     print(parentNotifications);
@@ -109,8 +110,8 @@ public class ParentsResourceNotificationsTest {
 
     assertEquals(Response.Status.OK.getStatusCode(), responseCheck.getStatus());
 
-    ParentNotificationsResponse parentNotifications =
-        responseCheck.readEntity(ParentNotificationsResponse.class);
+    NotificationsResponse parentNotifications =
+        responseCheck.readEntity(NotificationsResponse.class);
 
     assertTrue(parentNotifications.getNotifications().size() > 0);
 
@@ -137,8 +138,7 @@ public class ParentsResourceNotificationsTest {
                 adminForAuth, "parents", parentID, "notifications")
             .buildGet();
     Response responseGET = requestGET.invoke();
-    ParentNotificationsResponse parentNotifications =
-        responseGET.readEntity(ParentNotificationsResponse.class);
+    NotificationsResponse parentNotifications = responseGET.readEntity(NotificationsResponse.class);
 
     for (URI notURI : parentNotifications.getNotifications()) {
       Path fullNotPath = Paths.get("/", notURI.getPath());
@@ -179,8 +179,7 @@ public class ParentsResourceNotificationsTest {
                 adminForAuth, "parents", parentID, "notifications")
             .buildGet();
     Response responseGET = requestGET.invoke();
-    ParentNotificationsResponse parentNotifications =
-        responseGET.readEntity(ParentNotificationsResponse.class);
+    NotificationsResponse parentNotifications = responseGET.readEntity(NotificationsResponse.class);
 
     for (URI notURI : parentNotifications.getNotifications()) {
       Path fullNotPath = Paths.get("/", notURI.getPath());
@@ -202,10 +201,8 @@ public class ParentsResourceNotificationsTest {
     }
   }
 
-  private PostParentNotificationRequest buildNotification(int copynumber, String creatorEmail) {
-    PostParentNotificationRequest notification = new PostParentNotificationRequest();
-    notification.setCreatorEmail(creatorEmail);
-    notification.setDatetime(LocalDateTime.now());
+  private NotificationPersonalParent buildNotification(int copynumber) {
+    NotificationPersonalParent notification = new NotificationPersonalParent();
     notification.setSubject("Subject number: " + String.valueOf(copynumber));
     notification.setText("Text number: " + String.valueOf(copynumber));
     return notification;
@@ -213,13 +210,12 @@ public class ParentsResourceNotificationsTest {
 
   private URI postNotification(int copyNumber, String parentID) {
     // We post a notification between parent and admin
-    PostParentNotificationRequest postParentNotificationRequest =
-        buildNotification(copyNumber, adminForAuth.getEmail());
+    NotificationPersonalParent postParentNotification = buildNotification(copyNumber);
 
     Invocation request =
         RestFactory.getAuthenticatedInvocationBuilder(
                 adminForAuth, "parents", parentID, "notifications")
-            .buildPost(Entity.json(postParentNotificationRequest));
+            .buildPost(Entity.json(postParentNotification));
 
     Response response = request.invoke();
     System.out.println(response.toString());

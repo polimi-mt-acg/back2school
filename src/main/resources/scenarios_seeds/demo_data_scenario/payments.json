@@ -1,0 +1,52 @@
+{
+  "payments": [
+    {
+      "seedPlacedByUserEmail": "david@email.com",
+      "seedAssignedToUserEmail": "bob@email.com",
+      "type": "MONTHLY",
+      "datetimeRequested": "2018-04-05T20:24:10",
+      "datetimeDone": "2018-05-05T20:24:10",
+      "datetimeDeadline": "2018-06-05T20:24:10",
+      "done": true,
+      "subject": "School material",
+      "description": "The school material used in one month",
+      "amount": 25.99
+    },
+    {
+      "seedPlacedByUserEmail": "david@email.com",
+      "seedAssignedToUserEmail": "bob@email.com",
+      "type": "MATERIAL",
+      "datetimeRequested": "2018-04-05T20:24:10",
+      "datetimeDone": null,
+      "datetimeDeadline": "2018-06-05T20:24:10",
+      "done": false,
+      "subject": "School material",
+      "description": "The school material used in one month",
+      "amount": 2.60
+    },
+    {
+      "seedPlacedByUserEmail": "david@email.com",
+      "seedAssignedToUserEmail": "bob1@email.com",
+      "type": "MATERIAL",
+      "datetimeRequested": "2018-04-05T20:24:10",
+      "datetimeDone": null,
+      "datetimeDeadline": "2018-06-05T20:24:10",
+      "done": false,
+      "subject": "School material",
+      "description": "The school material used in one month",
+      "amount": 2.60
+    },
+    {
+      "seedPlacedByUserEmail": "david@email.com",
+      "seedAssignedToUserEmail": "bob2@email.com",
+      "type": "TRIP",
+      "datetimeRequested": "2018-04-05T20:24:10",
+      "datetimeDone": null,
+      "datetimeDeadline": "2018-06-05T20:24:10",
+      "done": false,
+      "subject": "School material",
+      "description": "The school material used in one month",
+      "amount": 204.45
+    }
+  ]
+}

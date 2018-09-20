@@ -1,6 +1,7 @@
 package com.github.polimi_mt_acg.back2school.api.v1.parents;
 
 import com.github.polimi_mt_acg.back2school.api.v1.StatusResponse;
+import com.github.polimi_mt_acg.back2school.api.v1.notifications.NotificationsResponse;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.AdministratorSecured;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.ParentAdministratorSecured;
 import com.github.polimi_mt_acg.back2school.model.*;
@@ -21,13 +22,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.*;
 import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
 import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.print;
@@ -155,12 +153,13 @@ public class ParentsResource {
   @Produces(MediaType.APPLICATION_JSON)
   @ParentAdministratorSecured
   @SameParentSecured
-  public Response getParentChildren(@PathParam("id") String parentId, @Context UriInfo uriInfo) {
+  public Response getParentChildren(@PathParam("id") Integer parentId, @Context UriInfo uriInfo) {
+    print("FROM HERE");
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 
     // Fetch User
-    User parent = session.get(User.class, Integer.parseInt(parentId));
+    User parent = session.get(User.class, parentId);
     if (parent == null) {
       session.getTransaction().commit();
       session.close();
@@ -170,15 +169,10 @@ public class ParentsResource {
     }
 
     ParentChildrenResponse response = new ParentChildrenResponse();
+    // force loading of entities -> avoid them to be lazy loaded after when
+    // they're required for serialization (response) but session already closed
+    parent.getChildren().size();
     response.setChildren(parent.getChildren());
-
-    List<URI> childrenURI = new ArrayList<>();
-
-    for (User c : parent.getChildren()) {
-      UriBuilder builder = uriInfo.getAbsolutePathBuilder();
-      URI uri = builder.path(String.valueOf(c.getId())).build();
-      childrenURI.add(uri);
-    }
 
     session.getTransaction().commit();
     session.close();
@@ -483,8 +477,7 @@ public class ParentsResource {
 
     // Get appointments of the teacher
     List<Appointment> teacherAppointments =
-        dbi.getListSelectFromWhereEqual(
-            Appointment.class, Appointment_.teacher, teacher  , session);
+        dbi.getListSelectFromWhereEqual(Appointment.class, Appointment_.teacher, teacher, session);
     // Is the teacher available in that time slot?
     for (Appointment a : teacherAppointments) {
       if (((a.getDatetimeStart().isBefore(request.getDatetimeStart())
@@ -501,7 +494,8 @@ public class ParentsResource {
         return Response.status(Status.CONFLICT)
             .entity(
                 new StatusResponse(
-                    Status.CONFLICT, "Teacher has already an appointment in the selected time slot."))
+                    Status.CONFLICT,
+                    "Teacher has already an appointment in the selected time slot."))
             .build();
       }
     }
@@ -564,7 +558,7 @@ public class ParentsResource {
 
     // Fetch payments of parent
     List<Payment> payments =
-        dbi.getListSelectFromWhereEqual(Payment.class, Payment_.placedBy, parent, session);
+        dbi.getListSelectFromWhereEqual(Payment.class, Payment_.assignedTo, parent, session);
     // ATT: parent
     ParentPaymentsResponse response = new ParentPaymentsResponse();
     List<URI> paymentsURIs = new ArrayList<>();
@@ -587,49 +581,40 @@ public class ParentsResource {
   @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
   public Response postParentPayments(
-      @PathParam("id") String parentId,
-      PostParentPaymentRequest request,
+      ParentPaymentRequest request,
+      @PathParam("id") Integer parentId,
+      @Context HttpHeaders httpHeaders,
       @Context UriInfo uriInfo) {
+    User currentUser = AuthenticationSession.getCurrentUser(httpHeaders);
 
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
     session.beginTransaction();
 
-    // Get parent who made the request
-    User parent = session.get(User.class, Integer.parseInt(parentId));
+    // Get parent
+    User parent = session.get(User.class, parentId);
     if (parent == null) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND).entity(new StatusResponse(Status.NOT_FOUND)).build();
-    }
-    if (!parent.getEmail().equals(request.getPlacedByEmail())) {
-      session.getTransaction().commit();
-      session.close();
-      return Response.status(Status.CONFLICT).entity(new StatusResponse(Status.CONFLICT)).build();
-    }
-
-    // Fetch the admin entity by email
-    Optional<User> adminOpt =
-        DatabaseHandler.fetchEntityBy(
-            User.class, User_.email, request.getAssignedToEmail(), session);
-    if (!adminOpt.isPresent()) {
-      session.getTransaction().commit();
-      session.close();
       return Response.status(Status.NOT_FOUND)
-          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown teacher name"))
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown parent id"))
           .build();
     }
 
     // Build the Payment entity
     Payment payment = new Payment();
-    payment.setPlacedBy(parent);
-    payment.setAssignedTo(adminOpt.get());
-    payment.setAmount(request.getAmount());
-    payment.setDatetimeDeadline(request.getDatetimeDeadline());
+    payment.setPlacedBy(currentUser);
+    payment.setAssignedTo(parent);
+    payment.setType(request.getType());
     payment.setDatetimeRequested(request.getDatetimeRequested());
-    payment.setDescription(request.getDescription());
-    payment.setSubject(request.getSubject());
+    // due to the meaning of this endpoint
+    payment.setDatetimeDone(null);
+    payment.setDatetimeDeadline(request.getDatetimeDeadline());
+    // due to the meaning of this endpoint
     payment.setDone(false);
+    payment.setSubject(request.getSubject());
+    payment.setDescription(request.getDescription());
+    payment.setAmount(request.getAmount());
     payment.prepareToPersist();
 
     session.persist(payment);
@@ -646,26 +631,29 @@ public class ParentsResource {
   @ParentAdministratorSecured
   @SameParentSecured
   public Response getParentPaymentById(
-      @PathParam("payment_id") String paymentId,
-      @PathParam("id") String parentId,
+      @PathParam("id") Integer parentId,
+      @PathParam("payment_id") Integer paymentId,
       @Context UriInfo uriInfo) {
 
-    // Fetch appointment
+    // Fetch payment
     Optional<Payment> paymentOpt =
-        DatabaseHandler.fetchEntityBy(Payment.class, Payment_.id, Integer.parseInt(paymentId));
+        DatabaseHandler.fetchEntityBy(Payment.class, Payment_.id, paymentId);
     if (!paymentOpt.isPresent()) {
       return Response.status(Status.NOT_FOUND)
           .entity(new StatusResponse(Status.NOT_FOUND, "Unknown payment id"))
           .build();
     }
+    Payment payment = paymentOpt.get();
 
-    if (paymentOpt.get().getPlacedBy().getId() != Integer.parseInt(parentId)) {
-      return Response.status(Status.CONFLICT)
-          .entity(new StatusResponse(Status.CONFLICT, "Not current parent's payment"))
+    // check payment assigned to current parent (url id)
+    if (payment.getAssignedTo().getId() != parentId) {
+      return Response.status(Status.NOT_FOUND)
+          .entity(
+              new StatusResponse(
+                  Status.NOT_FOUND, "No payment with this is for the current parent"))
           .build();
     }
-
-    return Response.ok(paymentOpt.get(), MediaType.APPLICATION_JSON_TYPE).build();
+    return Response.ok(payment, MediaType.APPLICATION_JSON_TYPE).build();
   }
 
   @Path("{id: [0-9]+}/payments/{payment_id: [0-9]+}/pay")
@@ -675,40 +663,41 @@ public class ParentsResource {
   @ParentSecured
   @SameParentSecured
   public Response postParentPaymentPaid(
-      @PathParam("payment_id") String paymentId,
-      @PathParam("id") String parentId,
-      PostParentPaymentPayRequest request,
+      String request, // ignored, not necessary
+      @PathParam("id") Integer parentId,
+      @PathParam("payment_id") Integer paymentId,
+      @Context HttpHeaders httpHeaders,
       @Context UriInfo uriInfo) {
+    // The only user allowed to invoke this endpoint is the user who has to pay
 
-    DatabaseHandler dbi = DatabaseHandler.getInstance();
-    Session session = dbi.getNewSession();
+    User parent = AuthenticationSession.getCurrentUser(httpHeaders);
+
+    Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
-
-    // Get parent who made the request
-    User parent = session.get(User.class, Integer.parseInt(parentId));
-    if (parent == null) {
-      session.getTransaction().commit();
-      session.close();
-      return Response.status(Status.NOT_FOUND).entity(new StatusResponse(Status.NOT_FOUND)).build();
-    }
     // Get payment
-    Payment payment = session.get(Payment.class, Integer.parseInt(paymentId));
+    Payment payment = session.get(Payment.class, paymentId);
     if (payment == null) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND).entity(new StatusResponse(Status.NOT_FOUND)).build();
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown payment id"))
+          .build();
     }
 
-    if (!parent.getEmail().equals(payment.getPlacedBy().getEmail())) {
+    if (parent.getId() != payment.getAssignedTo().getId()) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.CONFLICT).entity(new StatusResponse(Status.CONFLICT)).build();
+      return Response.status(Status.CONFLICT)
+          .entity(new StatusResponse(Status.CONFLICT, "Wrong payment"))
+          .build();
     }
 
-    if (!request.isPaid()) {
+    if (payment.isDone()) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.CONFLICT).entity(new StatusResponse(Status.CONFLICT)).build();
+      return Response.status(Status.NOT_MODIFIED)
+          .entity(new StatusResponse(Status.NOT_MODIFIED, "Payment already confirmed"))
+          .build();
     }
 
     payment.setDone(true);
@@ -719,8 +708,7 @@ public class ParentsResource {
     session.getTransaction().commit();
     session.close();
 
-    // Here the payment done is returned
-    return Response.ok(payment, MediaType.APPLICATION_JSON_TYPE).build();
+    return Response.ok().entity(new StatusResponse(Status.OK)).build();
   }
 
   @Path("{id: [0-9]+}/notifications")
@@ -729,13 +717,13 @@ public class ParentsResource {
   @ParentAdministratorSecured
   @SameParentSecured
   public Response getParentNotifications(
-      @PathParam("id") String parentId, @Context UriInfo uriInfo) {
+      @PathParam("id") Integer parentId, @Context UriInfo uriInfo) {
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
     session.beginTransaction();
 
     // Fetch Parent
-    User parent = session.get(User.class, Integer.parseInt(parentId));
+    User parent = session.get(User.class, parentId);
     if (parent == null) {
       session.close();
       return Response.status(Status.NOT_FOUND)
@@ -752,20 +740,20 @@ public class ParentsResource {
 
     // 2:Class Parent
     // Initialized an empty NotificationClassParent list
-    List<NotificationClassParent> notificationsCP =
-        dbi.getListSelectFromWhereEqual(
-            NotificationClassParent.class, NotificationClassParent_.text, "FOO", session);
+    List<NotificationClassParent> notificationsCP = new ArrayList<>();
+    List<Class> classes = dbi.getListSelectFrom(Class.class);
+
     for (User child : parent.getChildren()) {
-      List<Class> classes = dbi.getListSelectFrom(Class.class);
       for (Class cl : classes) {
         for (User student : cl.getClassStudents()) {
-          if (child.getEmail().equals(student.getEmail())) {
+          if (student.getId() == child.getId()) {
             notificationsCP.addAll(
                 dbi.getListSelectFromWhereEqual(
                     NotificationClassParent.class,
                     NotificationClassParent_.targetClass,
                     cl,
                     session));
+            break;
           }
         }
       }
@@ -779,29 +767,23 @@ public class ParentsResource {
             parent,
             session);
 
-    ParentNotificationsResponse response = new ParentNotificationsResponse();
-    List<URI> notificationsURIs = new ArrayList<>();
+    NotificationsResponse response = new NotificationsResponse();
+    response.setNotifications(new ArrayList<>());
 
     for (NotificationGeneralParents ngp : notificationsGP) {
-      UriBuilder builder = uriInfo.getAbsolutePathBuilder();
-      URI uri = builder.path(String.valueOf(ngp.getId())).build();
-      notificationsURIs.add(uri);
+      URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(ngp.getId())).build();
+      response.getNotifications().add(uri);
     }
 
     for (NotificationClassParent ncp : notificationsCP) {
-      UriBuilder builder = uriInfo.getAbsolutePathBuilder();
-      URI uri = builder.path(String.valueOf(ncp.getId())).build();
-      notificationsURIs.add(uri);
+      URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(ncp.getId())).build();
+      response.getNotifications().add(uri);
     }
 
     for (NotificationPersonalParent npp : notificationPP) {
-      UriBuilder builder = uriInfo.getAbsolutePathBuilder();
-      URI uri = builder.path(String.valueOf(npp.getId())).build();
-      notificationsURIs.add(uri);
+      URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(npp.getId())).build();
+      response.getNotifications().add(uri);
     }
-
-    response.setNotifications(notificationsURIs);
-
     session.getTransaction().commit();
     session.close();
     return Response.ok(response, MediaType.APPLICATION_JSON_TYPE).build();
@@ -813,42 +795,29 @@ public class ParentsResource {
   @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
   public Response postParentNotifications(
-      @PathParam("id") String parentId,
-      PostParentNotificationRequest request,
+      NotificationPersonalParent npp,
+      @PathParam("id") Integer parentId,
+      @Context HttpHeaders httpHeaders,
       @Context UriInfo uriInfo) {
+    // Here the admin can POST only a direct notification to this parent
+    User currentAdmin = AuthenticationSession.getCurrentUser(httpHeaders);
 
-    DatabaseHandler dbi = DatabaseHandler.getInstance();
-    Session session = dbi.getNewSession();
+    Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 
     // Get parent target of the notification
-    User parent = session.get(User.class, Integer.parseInt(parentId));
+    User parent = session.get(User.class, parentId);
     if (parent == null) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND).entity(new StatusResponse(Status.NOT_FOUND)).build();
-    }
-
-    // Here the admin can POST only a direct notification to this parent
-
-    // Fetch the admin entity by email
-    Optional<User> adminOpt =
-        DatabaseHandler.fetchEntityBy(User.class, User_.email, request.getCreatorEmail(), session);
-    if (!adminOpt.isPresent()) {
-      session.getTransaction().commit();
-      session.close();
       return Response.status(Status.NOT_FOUND)
-          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown admin name"))
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown parent id"))
           .build();
     }
 
-    // Build the Notification entity
-    NotificationPersonalParent npp = new NotificationPersonalParent();
-    npp.setCreator(adminOpt.get());
+    npp.setCreator(currentAdmin);
     npp.setTargetUser(parent);
-    npp.setDatetime(request.getDatetime());
-    npp.setSubject(request.getSubject());
-    npp.setText(request.getText());
+    npp.setDatetime(LocalDateTime.now());
     npp.prepareToPersist();
 
     session.persist(npp);
@@ -859,93 +828,90 @@ public class ParentsResource {
     return Response.created(uri).entity(new StatusResponse(Status.CREATED)).build();
   }
 
-  @Path("{id: [0-9]+}/notifications/{notification_id: [0-9]+}")
+  @Path("{id: [0-9]+}/notifications/{notificationId: [0-9]+}")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @ParentAdministratorSecured
   @SameParentSecured
   public Response getParentNotificationById(
-      @PathParam("notification_id") String notificationId,
-      @PathParam("id") String parentId,
+      @PathParam("id") Integer parentId,
+      @PathParam("notificationId") Integer notificationId,
+      @Context HttpHeaders httpHeaders,
       @Context UriInfo uriInfo) {
 
-    DatabaseHandler dbi = DatabaseHandler.getInstance();
-    Session session = dbi.getNewSession();
+    Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
+    User currentUser = AuthenticationSession.getCurrentUser(httpHeaders, session);
 
-    // Get parent target of the notification
-    User parent = session.get(User.class, Integer.parseInt(parentId));
-    if (parent == null) {
+    // Notification can be of three types: GeneralParents, ClassParent, PersonalParent
+    // if none of them will be found by the given id -> error
+
+    // 1: GeneralParents
+    NotificationGeneralParents notificationGeneralParents =
+        session.get(NotificationGeneralParents.class, notificationId);
+    if (notificationGeneralParents != null) {
+      // mark as read
+      if (currentUser.getRole().equals(Role.PARENT)) {
+        currentUser.addNotificationsRead(notificationGeneralParents);
+      }
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND).entity(new StatusResponse(Status.NOT_FOUND)).build();
+      return Response.ok(notificationGeneralParents, MediaType.APPLICATION_JSON_TYPE).build();
     }
 
-    // Fetch notification
-    Optional<NotificationGeneralParents> notificationOptGP =
-        DatabaseHandler.fetchEntityBy(
-            NotificationGeneralParents.class,
-            NotificationGeneralParents_.id,
-            Integer.parseInt(notificationId),
-            session);
-    Optional<NotificationClassParent> notificationOptCP =
-        DatabaseHandler.fetchEntityBy(
-            NotificationClassParent.class,
-            NotificationClassParent_.id,
-            Integer.parseInt(notificationId),
-            session);
-    Optional<NotificationPersonalParent> notificationOptPP =
-        DatabaseHandler.fetchEntityBy(
-            NotificationPersonalParent.class,
-            NotificationPersonalParent_.id,
-            Integer.parseInt(notificationId),
-            session);
-    if ((!notificationOptGP.isPresent())
-        && (!notificationOptCP.isPresent())
-        && (!notificationOptPP.isPresent())) {
-      session.getTransaction().commit();
-      session.close();
-      return Response.status(Status.NOT_FOUND)
-          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown notification id"))
-          .build();
-    }
+    // 2: ClassParent
+    NotificationClassParent notificationClassParent =
+        session.get(NotificationClassParent.class, notificationId);
+    if (notificationClassParent != null) {
+      // Parent logged in
+      if (currentUser.getRole().equals(Role.PARENT)) {
+        // look for a children of the current parent belonging the class
+        for (User student : notificationClassParent.getTargetClass().getClassStudents()) {
+          for (User child : currentUser.getChildren()) {
+            if (student.getId() == child.getId()) {
+              // found matching class student and children of the parent
 
-    if (notificationOptGP.isPresent()) {
-      session.getTransaction().commit();
-      session.close();
-      return Response.ok(notificationOptGP.get(), MediaType.APPLICATION_JSON_TYPE).build();
-    }
+              // mark as read
+              currentUser.addNotificationsRead(notificationClassParent);
 
-    if (notificationOptCP.isPresent()) {
-      // Check if the parent can read the notification
-      NotificationClassParent notificationCP = notificationOptCP.get();
-      Class targetClass = notificationCP.getTargetClass();
-      List<User> children = parent.getChildren();
-      for (User child : children) {
-        for (User student : targetClass.getClassStudents()) {
-          if (child.getId() == student.getId()) {
-            session.getTransaction().commit();
-            session.close();
-            return Response.ok(notificationOptCP.get(), MediaType.APPLICATION_JSON_TYPE).build();
+              session.getTransaction().commit();
+              session.close();
+              notificationClassParent.setTargetClass(null); // so won't be serialized
+              return Response.ok(notificationClassParent, MediaType.APPLICATION_JSON_TYPE).build();
+            }
           }
         }
+
+      } // Administrator logged in
+      else if (currentUser.getRole().equals(Role.ADMINISTRATOR)) {
+        session.getTransaction().commit();
+        session.close();
+        notificationClassParent.setTargetClass(null); // so won't be serialized
+        return Response.ok(notificationClassParent, MediaType.APPLICATION_JSON_TYPE).build();
       }
     }
 
-    if (notificationOptPP.isPresent()) {
-      if (notificationOptPP.get().getTargetUser().getId() == (parent.getId())) {
-        session.getTransaction().commit();
-        session.close();
-        return Response.ok(notificationOptPP.get(), MediaType.APPLICATION_JSON_TYPE).build();
+    // 3: PersonalParent
+    NotificationPersonalParent notificationPersonalParent =
+        session.get(NotificationPersonalParent.class, notificationId);
+    if (notificationPersonalParent != null) {
+      // mark as read
+      if (currentUser.getRole().equals(Role.PARENT)) {
+        currentUser.addNotificationsRead(notificationPersonalParent);
       }
+      session.getTransaction().commit();
+      session.close();
+      notificationPersonalParent.setTargetUser(null); // so won't be serialized
+      return Response.ok(notificationPersonalParent, MediaType.APPLICATION_JSON_TYPE).build();
     }
 
     session.getTransaction().commit();
     session.close();
-    return Response.status(Status.UNAUTHORIZED)
+    return Response.status(Status.NOT_FOUND)
         .entity(
             new StatusResponse(
-                Status.UNAUTHORIZED, "Current parent can't get the requested notification"))
+                Status.NOT_FOUND,
+                "No notification matching parent id and notification id was found"))
         .build();
   }
 }

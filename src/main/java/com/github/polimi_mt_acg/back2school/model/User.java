@@ -67,7 +67,8 @@ public class User implements DeserializeToPersistInterface {
   @JoinTable(
       name = "user_notification_read",
       joinColumns = @JoinColumn(name = "user_id"),
-      inverseJoinColumns = @JoinColumn(name = "notification_id"))
+      inverseJoinColumns = @JoinColumn(name = "notification_id"),
+      uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "notification_id"}))
   private List<Notification> notificationsRead = new ArrayList<>();
 
   @ManyToMany(cascade = CascadeType.ALL)
@@ -193,6 +194,11 @@ public class User implements DeserializeToPersistInterface {
   }
 
   public void addNotificationsRead(Notification notification) {
+    for (Notification n: getNotificationsRead()) {
+      if (n.getId() == notification.getId()) {
+        return;
+      }
+    }
     this.notificationsRead.add(notification);
   }
 

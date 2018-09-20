@@ -1,5 +1,6 @@
 package com.github.polimi_mt_acg.back2school.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,6 +18,7 @@ import javax.persistence.Transient;
 
 @Entity
 @Table(name = "payment")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Payment implements DeserializeToPersistInterface {
 
   @Transient public String seedPlacedByUserEmail;

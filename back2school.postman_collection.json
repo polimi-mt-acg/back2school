@@ -10,7 +10,7 @@
 			"description": "",
 			"item": [
 				{
-					"name": "AT1 /auth/login",
+					"name": "AT1 /auth/login - ADMIN admin@email.com",
 					"event": [
 						{
 							"listen": "test",
@@ -68,7 +68,279 @@
 					},
 					"response": [
 						{
-							"id": "30de1af4-f009-40c1-adcd-44189ac92a5b",
+							"id": "ef346bee-7771-4656-b2b4-d0ef9c6d7bd4",
+							"name": "/auth/login",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": false
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"email\": \"admin@email.com\",\n\t\"password\": \"admin\"\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8080/back2school-0.1/api/v1/auth/login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"back2school-0.1",
+										"api",
+										"v1",
+										"auth",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Connection",
+									"value": "keep-alive",
+									"name": "Connection",
+									"description": "Options that are desired for the connection"
+								},
+								{
+									"key": "Content-Length",
+									"value": "150",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 16 Sep 2018 13:45:15 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "WildFly/11",
+									"name": "Server",
+									"description": "A name for the server"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Undertow/1",
+									"name": "X-Powered-By",
+									"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"status\" : \"AUTHENTICATED\",\n  \"token\" : \"af8d112bbd5644f0ba067200ffbc37d6\",\n  \"authorization_header\" : \"Bearer af8d112bbd5644f0ba067200ffbc37d6\"\n}"
+						}
+					]
+				},
+				{
+					"name": "AT1 /auth/login - PARENT bob@email.com",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "672e12b1-6bfd-4d03-aa9e-306748205bd0",
+								"type": "text/javascript",
+								"exec": [
+									"/* --------- SET back2school_token GLOBAL VARIABLE ----------- ",
+									"After a login request, set the global variable back2school_token in Postman ecosystem.",
+									"This variable is used in the Authorization of the folders containing endpoints which requires authentication.",
+									"Look at the folders configuration (at the right of folder name:  ...) to inspect the variable usage. ",
+									"",
+									"Look at logout request for the variable unsetting.",
+									"*/",
+									"if (responseBody) {",
+									"    var jsonData = JSON.parse(responseBody);",
+									"    if (jsonData.status == \"AUTHENTICATED\") {",
+									"        pm.globals.set(\"back2school_token\", jsonData.token);",
+									"    }",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"bob@email.com\",\n  \"password\": \"password\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": [
+						{
+							"id": "8dac0178-7dc7-4b4e-904d-6d0d63276f77",
+							"name": "/auth/login",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": false
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"email\": \"admin@email.com\",\n\t\"password\": \"admin\"\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8080/back2school-0.1/api/v1/auth/login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"back2school-0.1",
+										"api",
+										"v1",
+										"auth",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Connection",
+									"value": "keep-alive",
+									"name": "Connection",
+									"description": "Options that are desired for the connection"
+								},
+								{
+									"key": "Content-Length",
+									"value": "150",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 16 Sep 2018 13:45:15 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "WildFly/11",
+									"name": "Server",
+									"description": "A name for the server"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Undertow/1",
+									"name": "X-Powered-By",
+									"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"status\" : \"AUTHENTICATED\",\n  \"token\" : \"af8d112bbd5644f0ba067200ffbc37d6\",\n  \"authorization_header\" : \"Bearer af8d112bbd5644f0ba067200ffbc37d6\"\n}"
+						}
+					]
+				},
+				{
+					"name": "AT1 /auth/login - TEACHER carl@email.com",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "672e12b1-6bfd-4d03-aa9e-306748205bd0",
+								"type": "text/javascript",
+								"exec": [
+									"/* --------- SET back2school_token GLOBAL VARIABLE ----------- ",
+									"After a login request, set the global variable back2school_token in Postman ecosystem.",
+									"This variable is used in the Authorization of the folders containing endpoints which requires authentication.",
+									"Look at the folders configuration (at the right of folder name:  ...) to inspect the variable usage. ",
+									"",
+									"Look at logout request for the variable unsetting.",
+									"*/",
+									"if (responseBody) {",
+									"    var jsonData = JSON.parse(responseBody);",
+									"    if (jsonData.status == \"AUTHENTICATED\") {",
+									"        pm.globals.set(\"back2school_token\", jsonData.token);",
+									"    }",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"carl@email.com\",\n  \"password\": \"password\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": [
+						{
+							"id": "12477891-2f66-4a57-b027-29c9a8069e12",
 							"name": "/auth/login",
 							"originalRequest": {
 								"method": "POST",
@@ -201,7 +473,7 @@
 					},
 					"response": [
 						{
-							"id": "2cb8ff8e-7865-4318-b3aa-a966e3b1eddd",
+							"id": "d8cc4c89-120b-48d7-971b-ad2da4ac22a0",
 							"name": "/auth/logout",
 							"originalRequest": {
 								"method": "GET",
@@ -304,7 +576,7 @@
 					},
 					"response": [
 						{
-							"id": "97be33eb-facc-41de-8a9a-84fac8c480a5",
+							"id": "b8eae350-95ec-4fa2-b20d-a5b3f419457c",
 							"name": "/demo-utils",
 							"originalRequest": {
 								"method": "GET",
@@ -395,7 +667,7 @@
 					},
 					"response": [
 						{
-							"id": "1e2892a6-8b27-4701-8289-7d403a34626d",
+							"id": "2598117a-3a00-45ac-ac53-3050e381e664",
 							"name": "/demo-utils/deploy-demo-data",
 							"originalRequest": {
 								"method": "GET",
@@ -487,7 +759,7 @@
 					},
 					"response": [
 						{
-							"id": "7e127df0-5f40-410b-8ea5-ebb4d7acfebe",
+							"id": "c89f9f11-db9f-494a-b77a-7476b3f43064",
 							"name": "/demo-utils/empty-database",
 							"originalRequest": {
 								"method": "GET",
@@ -652,7 +924,7 @@
 					},
 					"response": [
 						{
-							"id": "8155c5f4-b65e-4e36-a605-b2b18378b1e7",
+							"id": "68f41f5c-57b6-4f35-bf5b-cc8e3b30e788",
 							"name": "/students",
 							"originalRequest": {
 								"method": "POST",
@@ -748,12 +1020,11 @@
 								"students",
 								"8"
 							]
-						},
-						"description": "Student information."
+						}
 					},
 					"response": [
 						{
-							"id": "076a69a2-7157-4b1d-b9b1-d4c37440a0e7",
+							"id": "8b8a212c-dc50-4d99-ad43-38c3b0892c75",
 							"name": "S2 /students/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -849,8 +1120,7 @@
 								"students",
 								"8"
 							]
-						},
-						"description": "Student information."
+						}
 					},
 					"response": []
 				}
@@ -893,7 +1163,7 @@
 			"description": "",
 			"item": [
 				{
-					"name": "/parents",
+					"name": "PR1 /parents",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -921,7 +1191,7 @@
 					"response": []
 				},
 				{
-					"name": "/parents",
+					"name": "PR1 /parents",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -932,7 +1202,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"userPassword\": \"\",\n\t\"user\": {}\n}"
+							"raw": "{\n  \"name\": \"Parent Postman\",\n  \"surname\": \"Surname Postman\",\n  \"email\": \"parent@postman.com\",\n  \"new_password\": \"password\"\n}"
 						},
 						"url": {
 							"raw": "http://localhost:8080/back2school-0.1/api/v1/parents",
@@ -952,13 +1222,13 @@
 					"response": []
 				},
 				{
-					"name": "/parents/{id: [0-9]+}",
+					"name": "PR2 /parents/{id: [0-9]+}",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"body": {},
 						"url": {
-							"raw": "http://localhost:8080/back2school-0.1/api/v1/parents/11",
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/parents/15",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -969,89 +1239,28 @@
 								"api",
 								"v1",
 								"parents",
-								"11"
+								"15"
 							]
-						},
-						"description": "Student information."
-					},
-					"response": [
-						{
-							"id": "55c58055-8e45-4eea-bf5b-1c441aa403d0",
-							"name": "/parents/11",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"body": {},
-								"url": {
-									"raw": "http://localhost:8080/back2school-0.1/api/v1/parents/11",
-									"protocol": "http",
-									"host": [
-										"localhost"
-									],
-									"port": "8080",
-									"path": [
-										"back2school-0.1",
-										"api",
-										"v1",
-										"parents",
-										"11"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Connection",
-									"value": "keep-alive",
-									"name": "Connection",
-									"description": "Options that are desired for the connection"
-								},
-								{
-									"key": "Content-Length",
-									"value": "98",
-									"name": "Content-Length",
-									"description": "The length of the response body in octets (8-bit bytes)"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json",
-									"name": "Content-Type",
-									"description": "The mime type of this content"
-								},
-								{
-									"key": "Date",
-									"value": "Sun, 16 Sep 2018 13:51:15 GMT",
-									"name": "Date",
-									"description": "The date and time that the message was sent"
-								},
-								{
-									"key": "Server",
-									"value": "WildFly/11",
-									"name": "Server",
-									"description": "A name for the server"
-								},
-								{
-									"key": "X-Powered-By",
-									"value": "Undertow/1",
-									"name": "X-Powered-By",
-									"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
-								}
-							],
-							"cookie": [],
-							"body": "{\n  \"role\" : \"PARENT\",\n  \"name\" : \"Bob\",\n  \"surname\" : \"SurnameBob\",\n  \"email\" : \"bob@email.com\"\n}"
 						}
-					]
+					},
+					"response": []
 				},
 				{
-					"name": "/students/{id: [0-9]+}",
+					"name": "PR2 /parents/{id: [0-9]+}",
 					"request": {
 						"method": "PUT",
-						"header": [],
-						"body": {},
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"PostmanParentPut\",\n  \"surname\": \"Surname Put Postman\",\n  \"email\": \"parent@postman.com\",\n  \"new_password\": \"password\"\n}"
+						},
 						"url": {
-							"raw": "http://localhost:8080/back2school-0.1/api/v1/students/13",
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/parents/15",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1061,11 +1270,389 @@
 								"back2school-0.1",
 								"api",
 								"v1",
-								"students",
-								"13"
+								"parents",
+								"15"
 							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PR3 /parents/{id: [0-9]+}/children",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/parents/16/children",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"parents",
+								"16",
+								"children"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PR3 /parents/{id: [0-9]+}/children",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"child_id\": 11\n}"
 						},
-						"description": "Student information."
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/parents/15/children",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"parents",
+								"15",
+								"children"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PR4 /parents/{id: [0-9]+}/appointments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/parents/15/appointments",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"parents",
+								"15",
+								"appointments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PR4 /parents/{id: [0-9]+}/appointments",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"teacher_id\": 19,\n\t\"datetime_start\": \"2018-02-24T12:15:00\",\n\t\"datetime_end\": \"2018-02-24T14:15:00\",\n\t\"status\": \"REQUESTED\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/parents/15/appointments",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"parents",
+								"15",
+								"appointments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PR5 /parents/{id: [0-9]+}/appointments/{id: [0-9]+}",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/parents/15/appointments/47",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"parents",
+								"15",
+								"appointments",
+								"47"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PR5 /parents/{id: [0-9]+}/appointments/{id: [0-9]+}",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"teacher_id\": 22,\n\t\"datetime_start\": \"2018-06-24T12:15:00\",\n\t\"datetime_end\": \"2018-06-24T14:15:00\",\n\t\"status\": \"COUNTERPROPOSED\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/parents/15/appointments/47",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"parents",
+								"15",
+								"appointments",
+								"47"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PR6 /parents/{id: [0-9]+}/payments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/parents/15/payments",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"parents",
+								"15",
+								"payments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PR6 /parents/{id: [0-9]+}/payments",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"type\": \"MONTHLY\",\n\t\"datetime_requested\": \"2018-04-05T20:24:10\",\n\t\"datetime_done\": null,\n\t\"datetime_deadline\": \"2018-04-15T20:24:10\",\n\t\"done\": \"false\",\n\t\"subject\": \"Fee for student bad behaviour!\",\n\t\"description\": \"You're required to pay an extra fee due to your son behaviour\",\n\t\"amount\": 13.50\n\t\n}\n"
+						},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/parents/15/payments",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"parents",
+								"15",
+								"payments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PR7 /parents/{id: [0-9]+}/payments/{id: [0-9]+}",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/parents/15/payments/32",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"parents",
+								"15",
+								"payments",
+								"32"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PR8 /parents/{id: [0-9]+}/payments/{id: [0-9]+}/pay",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/parents/15/payments/32/pay",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"parents",
+								"15",
+								"payments",
+								"32",
+								"pay"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PR9 /parents/{id: [0-9]+}/notifications",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/parents/15/notifications",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"parents",
+								"15",
+								"notifications"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PR9 /parents/{id: [0-9]+}/notifications",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"type\": \"personal_parent\",\n\t\"subject\": \"Test notification to parent 15\",\n\t\"text\": \"Hi!\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/parents/15/notifications",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"parents",
+								"15",
+								"notifications"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PR10 /parents/{id: [0-9]+}/notifications/{id: [0-9]+}",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/parents/15/notifications/54",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"parents",
+								"15",
+								"notifications",
+								"54"
+							]
+						}
 					},
 					"response": []
 				}
@@ -1318,8 +1905,7 @@
 								"classes",
 								"26"
 							]
-						},
-						"description": "Student information."
+						}
 					},
 					"response": []
 				},
@@ -1351,8 +1937,7 @@
 								"classes",
 								"26"
 							]
-						},
-						"description": "Student information."
+						}
 					},
 					"response": []
 				},
@@ -1377,8 +1962,7 @@
 								"26",
 								"students"
 							]
-						},
-						"description": "Student information."
+						}
 					},
 					"response": []
 				},
@@ -1411,8 +1995,7 @@
 								"26",
 								"students"
 							]
-						},
-						"description": "Student information."
+						}
 					},
 					"response": []
 				},
@@ -1472,8 +2055,7 @@
 								"notifications",
 								"send-to-teachers"
 							]
-						},
-						"description": "Student information."
+						}
 					},
 					"response": []
 				},
@@ -1507,8 +2089,7 @@
 								"notifications",
 								"send-to-parents"
 							]
-						},
-						"description": "Student information."
+						}
 					},
 					"response": []
 				}
@@ -1822,7 +2403,7 @@
 						],
 						"body": {},
 						"url": {
-							"raw": "http://localhost:8080/back2school-0.1/api/v1/notifications/46",
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/notifications/37",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1833,7 +2414,7 @@
 								"api",
 								"v1",
 								"notifications",
-								"46"
+								"37"
 							]
 						}
 					},
