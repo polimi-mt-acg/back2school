@@ -46,6 +46,12 @@ public class AuthenticationResource {
           .entity(new StatusResponse(Response.Status.BAD_REQUEST, "Invalid credentials."))
           .build();
 
+    // if a student is trying to log in
+    if (user.getRole().equals(User.Role.STUDENT))
+      return Response.status(Response.Status.UNAUTHORIZED)
+          .entity(new StatusResponse(Response.Status.UNAUTHORIZED, "Students cannot login."))
+          .build();
+
     // create a new AuthenticationSession and return back the token to the client
     AuthenticationSession authSession = AuthenticationSession.startNewAuthenticationSession(user);
 
