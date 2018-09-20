@@ -50,4 +50,32 @@ public class Subject implements DeserializeToPersistInterface {
 
   @Override
   public void prepareToPersist() {}
+
+  /**
+   * Test weak equality against another object. Attributes tested to be equal: title, description.
+   *
+   * @param obj The object to be compared.
+   * @return true if weak equality holds.
+   */
+  public boolean weakEquals(Object obj) {
+    if (obj == null) {
+      return false;
+    }
+    if (!Subject.class.isAssignableFrom(obj.getClass())) {
+      return false;
+    }
+    final Subject other = (Subject) obj;
+
+    // name
+    if ((this.getName() == null)
+        ? (other.getName() != null)
+        : !this.getName().equals(other.getName())) return false;
+
+    // description
+    if ((this.getDescription() == null)
+        ? (other.getDescription() != null)
+        : !this.getDescription().equals(other.getDescription())) return false;
+
+    return true;
+  }
 }

@@ -68,7 +68,7 @@
 					},
 					"response": [
 						{
-							"id": "fa94e5ac-6a7d-4ce0-8358-48dee5a94f1c",
+							"id": "d55d4dfd-1166-4cc5-a56c-290301da9e26",
 							"name": "/auth/login",
 							"originalRequest": {
 								"method": "POST",
@@ -204,7 +204,7 @@
 					},
 					"response": [
 						{
-							"id": "126c6e5e-69a4-4c7f-8a1b-2dfe8709bfad",
+							"id": "b36fa3de-1404-48a0-a150-bb55d64e6ad6",
 							"name": "/auth/login",
 							"originalRequest": {
 								"method": "POST",
@@ -337,7 +337,7 @@
 					},
 					"response": [
 						{
-							"id": "6da389c6-153a-40a8-bf59-bcf21dc6bc9e",
+							"id": "2267728b-18c3-466b-80cb-ceebfb195f7a",
 							"name": "/auth/logout",
 							"originalRequest": {
 								"method": "GET",
@@ -470,7 +470,7 @@
 					},
 					"response": [
 						{
-							"id": "c11efb07-7ec7-4b7b-915d-7169b2a6983e",
+							"id": "e11c96cd-1bc9-4996-97ee-76c22f227d15",
 							"name": "/auth/login",
 							"originalRequest": {
 								"method": "POST",
@@ -576,7 +576,7 @@
 					},
 					"response": [
 						{
-							"id": "be61134a-940a-444e-bf35-131f486616e3",
+							"id": "c023d465-92fb-474c-8f89-428794c0533c",
 							"name": "/demo-utils",
 							"originalRequest": {
 								"method": "GET",
@@ -667,7 +667,7 @@
 					},
 					"response": [
 						{
-							"id": "0bfac689-e44c-4f8e-9a0d-bdd5511b257a",
+							"id": "7044dbde-0b5b-42c6-adda-c05b81ab0a67",
 							"name": "/demo-utils/deploy-demo-data",
 							"originalRequest": {
 								"method": "GET",
@@ -759,7 +759,7 @@
 					},
 					"response": [
 						{
-							"id": "a394361d-8deb-4f6d-8d39-aa366aefcf3a",
+							"id": "00743696-6132-4d51-aad0-765248fa1a4f",
 							"name": "/demo-utils/empty-database",
 							"originalRequest": {
 								"method": "GET",
@@ -2306,7 +2306,7 @@
 			"description": "",
 			"item": [
 				{
-					"name": "/subjects",
+					"name": "SB1 /subjects",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -2334,7 +2334,42 @@
 					"response": []
 				},
 				{
-					"name": "/subjects/id",
+					"name": "SB1 /subjects",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "ab2d9ba20e8449afa735c3735f2662fc"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Art\",\n    \"description\": \"Teach to students the art hisotry, methods and peculiarities\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/subjects",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"subjects"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SB2 /subjects/{id: [0-9]+}",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -2345,7 +2380,7 @@
 						],
 						"body": {},
 						"url": {
-							"raw": "http://localhost:8080/back2school-0.1/api/v1/subjects/11",
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/subjects/7",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -2356,7 +2391,43 @@
 								"api",
 								"v1",
 								"subjects",
-								"11"
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SB2 /subjects/{id: [0-9]+}",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "ab2d9ba20e8449afa735c3735f2662fc"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Middleware technologies\",\n    \"description\": \"Experience the technologies used to connect client-server architectures\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/subjects/8",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"back2school-0.1",
+								"api",
+								"v1",
+								"subjects",
+								"8"
 							]
 						}
 					},

@@ -1,20 +1,17 @@
 package com.github.polimi_mt_acg.back2school.api.v1;
 
+import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.print;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.polimi_mt_acg.back2school.api.v1.auth.AuthenticationResource;
-import com.github.polimi_mt_acg.back2school.api.v1.subjects.PutSubjectRequest;
 import com.github.polimi_mt_acg.back2school.api.v1.subjects.SubjectsResponse;
 import com.github.polimi_mt_acg.back2school.model.Subject;
 import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.model.User.Role;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseSeeder;
-import com.github.polimi_mt_acg.back2school.utils.JacksonCustomMapper;
 import com.github.polimi_mt_acg.back2school.utils.TestCategory;
 import com.github.polimi_mt_acg.back2school.utils.rest.HTTPServerManager;
 import com.github.polimi_mt_acg.back2school.utils.rest.RestFactory;
@@ -22,15 +19,7 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.stream.Collectors;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import org.glassfish.grizzly.http.server.HttpServer;
-import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
-import org.glassfish.jersey.jackson.JacksonFeature;
-import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -39,9 +28,10 @@ import org.junit.experimental.categories.Category;
 public class SubjectsResourceTest {
 
   private static HttpServer server;
+  private static User adminForAuth;
 
   @BeforeClass
-  public static void setUp() throws Exception {
+  public static void setUp() {
     // Deploy database scenario
     DatabaseSeeder.deployScenario("scenarioSubjects");
 
@@ -51,10 +41,12 @@ public class SubjectsResourceTest {
             AuthenticationResource.class,
             "com.github.polimi_mt_acg.back2school.api.v1.subjects",
             "com.github.polimi_mt_acg.back2school.api.v1.security_contexts");
+    // load admin for authentication
+    adminForAuth = DatabaseSeeder.getSeedUserByRole("scenarioSubjects", User.Role.ADMINISTRATOR);
   }
 
   @AfterClass
-  public static void tearDown() throws Exception {
+  public static void tearDown() {
     // Truncate DB
     DatabaseHandler.getInstance().truncateDatabase();
     DatabaseHandler.getInstance().destroy();
@@ -66,183 +58,99 @@ public class SubjectsResourceTest {
   @Test
   @Category(TestCategory.Endpoint.class)
   public void getSubjects() {
-    // Get an admin
-    User admin = get(Role.ADMINISTRATOR);
 
-    Invocation getRequest =
-        RestFactory.getAuthenticatedInvocationBuilder(admin, "subjects").buildGet();
+    List<URI> subjectsURIs =
+        RestFactory.doGetRequest(adminForAuth, "subjects")
+            .readEntity(SubjectsResponse.class)
+            .getSubjects();
 
-    Response response = getRequest.invoke();
-    assertEquals(Status.OK.getStatusCode(), response.getStatus());
-
-    //    System.out.println(admin);
-
-    List<URI> subjectsURIs = response.readEntity(SubjectsResponse.class).getSubjects();
-
+    print("GET /subjects");
     for (URI uri : subjectsURIs) {
       assertNotNull(uri);
-      System.out.println(uri);
+      print(uri);
     }
   }
 
   @Test
   @Category(TestCategory.Endpoint.class)
   public void postSubjects() {
+    Subject newSubject = buildSubject(0);
+    URI subjectURI = RestFactory.doPostRequest(adminForAuth, newSubject, "subjects");
 
-    URI resourceURI = postMate(0);
-
-    System.out.println(resourceURI);
+    print("POST /subjects");
+    print(subjectURI.toString());
   }
 
   @Test
   @Category(TestCategory.Endpoint.class)
-  public void getSubjectID() throws JsonProcessingException {
-    // Create a new Classroom in the system
-    URI mateURI = postMate(1);
-    System.out.println(mateURI);
+  public void getSubjectID() {
+    User teacher = DatabaseSeeder.getSeedUserByRole("scenarioSubjects", Role.TEACHER);
 
-    // Get an admin
-    User admin = get(Role.ADMINISTRATOR);
-
-    User teacher = get(Role.TEACHER);
+    // add a new subject
+    Subject newSubject = buildSubject(1);
+    URI subjectURI = RestFactory.doPostRequest(adminForAuth, newSubject, "subjects");
 
     // mate ID
-    Path fullPath = Paths.get("/", mateURI.getPath());
+    Path fullPath = Paths.get("/", subjectURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
-    String mateID = idPath.toString();
+    String subjectID = idPath.toString();
 
-    //    Administrator
-    Invocation requestAdministrator =
-        RestFactory.getAuthenticatedInvocationBuilder(admin, "subjects", mateID).buildGet();
+    // GET from administrator
+    Subject subjectResponseAdministrator =
+        RestFactory.doGetRequest(adminForAuth, "subjects", subjectID).readEntity(Subject.class);
 
-    Response responseAdministrator = requestAdministrator.invoke();
-    assertEquals(Status.OK.getStatusCode(), responseAdministrator.getStatus());
-    Subject mateResponseAdministrator = responseAdministrator.readEntity(Subject.class);
-
-    assertTrue(weakEquals(mateResponseAdministrator, buildMate(1)));
+    assertTrue(subjectResponseAdministrator.weakEquals(buildSubject(1)));
 
     // Print it
-    ObjectMapper mapperA = RestFactory.objectMapper();
-    System.out.println(
-        mapperA.writerWithDefaultPrettyPrinter().writeValueAsString(mateResponseAdministrator));
+    print("GET /subjects/", subjectID, " -- from admin");
+    print(subjectResponseAdministrator);
 
-    //    Teacher
-    Invocation requestTeacher =
-        RestFactory.getAuthenticatedInvocationBuilder(teacher, "subjects", mateID).buildGet();
+    // GET from teacher
+    Subject subjectResponseTeacher =
+        RestFactory.doGetRequest(teacher, "subjects", subjectID).readEntity(Subject.class);
 
-    Response responseTeacher = requestTeacher.invoke();
-    assertEquals(Status.OK.getStatusCode(), responseTeacher.getStatus());
-    Subject mateResponseTeacher = responseTeacher.readEntity(Subject.class);
-
-    assertTrue(weakEquals(mateResponseTeacher, buildMate(1)));
+    assertTrue(subjectResponseTeacher.weakEquals(buildSubject(1)));
 
     // Print it
-    ObjectMapper mapperT = RestFactory.objectMapper();
-    System.out.println(
-        mapperT.writerWithDefaultPrettyPrinter().writeValueAsString(mateResponseTeacher));
+    print("GET /subjects/", subjectID, " -- from teacher");
+    print(subjectResponseTeacher);
   }
 
   @Test
   @Category(TestCategory.Endpoint.class)
-  public void putSubjectById() throws JsonProcessingException {
-    // Get an admin
-    User admin = get(Role.ADMINISTRATOR);
+  public void putSubjectById() {
+    // add a new subject
+    Subject newSubject = buildSubject(2);
+    URI subjectURI = RestFactory.doPostRequest(adminForAuth, newSubject, "subjects");
 
-    URI subjectURI = postMate(2);
+    Subject subject =
+        RestFactory.doGetRequest(adminForAuth, subjectURI).readEntity(Subject.class);
 
-    Invocation getSubject =
-        RestFactory.getAuthenticatedInvocationBuilder(admin, subjectURI).buildGet();
-    Subject subjectResponse = getSubject.invoke().readEntity(Subject.class);
+    String suffix = " --changed";
 
-    String nameSuffix = "newName";
-    String descriptionSuffix = "newDescription";
-
-    // Create a PutSubject request to change its name
-    PutSubjectRequest putSubjectRequest = new PutSubjectRequest();
-    putSubjectRequest.setName(subjectResponse.getName() + nameSuffix);
-    putSubjectRequest.setDescription(subjectResponse.getDescription() + descriptionSuffix);
+    // Change the subject attributes in order to modify it on server
+    subject.setName(subject.getName() + suffix);
+    subject.setDescription(subject.getDescription() + suffix);
 
     // Make a PUT request
-    Invocation putSubject =
-        RestFactory.getAuthenticatedInvocationBuilder(admin, subjectURI)
-            .buildPut(Entity.json(putSubjectRequest));
-    Response putSubjectResponse = putSubject.invoke();
-
-    assertEquals(Status.OK.getStatusCode(), putSubjectResponse.getStatus());
+    RestFactory.doPutRequest(adminForAuth, subject, subjectURI);
 
     // Make a new GET to compare results
-    Invocation newGetSubject =
-        RestFactory.getAuthenticatedInvocationBuilder(admin, subjectURI).buildGet();
-    Subject newSubjectResponse = newGetSubject.invoke().readEntity(Subject.class);
+    Subject modifiedSubject =
+        RestFactory.doGetRequest(adminForAuth, subjectURI).readEntity(Subject.class);
 
-    assertEquals(subjectResponse.getName() + nameSuffix, newSubjectResponse.getName());
-    assertEquals(
-        subjectResponse.getDescription() + descriptionSuffix, newSubjectResponse.getDescription());
 
-    ObjectMapper mapper = RestFactory.objectMapper();
-    System.out.println(
-        mapper.writerWithDefaultPrettyPrinter().writeValueAsString(newSubjectResponse));
+    assertEquals(subject.getName(), modifiedSubject.getName());
+    assertEquals(subject.getDescription(), modifiedSubject.getDescription());
+
+    print("PUT ", subjectURI);
+    print(modifiedSubject);
   }
 
-  private static HttpServer startServer() {
-    // Create a resource config that scans for JAX-RS resources and providers
-    // in com.github.polimi_mt_acg.back2school.api.v1.subjects.resources package
-    final ResourceConfig rc =
-        new ResourceConfig()
-            .register(AuthenticationResource.class)
-            .packages("com.github.polimi_mt_acg.back2school.api.v1.subjects")
-            .register(JacksonCustomMapper.class)
-            .register(JacksonFeature.class);
-
-    // create and start a new instance of grizzly http server
-    // exposing the Jersey application at BASE_URI
-    return GrizzlyHttpServerFactory.createHttpServer(URI.create(RestFactory.BASE_URI), rc);
-  }
-
-  private Subject makeSubject() {
-    Subject sbj = new Subject();
-    sbj.setName("Filosofia");
-    sbj.setDescription("Storia della filosofia");
-    return sbj;
-  }
-
-  private User get(Role role) {
-    List<User> users =
-        (List<User>) DatabaseSeeder.getEntitiesListFromSeed("scenarioSubjects", "users.json");
-
-    List<User> usersWithRole =
-        users.stream().filter(user -> user.getRole() == role).collect(Collectors.toList());
-    return usersWithRole.get(0);
-  }
-
-  private URI postMate(int copyNumber) {
-    // Create a new Subjects in the system
-    Subject mate = buildMate(copyNumber);
-
-    // Get an admin to register B11 in the system
-    User admin = get(Role.ADMINISTRATOR);
-
-    // Make a POST to /students
-    Invocation post =
-        RestFactory.getAuthenticatedInvocationBuilder(admin, "subjects")
-            .buildPost(Entity.json(mate));
-
-    Response response = post.invoke();
-    assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
-
-    URI resourceURI = response.getLocation();
-    assertNotNull(resourceURI);
-    return resourceURI;
-  }
-
-  private Subject buildMate(int copyNumber) {
+  private Subject buildSubject(int copyNumber) {
     Subject mate = new Subject();
-    mate.setName("Matematica " + copyNumber);
-    mate.setDescription("Analisi matematica" + copyNumber);
+    mate.setName("Mathematics " + copyNumber);
+    mate.setDescription("Mathematical analysis " + copyNumber);
     return mate;
-  }
-
-  private boolean weakEquals(Subject u, Subject p) {
-    return u.getName().equals(p.getName()) && u.getDescription().equals(p.getDescription());
   }
 }
