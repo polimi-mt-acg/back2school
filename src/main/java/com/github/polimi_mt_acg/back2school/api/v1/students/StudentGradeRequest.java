@@ -1,19 +1,23 @@
 package com.github.polimi_mt_acg.back2school.api.v1.students;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.LocalDate;
 
-public class PostGradeRequest {
-  private String subjectName;
+public class StudentGradeRequest {
+
+  @JsonProperty("subject_id")
+  private Integer subjectId;
   private LocalDate date;
   private String title;
   private double grade;
 
-  public String getSubjectName() {
-    return subjectName;
+  public Integer getSubjectId() {
+    return subjectId;
   }
 
-  public void setSubjectName(String subjectName) {
-    this.subjectName = subjectName;
+  public void setSubjectId(Integer subjectId) {
+    this.subjectId = subjectId;
   }
 
   public LocalDate getDate() {

@@ -1,5 +1,7 @@
 package com.github.polimi_mt_acg.back2school.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,8 +23,13 @@ public class Subject implements DeserializeToPersistInterface {
   @Column(name = "description")
   private String description;
 
+  @JsonIgnore
   public int getId() {
     return id;
+  }
+
+  public void setId(int id) {
+    this.id = id;
   }
 
   public String getName() {

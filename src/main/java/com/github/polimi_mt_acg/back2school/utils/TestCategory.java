@@ -23,10 +23,4 @@ public class TestCategory {
 
   /** Class for authenticated endpoint tests. */
   public interface AuthEndpoint {}
-
-  /** Class for /students endpoint tests. */
-  public interface StudentsEndpoint {}
-
-  /** Class for integration tests. */
-  public interface Integration {}
 }

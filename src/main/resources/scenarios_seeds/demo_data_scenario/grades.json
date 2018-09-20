@@ -2,7 +2,7 @@
   "grades": [
     {
       "seedSubjectName": "English",
-      "seedTeacherEmail": "carl1@email.com",
+      "seedTeacherEmail": "carl@email.com",
       "seedStudentEmail": "alice@email.com",
       "date": "2018-04-10",
       "title": "1st grammar test",
@@ -10,7 +10,7 @@
     },
     {
       "seedSubjectName": "English",
-      "seedTeacherEmail": "carl1@email.com",
+      "seedTeacherEmail": "carl@email.com",
       "seedStudentEmail": "alice@email.com",
       "date": "2018-06-10",
       "title": "2nd grammar test",
