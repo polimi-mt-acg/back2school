@@ -2,7 +2,6 @@ package com.github.polimi_mt_acg.back2school.api.v1;
 
 import com.github.polimi_mt_acg.back2school.api.v1.auth.AuthenticationResource;
 import com.github.polimi_mt_acg.back2school.api.v1.parents.*;
-import com.github.polimi_mt_acg.back2school.model.Appointment;
 import com.github.polimi_mt_acg.back2school.model.Payment;
 import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
@@ -25,7 +24,6 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 
 import static com.github.polimi_mt_acg.back2school.api.v1.ParentsResourceTest.buildMarcos;
-import static com.github.polimi_mt_acg.back2school.api.v1.ParentsResourceTest.doParentPost;
 import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.print;
 import static org.junit.Assert.*;
 
@@ -62,21 +60,15 @@ public class ParentsResourcePaymentsTest {
   @Category(TestCategory.Endpoint.class)
   public void getParentPaymentsFromAdmin() {
     User parent = buildMarcos(1);
-    URI parentURI = doParentPost(adminForAuth, parent);
+    URI parentURI = RestFactory.doPostRequest(adminForAuth, parent, "parents");
 
     Path fullPath = Paths.get("/", parentURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
     String parentID = idPath.toString();
 
-    Invocation request =
-        RestFactory.getAuthenticatedInvocationBuilder(adminForAuth, "parents", parentID, "payments")
-            .buildGet();
-
-    Response response = request.invoke();
-
-    assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-
-    ParentPaymentsResponse parentPayments = response.readEntity(ParentPaymentsResponse.class);
+    ParentPaymentsResponse parentPayments =
+        RestFactory.doGetRequest(adminForAuth, "parents", parentID, "payments")
+            .readEntity(ParentPaymentsResponse.class);
 
     // Print it
     print(parentPayments);
@@ -86,21 +78,15 @@ public class ParentsResourcePaymentsTest {
   @Category(TestCategory.Endpoint.class)
   public void getParentPaymentsFromSameParent() {
     User parent = buildMarcos(2);
-    URI parentURI = doParentPost(adminForAuth, parent);
+    URI parentURI = RestFactory.doPostRequest(adminForAuth, parent, "parents");
 
     Path fullPath = Paths.get("/", parentURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
     String parentID = idPath.toString();
 
-    Invocation request =
-        RestFactory.getAuthenticatedInvocationBuilder(parent, "parents", parentID, "payments")
-            .buildGet();
-
-    Response response = request.invoke();
-
-    assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-
-    ParentPaymentsResponse parentPayments = response.readEntity(ParentPaymentsResponse.class);
+    ParentPaymentsResponse parentPayments =
+        RestFactory.doGetRequest(parent, "parents", parentID, "payments")
+            .readEntity(ParentPaymentsResponse.class);
 
     // Print it
     print(parentPayments);
@@ -110,24 +96,19 @@ public class ParentsResourcePaymentsTest {
   @Category(TestCategory.Endpoint.class)
   public void postParentPaymentsFromAdmin() {
     User parent = buildMarcos(3);
-    URI parentURI = doParentPost(adminForAuth, parent);
+    URI parentURI = RestFactory.doPostRequest(adminForAuth, parent, "parents");
 
     Path fullPath = Paths.get("/", parentURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
     String parentID = idPath.toString();
 
-    postPayment(parent.getEmail(), adminForAuth.getEmail(), 23, parentID);
+    ParentPaymentRequest parentPaymentRequest = buildPayment(Payment.Type.TRIP, 23);
+    RestFactory.doPostRequest(adminForAuth, parentPaymentRequest, "parents", parentID, "payments");
 
     // Now query /parents/{parent_id}/Payment from admin
-    Invocation requestCheck =
-        RestFactory.getAuthenticatedInvocationBuilder(adminForAuth, "parents", parentID, "payments")
-            .buildGet();
-
-    Response responseCheck = requestCheck.invoke();
-
-    assertEquals(Response.Status.OK.getStatusCode(), responseCheck.getStatus());
-
-    ParentPaymentsResponse parentPayments = responseCheck.readEntity(ParentPaymentsResponse.class);
+    ParentPaymentsResponse parentPayments =
+        RestFactory.doGetRequest(adminForAuth, "parents", parentID, "payments")
+            .readEntity(ParentPaymentsResponse.class);
 
     assertTrue(parentPayments.getPayments().size() > 0);
 
@@ -139,7 +120,7 @@ public class ParentsResourcePaymentsTest {
   @Category(TestCategory.Endpoint.class)
   public void postParentPaymentsFromParent() {
     User parent = buildMarcos(4);
-    URI parentURI = doParentPost(adminForAuth, parent);
+    URI parentURI = RestFactory.doPostRequest(adminForAuth, parent, "parents");
 
     Path fullPath = Paths.get("/", parentURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
@@ -160,7 +141,7 @@ public class ParentsResourcePaymentsTest {
   @Category(TestCategory.Endpoint.class)
   public void getParentPaymentByIdFromAdministrator() {
     User parent = buildMarcos(5);
-    URI parentURI = doParentPost(adminForAuth, parent);
+    URI parentURI = RestFactory.doPostRequest(adminForAuth, parent, "parents");
 
     // Now query /parents/{bob_id} from admin
     Path fullPath = Paths.get("/", parentURI.getPath());
@@ -169,20 +150,18 @@ public class ParentsResourcePaymentsTest {
 
     int amount = 20;
 
-    URI paymentURI = postPayment(parent.getEmail(), adminForAuth.getEmail(), amount, parentID);
+    ParentPaymentRequest parentPaymentRequest = buildPayment(Payment.Type.TRIP, amount);
+    URI paymentURI =
+        RestFactory.doPostRequest(
+            adminForAuth, parentPaymentRequest, "parents", parentID, "payments");
 
     Path fullPayPath = Paths.get("/", paymentURI.getPath());
     Path idPayPath = fullPayPath.getParent().relativize(fullPayPath);
     String paymentID = idPayPath.toString();
 
-    Invocation requestGetAppointmentByID =
-        RestFactory.getAuthenticatedInvocationBuilder(
-                adminForAuth, "parents", parentID, "payments", paymentID)
-            .buildGet();
-
-    Response response = requestGetAppointmentByID.invoke();
-    assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-    Payment paymentResp = response.readEntity(Payment.class);
+    Payment paymentResp =
+        RestFactory.doGetRequest(adminForAuth, "parents", parentID, "payments", paymentID)
+            .readEntity(Payment.class);
 
     assertEquals(paymentResp.getPlacedBy(), parent);
     assertEquals(paymentResp.getAssignedTo(), adminForAuth);
@@ -196,7 +175,7 @@ public class ParentsResourcePaymentsTest {
   @Category(TestCategory.Endpoint.class)
   public void getParentPaymentByIdFromSameParent() {
     User parent = buildMarcos(6);
-    URI parentURI = doParentPost(adminForAuth, parent);
+    URI parentURI = RestFactory.doPostRequest(adminForAuth, parent, "parents");
 
     // Now query /parents/{bob_id} from admin
     Path fullPath = Paths.get("/", parentURI.getPath());
@@ -204,21 +183,18 @@ public class ParentsResourcePaymentsTest {
     String parentID = idPath.toString();
 
     int amount = 10;
-
-    URI paymentURI = postPayment(parent.getEmail(), adminForAuth.getEmail(), amount, parentID);
+    ParentPaymentRequest parentPaymentRequest = buildPayment(Payment.Type.MATERIAL, 10);
+    URI paymentURI =
+        RestFactory.doPostRequest(
+            adminForAuth, parentPaymentRequest, "parents", parentID, "payments");
 
     Path fullPayPath = Paths.get("/", paymentURI.getPath());
     Path idPayPath = fullPayPath.getParent().relativize(fullPayPath);
     String paymentID = idPayPath.toString();
 
-    Invocation requestGetAppointmentByID =
-        RestFactory.getAuthenticatedInvocationBuilder(
-                parent, "parents", parentID, "payments", paymentID)
-            .buildGet();
-
-    Response response = requestGetAppointmentByID.invoke();
-    assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-    Payment paymentResp = response.readEntity(Payment.class);
+    Payment paymentResp =
+        RestFactory.doGetRequest(parent, "parents", parentID, "payments", paymentID)
+            .readEntity(Payment.class);
 
     assertEquals(paymentResp.getPlacedBy(), parent);
     assertEquals(paymentResp.getAssignedTo(), adminForAuth);
@@ -232,30 +208,32 @@ public class ParentsResourcePaymentsTest {
   @Category(TestCategory.Endpoint.class)
   public void postParentPaymentsPaidFromParent() {
     User parent = buildMarcos(7);
-    URI parentURI = doParentPost(adminForAuth, parent);
+    URI parentURI = RestFactory.doPostRequest(adminForAuth, parent, "parents");
 
     Path fullPath = Paths.get("/", parentURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
     String parentID = idPath.toString();
 
-    URI paymentURI = postPayment(parent.getEmail(), adminForAuth.getEmail(), 23, parentID);
+    ParentPaymentRequest parentPaymentRequest = buildPayment(Payment.Type.MATERIAL, 23);
+    URI paymentURI =
+        RestFactory.doPostRequest(
+            adminForAuth, parentPaymentRequest, "parents", parentID, "payments");
 
     Path fullPayPath = Paths.get("/", paymentURI.getPath());
     Path idPayPath = fullPayPath.getParent().relativize(fullPayPath);
     String paymentID = idPayPath.toString();
 
     // Do the payment
-    Invocation requestToPay =
+    Response response =
         RestFactory.getAuthenticatedInvocationBuilder(
                 parent, "parents", parentID, "payments", paymentID, "pay")
-            .buildPost(Entity.json("{}"));
+            .buildPost(Entity.json("{}"))
+            .invoke();
 
-    Response responsePaid = requestToPay.invoke();
-    assertEquals(Response.Status.OK.getStatusCode(), responsePaid.getStatus());
+    assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
     // Print it
-    print("POST /parents/", parentID, "/payments/", paymentID, "/pay");
-    print(responsePaid.readEntity(String.class));
+    print("POST ", response);
   }
 
   private ParentPaymentRequest buildPayment(Payment.Type type, double amount) {
@@ -269,24 +247,5 @@ public class ParentsResourcePaymentsTest {
     paymentRequest.setDescription("The new english book sold directly by the school");
     paymentRequest.setAmount(amount);
     return paymentRequest;
-  }
-
-  private URI postPayment(
-      String placedByEmail, String assignedToEmail, double amount, String parentID) {
-
-    // We post a payment between parent and admin
-    ParentPaymentRequest parentPaymentRequest = buildPayment(Payment.Type.TRIP, amount);
-
-    Invocation request =
-        RestFactory.getAuthenticatedInvocationBuilder(adminForAuth, "parents", parentID, "payments")
-            .buildPost(Entity.json(parentPaymentRequest));
-
-    Response response = request.invoke();
-    System.out.println("HERE Payment Post: " + response.toString());
-    assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-
-    URI resourceURI = response.getLocation();
-    assertNotNull(resourceURI);
-    return resourceURI;
   }
 }

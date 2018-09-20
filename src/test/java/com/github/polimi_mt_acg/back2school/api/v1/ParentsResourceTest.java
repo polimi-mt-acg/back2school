@@ -95,25 +95,22 @@ public class ParentsResourceTest {
   @Test
   @Category(TestCategory.Endpoint.class)
   public void postParents() {
-    doParentPost(adminForAuth, buildMarcos(0));
+    RestFactory.doPostRequest(adminForAuth, buildMarcos(0), "parents");
   }
 
   @Test
   @Category(TestCategory.Endpoint.class)
   public void getParentByIdFromAdministrator() {
     User marcos = buildMarcos(1);
-    URI marcosURI = doParentPost(adminForAuth, marcos);
+    URI marcosURI = RestFactory.doPostRequest(adminForAuth, marcos, "parents");
 
     // Now query /parents/{bob_id} from admin
     Path fullPath = Paths.get("/", marcosURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
     String marcosID = idPath.toString();
-    Invocation request =
-        RestFactory.getAuthenticatedInvocationBuilder(adminForAuth, "parents", marcosID).buildGet();
 
-    Response response = request.invoke();
-    assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-    User marcosResponse = response.readEntity(User.class);
+    User marcosResponse =
+        RestFactory.doGetRequest(adminForAuth, "parents", marcosID).readEntity(User.class);
 
     assertTrue(marcosResponse.weakEquals(marcos));
 
@@ -128,7 +125,7 @@ public class ParentsResourceTest {
     User seedParent = DatabaseSeeder.getSeedUserByRole("scenarioParents_ToPost1", User.Role.PARENT);
     assertNotNull(seedParent);
 
-    URI parentURI = doParentPost(adminForAuth, seedParent);
+    URI parentURI = RestFactory.doPostRequest(adminForAuth, seedParent, "parents");
 
     // Now query /parents/{bob_id} from admin
     Path fullPath = Paths.get("/", parentURI.getPath());
@@ -149,20 +146,15 @@ public class ParentsResourceTest {
     User seedParent = DatabaseSeeder.getSeedUserByRole("scenarioParents_ToPost2", User.Role.PARENT);
     assertNotNull(seedParent);
 
-    URI postParent = doParentPost(adminForAuth, seedParent);
+    URI postParent = RestFactory.doPostRequest(adminForAuth, seedParent, "parents");
 
     // Now query /parents/{bob_id} from admin
     Path fullPath = Paths.get("/", postParent.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
     String parentID = idPath.toString();
 
-    Invocation request =
-        RestFactory.getAuthenticatedInvocationBuilder(seedParent, "parents", parentID).buildGet();
-
-    Response response = request.invoke();
-
-    assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-    User parentResponse = response.readEntity(User.class);
+    User parentResponse =
+        RestFactory.doGetRequest(seedParent, "parents", parentID).readEntity(User.class);
 
     assertTrue(parentResponse.weakEquals(seedParent));
 
@@ -175,11 +167,9 @@ public class ParentsResourceTest {
   @Category(TestCategory.Endpoint.class)
   public void putParentByIdFromAdmin() {
     User parent = buildMarcos(2);
-    URI parentURI = doParentPost(adminForAuth, parent);
+    URI parentURI = RestFactory.doPostRequest(adminForAuth, parent, "parents");
 
-    Invocation getParent =
-        RestFactory.getAuthenticatedInvocationBuilder(adminForAuth, parentURI).buildGet();
-    User parentResponse = getParent.invoke().readEntity(User.class);
+    User parentResponse = RestFactory.doGetRequest(adminForAuth, parentURI).readEntity(User.class);
 
     String nameSuffix = "newName";
     String surnameSuffix = "newSurname";
@@ -193,17 +183,11 @@ public class ParentsResourceTest {
     putParent.setNewPassword("DontCare");
 
     // Make a PUT request
-    Invocation putParentRequest =
-        RestFactory.getAuthenticatedInvocationBuilder(adminForAuth, parentURI)
-            .buildPut(Entity.json(putParent));
-    Response putParentResponse = putParentRequest.invoke();
-
-    assertEquals(Response.Status.OK.getStatusCode(), putParentResponse.getStatus());
+    RestFactory.doPutRequest(adminForAuth, putParent, parentURI);
 
     // Make a new GET to compare results
-    Invocation newGetParent =
-        RestFactory.getAuthenticatedInvocationBuilder(adminForAuth, parentURI).buildGet();
-    User newParentResponse = newGetParent.invoke().readEntity(User.class);
+    User newParentResponse =
+        RestFactory.doGetRequest(adminForAuth, parentURI).readEntity(User.class);
 
     assertEquals(parentResponse.getName() + nameSuffix, newParentResponse.getName());
     assertEquals(parentResponse.getSurname() + surnameSuffix, newParentResponse.getSurname());
@@ -219,14 +203,14 @@ public class ParentsResourceTest {
   public void putParentByIdFromSameParent() {
     // Get an admin
     User parent = buildMarcos(3);
-    URI parentURI = doParentPost(adminForAuth, parent);
+    URI parentURI = RestFactory.doPostRequest(adminForAuth, parent, "parents");
+
     Path fullPath = Paths.get("/", parentURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
     String parentID = idPath.toString();
 
-    Invocation getParent =
-        RestFactory.getAuthenticatedInvocationBuilder(adminForAuth, "parents", parentID).buildGet();
-    User parentResponse = getParent.invoke().readEntity(User.class);
+    User parentResponse =
+        RestFactory.doGetRequest(adminForAuth, "parents", parentID).readEntity(User.class);
 
     String nameSuffix = "newName";
     String surnameSuffix = "newSurname";
@@ -240,18 +224,11 @@ public class ParentsResourceTest {
     putParent.setNewPassword("DontCare");
 
     // Make a PUT request
-    Invocation putParentRequest =
-        RestFactory.getAuthenticatedInvocationBuilder(parent, "parents", parentID)
-            .buildPut(Entity.json(putParent));
-    Response putParentResponse = putParentRequest.invoke();
-
-    //    System.out.println("HERE"+ putParentResponse);
-    assertEquals(Response.Status.OK.getStatusCode(), putParentResponse.getStatus());
+    RestFactory.doPutRequest(parent, putParent, "parents", parentID);
 
     // Make a new GET to compare results
-    Invocation newGetParent =
-        RestFactory.getAuthenticatedInvocationBuilder(adminForAuth, parentURI).buildGet();
-    User newParentResponse = newGetParent.invoke().readEntity(User.class);
+    User newParentResponse =
+        RestFactory.doGetRequest(adminForAuth, parentURI).readEntity(User.class);
 
     assertEquals(parentResponse.getName() + nameSuffix, newParentResponse.getName());
     assertEquals(parentResponse.getSurname() + surnameSuffix, newParentResponse.getSurname());
@@ -262,13 +239,12 @@ public class ParentsResourceTest {
     print(newParentResponse);
   }
 
-
   @Test
   @Category(TestCategory.Endpoint.class)
   public void postParentChildrenFromAdmin() {
     // add a parent to the database
     User parent = buildMarcos(8);
-    URI parentURI = doParentPost(adminForAuth, parent);
+    URI parentURI = RestFactory.doPostRequest(adminForAuth, parent, "parents");
 
     Path fullPathParent = Paths.get("/", parentURI.getPath());
     Path idPathParent = fullPathParent.getParent().relativize(fullPathParent);
@@ -277,11 +253,13 @@ public class ParentsResourceTest {
     // get a child from the database
     User child =
         DatabaseHandler.getInstance()
-            .getListSelectFromWhereEqual(User.class, User_.role, User.Role.STUDENT).get(2);
+            .getListSelectFromWhereEqual(User.class, User_.role, User.Role.STUDENT)
+            .get(2);
 
     // create request to associate parent and child and invoke it
     ParentsChildrenRequest requestPost = new ParentsChildrenRequest();
     requestPost.setChildId(child.getId());
+
     Response postResponse =
         RestFactory.getAuthenticatedInvocationBuilder(adminForAuth, "parents", parentId, "children")
             .buildPost(Entity.json(requestPost))
@@ -289,14 +267,9 @@ public class ParentsResourceTest {
     assertEquals(Response.Status.OK.getStatusCode(), postResponse.getStatus());
 
     // Now query /parents/{parent_id}/children from admin
-    Response getResponse =
-        RestFactory.getAuthenticatedInvocationBuilder(adminForAuth, "parents", parentId, "children")
-            .buildGet()
-            .invoke();
-
-    assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
-
-    ParentChildrenResponse marcosChildren = getResponse.readEntity(ParentChildrenResponse.class);
+    ParentChildrenResponse marcosChildren =
+        RestFactory.doGetRequest(adminForAuth, "parents", parentId, "children")
+            .readEntity(ParentChildrenResponse.class);
     assertTrue(marcosChildren.getChildren().size() > 0);
 
     print("GET /parents/", parentId, "/children");
@@ -309,7 +282,7 @@ public class ParentsResourceTest {
   public void getParentChildrenFromAdmin() {
     // add a parent to the database
     User parent = buildMarcos(4);
-    URI parentURI = doParentPost(adminForAuth, parent);
+    URI parentURI = RestFactory.doPostRequest(adminForAuth, parent, "parents");
 
     Path fullPathParent = Paths.get("/", parentURI.getPath());
     Path idPathParent = fullPathParent.getParent().relativize(fullPathParent);
@@ -318,7 +291,8 @@ public class ParentsResourceTest {
     // get a child from the database
     User child =
         DatabaseHandler.getInstance()
-            .getListSelectFromWhereEqual(User.class, User_.role, User.Role.STUDENT).get(6);
+            .getListSelectFromWhereEqual(User.class, User_.role, User.Role.STUDENT)
+            .get(6);
 
     // create request to associate parent and child and invoke it
     ParentsChildrenRequest requestPost = new ParentsChildrenRequest();
@@ -330,14 +304,9 @@ public class ParentsResourceTest {
     assertEquals(Response.Status.OK.getStatusCode(), postResponse.getStatus());
 
     // now query /parents/{marco_id}/children from admin
-    Response getResponse =
-        RestFactory.getAuthenticatedInvocationBuilder(adminForAuth, "parents", parentId, "children")
-            .buildGet()
-            .invoke();
-
-    assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
-
-    ParentChildrenResponse marcosChildren = getResponse.readEntity(ParentChildrenResponse.class);
+    ParentChildrenResponse marcosChildren =
+        RestFactory.doGetRequest(adminForAuth, "parents", parentId, "children")
+            .readEntity(ParentChildrenResponse.class);
 
     // and check its size is increased at more than 0
     assertTrue(marcosChildren.getChildren().size() > 0);
@@ -352,17 +321,17 @@ public class ParentsResourceTest {
   public void getParentChildrenFromSameParent() {
     // add a parent to the database
     User parent = buildMarcos(5);
-    URI parentURI = doParentPost(adminForAuth, parent);
+    URI parentURI = RestFactory.doPostRequest(adminForAuth, parent, "parents");
 
     Path fullPathParent = Paths.get("/", parentURI.getPath());
     Path idPathParent = fullPathParent.getParent().relativize(fullPathParent);
     String parentId = idPathParent.toString();
 
-
     // get a child from the database
     User child =
         DatabaseHandler.getInstance()
-            .getListSelectFromWhereEqual(User.class, User_.role, User.Role.STUDENT).get(7);
+            .getListSelectFromWhereEqual(User.class, User_.role, User.Role.STUDENT)
+            .get(7);
 
     // create request to associate parent and child and invoke it
     ParentsChildrenRequest requestPost = new ParentsChildrenRequest();
@@ -374,14 +343,9 @@ public class ParentsResourceTest {
     assertEquals(Response.Status.OK.getStatusCode(), postResponse.getStatus());
 
     // Now query /parents/{marco_id}/children from the parent
-    Response getResponse =
-        RestFactory.getAuthenticatedInvocationBuilder(parent, "parents", parentId, "children")
-            .buildGet()
-            .invoke();
-
-    assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
-
-    ParentChildrenResponse marcosChildren = getResponse.readEntity(ParentChildrenResponse.class);
+    ParentChildrenResponse marcosChildren =
+        RestFactory.doGetRequest(parent, "parents", parentId, "children")
+            .readEntity(ParentChildrenResponse.class);
 
     assertTrue(marcosChildren.getChildren().size() > 0);
 
@@ -394,10 +358,10 @@ public class ParentsResourceTest {
   @Category(TestCategory.Endpoint.class)
   public void getParentChildrenFromNotSameParent() {
     User parent = buildMarcos(6);
-    URI parentURI = doParentPost(adminForAuth, parent);
+    URI parentURI = RestFactory.doPostRequest(adminForAuth, parent, "parents");
 
     User secondParent = buildMarcos(7);
-    doParentPost(adminForAuth, secondParent);
+    RestFactory.doPostRequest(adminForAuth, secondParent, "parents");
 
     Path fullPath = Paths.get("/", parentURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
@@ -421,26 +385,5 @@ public class ParentsResourceTest {
     marcos.setNewPassword("marcos_password");
     marcos.setRole(User.Role.PARENT);
     return marcos;
-  }
-
-  /**
-   * Do a post an return the inserted parent URI.
-   *
-   * @return The inserted resource URI.
-   */
-  public static URI doParentPost(User userForAuth, User parent) {
-    // Make a POST to /parents
-    Invocation postRequest =
-        RestFactory.getAuthenticatedInvocationBuilder(userForAuth, "parents")
-            .buildPost(Entity.json(parent));
-
-    Response postResponse = postRequest.invoke();
-    print("POST /parents. Response location: ", postResponse.getLocation());
-
-    assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
-
-    URI resourceURI = postResponse.getLocation();
-    assertNotNull(resourceURI);
-    return resourceURI;
   }
 }

@@ -102,14 +102,13 @@ public class ParentsResource {
     // Fetch User
     Optional<User> parentOpt =
         DatabaseHandler.fetchEntityBy(User.class, User_.id, Integer.parseInt(parentId));
-    if (!parentOpt.isPresent()) {
+    if (!parentOpt.isPresent() || !parentOpt.get().getRole().equals(Role.PARENT)) {
       return Response.status(Status.NOT_FOUND)
           .entity(new StatusResponse(Status.NOT_FOUND, "Unknown parent id"))
           .build();
     }
-    User parent = parentOpt.get();
 
-    return Response.ok(parent, MediaType.APPLICATION_JSON_TYPE).build();
+    return Response.ok(parentOpt.get(), MediaType.APPLICATION_JSON_TYPE).build();
   }
 
   @Path("{id: [0-9]+}")

@@ -2,7 +2,6 @@ package com.github.polimi_mt_acg.back2school.api.v1;
 
 import com.github.polimi_mt_acg.back2school.api.v1.auth.AuthenticationResource;
 import com.github.polimi_mt_acg.back2school.api.v1.notifications.NotificationsResponse;
-import com.github.polimi_mt_acg.back2school.api.v1.parents.*;
 import com.github.polimi_mt_acg.back2school.model.Notification;
 import com.github.polimi_mt_acg.back2school.model.NotificationPersonalParent;
 import com.github.polimi_mt_acg.back2school.model.User;
@@ -17,16 +16,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 
 import static com.github.polimi_mt_acg.back2school.api.v1.ParentsResourceTest.buildMarcos;
-import static com.github.polimi_mt_acg.back2school.api.v1.ParentsResourceTest.doParentPost;
 import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.print;
 import static org.junit.Assert.*;
 
@@ -65,26 +59,18 @@ public class ParentsResourceNotificationsTest {
   @Category(TestCategory.Endpoint.class)
   public void getParentNotificationsFromAdmin() {
     User parent = buildMarcos(1);
-    URI parentURI = doParentPost(adminForAuth, parent);
+    URI parentURI = RestFactory.doPostRequest(adminForAuth, parent, "parents");
 
     Path fullPath = Paths.get("/", parentURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
     String parentID = idPath.toString();
 
-    Invocation request =
-        RestFactory.getAuthenticatedInvocationBuilder(
-                adminForAuth, "parents", parentID, "notifications")
-            .buildGet();
-
-    Response response = request.invoke();
-    print("GET /parents/", parentID, "/notifications");
-    print(response.toString());
-
-    assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-
-    NotificationsResponse parentNotifications = response.readEntity(NotificationsResponse.class);
+    NotificationsResponse parentNotifications =
+        RestFactory.doGetRequest(adminForAuth, "parents", parentID, "notifications")
+            .readEntity(NotificationsResponse.class);
 
     // Print it
+    print("GET /parents/", parentID, "/notifications");
     print(parentNotifications);
   }
 
@@ -92,26 +78,20 @@ public class ParentsResourceNotificationsTest {
   @Category(TestCategory.Endpoint.class)
   public void postParentNotificationsFromAdmin() {
     User parent = buildMarcos(2);
-    URI parentURI = doParentPost(adminForAuth, parent);
+    URI parentURI = RestFactory.doPostRequest(adminForAuth, parent, "parents");
 
     Path fullPath = Paths.get("/", parentURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
     String parentID = idPath.toString();
 
-    postNotification(1, parentID);
+    NotificationPersonalParent postParentNotification = buildNotification(1);
+    RestFactory.doPostRequest(
+        adminForAuth, postParentNotification, "parents", parentID, "notifications");
 
     // Now query /parents/{parent_id}/notifications from admin
-    Invocation requestCheck =
-        RestFactory.getAuthenticatedInvocationBuilder(
-                adminForAuth, "parents", parentID, "notifications")
-            .buildGet();
-
-    Response responseCheck = requestCheck.invoke();
-
-    assertEquals(Response.Status.OK.getStatusCode(), responseCheck.getStatus());
-
     NotificationsResponse parentNotifications =
-        responseCheck.readEntity(NotificationsResponse.class);
+        RestFactory.doGetRequest(adminForAuth, "parents", parentID, "notifications")
+            .readEntity(NotificationsResponse.class);
 
     assertTrue(parentNotifications.getNotifications().size() > 0);
 
@@ -123,48 +103,7 @@ public class ParentsResourceNotificationsTest {
   @Category(TestCategory.Endpoint.class)
   public void getParentNotificationsByIdFromAdministrator() {
     User parent = buildMarcos(3);
-    URI parentURI = doParentPost(adminForAuth, parent);
-
-    Path fullPath = Paths.get("/", parentURI.getPath());
-    Path idPath = fullPath.getParent().relativize(fullPath);
-    String parentID = idPath.toString();
-
-    int copynumber = 2;
-
-    postNotification(copynumber, parentID);
-
-    Invocation requestGET =
-        RestFactory.getAuthenticatedInvocationBuilder(
-                adminForAuth, "parents", parentID, "notifications")
-            .buildGet();
-    Response responseGET = requestGET.invoke();
-    NotificationsResponse parentNotifications = responseGET.readEntity(NotificationsResponse.class);
-
-    for (URI notURI : parentNotifications.getNotifications()) {
-      Path fullNotPath = Paths.get("/", notURI.getPath());
-      Path idNotPath = fullNotPath.getParent().relativize(fullNotPath);
-      String notificationID = idNotPath.toString();
-
-      Invocation requestGetNotificationByID =
-          RestFactory.getAuthenticatedInvocationBuilder(
-                  adminForAuth, "parents", parentID, "notifications", notificationID)
-              .buildGet();
-
-      Response response = requestGetNotificationByID.invoke();
-
-      assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-      Notification notificationResp = response.readEntity(Notification.class);
-
-      // Print it
-      print(notificationResp);
-    }
-  }
-
-  @Test
-  @Category(TestCategory.Endpoint.class)
-  public void getParentNotificationsByIdFromSameParent() {
-    User parent = buildMarcos(4);
-    URI parentURI = doParentPost(adminForAuth, parent);
+    URI parentURI = RestFactory.doPostRequest(adminForAuth, parent, "parents");
 
     Path fullPath = Paths.get("/", parentURI.getPath());
     Path idPath = fullPath.getParent().relativize(fullPath);
@@ -172,29 +111,57 @@ public class ParentsResourceNotificationsTest {
 
     int copyNumber = 2;
 
-    postNotification(copyNumber, parentID);
+    NotificationPersonalParent postParentNotification = buildNotification(copyNumber);
+    RestFactory.doPostRequest(
+        adminForAuth, postParentNotification, "parents", parentID, "notifications");
 
-    Invocation requestGET =
-        RestFactory.getAuthenticatedInvocationBuilder(
-                adminForAuth, "parents", parentID, "notifications")
-            .buildGet();
-    Response responseGET = requestGET.invoke();
-    NotificationsResponse parentNotifications = responseGET.readEntity(NotificationsResponse.class);
+    NotificationsResponse parentNotifications =
+        RestFactory.doGetRequest(adminForAuth, "parents", parentID, "notifications")
+            .readEntity(NotificationsResponse.class);
 
     for (URI notURI : parentNotifications.getNotifications()) {
       Path fullNotPath = Paths.get("/", notURI.getPath());
       Path idNotPath = fullNotPath.getParent().relativize(fullNotPath);
       String notificationID = idNotPath.toString();
 
-      Invocation requestGetNotificationByID =
-          RestFactory.getAuthenticatedInvocationBuilder(
-                  parent, "parents", parentID, "notifications", notificationID)
-              .buildGet();
+      Notification notification =
+          RestFactory.doGetRequest(
+                  adminForAuth, "parents", parentID, "notifications", notificationID)
+              .readEntity(Notification.class);
 
-      Response response = requestGetNotificationByID.invoke();
+      // Print it
+      print(notification);
+    }
+  }
 
-      assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-      Notification notificationResp = response.readEntity(Notification.class);
+  @Test
+  @Category(TestCategory.Endpoint.class)
+  public void getParentNotificationsByIdFromSameParent() {
+    User parent = buildMarcos(4);
+    URI parentURI = RestFactory.doPostRequest(adminForAuth, parent, "parents");
+
+    Path fullPath = Paths.get("/", parentURI.getPath());
+    Path idPath = fullPath.getParent().relativize(fullPath);
+    String parentID = idPath.toString();
+
+    int copyNumber = 2;
+
+    NotificationPersonalParent postParentNotification = buildNotification(copyNumber);
+    RestFactory.doPostRequest(
+        adminForAuth, postParentNotification, "parents", parentID, "notifications");
+
+    NotificationsResponse parentNotifications =
+        RestFactory.doGetRequest(adminForAuth, "parents", parentID, "notifications")
+            .readEntity(NotificationsResponse.class);
+
+    for (URI notURI : parentNotifications.getNotifications()) {
+      Path fullNotPath = Paths.get("/", notURI.getPath());
+      Path idNotPath = fullNotPath.getParent().relativize(fullNotPath);
+      String notificationID = idNotPath.toString();
+
+      Notification notificationResp =
+          RestFactory.doGetRequest(parent, "parents", parentID, "notifications", notificationID)
+              .readEntity(Notification.class);
 
       // Print it
       print(notificationResp);
@@ -206,23 +173,5 @@ public class ParentsResourceNotificationsTest {
     notification.setSubject("Subject number: " + String.valueOf(copynumber));
     notification.setText("Text number: " + String.valueOf(copynumber));
     return notification;
-  }
-
-  private URI postNotification(int copyNumber, String parentID) {
-    // We post a notification between parent and admin
-    NotificationPersonalParent postParentNotification = buildNotification(copyNumber);
-
-    Invocation request =
-        RestFactory.getAuthenticatedInvocationBuilder(
-                adminForAuth, "parents", parentID, "notifications")
-            .buildPost(Entity.json(postParentNotification));
-
-    Response response = request.invoke();
-    System.out.println(response.toString());
-    assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-
-    URI resourceURI = response.getLocation();
-    assertNotNull(resourceURI);
-    return resourceURI;
   }
 }

@@ -14,8 +14,6 @@ import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.utils.JacksonCustomMapper;
 
 import java.net.URI;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -137,25 +135,137 @@ public class RestFactory {
         .build();
   }
 
+  private static String getEndpointFromChunks(Object[] endpointChunks) {
+    StringBuilder endpoint = new StringBuilder("/");
+    for(Object c: endpointChunks){
+      endpoint.append(String.valueOf(c));
+      endpoint.append("/");
+    }
+    endpoint.deleteCharAt(endpoint.length()-1);
+    return endpoint.toString();
+  }
+
+  /**
+   * A convenient method to perform a one-line get request.
+   *
+   * @param userForLogin The user to be used for authentication.
+   * @param endpointChunks The endpoint parts to issue the request at.
+   * @return URI of the create resource.
+   */
+  public static Response doGetRequest(User userForLogin, Object... endpointChunks) {
+    String endpoint = getEndpointFromChunks(endpointChunks);
+
+    // Make a GET request
+    Invocation get =
+        RestFactory.getAuthenticatedInvocationBuilder(userForLogin, endpoint).buildGet();
+
+    Response response = get.invoke();
+    assertNotNull(response);
+    assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+
+    return response;
+  }
+
+  /**
+   * A convenient method to perform a one-line get request.
+   *
+   * @param userForLogin The user to be used for authentication.
+   * @param uri The URI to issue the request at.
+   * @return URI of the create resource.
+   */
+  public static Response doGetRequest(User userForLogin, URI uri) {
+    // Make a GET request
+    Invocation get =
+        RestFactory.getAuthenticatedInvocationBuilder(userForLogin, uri).buildGet();
+
+    Response response = get.invoke();
+    assertNotNull(response);
+    assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+
+    return response;
+  }
+
   /**
    * A convenient method to perform a one-line post request.
    *
    * @param userForLogin The user to be used for authentication.
-   * @param endpoint The endpoint to issue the request at.
    * @param requestEntity The entity to be sent.
+   * @param endpointChunks The endpoint parts to issue the request at.
    * @return URI of the create resource.
    */
-  public static URI doPostRequest(User userForLogin, String endpoint, Object requestEntity) {
+  public static URI doPostRequest(User userForLogin, Object requestEntity, Object... endpointChunks) {
+    String endpoint = getEndpointFromChunks(endpointChunks);
+
     // Make a POST request
     Invocation post =
         RestFactory.getAuthenticatedInvocationBuilder(userForLogin, endpoint)
             .buildPost(Entity.json(requestEntity));
 
     Response response = post.invoke();
+    assertNotNull(response);
     assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
 
     URI resourceURI = response.getLocation();
     assertNotNull(resourceURI);
     return resourceURI;
+  }
+
+  /**
+   * A convenient method to perform a one-line put request.
+   *
+   * @param userForLogin The user to be used for authentication.
+   * @param requestEntity The entity to be sent.
+   * @param endpointChunks The endpoint parts to issue the request at.
+   */
+  public static void doPutRequest(User userForLogin, Object requestEntity,  Object... endpointChunks) {
+    String endpoint = getEndpointFromChunks(endpointChunks);
+
+    // Make a PUT request
+    Invocation post =
+        RestFactory.getAuthenticatedInvocationBuilder(userForLogin, endpoint)
+            .buildPut(Entity.json(requestEntity));
+
+    Response response = post.invoke();
+    assertNotNull(response);
+    assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+  }
+
+  /**
+   * A convenient method to perform a one-line put request.
+   *
+   * @param userForLogin The user to be used for authentication.
+   * @param requestEntity The entity to be sent.
+   * @param uri The URI to issue the request at.
+   */
+  public static void doPutRequest(User userForLogin, Object requestEntity,  URI uri) {
+
+    // Make a PUT request
+    Invocation post =
+        RestFactory.getAuthenticatedInvocationBuilder(userForLogin, uri)
+            .buildPut(Entity.json(requestEntity));
+
+    Response response = post.invoke();
+    assertNotNull(response);
+    assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+  }
+
+
+  /**
+   * A convenient method to perform a one-line delete request.
+   *
+   * @param userForLogin The user to be used for authentication.
+   * @param endpointChunks The endpoint parts to issue the request at.
+   */
+  public static void doDeleteRequest(User userForLogin, Object... endpointChunks) {
+    String endpoint = getEndpointFromChunks(endpointChunks);
+
+    // Make a DELETE request
+    Invocation delete =
+        RestFactory.getAuthenticatedInvocationBuilder(userForLogin, endpoint)
+            .buildDelete();
+
+    Response response = delete.invoke();
+    assertNotNull(response);
+    assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
   }
 }

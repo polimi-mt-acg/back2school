@@ -12,8 +12,9 @@ import javax.ws.rs.ext.Provider;
 
 /**
  * AdministratorSecurityContext implements a request filter for JAX-RS REST APIs. It implements a
- * "Administrators-only" security policy. A REST API that is annotated with @ParentAdministratorSecured
- * can only be accessed if: a) the client is authenticated. b) the client role is ADMINISTRATOR or PARENT
+ * "Administrators-only" security policy. A REST API that is annotated
+ * with @ParentAdministratorSecured can only be accessed if: a) the client is authenticated. b) the
+ * client role is ADMINISTRATOR or PARENT
  */
 @ParentAdministratorSecured
 @Provider
@@ -44,8 +45,7 @@ public class ParentAdministratorSecurityContext implements ContainerRequestFilte
 
     // if the user logged has not the correct role
     Role role = currentUser.getRole();
-    if (!role.equals(Role.PARENT)
-            && !role.equals(Role.ADMINISTRATOR)) {
+    if (!role.equals(Role.PARENT) && !role.equals(Role.ADMINISTRATOR)) {
       requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
     }
   }
