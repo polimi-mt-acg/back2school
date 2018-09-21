@@ -21,11 +21,9 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.*;
 import javax.ws.rs.core.Response.Status;
 
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
 import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.print;
@@ -98,10 +96,9 @@ public class ParentsResource {
   @Produces(MediaType.APPLICATION_JSON)
   @ParentAdministratorSecured
   @SameParentSecured
-  public Response getParentById(@PathParam("id") String parentId) {
+  public Response getParentById(@PathParam("id") Integer parentId) {
     // Fetch User
-    Optional<User> parentOpt =
-        DatabaseHandler.fetchEntityBy(User.class, User_.id, Integer.parseInt(parentId));
+    Optional<User> parentOpt = DatabaseHandler.fetchEntityBy(User.class, User_.id, parentId);
     if (!parentOpt.isPresent() || !parentOpt.get().getRole().equals(Role.PARENT)) {
       return Response.status(Status.NOT_FOUND)
           .entity(new StatusResponse(Status.NOT_FOUND, "Unknown parent id"))
@@ -117,12 +114,12 @@ public class ParentsResource {
   @Produces(MediaType.APPLICATION_JSON)
   @ParentAdministratorSecured
   @SameParentSecured
-  public Response putParentById(User newParent, @PathParam("id") String parentId) {
+  public Response putParentById(User newParent, @PathParam("id") Integer parentId) {
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 
     // Fetch User
-    User parent = session.get(User.class, Integer.parseInt(parentId));
+    User parent = session.get(User.class, parentId);
     if (parent == null) {
       session.getTransaction().commit();
       session.close();
@@ -131,7 +128,7 @@ public class ParentsResource {
           .build();
     }
 
-    // Update student fields
+    // Update teacher fields
     parent.setName(newParent.getName());
     parent.setSurname(newParent.getSurname());
     parent.setEmail(newParent.getEmail());
@@ -237,13 +234,13 @@ public class ParentsResource {
   @ParentAdministratorSecured
   @SameParentSecured
   public Response getParentAppointments(
-      @PathParam("id") String parentId, @Context UriInfo uriInfo) {
+      @PathParam("id") Integer parentId, @Context UriInfo uriInfo) {
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
     session.beginTransaction();
 
     // Fetch Parent
-    User parent = session.get(User.class, Integer.parseInt(parentId));
+    User parent = session.get(User.class, parentId);
     if (parent == null) {
       session.getTransaction().commit();
       session.close();
@@ -379,23 +376,26 @@ public class ParentsResource {
   @ParentAdministratorSecured
   @SameParentSecured
   public Response getParentAppointmentById(
-      @PathParam("appointment_id") String appointmentId,
-      @PathParam("id") String parentId,
+      @PathParam("appointment_id") Integer appointmentId,
+      @PathParam("id") Integer parentId,
+      @Context HttpHeaders httpHeaders,
       @Context UriInfo uriInfo) {
+    User currentUser = AuthenticationSession.getCurrentUser(httpHeaders);
 
     // Fetch appointment
     Optional<Appointment> appointmentOpt =
-        DatabaseHandler.fetchEntityBy(
-            Appointment.class, Appointment_.id, Integer.parseInt(appointmentId));
+        DatabaseHandler.fetchEntityBy(Appointment.class, Appointment_.id, appointmentId);
     if (!appointmentOpt.isPresent()) {
       return Response.status(Status.NOT_FOUND)
           .entity(new StatusResponse(Status.NOT_FOUND, "Unknown appointment id"))
           .build();
     }
 
-    if (appointmentOpt.get().getParent().getId() != Integer.parseInt(parentId)) {
-      return Response.status(Status.CONFLICT)
-          .entity(new StatusResponse(Status.CONFLICT, "Not current parent's appointment"))
+    if (currentUser.getRole().equals(Role.PARENT)
+        && appointmentOpt.get().getParent().getId() != parentId) {
+      return Response.status(Status.FORBIDDEN)
+          .entity(
+              new StatusResponse(Status.FORBIDDEN, "You're not allowed to access this appointment"))
           .build();
     }
 
@@ -411,9 +411,7 @@ public class ParentsResource {
   public Response putParentAppointmentById(
       ParentAppointmentRequest request,
       @PathParam("id") Integer parentId,
-      @PathParam("appointmentId") Integer appointmentId,
-      @Context ContainerRequestContext crc,
-      @Context UriInfo uriInfo) {
+      @PathParam("appointmentId") Integer appointmentId) {
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
     session.beginTransaction();
@@ -464,11 +462,11 @@ public class ParentsResource {
     if (teacher.getId() != appointment.getTeacher().getId()) {
       session.getTransaction().commit();
       session.close();
-      return Response.notModified()
+      return Response.status(Status.BAD_REQUEST)
           .entity(
               new StatusResponse(
                   Status.BAD_REQUEST,
-                  "Invalid parentId. It does not correspond to the previous one"))
+                  "Invalid teacherId. It does not correspond to the previous one"))
           .build();
     }
 
@@ -541,13 +539,13 @@ public class ParentsResource {
   @Produces(MediaType.APPLICATION_JSON)
   @ParentAdministratorSecured
   @SameParentSecured
-  public Response getParentPayments(@PathParam("id") String parentId, @Context UriInfo uriInfo) {
+  public Response getParentPayments(@PathParam("id") Integer parentId, @Context UriInfo uriInfo) {
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
     session.beginTransaction();
 
     // Fetch Parent
-    User parent = session.get(User.class, Integer.parseInt(parentId));
+    User parent = session.get(User.class, parentId);
     if (parent == null) {
       session.close();
       return Response.status(Status.NOT_FOUND)
@@ -843,7 +841,7 @@ public class ParentsResource {
     User currentUser = AuthenticationSession.getCurrentUser(httpHeaders, session);
 
     // Notification can be of three types: GeneralParents, ClassParent, PersonalParent
-    // if none of them will be found by the given id -> error
+    // if none of them will be found by the given id -> error not found
 
     // 1: GeneralParents
     NotificationGeneralParents notificationGeneralParents =
@@ -864,30 +862,14 @@ public class ParentsResource {
     if (notificationClassParent != null) {
       // Parent logged in
       if (currentUser.getRole().equals(Role.PARENT)) {
-        // look for a children of the current parent belonging the class
-        for (User student : notificationClassParent.getTargetClass().getClassStudents()) {
-          for (User child : currentUser.getChildren()) {
-            if (student.getId() == child.getId()) {
-              // found matching class student and children of the parent
-
-              // mark as read
-              currentUser.addNotificationsRead(notificationClassParent);
-
-              session.getTransaction().commit();
-              session.close();
-              notificationClassParent.setTargetClass(null); // so won't be serialized
-              return Response.ok(notificationClassParent, MediaType.APPLICATION_JSON_TYPE).build();
-            }
-          }
-        }
-
-      } // Administrator logged in
-      else if (currentUser.getRole().equals(Role.ADMINISTRATOR)) {
-        session.getTransaction().commit();
-        session.close();
-        notificationClassParent.setTargetClass(null); // so won't be serialized
-        return Response.ok(notificationClassParent, MediaType.APPLICATION_JSON_TYPE).build();
+        // mark as read
+        currentUser.addNotificationsRead(notificationClassParent);
       }
+      // anyway even if Administrator logged in
+      session.getTransaction().commit();
+      session.close();
+      notificationClassParent.setTargetClass(null); // so won't be serialized
+      return Response.ok(notificationClassParent, MediaType.APPLICATION_JSON_TYPE).build();
     }
 
     // 3: PersonalParent

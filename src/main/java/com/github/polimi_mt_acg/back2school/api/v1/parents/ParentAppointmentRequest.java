@@ -5,7 +5,6 @@ import com.github.polimi_mt_acg.back2school.model.Appointment;
 
 import java.time.LocalDateTime;
 
-
 public class ParentAppointmentRequest {
 
   @JsonProperty("teacher_id")
@@ -16,7 +15,8 @@ public class ParentAppointmentRequest {
 
   @JsonProperty("datetime_end")
   private LocalDateTime datetimeEnd;
-  private Appointment.Status status;
+
+  private Appointment.Status status = Appointment.Status.REQUESTED;
 
   public Integer getTeacherId() {
     return teacherId;

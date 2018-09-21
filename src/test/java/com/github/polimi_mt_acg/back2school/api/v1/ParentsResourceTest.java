@@ -72,10 +72,11 @@ public class ParentsResourceTest {
     Response response = getRequest.invoke();
     assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
+
     List<URI> parentsURIs = response.readEntity(ParentsResponse.class).getParents();
     for (URI uri : parentsURIs) {
       assertNotNull(uri);
-      System.out.println(uri);
+      print(uri);
     }
   }
 

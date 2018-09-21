@@ -181,9 +181,9 @@ public class ParentsResourceAppointmentsTest {
                 adminForAuth, "parents", parentID, "appointments")
             .buildPost(Entity.json(parentAppointmentRequest2));
     Response response2 = request2.invoke();
-    print("[2] Conflict at: ", response2.toString());
-
     assertEquals(Response.Status.CONFLICT.getStatusCode(), response2.getStatus());
+
+    print("[2] Conflict at: ", response2.toString());
 
     // Tested conflict between same parent and different teacher
     ParentAppointmentRequest parentAppointmentRequest3 = buildAppointment(35, 1, "john@email.com");
@@ -193,9 +193,9 @@ public class ParentsResourceAppointmentsTest {
                 adminForAuth, "parents", parentID, "appointments")
             .buildPost(Entity.json(parentAppointmentRequest3));
     Response response3 = request3.invoke();
-    print("[3]", response3.toString());
-
     assertEquals(Response.Status.CONFLICT.getStatusCode(), response3.getStatus());
+
+    print("[3] ", response3.toString());
 
     // Tested conflict between different parent and same teacher
     User parent2 = buildMarcos(6);
@@ -211,11 +211,10 @@ public class ParentsResourceAppointmentsTest {
         RestFactory.getAuthenticatedInvocationBuilder(
                 adminForAuth, "parents", parentID2, "appointments")
             .buildPost(Entity.json(parentAppointmentRequest4));
-
     Response response4 = request4.invoke();
-    print("[4]", response4.toString());
-
     assertEquals(Response.Status.CONFLICT.getStatusCode(), response4.getStatus());
+
+    print("[4] ", response4.toString());
 
     // Now query /parents/{parent_id}/appointments from admin
     // Only the first appointment should be retrieved by the parent
