@@ -1,6 +1,9 @@
 package com.github.polimi_mt_acg.back2school.api.v1.demo_utils;
 
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.AdministratorSecured;
+import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.ParentTeacherAdministratorSecured;
+import com.github.polimi_mt_acg.back2school.model.AuthenticationSession;
+import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseSeeder;
 
@@ -79,5 +82,15 @@ public class DemoUtilsResource {
     demoUtilsActionResponse.setDuration(Duration.between(start, end).toString());
 
     return Response.ok(demoUtilsActionResponse, MediaType.APPLICATION_JSON_TYPE).build();
+  }
+
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @ParentTeacherAdministratorSecured
+  @Path("who-am-i")
+  public Response getWhoAmI(@Context HttpHeaders httpHeaders) {
+    User user = AuthenticationSession.getCurrentUser(httpHeaders);
+
+    return Response.ok(user, MediaType.APPLICATION_JSON_TYPE).build();
   }
 }
