@@ -36,6 +36,13 @@ public class DemoUtilsResource {
             .path(this.getClass(), "getEmptyDatabase")
             .build());
 
+    demoUtilsResponse.setUrlEmptyDatabase(
+        uriInfo
+            .getBaseUriBuilder()
+            .path(this.getClass())
+            .path(this.getClass(), "getWhoAmI")
+            .build());
+
     return Response.ok(demoUtilsResponse, MediaType.APPLICATION_JSON_TYPE).build();
   }
 
