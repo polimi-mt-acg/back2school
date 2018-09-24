@@ -50,14 +50,16 @@ To persist the data we used Hibernate ORM, a JPA implementation that abstract th
 Standards and technologies employed:
 
 - [Java 1.8] programming language
-- [JEE] standard with: [Wildfly] ([JBoss]) application server 
+- [Maven] project management and comprehension tool
+- [JEE] standard with: [Wildfly] application server ([JBoss] EAP: Enterprise Application Platform)
 - [JAX-RS] standard with: [Jersey] abstraction for RESTful Web Services in Java
 - [JPA] standard with: [Hibernate] ORM to handle data persistence and database interaction
 - [SQL] underling data query language, [MariaDB] database engine
 - [JSON] standard for structured data transfer
-- [Docker] paravirtualization technology for dev environment setup speed up
+- [Docker] paravirtualization technology for containerization of services and dev environment setup speed up
 - [phpMyAdmin] interface for database data visualization
-- [TDD] test driven development approach with [JUnit] framework
+- [TDD] test driven development approach with [Arquillian]-[JUnit] framework for automated testing
+- [Postman] popular HTTP Request composer for by hand APIs tests 
 
 
 ## Documentation
@@ -73,7 +75,8 @@ This project has been developed for the [Middleware Technologies for Distributed
 [JEE]: https://wikipedia.org/wiki/Java_Platform,_Enterprise_Edition
 [REST]: https://wikipedia.org/wiki/Representational_state_transfer
 
-[Java 1.8]: https://mariadb.org/
+[Java 1.8]: https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
+[Maven]: https://maven.apache.org/
 [Wildfly]: http://www.wildfly.org/
 [JBoss]: http://www.jboss.org/
 [JAX-RS]: https://wikipedia.org/wiki/Java_API_for_RESTful_Web_Services
@@ -86,8 +89,10 @@ This project has been developed for the [Middleware Technologies for Distributed
 [Docker]: https://www.docker.com/
 [phpMyAdmin]: https://www.phpmyadmin.net/
 [TDD]: https://wikipedia.org/wiki/Test-driven_development
+[Arquillian]: http://arquillian.org/
 [JUnit]: https://junit.org
- 
+[Postman]: https://www.getpostman.com/
+
 [Middleware Technologies for Distributed Systems course]: https://www4.ceda.polimi.it/manifesti/manifesti/controller/ManifestoPublic.do?EVN_DETTAGLIO_RIGA_MANIFESTO=evento&aa=2017&k_cf=225&k_corso_la=481&k_indir=T2A&codDescr=090931&lang=EN&semestre=1&idGruppo=3589&idRiga=216904
 [Politecnico di Milano]: https://www.polimi.it
 [polimi-mt-acg]: https://github.com/polimi-mt-acg

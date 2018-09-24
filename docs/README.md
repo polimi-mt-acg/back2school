@@ -1,24 +1,17 @@
-# back2school API REST project
+# Documentation
 
+## Index
 
-### Development approach chosen
+- [Environment setup](environment-setup.md)
+- [Project setup](project-setup.md)
+- [Run tests](run-tests.md)
+- [Run application](run-application.md)
+- [Postman APIs interaction and demo data deployment](postman-API-interaction-and-demo-data-deployment.md)
 
-- [Test-driven development](https://en.wikipedia.org/wiki/Test-driven_development) 
+## First time project setup
 
+To **setup the project for the first time**, it's strongly suggested to look at:
 
-### Main softwares, frameworks and libraries employed
-
-- [Maven](https://maven.apache.org/) (project management and comprehension tool)
-- [WildFly (JBoss EAP)](http://wildfly.org/downloads/) (Enterprise Application Platform, J2E implementation)
-- [Jersey](https://jersey.github.io/) (JAX-RS implementation)
-- [Arquillian-JUnit](http://arquillian.org/) (unit testing framework)
-- [Hibernate ORM](http://hibernate.org/orm/) (database ORM)
-- [MariaDB](https://mariadb.org/) (DBMS)
-- [phpMyAdmin](https://www.phpmyadmin.net/) (administration of the database)
-- [Docker](https://www.docker.com/) (containerization of services)
-
-
-## Get started
-
-Go through the [initial project setup](initial-project-setup.md) and then follow
-the [run the project](run-the-project.md) document.
+1. Environment setup
+2. Project setup
+3. Run application
