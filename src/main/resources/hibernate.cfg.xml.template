@@ -30,6 +30,8 @@
         <mapping class="com.github.polimi_mt_acg.back2school.model.NotificationPersonalTeacher"/>
         <mapping class="com.github.polimi_mt_acg.back2school.model.Payment"/>
         <mapping class="com.github.polimi_mt_acg.back2school.model.SeedDummy"/>
+        <mapping class="com.github.polimi_mt_acg.back2school.utils.json_mappers.SeedEntityParentChild"/>
+        <mapping class="com.github.polimi_mt_acg.back2school.utils.json_mappers.SeedEntityNotificationRead"/>
         <mapping class="com.github.polimi_mt_acg.back2school.model.Subject"/>
         <mapping class="com.github.polimi_mt_acg.back2school.model.User"/>
     </session-factory>
