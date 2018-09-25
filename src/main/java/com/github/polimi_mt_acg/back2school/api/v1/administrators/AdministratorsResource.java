@@ -19,7 +19,7 @@ import javax.ws.rs.core.Response.Status;
 import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.str;
 
 @Path("administrators")
-public class AdministratorResource {
+public class AdministratorsResource {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
