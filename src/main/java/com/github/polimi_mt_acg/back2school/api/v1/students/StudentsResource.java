@@ -63,7 +63,9 @@ public class StudentsResource {
   @AdministratorSecured
   public Response postStudents(User newUser, @Context UriInfo uriInfo) {
     if (newUser.getEmail() == null || newUser.getEmail().isEmpty()) {
-      return Response.status(Status.BAD_REQUEST).entity("User must have an email address").build();
+      return Response.status(Status.BAD_REQUEST)
+          .entity(new StatusResponse(Status.BAD_REQUEST, "User must have an email address"))
+          .build();
     }
 
     Session session = DatabaseHandler.getInstance().getNewSession();
@@ -126,7 +128,9 @@ public class StudentsResource {
     if (student == null || !student.getRole().equals(Role.STUDENT)) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND).entity("Unknown student id").build();
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown student id"))
+          .build();
     }
 
     // Update student fields
@@ -159,7 +163,9 @@ public class StudentsResource {
     User student = session.get(User.class, Integer.parseInt(studentId));
     if (student == null) {
       session.close();
-      return Response.status(Status.NOT_FOUND).entity("Unknown student id").build();
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown student id"))
+          .build();
     }
 
     // Fetch grades of student

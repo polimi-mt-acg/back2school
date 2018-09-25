@@ -45,7 +45,9 @@ public class SubjectsResource {
   @AdministratorSecured
   public Response postSubjects(Subject newSubject, @Context UriInfo uriInfo) {
     if (newSubject.getName() == null || newSubject.getName().isEmpty()) {
-      return Response.status(Status.BAD_REQUEST).entity("Subject must have a name.").build();
+      return Response.status(Status.BAD_REQUEST)
+          .entity(new StatusResponse(Status.BAD_REQUEST, "Subject must have a name."))
+          .build();
     }
 
     // Check if a subject with same name already exists, if so, do nothing

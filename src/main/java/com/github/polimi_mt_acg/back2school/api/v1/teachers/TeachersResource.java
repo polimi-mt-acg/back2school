@@ -56,7 +56,9 @@ public class TeachersResource {
   @AdministratorSecured
   public Response postTeachers(User newUser, @Context UriInfo uriInfo) {
     if (newUser.getEmail() == null || newUser.getEmail().isEmpty()) {
-      return Response.status(Status.BAD_REQUEST).entity("User must have an email address.").build();
+      return Response.status(Status.BAD_REQUEST)
+          .entity(new StatusResponse(Status.BAD_REQUEST, "User must have an email address."))
+          .build();
     }
 
     Session session = DatabaseHandler.getInstance().getNewSession();
@@ -292,7 +294,9 @@ public class TeachersResource {
     // Fetch request user
     Optional<User> userOpt = DatabaseHandler.fetchEntityBy(User.class, User_.id, teacherId);
     if (!userOpt.isPresent()) {
-      return Response.status(Status.NOT_FOUND).entity("User not found").build();
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "User not found"))
+          .build();
     }
     User teacher = userOpt.get();
 

@@ -7,6 +7,7 @@ import com.github.polimi_mt_acg.back2school.model.User.Role;
 import com.github.polimi_mt_acg.back2school.model.User_;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import org.hibernate.Session;
+import org.omg.CORBA.BAD_CONTEXT;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -49,7 +50,9 @@ public class AdministratorsResource {
   @AdministratorSecured
   public Response postAdministrators(User newUser, @Context UriInfo uriInfo) {
     if (newUser.getEmail() == null || newUser.getEmail().isEmpty()) {
-      return Response.status(Status.BAD_REQUEST).entity("User must have an email address").build();
+      return Response.status(Status.BAD_REQUEST)
+          .entity(new StatusResponse(Status.BAD_REQUEST, "User must have an email address"))
+          .build();
     }
 
     Session session = DatabaseHandler.getInstance().getNewSession();
@@ -111,7 +114,9 @@ public class AdministratorsResource {
     if (administrator == null || !administrator.getRole().equals(Role.ADMINISTRATOR)) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND).entity("Unknown administrator id").build();
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown administrator id"))
+          .build();
     }
 
     // Update administrator fields

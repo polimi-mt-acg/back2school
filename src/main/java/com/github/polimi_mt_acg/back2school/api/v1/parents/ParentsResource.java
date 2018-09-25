@@ -60,7 +60,9 @@ public class ParentsResource {
   @AdministratorSecured
   public Response postParents(User newUser, @Context UriInfo uriInfo) {
     if (newUser.getEmail() == null || newUser.getEmail().isEmpty()) {
-      return Response.status(Status.BAD_REQUEST).entity("User must have an email address.").build();
+      return Response.status(Status.BAD_REQUEST)
+          .entity(new StatusResponse(Status.BAD_REQUEST, "User must have an email address."))
+          .build();
     }
 
     Session session = DatabaseHandler.getInstance().getNewSession();
