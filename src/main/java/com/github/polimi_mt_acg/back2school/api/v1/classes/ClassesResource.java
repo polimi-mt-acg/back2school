@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.as_int;
 import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.print;
 import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.str;
 
@@ -101,10 +100,10 @@ public class ClassesResource {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @TeacherAdministratorSecured
-  public Response getClassById(@PathParam("classId") String classId, @Context UriInfo uriInfo) {
+  public Response getClassById(@PathParam("classId") Integer classId, @Context UriInfo uriInfo) {
     // Fetch the class
     Optional<Class> classOpt =
-        DatabaseHandler.fetchEntityBy(Class.class, Class_.id, Integer.parseInt(classId));
+        DatabaseHandler.fetchEntityBy(Class.class, Class_.id, classId);
 
     if (!classOpt.isPresent()) {
       return Response.status(Status.NOT_FOUND)
@@ -186,10 +185,10 @@ public class ClassesResource {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @TeacherAdministratorSecured
-  public Response getClassStudents(@PathParam("classId") String classId) {
+  public Response getClassStudents(@PathParam("classId") Integer classId) {
     // Fetch the class
     Optional<Class> classOpt =
-        DatabaseHandler.fetchEntityBy(Class.class, Class_.id, as_int(classId));
+        DatabaseHandler.fetchEntityBy(Class.class, Class_.id, classId);
 
     if (!classOpt.isPresent()) {
       return Response.status(Status.NOT_FOUND)

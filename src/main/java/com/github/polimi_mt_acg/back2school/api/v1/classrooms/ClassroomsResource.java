@@ -80,12 +80,11 @@ public class ClassroomsResource {
   @Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
   @Produces(javax.ws.rs.core.MediaType.APPLICATION_JSON)
   @TeacherAdministratorSecured
-  public Response getClassroomById(@PathParam("id") String classroomId) {
+  public Response getClassroomById(@PathParam("id") Integer classroomId) {
     // Fetch Classroom
     List<Classroom> res =
         DatabaseHandler.getInstance()
-            .getListSelectFromWhereEqual(
-                Classroom.class, Classroom_.id, Integer.parseInt(classroomId));
+            .getListSelectFromWhereEqual(Classroom.class, Classroom_.id, classroomId);
 
     if (res.isEmpty()) {
       return Response.status(Response.Status.NOT_FOUND)
@@ -103,15 +102,14 @@ public class ClassroomsResource {
   @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
   public Response putClassroomById(
-      PutClassroomRequest newClassroom, @PathParam("id") String classroomId) {
+      PutClassroomRequest newClassroom, @PathParam("id") Integer classroomId) {
     // Fetch Classroom
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
     session.beginTransaction();
 
     List<Classroom> res =
-        dbi.getListSelectFromWhereEqual(
-            Classroom.class, Classroom_.id, Integer.parseInt(classroomId), session);
+        dbi.getListSelectFromWhereEqual(Classroom.class, Classroom_.id, classroomId, session);
 
     if (res.isEmpty()) {
       session.getTransaction().commit();

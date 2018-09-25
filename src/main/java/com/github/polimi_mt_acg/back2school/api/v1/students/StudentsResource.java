@@ -154,13 +154,13 @@ public class StudentsResource {
   @ParentTeacherAdministratorSecured
   @ParentOfStudentSecured
   @TeacherOfStudentSecured
-  public Response getStudentGrades(@PathParam("id") String studentId, @Context UriInfo uriInfo) {
+  public Response getStudentGrades(@PathParam("id") Integer studentId, @Context UriInfo uriInfo) {
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
     session.beginTransaction();
 
     // Fetch User
-    User student = session.get(User.class, Integer.parseInt(studentId));
+    User student = session.get(User.class, studentId);
     if (student == null) {
       session.close();
       return Response.status(Status.NOT_FOUND)
