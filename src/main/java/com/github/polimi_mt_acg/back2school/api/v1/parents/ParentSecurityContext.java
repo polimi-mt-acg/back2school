@@ -18,7 +18,7 @@ import java.io.IOException;
  */
 @ParentSecured
 @Provider
-@Priority(SecurityContextPriority.ADMINISTRATOR)
+@Priority(SecurityContextPriority.PARENT)
 public class ParentSecurityContext implements ContainerRequestFilter {
 
   /**
