@@ -120,7 +120,7 @@ public class ParentsResource {
 
     // Fetch User
     User parent = session.get(User.class, parentId);
-    if (parent == null) {
+    if (parent == null || !parent.getRole().equals(Role.PARENT)) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND)

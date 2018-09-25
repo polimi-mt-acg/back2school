@@ -100,10 +100,9 @@ public class StudentsResource {
   @ParentTeacherAdministratorSecured
   @ParentOfStudentSecured
   @TeacherOfStudentSecured
-  public Response getStudentById(@PathParam("id") String studentId) {
+  public Response getStudentById(@PathParam("id") Integer studentId) {
     // Fetch User
-    Optional<User> studentOpt =
-        DatabaseHandler.fetchEntityBy(User.class, User_.id, Integer.parseInt(studentId));
+    Optional<User> studentOpt = DatabaseHandler.fetchEntityBy(User.class, User_.id, studentId);
     if (!studentOpt.isPresent() || !studentOpt.get().getRole().equals(Role.STUDENT)) {
       return Response.status(Status.NOT_FOUND)
           .entity(new StatusResponse(Status.NOT_FOUND, "Unknown student id"))
@@ -124,7 +123,7 @@ public class StudentsResource {
 
     // Fetch User
     User student = session.get(User.class, studentId);
-    if (student == null) {
+    if (student == null || !student.getRole().equals(Role.STUDENT)) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND).entity("Unknown student id").build();

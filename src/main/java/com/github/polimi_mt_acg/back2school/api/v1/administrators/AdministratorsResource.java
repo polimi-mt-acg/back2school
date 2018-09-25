@@ -43,7 +43,6 @@ public class AdministratorsResource {
     return Response.ok(response, MediaType.APPLICATION_JSON_TYPE).build();
   }
 
-
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
@@ -82,7 +81,6 @@ public class AdministratorsResource {
     return Response.created(uri).entity(new StatusResponse(Status.CREATED)).build();
   }
 
-
   @Path("{id: [0-9]+}")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
@@ -110,7 +108,7 @@ public class AdministratorsResource {
 
     // Fetch User
     User administrator = session.get(User.class, administratorId);
-    if (administrator == null) {
+    if (administrator == null || !administrator.getRole().equals(Role.ADMINISTRATOR)) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND).entity("Unknown administrator id").build();

@@ -116,7 +116,7 @@ public class TeachersResource {
 
     // Fetch User
     User teacher = session.get(User.class, teacherId);
-    if (teacher == null) {
+    if (teacher == null || !teacher.getRole().equals(Role.TEACHER)) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND)
