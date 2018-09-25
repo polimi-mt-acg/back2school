@@ -1,0 +1,18 @@
+{
+  "users": [
+    {
+      "role": "ADMINISTRATOR",
+      "name": "David2",
+      "surname": "David2 Surname",
+      "email": "david2@email.com",
+      "new_password": "password"
+    },
+    {
+      "role": "ADMINISTRATOR",
+      "name": "David3",
+      "surname": "David3 Surname",
+      "email": "david3@email.com",
+      "new_password": "password"
+    }
+  ]
+}
