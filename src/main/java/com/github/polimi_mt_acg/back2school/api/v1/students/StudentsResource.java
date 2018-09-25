@@ -161,7 +161,7 @@ public class StudentsResource {
 
     // Fetch User
     User student = session.get(User.class, studentId);
-    if (student == null) {
+    if (student == null || !student.getRole().equals(Role.STUDENT)) {
       session.close();
       return Response.status(Status.NOT_FOUND)
           .entity(new StatusResponse(Status.NOT_FOUND, "Unknown student id"))
@@ -213,7 +213,7 @@ public class StudentsResource {
 
     // Fetch student
     User student = session.get(User.class, studentId);
-    if (student == null) {
+    if (student == null || !student.getRole().equals(Role.STUDENT)) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND)
@@ -255,8 +255,16 @@ public class StudentsResource {
   @ParentTeacherAdministratorSecured
   @ParentOfStudentSecured
   @TeacherOfStudentSecured
-  public Response getStudentGradeById(@PathParam("grade_id") Integer gradeId) {
+  public Response getStudentGradeById(
+      @PathParam("id") Integer studentId, @PathParam("grade_id") Integer gradeId) {
+    // Fetch student
+    Optional<User> studentOpt = DatabaseHandler.fetchEntityBy(User.class, User_.id, studentId);
 
+    if (!studentOpt.isPresent() || !studentOpt.get().getRole().equals(Role.STUDENT)) {
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown student id"))
+          .build();
+    }
     // Fetch grade
     Optional<Grade> gradeOpt = DatabaseHandler.fetchEntityBy(Grade.class, Grade_.id, gradeId);
     if (!gradeOpt.isPresent()) {
@@ -294,7 +302,7 @@ public class StudentsResource {
 
     // Fetch student
     User student = session.get(User.class, studentId);
-    if (student == null) {
+    if (student == null || !student.getRole().equals(Role.STUDENT)) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND)
@@ -351,9 +359,20 @@ public class StudentsResource {
   @Produces(MediaType.APPLICATION_JSON)
   @TeacherAdministratorSecured
   @TeacherOfStudentSecured
-  public Response deleteStudentGradeById(@PathParam("grade_id") Integer gradeId) {
+  public Response deleteStudentGradeById(
+      @PathParam("id") Integer studentId, @PathParam("grade_id") Integer gradeId) {
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
+
+    // Fetch student
+    User student = session.get(User.class, studentId);
+    if (student == null || !student.getRole().equals(Role.STUDENT)) {
+      session.getTransaction().commit();
+      session.close();
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown student id"))
+          .build();
+    }
 
     // Fetch Grade entity
     Grade grade = session.get(Grade.class, gradeId);
