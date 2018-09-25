@@ -2,6 +2,7 @@ package com.github.polimi_mt_acg.back2school.model;
 
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import com.github.polimi_mt_acg.back2school.utils.RandomStringGenerator;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,6 +20,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.HttpHeaders;
+
 import org.hibernate.Session;
 
 @Entity
@@ -31,9 +33,10 @@ public class AuthenticationSession implements DeserializeToPersistInterface {
    * interactions the user is allowed to do without being force to do the login
    * again
    */
-  private static final Duration SESSION_DURATION = Duration.parse("PT30M" ); // 30 minutes
+  private static final Duration SESSION_DURATION = Duration.parse("PT30M"); // 30 minutes
 
-  @Transient public String seedUserEmail;
+  @Transient
+  public String seedUserEmail;
 
   @Id
   @GeneratedValue
@@ -110,14 +113,14 @@ public class AuthenticationSession implements DeserializeToPersistInterface {
 
   /**
    * Get the current authenticated user, if any, according to AuthenticationSession validity.
-   *
+   * <p>
    * Overall procedure:
    * 1. Get the token from the header.
    * 2. Use the token to retrieve the linked AuthenticationSession.
    * 3. Check if there exist an AuthenticationSession corresponding to the token.
    * 4. Check if the AuthenticationSession is still valid (not cancelled).
    * 5. Check if the duration of the user session is not gone over (w.r.t. the
-   *    last interaction)
+   * last interaction)
    * 6. Update the last_interaction_datetime of the session.
    * 7. Return the user associated to the AuthenticationSession of the token.
    *
@@ -129,36 +132,66 @@ public class AuthenticationSession implements DeserializeToPersistInterface {
     session.beginTransaction();
 
     User currentUser = getCurrentUser(requestContext, session);
+
     session.getTransaction().commit();
     session.close();
     return currentUser;
   }
 
+  public static User getCurrentUser(ContainerRequestContext requestContext, Session session) {
+    if (requestContext == null) return null;
+    String bearerAuthorizationToken = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
+    return getUserFromToken(bearerAuthorizationToken, session);
+  }
+
+
   /**
    * Get the current authenticated user, if any, according to AuthenticationSession validity.
-   *
+   * <p>
    * Overall procedure:
    * 1. Get the token from the header.
    * 2. Use the token to retrieve the linked AuthenticationSession.
    * 3. Check if there exist an AuthenticationSession corresponding to the token.
    * 4. Check if the AuthenticationSession is still valid (not cancelled).
    * 5. Check if the duration of the user session is not gone over (w.r.t. the
-   *    last interaction)
+   * last interaction)
    * 6. Update the last_interaction_datetime of the session.
    * 7. Return the user associated to the AuthenticationSession of the token.
    *
-   * @param requestContext The current request context.
-   * @param session The hibernate session to use
+   * @param HTTPHeaders The current HTTPHeaders.
    * @return
    */
-  public static User getCurrentUser(ContainerRequestContext requestContext, Session session) {
-    // Get the Authorization header from the request
-    String authorizationHeader = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
+  public static User getCurrentUser(HttpHeaders HTTPHeaders) {
+    Session session = DatabaseHandler.getInstance().getNewSession();
+    session.beginTransaction();
 
-    // Validate the Authorization header
-    if (authorizationHeader == null) return null;
-    String token = authorizationHeader.trim();
-    if (authorizationHeader.isEmpty()) return null;
+    User currentUser = getCurrentUser(HTTPHeaders, session);
+
+    session.getTransaction().commit();
+    session.close();
+    return currentUser;
+  }
+
+  public static User getCurrentUser(HttpHeaders HTTPHeaders, Session session) {
+    if (HTTPHeaders == null) return null;
+    String authorizationToken = HTTPHeaders.getHeaderString(HttpHeaders.AUTHORIZATION);
+    return getUserFromToken(authorizationToken, session);
+  }
+
+
+  /**
+   * Get the current authenticated user, if any, according to the given token.
+   *
+   * @param bearerAuthorizationToken The token with prefix "Bearer " corresponding to the session.
+   * @param session            The Hibernate session to use.
+   * @return
+   */
+  public static User getUserFromToken(String bearerAuthorizationToken, Session session) {
+    // Validate the Authorization token
+    if (bearerAuthorizationToken == null) return null;
+    String token = bearerAuthorizationToken.replace("Bearer ", "");
+    token = token.trim();
+    if (token.isEmpty()) return null;
 
     // query to get the last valid AuthenticationSession corresponding to the token
     // ------------------------------------
@@ -187,7 +220,8 @@ public class AuthenticationSession implements DeserializeToPersistInterface {
     sessionDatetimeValidityOffset = sessionDatetimeValidityOffset.plus(SESSION_DURATION);
 
     // if the time validity offset is over the current time: session is not more valid
-    if (sessionDatetimeValidityOffset.isBefore(LocalDateTime.now())) return null;
+    if (sessionDatetimeValidityOffset.isBefore(LocalDateTime.now()))
+      return null;
 
 
     /* ****  Otherwise, just update the last interaction attribute **** */
@@ -225,7 +259,7 @@ public class AuthenticationSession implements DeserializeToPersistInterface {
    * Invalidate all the still valid (set AuthenticationSession.cancelled = true)
    * sessions associated to the user.
    *
-   * @param user The user to which invalidate the sessions
+   * @param user    The user to which invalidate the sessions
    * @param session The hibernate session
    */
   public static void invalidateAllAuthenticationSession(User user, Session session) {
@@ -248,7 +282,7 @@ public class AuthenticationSession implements DeserializeToPersistInterface {
    * Get the list of still valid AuthenticationSession associated to an user.
    * By still valid it is meant: AuthenticationSession.cancelled = false
    *
-   * @param user The user to which retrieve active sessions
+   * @param user    The user to which retrieve active sessions
    * @param session The hibernate session
    * @return
    */

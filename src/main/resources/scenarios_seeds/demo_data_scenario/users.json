@@ -1,0 +1,113 @@
+/*
+
+
+*/
+{
+  "users": [
+    {
+      "role": "STUDENT",
+      "name": "Alice",
+      "surname": "SurnameAlice",
+      "email": "alice@email.com",
+      "new_password": "password"
+    },
+    {
+      "role": "STUDENT",
+      "name": "Alice1",
+      "surname": "SurnameAlice1",
+      "email": "alice1@email.com",
+      "new_password": "password"
+    },
+    {
+      "role": "STUDENT",
+      "name": "Alice2",
+      "surname": "SurnameAlice2",
+      "email": "alice2@email.com",
+      "new_password": "password"
+    },
+    {
+      "role": "STUDENT",
+      "name": "Alice3",
+      "surname": "SurnameAlice3",
+      "email": "alice3@email.com",
+      "new_password": "password"
+    },
+    {
+      "role": "STUDENT",
+      "name": "Alice4",
+      "surname": "SurnameAlice4",
+      "email": "alice4@email.com",
+      "new_password": "password"
+    },
+    {
+      "role": "STUDENT",
+      "name": "Alice5",
+      "surname": "SurnameAlice5",
+      "email": "alice5@email.com",
+      "new_password": "password"
+    },
+    {
+      "role": "PARENT",
+      "name": "Bob",
+      "surname": "SurnameBob",
+      "email": "bob@email.com",
+      "new_password": "password"
+    },
+    {
+      "role": "PARENT",
+      "name": "Bob1",
+      "surname": "SurnameBob1",
+      "email": "bob1@email.com",
+      "new_password": "password"
+    },
+    {
+      "role": "PARENT",
+      "name": "Bob2",
+      "surname": "SurnameBob2",
+      "email": "bob2@email.com",
+      "new_password": "password"
+    },
+    {
+      "role": "PARENT",
+      "name": "Bob3",
+      "surname": "SurnameBob3",
+      "email": "bob3@email.com",
+      "new_password": "password"
+    },
+    {
+      "role": "TEACHER",
+      "name": "Carl",
+      "surname": "SurnameCarl",
+      "email": "carl@email.com",
+      "new_password": "password"
+    },
+    {
+      "role": "TEACHER",
+      "name": "Carl1",
+      "surname": "SurnameCarl1",
+      "email": "carl1@email.com",
+      "new_password": "password"
+    },
+    {
+      "role": "TEACHER",
+      "name": "Carl2",
+      "surname": "SurnameCarl2",
+      "email": "carl2@email.com",
+      "new_password": "password"
+    },
+    {
+      "role": "TEACHER",
+      "name": "Carl3",
+      "surname": "SurnameCarl3",
+      "email": "carl3@email.com",
+      "new_password": "password"
+    },
+    {
+      "role": "ADMINISTRATOR",
+      "name": "David",
+      "surname": "SurnameDavid",
+      "email": "david@email.com",
+      "new_password": "password"
+    }
+  ]
+}

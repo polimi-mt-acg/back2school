@@ -1,0 +1,48 @@
+{
+  "classes": [
+    {
+      "academicYear": 2017,
+      "name": "1A",
+      "seedStudentsEmail": [
+        "alice1@email.com",
+        "alice4@email.com"
+      ]
+    },
+    {
+      "academicYear": 2017,
+      "name": "2A",
+      "seedStudentsEmail": [
+        "alice1@email.com",
+        "alice2@email.com",
+        "alice3@email.com",
+        "alice4@email.com",
+        "alice5@email.com"
+      ]
+    },
+    {
+      "academicYear": 2018,
+      "name": "1B",
+      "seedStudentsEmail": [
+        "alice@email.com",
+        "alice2@email.com"
+      ]
+    },
+    {
+      "academicYear": 2017,
+      "name": "2B",
+      "seedStudentsEmail": [
+        "alice3@email.com",
+        "alice4@email.com"
+      ]
+    },
+    {
+      "academicYear": 2018,
+      "name": "3B",
+      "seedStudentsEmail": [
+        "alice1@email.com",
+        "alice2@email.com",
+        "alice3@email.com"
+      ]
+    }
+  ]
+}

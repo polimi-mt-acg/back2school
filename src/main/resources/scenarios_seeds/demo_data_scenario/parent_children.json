@@ -1,0 +1,32 @@
+{
+  "parent_children": [
+    {
+      "seedParentEmail": "bob1@email.com",
+      "seedChildEmail": "alice3@email.com"
+    },
+    {
+      "seedParentEmail": "bob1@email.com",
+      "seedChildEmail": "alice4@email.com"
+    },
+    {
+      "seedParentEmail": "bob2@email.com",
+      "seedChildEmail": "alice3@email.com"
+    },
+    {
+      "seedParentEmail": "bob3@email.com",
+      "seedChildEmail": "alice4@email.com"
+    },
+    {
+      "seedParentEmail": "bob@email.com",
+      "seedChildEmail": "alice@email.com"
+    },
+    {
+      "seedParentEmail": "bob3@email.com",
+      "seedChildEmail": "alice1@email.com"
+    },
+    {
+      "seedParentEmail": "bob3@email.com",
+      "seedChildEmail": "alice2@email.com"
+    }
+  ]
+}

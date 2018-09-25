@@ -1,6 +1,7 @@
 package com.github.polimi_mt_acg.back2school.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.polimi_mt_acg.back2school.utils.RandomStringGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -12,29 +13,31 @@ import java.util.List;
 import java.util.logging.Logger;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
 @Table(name = "user")
 @XmlRootElement
+// skip null fields when serializing (e.g. newPassword field)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class User implements DeserializeToPersistInterface {
 
   private static final Logger LOGGER = Logger.getLogger(User.class.getName());
-  @Transient private String seedPassword;
+
+  /**
+   * The newPassword field: - is deserialized when received in a request or as outcome of a JSON
+   * mapping - is NOT serialized when it is null. Since it is Transient it will never be persisted
+   * on the database and anytime the User entity is retrieved back from the database this field will
+   * be null. By the annotation @JsonInclude(JsonInclude.Include.NON_NULL) on top of this entity,
+   * when a field is null it won't be serialized.
+   *
+   * <p>Further explanation: it is required to be also serializable otherwise the field won't behave
+   * correctly on User entity serialization while performing post requests on tests.
+   */
+  @Transient
+  @JsonProperty("new_password")
+  protected String newPassword;
 
   @Id
   @GeneratedValue
@@ -62,10 +65,10 @@ public class User implements DeserializeToPersistInterface {
 
   @ManyToMany
   @JoinTable(
-    name = "user_notification_read",
-    joinColumns = @JoinColumn(name = "user_id"),
-    inverseJoinColumns = @JoinColumn(name = "notification_id")
-  )
+      name = "user_notification_read",
+      joinColumns = @JoinColumn(name = "user_id"),
+      inverseJoinColumns = @JoinColumn(name = "notification_id"),
+      uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "notification_id"}))
   private List<Notification> notificationsRead = new ArrayList<>();
 
   @ManyToMany(cascade = CascadeType.ALL)
@@ -77,8 +80,8 @@ public class User implements DeserializeToPersistInterface {
 
   @Override
   public void prepareToPersist() {
-    if (seedPassword != null) {
-      setPassword(this.seedPassword);
+    if (getNewPassword() != null) {
+      setPassword(this.newPassword);
     }
   }
 
@@ -169,6 +172,7 @@ public class User implements DeserializeToPersistInterface {
    */
   public boolean passwordEqualsTo(String passwordToCheck) {
     if (this.salt == null || this.password == null) {
+      System.err.println("[ERROR] Password check on NULL password. User.email: " + this.getEmail());
       return false;
     }
 
@@ -176,14 +180,12 @@ public class User implements DeserializeToPersistInterface {
     return this.password.equals(hashOfPasswordToCheck);
   }
 
-  @JsonIgnore
-  public String getSeedPassword() {
-    return seedPassword;
+  public String getNewPassword() {
+    return this.newPassword;
   }
 
-  @JsonProperty
-  public void setSeedPassword(String seedPassword) {
-    this.seedPassword = seedPassword;
+  public void setNewPassword(String newPassword) {
+    this.newPassword = newPassword;
   }
 
   @JsonIgnore
@@ -192,6 +194,11 @@ public class User implements DeserializeToPersistInterface {
   }
 
   public void addNotificationsRead(Notification notification) {
+    for (Notification n: getNotificationsRead()) {
+      if (n.getId() == notification.getId()) {
+        return;
+      }
+    }
     this.notificationsRead.add(notification);
   }
 

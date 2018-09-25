@@ -470,7 +470,7 @@ public class ClassesResourceTest {
             .buildPost(Entity.json(notificationRequest));
 
     Response postResponse = postRequest.invoke();
-    assertEquals(Status.OK.getStatusCode(), postResponse.getStatus());
+    assertEquals(Status.CREATED.getStatusCode(), postResponse.getStatus());
 
     // verify it has been correctly saved
     Optional<NotificationClassTeacher> notificationClassTeacherOpt =
@@ -511,7 +511,7 @@ public class ClassesResourceTest {
             .buildPost(Entity.json(notificationRequest));
 
     Response postResponse = postRequest.invoke();
-    assertEquals(Status.OK.getStatusCode(), postResponse.getStatus());
+    assertEquals(Status.CREATED.getStatusCode(), postResponse.getStatus());
 
     // verify it has been correctly saved
     Optional<NotificationClassParent> NotificationClassParentOpt =

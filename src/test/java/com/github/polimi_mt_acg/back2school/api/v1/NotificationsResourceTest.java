@@ -1,5 +1,6 @@
 package com.github.polimi_mt_acg.back2school.api.v1;
 
+import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.print;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -13,10 +14,12 @@ import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.model.User.Role;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseSeeder;
+import com.github.polimi_mt_acg.back2school.utils.TestCategory;
 import com.github.polimi_mt_acg.back2school.utils.rest.HTTPServerManager;
 import com.github.polimi_mt_acg.back2school.utils.rest.RestFactory;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.ws.rs.client.Entity;
@@ -27,6 +30,7 @@ import org.glassfish.grizzly.http.server.HttpServer;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 public class NotificationsResourceTest {
 
@@ -56,6 +60,7 @@ public class NotificationsResourceTest {
   }
 
   @Test
+  @Category(TestCategory.Endpoint.class)
   public void getNotifications() throws IOException {
     // Get Database seeds
     List<User> admins =
@@ -81,6 +86,7 @@ public class NotificationsResourceTest {
   }
 
   @Test
+  @Category(TestCategory.Endpoint.class)
   public void sendNotificationToTeachers() throws JsonProcessingException {
     // Get an admin
     List<User> admins =
@@ -98,28 +104,38 @@ public class NotificationsResourceTest {
     // Set the POST request
     Invocation request =
         RestFactory.getAuthenticatedInvocationBuilder(
-            admin, new String[] {"notifications", "send-to-teachers"})
+                admin, new String[] {"notifications", "send-to-teachers"})
             .buildPost(Entity.json(notification));
 
     // Invoke the request
     Response response = request.invoke();
-    assertEquals(Status.OK.getStatusCode(), response.getStatus());
+    assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
+
+    // get the created entity
+    Invocation getRequest =
+        RestFactory.getAuthenticatedInvocationBuilder(admin, response.getLocation()).buildGet();
+
+    Response getResponse = getRequest.invoke();
+    assertEquals(Status.OK.getStatusCode(), getResponse.getStatus());
 
     NotificationGeneralTeachers responseNotif =
-        response.readEntity(NotificationGeneralTeachers.class);
+        getResponse.readEntity(NotificationGeneralTeachers.class);
 
     // Print it
-    ObjectMapper mapper = RestFactory.objectMapper();
-    System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(responseNotif));
+    print("Got from: ", response.getLocation());
+    print(responseNotif);
 
     assertNotNull(responseNotif);
     assertEquals(responseNotif.getSubject(), notification.getSubject());
     assertEquals(responseNotif.getText(), notification.getText());
-    assertEquals(responseNotif.getDatetime(), notification.getDatetime());
+    assertEquals(
+        responseNotif.getDatetime().truncatedTo(ChronoUnit.SECONDS),
+        notification.getDatetime().truncatedTo(ChronoUnit.SECONDS));
     assertEquals(responseNotif.getCreator().getEmail(), admin.getEmail());
   }
 
   @Test
+  @Category(TestCategory.Endpoint.class)
   public void sendNotificationToParents() throws JsonProcessingException {
     // Get an admin
     List<User> admins =
@@ -137,25 +153,33 @@ public class NotificationsResourceTest {
 
     // Create the POST request
     Invocation request =
-        RestFactory.getAuthenticatedInvocationBuilder(
-            admin, "notifications", "send-to-parents")
+        RestFactory.getAuthenticatedInvocationBuilder(admin, "notifications", "send-to-parents")
             .buildPost(Entity.json(notification));
 
     // Invoke the request
     Response response = request.invoke();
-    assertEquals(Status.OK.getStatusCode(), response.getStatus());
+    assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
+
+    // get the created entity
+    Invocation getRequest =
+        RestFactory.getAuthenticatedInvocationBuilder(admin, response.getLocation()).buildGet();
+
+    Response getResponse = getRequest.invoke();
+    assertEquals(Status.OK.getStatusCode(), getResponse.getStatus());
 
     NotificationGeneralParents responseNotif =
-        response.readEntity(NotificationGeneralParents.class);
+        getResponse.readEntity(NotificationGeneralParents.class);
 
     // Print it
-    ObjectMapper mapper = RestFactory.objectMapper();
-    System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(responseNotif));
+    print("Got from: ", response.getLocation());
+    print(responseNotif);
 
     assertNotNull(responseNotif);
     assertEquals(responseNotif.getSubject(), notification.getSubject());
     assertEquals(responseNotif.getText(), notification.getText());
-    assertEquals(responseNotif.getDatetime(), notification.getDatetime());
+    assertEquals(
+        responseNotif.getDatetime().truncatedTo(ChronoUnit.SECONDS),
+        notification.getDatetime().truncatedTo(ChronoUnit.SECONDS));
     assertEquals(responseNotif.getCreator().getEmail(), admin.getEmail());
   }
 

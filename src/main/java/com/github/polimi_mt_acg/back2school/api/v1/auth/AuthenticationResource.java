@@ -1,28 +1,23 @@
 package com.github.polimi_mt_acg.back2school.api.v1.auth;
 
+import com.github.polimi_mt_acg.back2school.api.v1.StatusResponse;
 import com.github.polimi_mt_acg.back2school.model.AuthenticationSession;
 import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.model.User_;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
+
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import org.hibernate.Session;
-
-
-/**
- * Replies to a HTTP POST to /auth/logout endpoint.
- *
- * @return The session token is the user is authenticated.
- */
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
 
 /**
  * JAX-RS resource for HTTP client authentication. Check authenticateUser() for additional details
@@ -47,35 +42,43 @@ public class AuthenticationResource {
 
     // if the user is null: invalid credentials or user does not exist
     if (user == null)
-      return Response.status(Response.Status.BAD_REQUEST).build();
+      return Response.status(Response.Status.BAD_REQUEST)
+          .entity(new StatusResponse(Response.Status.BAD_REQUEST, "Invalid credentials."))
+          .build();
 
+    // if a student is trying to log in
+    if (user.getRole().equals(User.Role.STUDENT))
+      return Response.status(Response.Status.UNAUTHORIZED)
+          .entity(new StatusResponse(Response.Status.UNAUTHORIZED, "Students cannot login."))
+          .build();
 
     // create a new AuthenticationSession and return back the token to the client
-    AuthenticationSession authSession =
-        AuthenticationSession.startNewAuthenticationSession(user);
-
+    AuthenticationSession authSession = AuthenticationSession.startNewAuthenticationSession(user);
 
     String token = authSession.getToken();
-    return Response.ok(token).build();
+
+    return Response.ok(new LoginResponse("AUTHENTICATED", token)).build();
   }
 
   @GET
   @Path("logout")
-  public LogoutResponse userLogout(ContainerRequestContext requestContext) {
-    User currentUser = AuthenticationSession.getCurrentUser(requestContext);
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response userLogout(@Context HttpHeaders httpHeaders) {
+    User currentUser = AuthenticationSession.getCurrentUser(httpHeaders);
 
     // if the user is null because session expired or other reasons
     if (currentUser == null)
-      return new LogoutResponse();
+      return Response.status(Response.Status.BAD_REQUEST)
+          .entity(new StatusResponse(Response.Status.BAD_REQUEST, "Invalid authenticated session."))
+          .build();
 
     Session session = DatabaseHandler.getInstance().getNewSession();
     // invalidate all the still valid user sessions
     AuthenticationSession.invalidateAllAuthenticationSession(currentUser, session);
     session.close();
 
-    return new LogoutResponse();
+    return Response.ok(new LogoutResponse()).build();
   }
-
 
   private User getAuthenticatedUser(String email, String password) {
     // Authenticate against the database
@@ -94,4 +97,3 @@ public class AuthenticationResource {
     return user;
   }
 }
-

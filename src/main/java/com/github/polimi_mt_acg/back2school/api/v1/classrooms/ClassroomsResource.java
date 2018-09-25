@@ -1,5 +1,6 @@
 package com.github.polimi_mt_acg.back2school.api.v1.classrooms;
 
+import com.github.polimi_mt_acg.back2school.api.v1.StatusResponse;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.AdministratorSecured;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.TeacherAdministratorSecured;
 import com.github.polimi_mt_acg.back2school.model.Classroom;
@@ -43,9 +44,9 @@ public class ClassroomsResource {
 
   @POST
   @Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
+  @Produces(javax.ws.rs.core.MediaType.APPLICATION_JSON)
   @AdministratorSecured
   public Response postClassrooms(Classroom classroom, @Context UriInfo uriInfo) {
-
     // Check if a classroom with same name already exists, if so, do nothing
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
@@ -56,23 +57,28 @@ public class ClassroomsResource {
     if (!result.isEmpty()) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Response.Status.CONFLICT).entity("Classroom already exists.").build();
+      return Response.status(Response.Status.CONFLICT)
+          .entity(
+              new StatusResponse(
+                  Response.Status.CONFLICT, "Classroom with this name already exists"))
+          .build();
     }
 
     // Otherwise we accept the request.
     session.persist(classroom);
-    session.getTransaction().commit(); // Makes classrrom persisted.
+    session.getTransaction().commit(); // Makes classroom persisted.
     session.close();
 
     // Now classroom has the ID field filled by the ORM
     UriBuilder builder = uriInfo.getAbsolutePathBuilder();
     URI uri = builder.path(String.valueOf(classroom.getId())).build();
-    return Response.created(uri).build();
+    return Response.created(uri).entity(new StatusResponse(Response.Status.CREATED)).build();
   }
 
   @Path("{id: [0-9]+}")
   @GET
   @Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
+  @Produces(javax.ws.rs.core.MediaType.APPLICATION_JSON)
   @TeacherAdministratorSecured
   public Response getClassroomById(@PathParam("id") String classroomId) {
     // Fetch Classroom
@@ -82,7 +88,9 @@ public class ClassroomsResource {
                 Classroom.class, Classroom_.id, Integer.parseInt(classroomId));
 
     if (res.isEmpty()) {
-      return Response.status(Response.Status.NOT_FOUND).entity("Unknown classroom id").build();
+      return Response.status(Response.Status.NOT_FOUND)
+          .entity(new StatusResponse(Response.Status.NOT_FOUND, "Unknown classroom id"))
+          .build();
     }
 
     Classroom classroom = res.get(0);
@@ -92,6 +100,7 @@ public class ClassroomsResource {
   @Path("{id: [0-9]+}")
   @PUT
   @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
   public Response putClassroomById(
       PutClassroomRequest newClassroom, @PathParam("id") String classroomId) {
@@ -107,7 +116,9 @@ public class ClassroomsResource {
     if (res.isEmpty()) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Response.Status.NOT_FOUND).entity("Unknown classroom id").build();
+      return Response.status(Response.Status.NOT_FOUND)
+          .entity(new StatusResponse(Response.Status.NOT_FOUND, "Unknown classroom id"))
+          .build();
     }
 
     Classroom classroom = res.get(0);
@@ -118,7 +129,7 @@ public class ClassroomsResource {
     // According to HTTP specification:
     // HTTP status code 200 OK for a successful PUT of an update to an existing resource. No
     // response body needed.
-    return Response.ok().build();
+    return Response.ok().entity(new StatusResponse(Response.Status.OK)).build();
   }
 
   private void updateClassroom(Classroom classroom, PutClassroomRequest newClassroom) {

@@ -1,5 +1,6 @@
 package com.github.polimi_mt_acg.back2school.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import java.time.LocalDate;
 import java.util.List;
@@ -16,6 +17,7 @@ import javax.persistence.Transient;
 
 @Entity
 @Table(name = "grade")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Grade implements DeserializeToPersistInterface {
 
   private static final Logger LOGGER = Logger.getLogger(Grade.class.getName());

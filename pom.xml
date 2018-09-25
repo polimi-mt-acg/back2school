@@ -24,7 +24,8 @@
           <source>1.8</source>
           <target>1.8</target>
           <compilerArguments>
-            <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
+            <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor
+            </processor>
           </compilerArguments>
         </configuration>
       </plugin>
@@ -32,11 +33,83 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.19.1</version>
         <configuration>
-          <!--<groups>com.github.polimi_mt_acg.back2school.utils.TestCategory$StudentsEndpoint</groups>-->
+          <!-- just as a default, so deploy will be done straight -->
+          <skipTests>true</skipTests>
           <!--<groups>com.github.polimi_mt_acg.back2school.utils.TestCategory$Transient</groups>-->
         </configuration>
       </plugin>
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>3.0.0</version>
+      </plugin>
 
+      <plugin>
+        <groupId>org.wildfly.plugins</groupId>
+        <artifactId>wildfly-maven-plugin</artifactId>
+        <version>1.2.2.Final</version>
+        <executions>
+          <!-- Undeploy the application on clean -->
+          <execution>
+            <id>undeploy</id>
+            <phase>clean</phase>
+            <goals>
+              <goal>undeploy</goal>
+            </goals>
+            <configuration>
+              <ignoreMissingDeployment>true</ignoreMissingDeployment>
+            </configuration>
+          </execution>
+
+          <!-- Deploy the JDBC library -->
+          <execution>
+            <id>deploy-driver</id>
+            <phase>install</phase>
+            <configuration>
+              <groupId>org.mariadb.jdbc</groupId>
+              <artifactId>mariadb-java-client</artifactId>
+              <name>mariadb.jar</name>
+            </configuration>
+            <goals>
+              <goal>deploy-artifact</goal>
+            </goals>
+          </execution>
+          <!-- Add a data source -->
+          <execution>
+            <id>add-datasource</id>
+            <phase>install</phase>
+            <configuration>
+              <address>subsystem=datasources,data-source=myDatasource</address>
+              <resources>
+                <resource>
+                  <enableResource>true</enableResource>
+                  <properties>
+                    <connection-url>jdbc:mysql://localhost/back2school
+                    </connection-url>
+                    <jndi-name>java:jboss/myDatasource</jndi-name>
+                    <enabled>true</enabled>
+                    <enable>true</enable>
+                    <user-name>root</user-name>
+                    <password>rootpwd</password>
+                    <driver-name>mariadb.jar</driver-name>
+                    <use-ccm>false</use-ccm>
+                  </properties>
+                </resource>
+              </resources>
+            </configuration>
+            <goals>
+              <goal>add-resource</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>deploy</id>
+            <phase>install</phase>
+            <goals>
+              <goal>deploy</goal>
+            </goals>
+          </execution>
+        </executions>
+
+      </plugin>
     </plugins>
   </build>
 

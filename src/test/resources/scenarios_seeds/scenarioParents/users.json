@@ -5,133 +5,133 @@
       "name": "Alice",
       "surname": "SurnameAlice",
       "email": "alice@email.com",
-      "seedPassword": "alice_password"
+      "new_password": "alice_password"
     },
     {
       "role": "STUDENT",
       "name": "Alice0",
       "surname": "SurnameAlice0",
       "email": "alice0@email.com",
-      "seedPassword": "alice_password0"
+      "new_password": "alice_password0"
     },
     {
       "role": "STUDENT",
       "name": "Alice1",
       "surname": "SurnameAlice1",
       "email": "alice1@email.com",
-      "seedPassword": "alice_password1"
+      "new_password": "alice_password1"
     },
     {
       "role": "STUDENT",
       "name": "Alice2",
       "surname": "SurnameAlice2",
       "email": "alice2@email.com",
-      "seedPassword": "alice_password2"
+      "new_password": "alice_password2"
     },
     {
       "role": "STUDENT",
       "name": "Alice3",
       "surname": "SurnameAlice3",
       "email": "alice3@email.com",
-      "seedPassword": "alice_password3"
+      "new_password": "alice_password3"
     },
     {
       "role": "STUDENT",
       "name": "Alice4",
       "surname": "SurnameAlice4",
       "email": "alice4@email.com",
-      "seedPassword": "alice_password4"
+      "new_password": "alice_password4"
     },
     {
       "role": "STUDENT",
       "name": "Alice5",
       "surname": "SurnameAlice5",
       "email": "alice5@email.com",
-      "seedPassword": "alice_password5"
+      "new_password": "alice_password5"
     },
     {
       "role": "STUDENT",
       "name": "Alice6",
       "surname": "SurnameAlice6",
       "email": "alice6@email.com",
-      "seedPassword": "alice_password6"
+      "new_password": "alice_password6"
     },
     {
       "role": "STUDENT",
       "name": "Alice7",
       "surname": "SurnameAlice7",
       "email": "alice7@email.com",
-      "seedPassword": "alice_password7"
+      "new_password": "alice_password7"
     },
     {
       "role": "STUDENT",
       "name": "Alice8",
       "surname": "SurnameAlice8",
       "email": "alice8@email.com",
-      "seedPassword": "alice_password8"
+      "new_password": "alice_password8"
     },
     {
       "role": "STUDENT",
       "name": "Alice9",
       "surname": "SurnameAlice9",
       "email": "alice9@email.com",
-      "seedPassword": "alice_password9"
+      "new_password": "alice_password9"
     },
     {
       "role": "STUDENT",
       "name": "Alice10",
       "surname": "SurnameAlice10",
       "email": "alice10@email.com",
-      "seedPassword": "alice_password10"
+      "new_password": "alice_password10"
     },
     {
       "role": "PARENT",
       "name": "Bob",
       "surname": "SurnameBob",
       "email": "bob@email.com",
-      "seedPassword": "bob_password"
+      "new_password": "bob_password"
     },
     {
       "role": "TEACHER",
       "name": "Carl",
       "surname": "SurnameCarl",
       "email": "carl@email.com",
-      "seedPassword": "email_password"
+      "new_password": "email_password"
     },
     {
       "role": "TEACHER",
       "name": "John",
       "surname": "SurnameJohn",
       "email": "john@email.com",
-      "seedPassword": "email_password"
+      "new_password": "email_password"
     },
     {
       "role": "ADMINISTRATOR",
       "name": "David",
       "surname": "SurnameDavid",
       "email": "david@email.com",
-      "seedPassword": "david_password"
+      "new_password": "david_password"
     },
     {
       "role": "STUDENT",
       "name": "Edmond",
       "surname": "SurnameEdmond",
       "email": "edmond@email.com",
-      "seedPassword": "edmond_password"
+      "new_password": "edmond_password"
     },
     {
       "role": "STUDENT",
       "name": "Finn",
       "surname": "SurnameFinn",
       "email": "finn@email.com",
-      "seedPassword": "finn_password"
+      "new_password": "finn_password"
     },
     {
       "role": "PARENT",
       "name": "Bob2",
       "surname": "SurnameBob2",
       "email": "bob2@email.com",
-      "seedPassword": "bob2_password"
+      "new_password": "bob2_password"
     }
   ]
 }

@@ -5,70 +5,70 @@
       "name": "AdminUser",
       "surname": "Bob",
       "email": "bob@email.com",
-      "seedPassword": "email_password"
+      "new_password": "email_password"
     },
     {
       "role": "ADMINISTRATOR",
       "name": "AdminDavidUser",
       "surname": "DavidSurname",
       "email": "david@email.com",
-      "seedPassword": "email_password"
+      "new_password": "email_password"
     },
     {
       "role": "STUDENT",
       "name": "Alice1",
       "surname": "SurnameAlice1",
       "email": "alice1@email.com",
-      "seedPassword": "email_password"
+      "new_password": "email_password"
     },
     {
       "role": "STUDENT",
       "name": "Alice2",
       "surname": "SurnameAlice2",
       "email": "alice2@email.com",
-      "seedPassword": "email_password"
+      "new_password": "email_password"
     },
     {
       "role": "STUDENT",
       "name": "Alice3",
       "surname": "SurnameAlice3",
       "email": "alice3@email.com",
-      "seedPassword": "email_password"
+      "new_password": "email_password"
     },
     {
       "role": "STUDENT",
       "name": "Alice4",
       "surname": "SurnameAlice4",
       "email": "alice4@email.com",
-      "seedPassword": "email_password"
+      "new_password": "email_password"
     },
     {
       "role": "STUDENT",
       "name": "Alice5",
       "surname": "SurnameAlice5",
       "email": "alice5@email.com",
-      "seedPassword": "email_password"
+      "new_password": "email_password"
     },
     {
       "role": "STUDENT",
       "name": "Alice6",
       "surname": "SurnameAlice6",
       "email": "alice6@email.com",
-      "seedPassword": "email_password"
+      "new_password": "email_password"
     },
     {
       "role": "STUDENT",
       "name": "Alice7",
       "surname": "SurnameAlice7",
       "email": "alice7@email.com",
-      "seedPassword": "email_password"
+      "new_password": "email_password"
     },
     {
       "role": "STUDENT",
       "name": "Alice8",
       "surname": "SurnameAlice8",
       "email": "alice8@email.com",
-      "seedPassword": "email_password"
+      "new_password": "email_password"
     }
   ]
 }

@@ -5,14 +5,14 @@
       "name": "Marco",
       "surname": "SurnameMarco1",
       "email": "marco@email.com",
-      "seedPassword": "marco_password1"
+      "new_password": "marco_password1"
     },
     {
       "role": "STUDENT",
       "name": "Sara",
       "surname": "SurnameSara",
       "email": "sara@email.com",
-      "seedPassword": "sara_password"
+      "new_password": "sara_password"
     }
   ]
 }

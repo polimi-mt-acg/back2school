@@ -1,0 +1,71 @@
+/*
+  The users below are used to issue post request during test and  so
+  create new users that were not inserted during the deployScenario procedure.
+*/
+{
+  "users": [
+    {
+      "role": "TEACHER",
+      "name": "CarlPost0",
+      "surname": "SurnameCarlPost0",
+      "email": "carl-post0@email.com",
+      "new_password": "email_password"
+    },
+    {
+      "role": "TEACHER",
+      "name": "CarlPost1",
+      "surname": "SurnameCarlPost1",
+      "email": "carl-post1@email.com",
+      "new_password": "email_password"
+    },
+    {
+      "role": "TEACHER",
+      "name": "CarlPost2",
+      "surname": "SurnameCarlPost2",
+      "email": "carl-post2@email.com",
+      "new_password": "email_password"
+    },
+    {
+      "role": "TEACHER",
+      "name": "CarlPost3",
+      "surname": "SurnameCarlPost3",
+      "email": "carl-post3@email.com",
+      "new_password": "email_password"
+    },
+    {
+      "role": "TEACHER",
+      "name": "CarlPost4",
+      "surname": "SurnameCarlPost4",
+      "email": "carl-post4@email.com",
+      "new_password": "email_password"
+    },
+    {
+      "role": "TEACHER",
+      "name": "CarlPost5",
+      "surname": "SurnameCarlPost5",
+      "email": "carl-post5@email.com",
+      "new_password": "email_password"
+    },
+    {
+      "role": "TEACHER",
+      "name": "CarlPost6",
+      "surname": "SurnameCarlPost6",
+      "email": "carl-post6@email.com",
+      "new_password": "email_password"
+    },
+    {
+      "role": "TEACHER",
+      "name": "CarlPost7",
+      "surname": "SurnameCarlPost7",
+      "email": "carl-post7@email.com",
+      "new_password": "email_password"
+    },
+    {
+      "role": "TEACHER",
+      "name": "CarlPost8",
+      "surname": "SurnameCarlPost8",
+      "email": "carl-post8@email.com",
+      "new_password": "email_password"
+    }
+  ]
+}

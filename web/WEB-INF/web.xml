@@ -8,6 +8,6 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>com.github.polimi_mt_acg.back2school.RESTApplication</servlet-name>
-    <url-pattern>/v1/*</url-pattern>
+    <url-pattern>/api/v1/*</url-pattern>
   </servlet-mapping>
 </web-app>

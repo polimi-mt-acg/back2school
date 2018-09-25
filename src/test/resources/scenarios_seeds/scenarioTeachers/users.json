@@ -5,55 +5,55 @@
       "name": "David",
       "surname": "SurnameDavid",
       "email": "david@email.com",
-      "seedPassword": "david_password"
+      "new_password": "david_password"
     },
     {
       "role": "TEACHER",
       "name": "Carl1",
       "surname": "SurnameCarl1",
       "email": "carl1@email.com",
-      "seedPassword": "email_password"
+      "new_password": "email_password"
     },
     {
       "role": "TEACHER",
       "name": "Carl2",
       "surname": "SurnameCarl2",
       "email": "carl2@email.com",
-      "seedPassword": "email_password"
+      "new_password": "email_password"
     },
     {
       "role": "TEACHER",
       "name": "Carl3",
       "surname": "SurnameCarl3",
       "email": "carl3@email.com",
-      "seedPassword": "email_password"
+      "new_password": "email_password"
     },
     {
       "role": "STUDENT",
       "name": "Bob1",
       "surname": "SurnameBob1",
       "email": "bob1@email.com",
-      "seedPassword": "email_password"
+      "new_password": "email_password"
     },
     {
       "role": "STUDENT",
       "name": "Bob2",
       "surname": "SurnameBob2",
       "email": "bob2@email.com",
-      "seedPassword": "email_password"
+      "new_password": "email_password"
     },
     {
       "role": "PARENT",
       "name": "Alice",
       "surname": "SurnameAlice",
       "email": "alice@email.com",
-      "seedPassword": "email_password"
+      "new_password": "email_password"
     },
     {
       "role": "PARENT",
       "name": "Alice2",
       "email": "alice2@email.com",
-      "seedPassword": "email_password"
+      "new_password": "email_password"
     }
   ]
 }

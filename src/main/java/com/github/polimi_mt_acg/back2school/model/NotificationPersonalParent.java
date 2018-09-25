@@ -1,6 +1,7 @@
 package com.github.polimi_mt_acg.back2school.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import java.util.List;
@@ -13,6 +14,7 @@ import javax.persistence.Transient;
 
 @Entity
 @DiscriminatorValue(value = "PERSONAL-PARENT")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class NotificationPersonalParent extends Notification {
 
   @Transient private String seedTargetParentEmail;

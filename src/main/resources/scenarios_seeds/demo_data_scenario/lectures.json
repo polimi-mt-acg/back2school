@@ -1,0 +1,40 @@
+{
+  "lectures": [
+    {
+      "seedSubjectName": "English",
+      "seedTeacherEmail": "carl@email.com",
+      "seedClassroomName": "2.1",
+      "seedClassName": "1B",
+      "seedClassYear": 2018,
+      "datetimeStart": "2018-05-20T12:15:00",
+      "datetimeEnd": "2018-05-20T14:15:00"
+    },
+    {
+      "seedSubjectName": "English",
+      "seedTeacherEmail": "carl@email.com",
+      "seedClassroomName": "1.4",
+      "seedClassName": "2B",
+      "seedClassYear": 2017,
+      "datetimeStart": "2017-05-20T08:15:00",
+      "datetimeEnd": "2017-05-20T10:15:00"
+    },
+    {
+      "seedSubjectName": "History",
+      "seedTeacherEmail": "carl@email.com",
+      "seedClassroomName": "1.4",
+      "seedClassName": "3B",
+      "seedClassYear": 2018,
+      "datetimeStart": "2018-05-14T10:15:00",
+      "datetimeEnd": "2018-05-14T12:15:00"
+    },
+    {
+      "seedSubjectName": "History",
+      "seedTeacherEmail": "carl2@email.com",
+      "seedClassroomName": "1.4",
+      "seedClassName": "3B",
+      "seedClassYear": 2018,
+      "datetimeStart": "2018-05-14T10:15:00",
+      "datetimeEnd": "2018-05-14T12:15:00"
+    }
+  ]
+}
