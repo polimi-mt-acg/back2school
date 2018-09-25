@@ -34,4 +34,4 @@ out/
 **/hibernate.cfg.xml
 
 # Maven configs
-wildfly-config.properties
+wildfly.cfg.properties

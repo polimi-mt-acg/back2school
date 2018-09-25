@@ -28,7 +28,7 @@
             </goals>
             <configuration>
               <files>
-                <file>wildfly-config.properties</file>
+                <file>wildfly.cfg.properties</file>
               </files>
             </configuration>
           </execution>
