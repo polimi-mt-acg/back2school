@@ -16,7 +16,7 @@ docker-compose up &
 Compile, tear the application server up and deploy the application:
 
 ```bash
-mvn install
+mvn install -DskipTests
 ```
 
 Once the deployment succeed, the application will be ready to accept incoming requests.
