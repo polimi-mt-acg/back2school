@@ -32,3 +32,6 @@ out/
 
 # Hibernate configs
 **/hibernate.cfg.xml
+
+# Maven configs
+wildfly-config.properties
