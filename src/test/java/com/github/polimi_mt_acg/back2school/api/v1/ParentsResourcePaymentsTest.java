@@ -232,8 +232,9 @@ public class ParentsResourcePaymentsTest {
 
     assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
+
     // Print it
-    print("POST ", response);
+    print("POST /parents/", parentID, "/payments/", paymentID, "/pay");
   }
 
   private ParentPaymentRequest buildPayment(Payment.Type type, double amount) {
