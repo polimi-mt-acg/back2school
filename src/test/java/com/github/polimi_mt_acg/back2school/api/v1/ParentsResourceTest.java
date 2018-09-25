@@ -123,7 +123,7 @@ public class ParentsResourceTest {
   @Test
   @Category(TestCategory.Endpoint.class)
   public void getParentByIdFromNotSameParent() {
-    User seedParent = DatabaseSeeder.getSeedUserByRole("scenarioParents_ToPost1", User.Role.PARENT);
+    User seedParent = DatabaseSeeder.getSeedUserByRole("scenarioParentsToPost", User.Role.PARENT, 0);
     assertNotNull(seedParent);
 
     URI parentURI = RestFactory.doPostRequest(adminForAuth, seedParent, "parents");
@@ -144,7 +144,7 @@ public class ParentsResourceTest {
   @Test
   @Category(TestCategory.Endpoint.class)
   public void getParentByIdFromSameParent() {
-    User seedParent = DatabaseSeeder.getSeedUserByRole("scenarioParents_ToPost2", User.Role.PARENT);
+    User seedParent = DatabaseSeeder.getSeedUserByRole("scenarioParentsToPost", User.Role.PARENT, 1);
     assertNotNull(seedParent);
 
     URI postParent = RestFactory.doPostRequest(adminForAuth, seedParent, "parents");

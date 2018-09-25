@@ -106,7 +106,7 @@ public class ClassesResourceTest {
     // get classes to post
     List<Class> seedClasses =
         (List<Class>)
-            DatabaseSeeder.getEntitiesListFromSeed("scenarioClasses_ToPost1", "classes.json");
+            DatabaseSeeder.getEntitiesListFromSeed("scenarioClassesToPost", "classes.json");
     assertNotNull(seedClasses);
 
     Class seedClass =
