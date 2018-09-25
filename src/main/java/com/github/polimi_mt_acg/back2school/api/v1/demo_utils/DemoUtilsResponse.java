@@ -28,6 +28,10 @@ public class DemoUtilsResponse {
     this.urls.put("empty_database", uriEmptyDatabase);
   }
 
+  public void setUrlWhoAmI(URI uriWhoAmI) {
+    this.urls.put("who_am_i", uriWhoAmI);
+  }
+
   public HashMap<String, URI> getUrls() {
     return urls;
   }
