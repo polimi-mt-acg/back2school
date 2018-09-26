@@ -5,7 +5,7 @@ import com.github.polimi_mt_acg.back2school.api.v1.notifications.NotificationsRe
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.AdministratorSecured;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.ParentAdministratorSecured;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.ParentSecured;
-import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.SameParentSecured;
+import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.SameParentOfPathParentIdSecured;
 import com.github.polimi_mt_acg.back2school.model.*;
 import com.github.polimi_mt_acg.back2school.model.Class;
 import com.github.polimi_mt_acg.back2school.model.User.Role;
@@ -43,7 +43,7 @@ public class ParentsResource {
         DatabaseHandler.getInstance()
             .getListSelectFromWhereEqual(User.class, User_.role, Role.PARENT);
 
-    // For each user, build a URI to /parents/{id}
+    // For each user, build a URI to /parents/{parentId}
     List<URI> uris = new ArrayList<>();
     for (User parent : parents) {
       UriBuilder builder = uriInfo.getAbsolutePathBuilder();
@@ -95,12 +95,12 @@ public class ParentsResource {
     return Response.created(uri).entity(new StatusResponse(Status.CREATED)).build();
   }
 
-  @Path("{id: [0-9]+}")
+  @Path("{parentId: [0-9]+}")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @ParentAdministratorSecured
-  @SameParentSecured
-  public Response getParentById(@PathParam("id") Integer parentId) {
+  @SameParentOfPathParentIdSecured
+  public Response getParentById(@PathParam("parentId") Integer parentId) {
     // Fetch User
     Optional<User> parentOpt = DatabaseHandler.fetchEntityBy(User.class, User_.id, parentId);
     if (!parentOpt.isPresent() || !parentOpt.get().getRole().equals(Role.PARENT)) {
@@ -112,13 +112,13 @@ public class ParentsResource {
     return Response.ok(parentOpt.get(), MediaType.APPLICATION_JSON_TYPE).build();
   }
 
-  @Path("{id: [0-9]+}")
+  @Path("{parentId: [0-9]+}")
   @PUT
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @ParentAdministratorSecured
-  @SameParentSecured
-  public Response putParentById(User newParent, @PathParam("id") Integer parentId) {
+  @SameParentOfPathParentIdSecured
+  public Response putParentById(User newParent, @PathParam("parentId") Integer parentId) {
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 
@@ -148,12 +148,12 @@ public class ParentsResource {
     return Response.ok().entity(new StatusResponse(Status.OK)).build();
   }
 
-  @Path("{id: [0-9]+}/children")
+  @Path("{parentId: [0-9]+}/children")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @ParentAdministratorSecured
-  @SameParentSecured
-  public Response getParentChildren(@PathParam("id") Integer parentId, @Context UriInfo uriInfo) {
+  @SameParentOfPathParentIdSecured
+  public Response getParentChildren(@PathParam("parentId") Integer parentId, @Context UriInfo uriInfo) {
     print("FROM HERE");
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
@@ -179,13 +179,13 @@ public class ParentsResource {
     return Response.ok(response, MediaType.APPLICATION_JSON_TYPE).build();
   }
 
-  @Path("{id: [0-9]+}/children")
+  @Path("{parentId: [0-9]+}/children")
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
   public Response postParentChildren(
-      ParentsChildrenRequest request, @PathParam("id") Integer parentId) {
+      ParentsChildrenRequest request, @PathParam("parentId") Integer parentId) {
 
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
@@ -232,13 +232,13 @@ public class ParentsResource {
     return Response.ok().entity(new StatusResponse(Status.OK)).build();
   }
 
-  @Path("{id: [0-9]+}/appointments")
+  @Path("{parentId: [0-9]+}/appointments")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @ParentAdministratorSecured
-  @SameParentSecured
+  @SameParentOfPathParentIdSecured
   public Response getParentAppointments(
-      @PathParam("id") Integer parentId, @Context UriInfo uriInfo) {
+      @PathParam("parentId") Integer parentId, @Context UriInfo uriInfo) {
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
     session.beginTransaction();
@@ -272,15 +272,15 @@ public class ParentsResource {
     return Response.ok(response, MediaType.APPLICATION_JSON_TYPE).build();
   }
 
-  @Path("{id: [0-9]+}/appointments")
+  @Path("{parentId: [0-9]+}/appointments")
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @ParentAdministratorSecured
-  @SameParentSecured
+  @SameParentOfPathParentIdSecured
   public Response postParentAppointments(
       ParentAppointmentRequest request,
-      @PathParam("id") Integer parentId,
+      @PathParam("parentId") Integer parentId,
       @Context UriInfo uriInfo) {
 
     DatabaseHandler dbi = DatabaseHandler.getInstance();
@@ -374,14 +374,14 @@ public class ParentsResource {
     return Response.created(uri).entity(new StatusResponse(Status.CREATED)).build();
   }
 
-  @Path("{id: [0-9]+}/appointments/{appointment_id: [0-9]+}")
+  @Path("{parentId: [0-9]+}/appointments/{appointment_id: [0-9]+}")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @ParentAdministratorSecured
-  @SameParentSecured
+  @SameParentOfPathParentIdSecured
   public Response getParentAppointmentById(
       @PathParam("appointment_id") Integer appointmentId,
-      @PathParam("id") Integer parentId,
+      @PathParam("parentId") Integer parentId,
       @Context HttpHeaders httpHeaders,
       @Context UriInfo uriInfo) {
     User currentUser = AuthenticationSession.getCurrentUser(httpHeaders);
@@ -406,15 +406,15 @@ public class ParentsResource {
     return Response.ok(appointmentOpt.get(), MediaType.APPLICATION_JSON_TYPE).build();
   }
 
-  @Path("{id: [0-9]+}/appointments/{appointmentId: [0-9]+}")
+  @Path("{parentId: [0-9]+}/appointments/{appointmentId: [0-9]+}")
   @PUT
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @ParentSecured
-  @SameParentSecured
+  @SameParentOfPathParentIdSecured
   public Response putParentAppointmentById(
       ParentAppointmentRequest request,
-      @PathParam("id") Integer parentId,
+      @PathParam("parentId") Integer parentId,
       @PathParam("appointmentId") Integer appointmentId) {
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
@@ -538,12 +538,12 @@ public class ParentsResource {
     return Response.ok().entity(new StatusResponse(Status.OK)).build();
   }
 
-  @Path("{id: [0-9]+}/payments")
+  @Path("{parentId: [0-9]+}/payments")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @ParentAdministratorSecured
-  @SameParentSecured
-  public Response getParentPayments(@PathParam("id") Integer parentId, @Context UriInfo uriInfo) {
+  @SameParentOfPathParentIdSecured
+  public Response getParentPayments(@PathParam("parentId") Integer parentId, @Context UriInfo uriInfo) {
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
     session.beginTransaction();
@@ -576,14 +576,14 @@ public class ParentsResource {
     return Response.ok(response, MediaType.APPLICATION_JSON_TYPE).build();
   }
 
-  @Path("{id: [0-9]+}/payments")
+  @Path("{parentId: [0-9]+}/payments")
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
   public Response postParentPayments(
       ParentPaymentRequest request,
-      @PathParam("id") Integer parentId,
+      @PathParam("parentId") Integer parentId,
       @Context HttpHeaders httpHeaders,
       @Context UriInfo uriInfo) {
     User currentUser = AuthenticationSession.getCurrentUser(httpHeaders);
@@ -626,13 +626,13 @@ public class ParentsResource {
     return Response.created(uri).entity(new StatusResponse(Status.CREATED)).build();
   }
 
-  @Path("{id: [0-9]+}/payments/{payment_id: [0-9]+}")
+  @Path("{parentId: [0-9]+}/payments/{payment_id: [0-9]+}")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @ParentAdministratorSecured
-  @SameParentSecured
+  @SameParentOfPathParentIdSecured
   public Response getParentPaymentById(
-      @PathParam("id") Integer parentId,
+      @PathParam("parentId") Integer parentId,
       @PathParam("payment_id") Integer paymentId,
       @Context UriInfo uriInfo) {
 
@@ -657,15 +657,15 @@ public class ParentsResource {
     return Response.ok(payment, MediaType.APPLICATION_JSON_TYPE).build();
   }
 
-  @Path("{id: [0-9]+}/payments/{payment_id: [0-9]+}/pay")
+  @Path("{parentId: [0-9]+}/payments/{payment_id: [0-9]+}/pay")
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @ParentSecured
-  @SameParentSecured
+  @SameParentOfPathParentIdSecured
   public Response postParentPaymentPaid(
       String request, // ignored, not necessary
-      @PathParam("id") Integer parentId,
+      @PathParam("parentId") Integer parentId,
       @PathParam("payment_id") Integer paymentId,
       @Context HttpHeaders httpHeaders,
       @Context UriInfo uriInfo) {
@@ -712,13 +712,13 @@ public class ParentsResource {
     return Response.ok().entity(new StatusResponse(Status.OK)).build();
   }
 
-  @Path("{id: [0-9]+}/notifications")
+  @Path("{parentId: [0-9]+}/notifications")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @ParentAdministratorSecured
-  @SameParentSecured
+  @SameParentOfPathParentIdSecured
   public Response getParentNotifications(
-      @PathParam("id") Integer parentId, @Context UriInfo uriInfo) {
+      @PathParam("parentId") Integer parentId, @Context UriInfo uriInfo) {
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
     session.beginTransaction();
@@ -790,14 +790,14 @@ public class ParentsResource {
     return Response.ok(response, MediaType.APPLICATION_JSON_TYPE).build();
   }
 
-  @Path("{id: [0-9]+}/notifications")
+  @Path("{parentId: [0-9]+}/notifications")
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
   public Response postParentNotifications(
       NotificationPersonalParent npp,
-      @PathParam("id") Integer parentId,
+      @PathParam("parentId") Integer parentId,
       @Context HttpHeaders httpHeaders,
       @Context UriInfo uriInfo) {
     // Here the admin can POST only a direct notification to this parent
@@ -829,13 +829,13 @@ public class ParentsResource {
     return Response.created(uri).entity(new StatusResponse(Status.CREATED)).build();
   }
 
-  @Path("{id: [0-9]+}/notifications/{notificationId: [0-9]+}")
+  @Path("{parentId: [0-9]+}/notifications/{notificationId: [0-9]+}")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @ParentAdministratorSecured
-  @SameParentSecured
+  @SameParentOfPathParentIdSecured
   public Response getParentNotificationById(
-      @PathParam("id") Integer parentId,
+      @PathParam("parentId") Integer parentId,
       @PathParam("notificationId") Integer notificationId,
       @Context HttpHeaders httpHeaders,
       @Context UriInfo uriInfo) {
