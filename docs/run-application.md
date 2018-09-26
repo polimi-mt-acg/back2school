@@ -8,23 +8,15 @@ Before run the application, please be sure to have properly [setup the project](
 In order to execute the database and also be able to use phpMyAdmin interface:
 
 ```bash
-docker-compose up
+docker-compose up &
 ```
 
-### 2. Run the application server
+### 2. Run the application server & Deploy the application
 
-On different shell, run the application server:
-
-```bash
-<base-path-to-wildfly>/bin/standalone.sh
-```
-
-### 3. Deploy the application
-
-Again on one more different shell, deploy the application with Maven:
+Compile, tear the application server up and deploy the application:
 
 ```bash
-mvn wildfly:deploy
+mvn install
 ```
 
 Once the deployment succeed, the application will be ready to accept incoming requests.
@@ -35,6 +27,13 @@ Default admin user's credentials:
 
 - email: `admin@email.com`
 - password: `admin`
+
+### 3. Tear down
+To tear the system down, press `CTRL+C` in your shell and wait for the application server to close. Then stop phpMyAdmin and MariaDB:
+
+```bash
+docker-compose down
+```
 
 ---
 

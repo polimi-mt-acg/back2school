@@ -57,7 +57,7 @@ Suggested `Collation`'s value: *utf8_general_ci*.
 
 At this step it's required to create just an empty database. The schema will be automatically managed by Hibernate.
 
-### 3. hibernate.crg.xml files
+### 3. hibernate.cfg.xml files
 
 To setup the connection's parameters for Hibernate, make a copy of the files
 
@@ -99,6 +99,18 @@ Example on a Linux machine:
 <property name="hibernate.connection.username">root</property>
 <property name="hibernate.connection.password">rootpwd</property>
 ```
+
+### 4. wildfly.cfg.properties file
+
+To run the application server and deploy the application you shall specify where WildFly resides. Make a copy of the file
+
+ - `wildfly.cfg.properties.template`
+
+as
+
+ - `wildfly.cfg.properties`
+ 
+and edit the string `WILDFLY-HOME` with the path to Wildfly installation.
 
 ---
 
