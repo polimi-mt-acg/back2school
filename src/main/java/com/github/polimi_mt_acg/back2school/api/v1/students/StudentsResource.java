@@ -93,13 +93,13 @@ public class StudentsResource {
     return Response.created(uri).entity(new StatusResponse(Status.CREATED)).build();
   }
 
-  @Path("{id: [0-9]+}")
+  @Path("{studentId: [0-9]+}")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @ParentTeacherAdministratorSecured
   @ParentOfStudentSecured
   @TeacherOfStudentSecured
-  public Response getStudentById(@PathParam("id") Integer studentId) {
+  public Response getStudentById(@PathParam("studentId") Integer studentId) {
     // Fetch User
     Optional<User> studentOpt = DatabaseHandler.fetchEntityBy(User.class, User_.id, studentId);
     if (!studentOpt.isPresent() || !studentOpt.get().getRole().equals(Role.STUDENT)) {
@@ -110,13 +110,13 @@ public class StudentsResource {
     return Response.ok(studentOpt.get(), MediaType.APPLICATION_JSON_TYPE).build();
   }
 
-  @Path("{id: [0-9]+}")
+  @Path("{studentId: [0-9]+}")
   @PUT
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @ParentAdministratorSecured
   @ParentOfStudentSecured
-  public Response putStudentById(User newUser, @PathParam("id") Integer studentId) {
+  public Response putStudentById(User newUser, @PathParam("studentId") Integer studentId) {
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 
@@ -145,13 +145,14 @@ public class StudentsResource {
     return Response.ok().entity(new StatusResponse(Status.OK)).build();
   }
 
-  @Path("{id: [0-9]+}/grades")
+  @Path("{studentId: [0-9]+}/grades")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @ParentTeacherAdministratorSecured
   @ParentOfStudentSecured
   @TeacherOfStudentSecured
-  public Response getStudentGrades(@PathParam("id") Integer studentId, @Context UriInfo uriInfo) {
+  public Response getStudentGrades(
+      @PathParam("studentId") Integer studentId, @Context UriInfo uriInfo) {
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
     session.beginTransaction();
@@ -159,6 +160,7 @@ public class StudentsResource {
     // Fetch User
     User student = session.get(User.class, studentId);
     if (student == null || !student.getRole().equals(Role.STUDENT)) {
+      session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND)
           .entity(new StatusResponse(Status.NOT_FOUND, "Unknown student id"))
@@ -183,7 +185,7 @@ public class StudentsResource {
     return Response.ok(response, MediaType.APPLICATION_JSON_TYPE).build();
   }
 
-  @Path("{id: [0-9]+}/grades")
+  @Path("{studentId: [0-9]+}/grades")
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
@@ -191,7 +193,7 @@ public class StudentsResource {
   @TeacherOfStudentSecured
   public Response postStudentGrades(
       StudentGradeRequest gradeRequest,
-      @PathParam("id") Integer studentId,
+      @PathParam("studentId") Integer studentId,
       @Context HttpHeaders httpHeaders,
       @Context UriInfo uriInfo) {
     DatabaseHandler dbi = DatabaseHandler.getInstance();
@@ -246,14 +248,14 @@ public class StudentsResource {
     return Response.created(uri).entity(new StatusResponse(Status.CREATED)).build();
   }
 
-  @Path("{id: [0-9]+}/grades/{grade_id: [0-9]+}")
+  @Path("{studentId: [0-9]+}/grades/{grade_id: [0-9]+}")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @ParentTeacherAdministratorSecured
   @ParentOfStudentSecured
   @TeacherOfStudentSecured
   public Response getStudentGradeById(
-      @PathParam("id") Integer studentId, @PathParam("grade_id") Integer gradeId) {
+      @PathParam("studentId") Integer studentId, @PathParam("grade_id") Integer gradeId) {
     // Fetch student
     Optional<User> studentOpt = DatabaseHandler.fetchEntityBy(User.class, User_.id, studentId);
 
@@ -273,7 +275,7 @@ public class StudentsResource {
     return Response.ok(gradeOpt.get(), MediaType.APPLICATION_JSON_TYPE).build();
   }
 
-  @Path("{id: [0-9]+}/grades/{grade_id: [0-9]+}")
+  @Path("{studentId: [0-9]+}/grades/{gradeId: [0-9]+}")
   @PUT
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
@@ -281,8 +283,8 @@ public class StudentsResource {
   @TeacherOfStudentSecured
   public Response putStudentGradeById(
       StudentGradeRequest gradeRequest,
-      @PathParam("id") Integer studentId,
-      @PathParam("grade_id") Integer gradeId,
+      @PathParam("studentId") Integer studentId,
+      @PathParam("gradeId") Integer gradeId,
       @Context HttpHeaders httpHeaders) {
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
@@ -351,13 +353,13 @@ public class StudentsResource {
     return Response.ok().entity(new StatusResponse(Status.OK)).build();
   }
 
-  @Path("{id: [0-9]+}/grades/{grade_id: [0-9]+}")
+  @Path("{studentId: [0-9]+}/grades/{gradeId: [0-9]+}")
   @DELETE
   @Produces(MediaType.APPLICATION_JSON)
   @TeacherAdministratorSecured
   @TeacherOfStudentSecured
   public Response deleteStudentGradeById(
-      @PathParam("id") Integer studentId, @PathParam("grade_id") Integer gradeId) {
+      @PathParam("studentId") Integer studentId, @PathParam("gradeId") Integer gradeId) {
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 

@@ -1,84 +1,87 @@
 package com.github.polimi_mt_acg.back2school.api.v1.security_contexts;
 
-import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.InvalidTemplateParameterException;
-import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.ParentOfStudentSecured;
-import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.SecurityContextPriority;
+import com.github.polimi_mt_acg.back2school.api.v1.StatusResponse;
 import com.github.polimi_mt_acg.back2school.model.AuthenticationSession;
 import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.model.User.Role;
-import com.github.polimi_mt_acg.back2school.model.User_;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
-import java.io.IOException;
-import java.util.List;
+import org.hibernate.Session;
+
 import javax.annotation.Priority;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Provider;
-import org.hibernate.Session;
 
+import static com.github.polimi_mt_acg.back2school.api.v1.security_contexts.AdministratorSecurityContext.getPathParameter;
+
+/**
+ * ParentOfStudentSecurityContext implements a request filter for JAX-RS REST APIs.
+ *
+ * <p>It implements a "ParentOfAccessedStudent-only" security policy.
+ *
+ * <p>A REST API annotated with this, can only be accessed if:
+ *
+ * <p>a) the client is authenticated.
+ *
+ * <p>b) if client role is PARENT then the user is required to be a parent of the accessed student
+ *
+ * <p>To be successfully authenticated, the client must send the auth token in the AUTHORIZATION
+ * HTTP header.
+ */
 @ParentOfStudentSecured
 @Provider
 @Priority(SecurityContextPriority.PARENT_OF_STUDENT)
 public class ParentOfStudentSecurityContext implements ContainerRequestFilter {
 
   @Override
-  public void filter(ContainerRequestContext requestContext) throws IOException {
-    DatabaseHandler dbi = DatabaseHandler.getInstance();
-    Session session = dbi.getNewSession();
+  public void filter(ContainerRequestContext requestContext)
+      throws InvalidTemplateParameterException {
+    Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
-    User parent = AuthenticationSession.getCurrentUser(requestContext, session);
+
+    User currentUser = AuthenticationSession.getCurrentUser(requestContext, session);
 
     // Abort the filter chain with a 401 status code response
 
     // if there is no user logged in
-    if (parent == null) {
-      requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
+    if (currentUser == null) {
+      session.getTransaction().commit();
+      session.close();
+      requestContext.abortWith(
+          Response.status(Response.Status.UNAUTHORIZED)
+              .entity(new StatusResponse(Response.Status.UNAUTHORIZED, "Not a valid session"))
+              .build());
       return;
     }
 
-    // if the user logged has not the correct role
-    if (parent.getRole() != Role.PARENT) {
+    // if the user logged in is not on the checked role
+    if (!currentUser.getRole().equals(Role.PARENT)) {
+      session.getTransaction().commit();
+      session.close();
       return; // Move control to next filter
     }
+    // here currentUser has role PARENT
 
-    // Get the student id template parameter
-    UriInfo uriInfo = requestContext.getUriInfo();
-    MultivaluedMap<String, String> pathParameter = uriInfo.getPathParameters();
+    // get studentId parameter from path
+    Integer studentId = getPathParameter("studentId", requestContext);
 
-    if (!pathParameter.containsKey("id")) {
-      throw new InvalidTemplateParameterException(
-          "Could not find 'id' template parameter in URI. Maybe you annotated a non /students/{id}/* REST endpoint?");
-    }
-
-    // Get student id from request's URI
-    int studentId = Integer.parseInt(pathParameter.getFirst("id"));
-    List<User> result =
-        DatabaseHandler.getInstance()
-            .getListSelectFromWhereEqual(User.class, User_.id, studentId, session);
-    if (result.isEmpty()) {
-      requestContext.abortWith(Response.status(Status.NOT_FOUND).build());
-    }
-
-    // Check is requested student is child of requesting parent
-    User student = result.get(0);
-    List<User> children = parent.getChildren();
-    boolean isParent = false;
-    for (User child : children) {
-      if (child.getId() == student.getId()) {
-        isParent = true;
-        break;
+    for (User child : currentUser.getChildren()) {
+      if (child.getId() == studentId) {
+        // found a children id corresponding to path studentId
+        session.getTransaction().commit();
+        session.close();
+        return; // Move control to next filter
       }
     }
 
+    // if arrived here, not a children of parent
     session.getTransaction().commit();
     session.close();
-
-    if (!isParent) {
-      requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
-    }
+    requestContext.abortWith(
+        Response.status(Response.Status.UNAUTHORIZED)
+            .entity(new StatusResponse(Status.UNAUTHORIZED, "Access to the resource not allowed"))
+            .build());
   }
 }

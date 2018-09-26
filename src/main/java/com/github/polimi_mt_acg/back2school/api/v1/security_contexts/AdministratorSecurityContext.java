@@ -7,6 +7,7 @@ import com.github.polimi_mt_acg.back2school.model.User;
 import javax.annotation.Priority;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 
@@ -52,5 +53,31 @@ public class AdministratorSecurityContext implements ContainerRequestFilter {
               .build());
       return;
     }
+  }
+
+  /**
+   * Retrieve a path parameter value by its key.
+   * @param parameterKey The name of the path parameter of which get the value.
+   * @param crc The ContainerRequestContext of the filtered request.
+   * @return The value of the parameter.
+   * @throws InvalidTemplateParameterException when parameterKey value not found to be a parameter of path of the annotated endpoint.
+   */
+  static Integer getPathParameter(String parameterKey, ContainerRequestContext crc)
+      throws InvalidTemplateParameterException {
+    // Get the Map of path parameters
+    MultivaluedMap<String, String> pathParameter = crc.getUriInfo().getPathParameters();
+
+    if (!pathParameter.containsKey(parameterKey)) {
+      String msg =
+          String.format(
+              "ERROR! Could not find parameter \"%s\" in annotated endpoint: %s.\n"
+                  + "Does the URI you have annotated contain the \"%1$s\" parameter?\n",
+              parameterKey, crc.getUriInfo().getPath());
+      System.out.println(msg);
+      throw new InvalidTemplateParameterException(msg);
+    }
+
+    // Get parameter from request's URI
+    return Integer.parseInt(pathParameter.getFirst(parameterKey));
   }
 }
