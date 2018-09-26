@@ -10,23 +10,16 @@ import com.github.polimi_mt_acg.back2school.model.*;
 import com.github.polimi_mt_acg.back2school.model.Class;
 import com.github.polimi_mt_acg.back2school.model.User.Role;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
+import org.hibernate.Session;
 
+import javax.ws.rs.*;
+import javax.ws.rs.core.*;
+import javax.ws.rs.core.Response.Status;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.*;
-import javax.ws.rs.core.Response.Status;
-
-import org.hibernate.Session;
 
 import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.print;
 import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.str;
@@ -153,14 +146,15 @@ public class ParentsResource {
   @Produces(MediaType.APPLICATION_JSON)
   @ParentAdministratorSecured
   @SameParentOfPathParentIdSecured
-  public Response getParentChildren(@PathParam("parentId") Integer parentId, @Context UriInfo uriInfo) {
+  public Response getParentChildren(
+      @PathParam("parentId") Integer parentId, @Context UriInfo uriInfo) {
     print("FROM HERE");
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 
     // Fetch User
     User parent = session.get(User.class, parentId);
-    if (parent == null) {
+    if (parent == null || !parent.getRole().equals(Role.PARENT)) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND)
@@ -192,7 +186,7 @@ public class ParentsResource {
 
     // Fetch the parent
     User parent = session.get(User.class, parentId);
-    if (parent == null) {
+    if (parent == null || !parent.getRole().equals(Role.PARENT)) {
       print("Unknown parent id: ", parentId);
       session.getTransaction().commit();
       session.close();
@@ -245,7 +239,7 @@ public class ParentsResource {
 
     // Fetch Parent
     User parent = session.get(User.class, parentId);
-    if (parent == null) {
+    if (parent == null || !parent.getRole().equals(Role.PARENT)) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND)
@@ -289,7 +283,7 @@ public class ParentsResource {
 
     // Get parent who made the request
     User parent = session.get(User.class, parentId);
-    if (parent == null) {
+    if (parent == null || !parent.getRole().equals(Role.PARENT)) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND)
@@ -374,17 +368,24 @@ public class ParentsResource {
     return Response.created(uri).entity(new StatusResponse(Status.CREATED)).build();
   }
 
-  @Path("{parentId: [0-9]+}/appointments/{appointment_id: [0-9]+}")
+  @Path("{parentId: [0-9]+}/appointments/{appointmentId: [0-9]+}")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @ParentAdministratorSecured
   @SameParentOfPathParentIdSecured
   public Response getParentAppointmentById(
-      @PathParam("appointment_id") Integer appointmentId,
       @PathParam("parentId") Integer parentId,
-      @Context HttpHeaders httpHeaders,
-      @Context UriInfo uriInfo) {
+      @PathParam("appointmentId") Integer appointmentId,
+      @Context HttpHeaders httpHeaders) {
     User currentUser = AuthenticationSession.getCurrentUser(httpHeaders);
+
+    // Fetch parent
+    Optional<User> parentOpt = DatabaseHandler.fetchEntityBy(User.class, User_.id, parentId);
+    if (!parentOpt.isPresent() || !parentOpt.get().getRole().equals(Role.PARENT)) {
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown parent id"))
+          .build();
+    }
 
     // Fetch appointment
     Optional<Appointment> appointmentOpt =
@@ -422,7 +423,7 @@ public class ParentsResource {
 
     // Get parent who made the request
     User parent = session.get(User.class, parentId);
-    if (parent == null) {
+    if (parent == null || !parent.getRole().equals(Role.PARENT)) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND)
@@ -432,7 +433,7 @@ public class ParentsResource {
 
     // Fetch the teacher
     User teacher = session.get(User.class, request.getTeacherId());
-    if (teacher == null) {
+    if (teacher == null || !teacher.getRole().equals(Role.TEACHER)) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.BAD_REQUEST)
@@ -543,14 +544,15 @@ public class ParentsResource {
   @Produces(MediaType.APPLICATION_JSON)
   @ParentAdministratorSecured
   @SameParentOfPathParentIdSecured
-  public Response getParentPayments(@PathParam("parentId") Integer parentId, @Context UriInfo uriInfo) {
+  public Response getParentPayments(
+      @PathParam("parentId") Integer parentId, @Context UriInfo uriInfo) {
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
     session.beginTransaction();
 
     // Fetch Parent
     User parent = session.get(User.class, parentId);
-    if (parent == null) {
+    if (parent == null || !parent.getRole().equals(Role.PARENT)) {
       session.close();
       return Response.status(Status.NOT_FOUND)
           .entity(new StatusResponse(Status.NOT_FOUND, "Unknown parent id"))
@@ -594,7 +596,7 @@ public class ParentsResource {
 
     // Get parent
     User parent = session.get(User.class, parentId);
-    if (parent == null) {
+    if (parent == null || !parent.getRole().equals(Role.PARENT)) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND)
@@ -725,7 +727,7 @@ public class ParentsResource {
 
     // Fetch Parent
     User parent = session.get(User.class, parentId);
-    if (parent == null) {
+    if (parent == null || !parent.getRole().equals(Role.PARENT)) {
       session.close();
       return Response.status(Status.NOT_FOUND)
           .entity(new StatusResponse(Status.NOT_FOUND, "Unknown parent id"))
@@ -808,7 +810,7 @@ public class ParentsResource {
 
     // Get parent target of the notification
     User parent = session.get(User.class, parentId);
-    if (parent == null) {
+    if (parent == null || !parent.getRole().equals(Role.PARENT)) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND)
@@ -843,6 +845,15 @@ public class ParentsResource {
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
     User currentUser = AuthenticationSession.getCurrentUser(httpHeaders, session);
+
+    // Fetch Parent
+    User parent = session.get(User.class, parentId);
+    if (parent == null || !parent.getRole().equals(Role.PARENT)) {
+      session.close();
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown parent id"))
+          .build();
+    }
 
     // Notification can be of three types: GeneralParents, ClassParent, PersonalParent
     // if none of them will be found by the given id -> error not found
