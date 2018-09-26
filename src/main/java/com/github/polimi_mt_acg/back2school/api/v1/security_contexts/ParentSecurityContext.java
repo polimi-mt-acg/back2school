@@ -1,6 +1,5 @@
-package com.github.polimi_mt_acg.back2school.api.v1.parents;
+package com.github.polimi_mt_acg.back2school.api.v1.security_contexts;
 
-import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.SecurityContextPriority;
 import com.github.polimi_mt_acg.back2school.model.AuthenticationSession;
 import com.github.polimi_mt_acg.back2school.model.User;
 

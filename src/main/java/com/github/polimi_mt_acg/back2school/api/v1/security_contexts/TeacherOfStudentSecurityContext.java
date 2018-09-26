@@ -1,8 +1,11 @@
-package com.github.polimi_mt_acg.back2school.api.v1.students;
+package com.github.polimi_mt_acg.back2school.api.v1.security_contexts;
 
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.InvalidTemplateParameterException;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.SecurityContextPriority;
+import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.TeacherOfStudentSecured;
 import com.github.polimi_mt_acg.back2school.model.AuthenticationSession;
+import com.github.polimi_mt_acg.back2school.model.Lecture;
+import com.github.polimi_mt_acg.back2school.model.Lecture_;
 import com.github.polimi_mt_acg.back2school.model.User;
 import com.github.polimi_mt_acg.back2school.model.User.Role;
 import com.github.polimi_mt_acg.back2school.model.User_;
@@ -19,28 +22,32 @@ import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Provider;
 import org.hibernate.Session;
 
-@ParentOfStudentSecured
+@TeacherOfStudentSecured
 @Provider
-@Priority(SecurityContextPriority.PARENT_OF_STUDENT)
-public class ParentOfStudentSecurityContext implements ContainerRequestFilter {
+@Priority(SecurityContextPriority.TEACHER_OF_STUDENT)
+public class TeacherOfStudentSecurityContext implements ContainerRequestFilter {
 
   @Override
   public void filter(ContainerRequestContext requestContext) throws IOException {
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
     session.beginTransaction();
-    User parent = AuthenticationSession.getCurrentUser(requestContext, session);
+    User teacher = AuthenticationSession.getCurrentUser(requestContext, session);
 
     // Abort the filter chain with a 401 status code response
 
     // if there is no user logged in
-    if (parent == null) {
-      requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
+    if (teacher == null) {
+      session.getTransaction().commit();
+      session.close();
+      requestContext.abortWith(Response.status(Status.UNAUTHORIZED).build());
       return;
     }
 
     // if the user logged has not the correct role
-    if (parent.getRole() != Role.PARENT) {
+    if (teacher.getRole() != Role.TEACHER) {
+      session.getTransaction().commit();
+      session.close();
       return; // Move control to next filter
     }
 
@@ -49,35 +56,47 @@ public class ParentOfStudentSecurityContext implements ContainerRequestFilter {
     MultivaluedMap<String, String> pathParameter = uriInfo.getPathParameters();
 
     if (!pathParameter.containsKey("id")) {
+      session.getTransaction().commit();
+      session.close();
       throw new InvalidTemplateParameterException(
-          "Could not find 'id' template parameter in URI. Maybe you annotated a non /students/{id}/* REST endpoint?");
+          "Could not find 'id' template parameter in URI. Maybe you annotated"
+              + "a non /students/{id}/* REST endpoint?");
     }
 
     // Get student id from request's URI
     int studentId = Integer.parseInt(pathParameter.getFirst("id"));
-    List<User> result =
+
+    List<User> students =
         DatabaseHandler.getInstance()
             .getListSelectFromWhereEqual(User.class, User_.id, studentId, session);
-    if (result.isEmpty()) {
+    if (students.isEmpty()) {
+      session.getTransaction().commit();
+      session.close();
       requestContext.abortWith(Response.status(Status.NOT_FOUND).build());
     }
 
-    // Check is requested student is child of requesting parent
-    User student = result.get(0);
-    List<User> children = parent.getChildren();
-    boolean isParent = false;
-    for (User child : children) {
-      if (child.getId() == student.getId()) {
-        isParent = true;
-        break;
+    // Check is requested student is in a class of requesting teacher
+    User student = students.get(0);
+
+    List<Lecture> lectures =
+        dbi.getListSelectFromWhereEqual(Lecture.class, Lecture_.teacher, teacher, session);
+    boolean isTeacherOfStudent = false;
+    for (Lecture lecture : lectures) {
+      for (User s : lecture.getClass_().getClassStudents()) {
+        // For all the lectures of the teacher, get the class C. If student is in C, then 'teacher'
+        // is a teacher of student.
+        if (s == student) {
+          isTeacherOfStudent = true;
+          break;
+        }
       }
     }
 
     session.getTransaction().commit();
     session.close();
 
-    if (!isParent) {
-      requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
+    if (!isTeacherOfStudent) {
+      requestContext.abortWith(Response.status(Status.UNAUTHORIZED).build());
     }
   }
 }

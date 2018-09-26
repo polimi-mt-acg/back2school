@@ -7,6 +7,7 @@ import com.github.polimi_mt_acg.back2school.api.v1.classrooms.ClassroomsResource
 import com.github.polimi_mt_acg.back2school.api.v1.notifications.NotificationsResponse;
 import com.github.polimi_mt_acg.back2school.api.v1.parents.ParentsResource;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.AdministratorSecured;
+import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.SameTeacherSecured;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.TeacherAdministratorSecured;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.TeacherSecured;
 import com.github.polimi_mt_acg.back2school.api.v1.subjects.SubjectsResource;

@@ -4,6 +4,8 @@ import com.github.polimi_mt_acg.back2school.api.v1.StatusResponse;
 import com.github.polimi_mt_acg.back2school.api.v1.notifications.NotificationsResponse;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.AdministratorSecured;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.ParentAdministratorSecured;
+import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.ParentSecured;
+import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.SameParentSecured;
 import com.github.polimi_mt_acg.back2school.model.*;
 import com.github.polimi_mt_acg.back2school.model.Class;
 import com.github.polimi_mt_acg.back2school.model.User.Role;

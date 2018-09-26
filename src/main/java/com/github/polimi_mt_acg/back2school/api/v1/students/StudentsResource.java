@@ -1,10 +1,7 @@
 package com.github.polimi_mt_acg.back2school.api.v1.students;
 
 import com.github.polimi_mt_acg.back2school.api.v1.StatusResponse;
-import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.AdministratorSecured;
-import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.ParentAdministratorSecured;
-import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.ParentTeacherAdministratorSecured;
-import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.TeacherAdministratorSecured;
+import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.*;
 import com.github.polimi_mt_acg.back2school.model.AuthenticationSession;
 import com.github.polimi_mt_acg.back2school.model.Grade;
 import com.github.polimi_mt_acg.back2school.model.Grade_;
