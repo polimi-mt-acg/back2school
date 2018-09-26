@@ -11,4 +11,4 @@ import javax.ws.rs.NameBinding;
 @NameBinding
 @Retention(RUNTIME)
 @Target({TYPE, METHOD})
-public @interface SameTeacherSecured {}
+public @interface SameTeacherOfPathTeacherIdSecured {}
