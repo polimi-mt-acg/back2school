@@ -76,7 +76,7 @@ public class ClassesResource {
         return Response.status(Status.BAD_REQUEST)
             .entity(
                 new StatusResponse(
-                    Status.BAD_REQUEST, "Student with id: " + str(studentId) + " NOT known!"))
+                    Status.BAD_REQUEST, "Unknown student with id: " + str(studentId)))
             .build();
       }
       aClass.addStudent(student);
@@ -102,8 +102,7 @@ public class ClassesResource {
   @TeacherAdministratorSecured
   public Response getClassById(@PathParam("classId") Integer classId, @Context UriInfo uriInfo) {
     // Fetch the class
-    Optional<Class> classOpt =
-        DatabaseHandler.fetchEntityBy(Class.class, Class_.id, classId);
+    Optional<Class> classOpt = DatabaseHandler.fetchEntityBy(Class.class, Class_.id, classId);
 
     if (!classOpt.isPresent()) {
       return Response.status(Status.NOT_FOUND)
@@ -161,12 +160,14 @@ public class ClassesResource {
     for (Integer studentId : request.getStudentsIds()) {
       // get student from db
       User student = session.get(User.class, studentId);
-      if (student == null) {
+      if (student == null || !student.getRole().equals(User.Role.STUDENT)) {
         print("Unknown student id ", studentId);
         session.getTransaction().commit();
         session.close();
         return Response.status(Status.BAD_REQUEST)
-            .entity(new StatusResponse(Status.BAD_REQUEST, "Unknown student id " + str(studentId)))
+            .entity(
+                new StatusResponse(
+                    Status.BAD_REQUEST, "Unknown student with id: " + str(studentId)))
             .build();
       }
       aClass.addStudent(student);
@@ -187,8 +188,7 @@ public class ClassesResource {
   @TeacherAdministratorSecured
   public Response getClassStudents(@PathParam("classId") Integer classId) {
     // Fetch the class
-    Optional<Class> classOpt =
-        DatabaseHandler.fetchEntityBy(Class.class, Class_.id, classId);
+    Optional<Class> classOpt = DatabaseHandler.fetchEntityBy(Class.class, Class_.id, classId);
 
     if (!classOpt.isPresent()) {
       return Response.status(Status.NOT_FOUND)
@@ -238,12 +238,12 @@ public class ClassesResource {
 
     // Fetch the student
     User newStudent = session.get(User.class, request.getStudentId());
-    if (newStudent == null) {
+    if (newStudent == null || !newStudent.getRole().equals(User.Role.STUDENT)) {
       print("Unknown student id: ", request.getStudentId());
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.BAD_REQUEST)
-          .entity(new StatusResponse(Status.BAD_REQUEST, "Unknown user id"))
+          .entity(new StatusResponse(Status.BAD_REQUEST, "Unknown student id"))
           .build();
     }
 

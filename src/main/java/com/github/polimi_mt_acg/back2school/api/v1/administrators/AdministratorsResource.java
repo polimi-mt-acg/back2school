@@ -7,7 +7,6 @@ import com.github.polimi_mt_acg.back2school.model.User.Role;
 import com.github.polimi_mt_acg.back2school.model.User_;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import org.hibernate.Session;
-import org.omg.CORBA.BAD_CONTEXT;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -84,15 +83,16 @@ public class AdministratorsResource {
     return Response.created(uri).entity(new StatusResponse(Status.CREATED)).build();
   }
 
-  @Path("{id: [0-9]+}")
+  @Path("{administratorId: [0-9]+}")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
-  public Response getAdministratorById(@PathParam("id") Integer administratorId) {
+  public Response getAdministratorById(@PathParam("administratorId") Integer administratorId) {
     // Fetch User
     Optional<User> administratorOpt =
         DatabaseHandler.fetchEntityBy(User.class, User_.id, administratorId);
-    if (!administratorOpt.isPresent()) {
+    if (!administratorOpt.isPresent()
+        || !administratorOpt.get().getRole().equals(Role.ADMINISTRATOR)) {
       return Response.status(Status.NOT_FOUND)
           .entity(new StatusResponse(Status.NOT_FOUND, "Unknown administrator id"))
           .build();
@@ -100,12 +100,13 @@ public class AdministratorsResource {
     return Response.ok(administratorOpt.get(), MediaType.APPLICATION_JSON_TYPE).build();
   }
 
-  @Path("{id: [0-9]+}")
+  @Path("{administratorId: [0-9]+}")
   @PUT
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
-  public Response putAdministratorById(User newUser, @PathParam("id") Integer administratorId) {
+  public Response putAdministratorById(
+      User newUser, @PathParam("administratorId") Integer administratorId) {
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 

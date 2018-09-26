@@ -187,7 +187,6 @@ public class ParentsResource {
     // Fetch the parent
     User parent = session.get(User.class, parentId);
     if (parent == null || !parent.getRole().equals(Role.PARENT)) {
-      print("Unknown parent id: ", parentId);
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND)
@@ -197,12 +196,12 @@ public class ParentsResource {
 
     // Fetch the child
     User newChild = session.get(User.class, request.getChildId());
-    if (newChild == null) {
+    if (newChild == null || !newChild.getRole().equals(Role.STUDENT)){
       print("Unknown child id: ", request.getChildId());
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.BAD_REQUEST)
-          .entity(new StatusResponse(Status.BAD_REQUEST, "Unknown child id"))
+          .entity(new StatusResponse(Status.BAD_REQUEST, "Unknown child id or the id is not of a student"))
           .build();
     }
 
@@ -293,7 +292,7 @@ public class ParentsResource {
 
     // Fetch the teacher
     User teacher = session.get(User.class, request.getTeacherId());
-    if (teacher == null) {
+    if (teacher == null || !teacher.getRole().equals(Role.TEACHER)) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.BAD_REQUEST)
@@ -421,7 +420,6 @@ public class ParentsResource {
     Session session = dbi.getNewSession();
     session.beginTransaction();
 
-    // Get parent who made the request
     User parent = session.get(User.class, parentId);
     if (parent == null || !parent.getRole().equals(Role.PARENT)) {
       session.getTransaction().commit();
@@ -553,6 +551,7 @@ public class ParentsResource {
     // Fetch Parent
     User parent = session.get(User.class, parentId);
     if (parent == null || !parent.getRole().equals(Role.PARENT)) {
+      session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND)
           .entity(new StatusResponse(Status.NOT_FOUND, "Unknown parent id"))
@@ -637,6 +636,15 @@ public class ParentsResource {
       @PathParam("parentId") Integer parentId,
       @PathParam("payment_id") Integer paymentId,
       @Context UriInfo uriInfo) {
+
+    // Fetch parent
+    Optional<User> parentOpt =
+        DatabaseHandler.fetchEntityBy(User.class, User_.id, parentId);
+    if (!parentOpt.isPresent() || !parentOpt.get().getRole().equals(Role.PARENT)) {
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown parent id"))
+          .build();
+    }
 
     // Fetch payment
     Optional<Payment> paymentOpt =
@@ -728,6 +736,7 @@ public class ParentsResource {
     // Fetch Parent
     User parent = session.get(User.class, parentId);
     if (parent == null || !parent.getRole().equals(Role.PARENT)) {
+      session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND)
           .entity(new StatusResponse(Status.NOT_FOUND, "Unknown parent id"))
@@ -849,6 +858,7 @@ public class ParentsResource {
     // Fetch Parent
     User parent = session.get(User.class, parentId);
     if (parent == null || !parent.getRole().equals(Role.PARENT)) {
+      session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND)
           .entity(new StatusResponse(Status.NOT_FOUND, "Unknown parent id"))

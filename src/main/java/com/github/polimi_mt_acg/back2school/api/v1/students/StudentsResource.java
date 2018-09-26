@@ -225,8 +225,8 @@ public class StudentsResource {
     if (subject == null) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND)
-          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown subject id"))
+      return Response.status(Status.BAD_REQUEST)
+          .entity(new StatusResponse(Status.BAD_REQUEST, "Unknown subject id"))
           .build();
     }
 
@@ -314,8 +314,8 @@ public class StudentsResource {
     if (subject == null) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND)
-          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown subject id"))
+      return Response.status(Status.BAD_REQUEST)
+          .entity(new StatusResponse(Status.BAD_REQUEST, "Unknown subject id"))
           .build();
     }
 
