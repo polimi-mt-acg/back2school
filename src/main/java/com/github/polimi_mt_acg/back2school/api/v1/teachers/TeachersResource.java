@@ -616,6 +616,7 @@ public class TeachersResource {
     // Fetch teacher
     User teacher = session.get(User.class, teacherId);
     if (teacher == null || !teacher.getRole().equals(Role.TEACHER)) {
+      session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND)
           .entity(new StatusResponse(Status.NOT_FOUND, "Unknown teacher id"))

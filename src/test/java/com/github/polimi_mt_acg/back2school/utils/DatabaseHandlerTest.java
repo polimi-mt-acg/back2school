@@ -38,7 +38,9 @@ public class DatabaseHandlerTest {
   @Category(TestCategory.Unit.class)
   public void getNewSession() {
     Session session = dbh.getNewSession();
+    session.beginTransaction();
     assertNotNull(session);
+    session.getTransaction().commit();
     session.close();
   }
 

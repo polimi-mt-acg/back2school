@@ -118,6 +118,8 @@ public class NotificationTest {
 
     // load user with notification read from DB
     Session session = DatabaseHandler.getInstance().getNewSession();
+    session.beginTransaction();
+
     Optional<User> carlOpt =
         DatabaseHandler.fetchEntityBy(User.class, User_.email, "carl@email.com", session);
     assertTrue(carlOpt.isPresent());
@@ -127,6 +129,7 @@ public class NotificationTest {
 
     Notification notificationRead = carl.getNotificationsRead().get(0);
     assertEquals(seedEntityNotificationRead.seedNotificationSubject, notificationRead.getSubject());
+    session.getTransaction().commit();
     session.close();
   }
 

@@ -150,6 +150,7 @@ public class Lecture implements DeserializeToPersistInterface {
   private void seedAssociateClass() {
     if (seedClassName != null && seedClassYear != null) {
       Session session = DatabaseHandler.getInstance().getNewSession();
+      session.beginTransaction();
 
       CriteriaBuilder builder = session.getCriteriaBuilder();
       CriteriaQuery<Class> criteria = builder.createQuery(Class.class);
@@ -163,6 +164,8 @@ public class Lecture implements DeserializeToPersistInterface {
               builder.equal(root.get(Class_.academicYear), seedClassYear)));
 
       List<Class> classes = session.createQuery(criteria).getResultList();
+
+      session.getTransaction().commit();
       session.close();
 
       if (classes != null) {

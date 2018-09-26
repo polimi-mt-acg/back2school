@@ -75,12 +75,15 @@ public class DatabaseHandler {
    */
   public <T> List<T> getListSelectFrom(Class<T> classType) {
     Session session = getNewSession();
+    session.beginTransaction();
 
     CriteriaQuery<T> criteria = getCriteriaQuery(classType);
     Root<T> root = criteria.from(classType);
     criteria.select(root);
 
     List<T> entities = session.createQuery(criteria).getResultList();
+
+    session.getTransaction().commit();
     session.close();
     return entities;
   }
@@ -97,6 +100,8 @@ public class DatabaseHandler {
   public <T> List<T> getListSelectFromWhereEqual(
       Class<T> classType, SingularAttribute singularAttribute, Object obj) {
     Session session = getNewSession();
+    session.beginTransaction();
+
     CriteriaBuilder builder = session.getCriteriaBuilder();
 
     CriteriaQuery<T> criteria = builder.createQuery(classType);
@@ -105,6 +110,8 @@ public class DatabaseHandler {
     criteria.where(builder.equal(root.get(singularAttribute), obj));
 
     List<T> results = session.createQuery(criteria).getResultList();
+
+    session.getTransaction().commit();
     session.close();
     return results;
   }
@@ -191,7 +198,9 @@ public class DatabaseHandler {
       Class<T> classType, SingularAttribute singularAttribute, Object parameter) {
 
     Session session = DatabaseHandler.getInstance().getNewSession();
+    session.beginTransaction();
     Optional<T> entity = fetchEntityBy(classType, singularAttribute, parameter, session);
+    session.getTransaction().commit();
     session.close();
     return entity;
   }

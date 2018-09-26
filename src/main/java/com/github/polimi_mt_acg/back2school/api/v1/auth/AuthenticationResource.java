@@ -75,6 +75,7 @@ public class AuthenticationResource {
     Session session = DatabaseHandler.getInstance().getNewSession();
     // invalidate all the still valid user sessions
     AuthenticationSession.invalidateAllAuthenticationSession(currentUser, session);
+    session.getTransaction().commit();
     session.close();
 
     return Response.ok(new LogoutResponse()).build();
