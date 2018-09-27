@@ -148,7 +148,6 @@ public class ParentsResource {
   @SameParentOfPathParentIdSecured
   public Response getParentChildren(
       @PathParam("parentId") Integer parentId, @Context UriInfo uriInfo) {
-    print("FROM HERE");
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 
@@ -196,12 +195,14 @@ public class ParentsResource {
 
     // Fetch the child
     User newChild = session.get(User.class, request.getChildId());
-    if (newChild == null || !newChild.getRole().equals(Role.STUDENT)){
+    if (newChild == null || !newChild.getRole().equals(Role.STUDENT)) {
       print("Unknown child id: ", request.getChildId());
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.BAD_REQUEST)
-          .entity(new StatusResponse(Status.BAD_REQUEST, "Unknown child id or the id is not of a student"))
+          .entity(
+              new StatusResponse(
+                  Status.BAD_REQUEST, "Unknown child id or the id is not of a student"))
           .build();
     }
 
@@ -638,8 +639,7 @@ public class ParentsResource {
       @Context UriInfo uriInfo) {
 
     // Fetch parent
-    Optional<User> parentOpt =
-        DatabaseHandler.fetchEntityBy(User.class, User_.id, parentId);
+    Optional<User> parentOpt = DatabaseHandler.fetchEntityBy(User.class, User_.id, parentId);
     if (!parentOpt.isPresent() || !parentOpt.get().getRole().equals(Role.PARENT)) {
       return Response.status(Status.NOT_FOUND)
           .entity(new StatusResponse(Status.NOT_FOUND, "Unknown parent id"))
@@ -914,10 +914,7 @@ public class ParentsResource {
     session.getTransaction().commit();
     session.close();
     return Response.status(Status.NOT_FOUND)
-        .entity(
-            new StatusResponse(
-                Status.NOT_FOUND,
-                "No notification matching parent id and notification id was found"))
+        .entity(new StatusResponse(Status.NOT_FOUND, "Unknown notification id"))
         .build();
   }
 }

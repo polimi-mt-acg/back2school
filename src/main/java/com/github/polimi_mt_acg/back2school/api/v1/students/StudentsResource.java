@@ -291,7 +291,7 @@ public class StudentsResource {
 
     // Get teacher/admin who made the request
     User teacher = AuthenticationSession.getCurrentUser(httpHeaders, session);
-    if (teacher == null) {
+    if (teacher == null) { // not check if teacher because also admin can access
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.UNAUTHORIZED)
@@ -330,11 +330,11 @@ public class StudentsResource {
     }
 
     // Check if user that created this grade is the same
-    if (teacher.getId() != grade.getTeacher().getId()) {
+    if (teacher.getRole().equals(Role.TEACHER) && teacher.getId() != grade.getTeacher().getId()) {
       session.getTransaction().commit();
       session.close();
-      return Response.notModified()
-          .entity(new StatusResponse(Status.NOT_MODIFIED, "You cannot modify this grade"))
+      return Response.status(Status.FORBIDDEN)
+          .entity(new StatusResponse(Status.FORBIDDEN, "Only the teacher that created the grade can modify it"))
           .build();
     }
 
@@ -359,9 +359,13 @@ public class StudentsResource {
   @TeacherAdministratorSecured
   @TeacherOfStudentSecured
   public Response deleteStudentGradeById(
-      @PathParam("studentId") Integer studentId, @PathParam("gradeId") Integer gradeId) {
+      @PathParam("studentId") Integer studentId,
+      @PathParam("gradeId") Integer gradeId,
+      @Context HttpHeaders httpHeaders) {
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
+
+    User currentUser = AuthenticationSession.getCurrentUser(httpHeaders);
 
     // Fetch student
     User student = session.get(User.class, studentId);
@@ -380,6 +384,16 @@ public class StudentsResource {
       session.close();
       return Response.status(Status.NOT_FOUND)
           .entity(new StatusResponse(Status.NOT_FOUND, "Unknown grade id"))
+          .build();
+    }
+
+    // if it's a teacher deleting, check it is the same created the grade
+    if (currentUser.getRole().equals(Role.TEACHER)
+        && grade.getTeacher().getId() != currentUser.getId()) {
+      session.getTransaction().commit();
+      session.close();
+      return Response.status(Status.FORBIDDEN)
+          .entity(new StatusResponse(Status.FORBIDDEN, "Action not allowed"))
           .build();
     }
 

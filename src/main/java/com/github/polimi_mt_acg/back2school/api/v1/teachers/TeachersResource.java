@@ -354,7 +354,7 @@ public class TeachersResource {
 
     // Fetch the parent
     User parent = session.get(User.class, request.getParentId());
-    if (parent == null) {
+    if (parent == null || !parent.getRole().equals(Role.PARENT)) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.BAD_REQUEST)
@@ -794,10 +794,7 @@ public class TeachersResource {
     session.getTransaction().commit();
     session.close();
     return Response.status(Status.NOT_FOUND)
-        .entity(
-            new StatusResponse(
-                Status.NOT_FOUND,
-                "No notification matching teacher id and notification id was found"))
+        .entity(new StatusResponse(Status.NOT_FOUND, "Unknown notification id"))
         .build();
   }
 }

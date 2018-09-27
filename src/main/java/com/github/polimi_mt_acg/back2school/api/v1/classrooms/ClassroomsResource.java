@@ -46,14 +46,14 @@ public class ClassroomsResource {
   @Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
   @Produces(javax.ws.rs.core.MediaType.APPLICATION_JSON)
   @AdministratorSecured
-  public Response postClassrooms(Classroom classroom, @Context UriInfo uriInfo) {
+  public Response postClassrooms(Classroom newClassroom, @Context UriInfo uriInfo) {
     // Check if a classroom with same name already exists, if so, do nothing
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
     session.beginTransaction();
     List<Classroom> result =
         dbi.getListSelectFromWhereEqual(
-            Classroom.class, Classroom_.name, classroom.getName(), session);
+            Classroom.class, Classroom_.name, newClassroom.getName(), session);
     if (!result.isEmpty()) {
       session.getTransaction().commit();
       session.close();
@@ -65,13 +65,13 @@ public class ClassroomsResource {
     }
 
     // Otherwise we accept the request.
-    session.persist(classroom);
+    session.persist(newClassroom);
     session.getTransaction().commit(); // Makes classroom persisted.
     session.close();
 
     // Now classroom has the ID field filled by the ORM
     UriBuilder builder = uriInfo.getAbsolutePathBuilder();
-    URI uri = builder.path(String.valueOf(classroom.getId())).build();
+    URI uri = builder.path(String.valueOf(newClassroom.getId())).build();
     return Response.created(uri).entity(new StatusResponse(Response.Status.CREATED)).build();
   }
 

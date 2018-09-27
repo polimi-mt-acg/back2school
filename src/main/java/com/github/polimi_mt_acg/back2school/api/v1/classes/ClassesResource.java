@@ -69,7 +69,7 @@ public class ClassesResource {
     for (Integer studentId : request.getStudentsIds()) {
       // get student from db
       User student = session.get(User.class, studentId);
-      if (student == null) {
+      if (student == null || !student.getRole().equals(User.Role.STUDENT)) {
         print("Student with id: ", studentId, " NOT known!");
         session.getTransaction().commit();
         session.close();
@@ -334,7 +334,7 @@ public class ClassesResource {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND)
-          .entity(new StatusResponse(Status.BAD_REQUEST, "Unknown class id"))
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown class id"))
           .build();
     }
 
