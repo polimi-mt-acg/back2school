@@ -209,7 +209,10 @@ public class Notification implements DeserializeToPersistInterface, ValidableReq
    * required information from the client side are only the subject and text, the following is a
    * common request class.
    */
-  public static class NotificationRequest {
+  public static class NotificationRequest implements ValidableRequest {
+
+    @JsonIgnore private Response invalidPostResponse;
+
     private String subject;
 
     private String text;
@@ -228,6 +231,50 @@ public class Notification implements DeserializeToPersistInterface, ValidableReq
 
     public void setText(String text) {
       this.text = text;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isValidForPost() {
+      if (getSubject() == null || getSubject().isEmpty()) {
+        invalidPostResponse =
+            Response.status(Response.Status.BAD_REQUEST)
+                .entity(
+                    new StatusResponse(
+                        Response.Status.BAD_REQUEST, "Missing required attribute: subject"))
+                .build();
+        return false;
+      }
+
+      if (getText() == null || getText().isEmpty()) {
+        invalidPostResponse =
+            Response.status(Response.Status.BAD_REQUEST)
+                .entity(
+                    new StatusResponse(
+                        Response.Status.BAD_REQUEST, "Missing required attribute: text"))
+                .build();
+        return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    @JsonIgnore
+    public Response getInvalidPostResponse() {
+      return invalidPostResponse;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isValidForPut(Integer id) {
+      return false;
+    }
+
+    @Override
+    @JsonIgnore
+    public Response getInvalidPutResponse() {
+      return null;
     }
   }
 }
