@@ -6,20 +6,16 @@ import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
+
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 @Entity
-@Table(name = "class")
+@Table(name = "class",
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"academic_year", "name"})
+    })
 public class Class implements DeserializeToPersistInterface {
 
   private static final Logger LOGGER = Logger.getLogger(Class.class.getName());

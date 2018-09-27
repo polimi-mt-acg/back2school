@@ -2,14 +2,13 @@ package com.github.polimi_mt_acg.back2school.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
-@Table(name = "classroom")
+@Table(name = "classroom",
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"name", "floor", "building"})
+    })
 public class Classroom implements DeserializeToPersistInterface {
 
   @Id

@@ -17,7 +17,8 @@ import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
-@Table(name = "user")
+@Table(name = "user",
+    uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})
 @XmlRootElement
 // skip null fields when serializing (e.g. newPassword field)
 @JsonInclude(JsonInclude.Include.NON_NULL)
