@@ -214,6 +214,7 @@ public class AuthenticationSession implements DeserializeToPersistInterface {
   /** Provide a new AuthenticationSession invalidating all the previously eventually active ones. */
   public static AuthenticationSession startNewAuthenticationSession(User user) {
     Session session = DatabaseHandler.getInstance().getNewSession();
+    session.beginTransaction();
 
     // just start with a new fresh session: get invalid all the other sessions
     invalidateAllAuthenticationSession(user, session);
@@ -223,8 +224,8 @@ public class AuthenticationSession implements DeserializeToPersistInterface {
     authSession.setUser(user);
 
     // persist the new session
-    session.beginTransaction();
     session.persist(authSession);
+
     session.getTransaction().commit();
     session.close();
 
@@ -247,9 +248,7 @@ public class AuthenticationSession implements DeserializeToPersistInterface {
       // invalidate the authSession and save it
       authSession.setCancelled(true);
 
-      session.beginTransaction();
       session.persist(authSession);
-      session.getTransaction().commit();
     }
   }
 
