@@ -54,26 +54,11 @@ public class ParentsResource {
   @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
   public Response postParents(User newUser, @Context UriInfo uriInfo) {
-    if (newUser.getEmail() == null || newUser.getEmail().isEmpty()) {
-      return Response.status(Status.BAD_REQUEST)
-          .entity(new StatusResponse(Status.BAD_REQUEST, "User must have an email address."))
-          .build();
-    }
+    if (!newUser.isValidForPost()) return newUser.getInvalidPostResponse();
 
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 
-    // Check if a user with same email already exists, if so, do nothing
-    Optional<User> userOpt =
-        DatabaseHandler.fetchEntityBy(User.class, User_.email, newUser.getEmail(), session);
-
-    if (userOpt.isPresent()) {
-      session.getTransaction().commit();
-      session.close();
-      return Response.status(Status.CONFLICT)
-          .entity(new StatusResponse(Status.CONFLICT, "A user with this email already exists"))
-          .build();
-    }
     // force to be a parent since this endpoint meaning
     newUser.setRole(Role.PARENT);
     newUser.prepareToPersist();
@@ -112,6 +97,8 @@ public class ParentsResource {
   @ParentAdministratorSecured
   @SameParentOfPathParentIdSecured
   public Response putParentById(User newParent, @PathParam("parentId") Integer parentId) {
+    if (!newParent.isValidForPut(parentId)) return newParent.getInvalidPutResponse();
+
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 
@@ -179,6 +166,7 @@ public class ParentsResource {
   @AdministratorSecured
   public Response postParentChildren(
       ParentsChildrenRequest request, @PathParam("parentId") Integer parentId) {
+    if (!request.isValidForPost()) return request.getInvalidPostResponse();
 
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
@@ -193,18 +181,7 @@ public class ParentsResource {
           .build();
     }
 
-    // Fetch the child
     User newChild = session.get(User.class, request.getChildId());
-    if (newChild == null || !newChild.getRole().equals(Role.STUDENT)) {
-      print("Unknown child id: ", request.getChildId());
-      session.getTransaction().commit();
-      session.close();
-      return Response.status(Status.BAD_REQUEST)
-          .entity(
-              new StatusResponse(
-                  Status.BAD_REQUEST, "Unknown child id or the id is not of a student"))
-          .build();
-    }
 
     // Check if student is already a child of the parent
     for (User child : parent.getChildren()) {
@@ -276,6 +253,7 @@ public class ParentsResource {
       ParentAppointmentRequest request,
       @PathParam("parentId") Integer parentId,
       @Context UriInfo uriInfo) {
+    if (!request.isValidForPost()) return request.getInvalidPostResponse();
 
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
@@ -291,15 +269,7 @@ public class ParentsResource {
           .build();
     }
 
-    // Fetch the teacher
     User teacher = session.get(User.class, request.getTeacherId());
-    if (teacher == null || !teacher.getRole().equals(Role.TEACHER)) {
-      session.getTransaction().commit();
-      session.close();
-      return Response.status(Status.BAD_REQUEST)
-          .entity(new StatusResponse(Status.BAD_REQUEST, "Unknown teacher id"))
-          .build();
-    }
 
     // To check! Do we need to do these checks?
     // Get appointments of the teacher
@@ -417,6 +387,8 @@ public class ParentsResource {
       ParentAppointmentRequest request,
       @PathParam("parentId") Integer parentId,
       @PathParam("appointmentId") Integer appointmentId) {
+    if (!request.isValidForPut(appointmentId)) return request.getInvalidPutResponse();
+
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
     session.beginTransaction();
@@ -430,25 +402,11 @@ public class ParentsResource {
           .build();
     }
 
-    // Fetch the teacher
+    // Fetch teacher entity
     User teacher = session.get(User.class, request.getTeacherId());
-    if (teacher == null || !teacher.getRole().equals(Role.TEACHER)) {
-      session.getTransaction().commit();
-      session.close();
-      return Response.status(Status.BAD_REQUEST)
-          .entity(new StatusResponse(Status.BAD_REQUEST, "Unknown teacher id"))
-          .build();
-    }
 
     // Fetch Appointment entity
     Appointment appointment = session.get(Appointment.class, appointmentId);
-    if (appointment == null) {
-      session.getTransaction().commit();
-      session.close();
-      return Response.status(Status.NOT_FOUND)
-          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown appointment id"))
-          .build();
-    }
 
     // Check if 'parent' is valid
     if (parent.getId() != appointment.getParent().getId()) {
@@ -588,6 +546,8 @@ public class ParentsResource {
       @PathParam("parentId") Integer parentId,
       @Context HttpHeaders httpHeaders,
       @Context UriInfo uriInfo) {
+    if (!request.isValidForPost()) return request.getInvalidPostResponse();
+
     User currentUser = AuthenticationSession.getCurrentUser(httpHeaders);
 
     DatabaseHandler dbi = DatabaseHandler.getInstance();
@@ -609,7 +569,7 @@ public class ParentsResource {
     payment.setPlacedBy(currentUser);
     payment.setAssignedTo(parent);
     payment.setType(request.getType());
-    payment.setDatetimeRequested(request.getDatetimeRequested());
+    payment.setDatetimeRequested(LocalDateTime.now());
     // due to the meaning of this endpoint
     payment.setDatetimeDone(null);
     payment.setDatetimeDeadline(request.getDatetimeDeadline());
@@ -811,6 +771,8 @@ public class ParentsResource {
       @PathParam("parentId") Integer parentId,
       @Context HttpHeaders httpHeaders,
       @Context UriInfo uriInfo) {
+    if (!npp.isValidForPost()) return npp.getInvalidPostResponse();
+
     // Here the admin can POST only a direct notification to this parent
     User currentAdmin = AuthenticationSession.getCurrentUser(httpHeaders);
 

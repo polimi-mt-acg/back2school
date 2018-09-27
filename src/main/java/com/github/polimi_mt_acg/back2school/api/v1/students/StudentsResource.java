@@ -312,13 +312,6 @@ public class StudentsResource {
 
     // Fetch previous grade entity
     Grade grade = session.get(Grade.class, gradeId);
-    if (grade == null) {
-      session.getTransaction().commit();
-      session.close();
-      return Response.status(Status.NOT_FOUND)
-          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown grade id"))
-          .build();
-    }
 
     // Check if user that created this grade is the same
     if (teacher.getRole().equals(Role.TEACHER) && teacher.getId() != grade.getTeacher().getId()) {

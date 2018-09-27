@@ -66,6 +66,7 @@ public class DatabaseHandlerTest {
     assertEquals(seedUsers.size(), users.size());
     assertEquals(seedUsers.get(0).getName(), users.get(0).getName());
     assertEquals(seedUsers.get(1).getName(), users.get(1).getName());
+    dbh.truncateDatabase();
   }
 
   @Test
