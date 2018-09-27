@@ -48,26 +48,10 @@ public class AdministratorsResource {
   @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
   public Response postAdministrators(User newUser, @Context UriInfo uriInfo) {
-    if (newUser.getEmail() == null || newUser.getEmail().isEmpty()) {
-      return Response.status(Status.BAD_REQUEST)
-          .entity(new StatusResponse(Status.BAD_REQUEST, "User must have an email address"))
-          .build();
-    }
+    if (!newUser.isValidForPost()) return newUser.getInvalidPostResponse();
 
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
-
-    // Check if a user with same email already exists, if so, do nothing
-    Optional<User> userOpt =
-        DatabaseHandler.fetchEntityBy(User.class, User_.email, newUser.getEmail(), session);
-
-    if (userOpt.isPresent()) {
-      session.getTransaction().commit();
-      session.close();
-      return Response.status(Status.CONFLICT)
-          .entity(new StatusResponse(Status.CONFLICT, "A user with this email already exists"))
-          .build();
-    }
 
     // force to be an administrator since this endpoint meaning
     newUser.setRole(Role.ADMINISTRATOR);
@@ -107,18 +91,13 @@ public class AdministratorsResource {
   @AdministratorSecured
   public Response putAdministratorById(
       User newUser, @PathParam("administratorId") Integer administratorId) {
+    if (!newUser.isValidForPut(administratorId)) return newUser.getInvalidPutResponse();
+
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 
     // Fetch User
     User administrator = session.get(User.class, administratorId);
-    if (administrator == null || !administrator.getRole().equals(Role.ADMINISTRATOR)) {
-      session.getTransaction().commit();
-      session.close();
-      return Response.status(Status.NOT_FOUND)
-          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown administrator id"))
-          .build();
-    }
 
     // Update administrator fields
     administrator.setName(newUser.getName());
