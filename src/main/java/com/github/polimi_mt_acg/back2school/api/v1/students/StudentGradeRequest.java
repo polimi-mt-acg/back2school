@@ -11,8 +11,6 @@ import javax.ws.rs.core.Response.Status;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.print;
-
 public class StudentGradeRequest implements ValidableRequest {
 
   @JsonIgnore private Response invalidPostResponse;
@@ -60,11 +58,11 @@ public class StudentGradeRequest implements ValidableRequest {
   @Override
   @JsonIgnore
   public boolean isValidForPost() {
-    if (getSubjectId() == null) {
-      print("Missing attribute: subject_id");
+    if (getSubjectId() == null || getSubjectId() == 0) {
       invalidPostResponse =
           Response.status(Response.Status.BAD_REQUEST)
-              .entity(new StatusResponse(Status.BAD_REQUEST, "Missing required attribute: subject_id"))
+              .entity(
+                  new StatusResponse(Status.BAD_REQUEST, "Missing required attribute: subject_id"))
               .build();
       return false;
     }
@@ -73,7 +71,6 @@ public class StudentGradeRequest implements ValidableRequest {
         DatabaseHandler.fetchEntityBy(Subject.class, Subject_.id, getSubjectId());
 
     if (!subjectOpt.isPresent()) {
-      print("Unknown subject id");
       invalidPostResponse =
           Response.status(Response.Status.BAD_REQUEST)
               .entity(new StatusResponse(Status.BAD_REQUEST, "Unknown required subject id"))
@@ -81,8 +78,7 @@ public class StudentGradeRequest implements ValidableRequest {
       return false;
     }
 
-    if (getDate() == null) {
-      print("Missing attribute: date");
+    if (getDate() == null || getDate().toString().isEmpty()) {
       invalidPostResponse =
           Response.status(Response.Status.BAD_REQUEST)
               .entity(new StatusResponse(Status.BAD_REQUEST, "Missing required attribute: date"))
@@ -91,7 +87,6 @@ public class StudentGradeRequest implements ValidableRequest {
     }
 
     if (getTitle() == null || getTitle().isEmpty()) {
-      print("Missing attribute: title");
       invalidPostResponse =
           Response.status(Response.Status.BAD_REQUEST)
               .entity(new StatusResponse(Status.BAD_REQUEST, "Missing required attribute: title"))
@@ -100,7 +95,6 @@ public class StudentGradeRequest implements ValidableRequest {
     }
 
     if (getGrade() == 0) {
-      print("Missing attribute: grade");
       invalidPostResponse =
           Response.status(Response.Status.BAD_REQUEST)
               .entity(new StatusResponse(Status.BAD_REQUEST, "Missing required attribute: grade"))
@@ -120,6 +114,15 @@ public class StudentGradeRequest implements ValidableRequest {
   @Override
   @JsonIgnore
   public boolean isValidForPut(Integer id) {
+    Optional<Grade> gradeOpt = DatabaseHandler.fetchEntityBy(Grade.class, Grade_.id, id);
+    if (!gradeOpt.isPresent()) {
+      invalidPutResponse =
+          Response.status(Status.NOT_FOUND)
+              .entity(new StatusResponse(Status.NOT_FOUND, "Unknown grade id"))
+              .build();
+      return false;
+    }
+
     if (!isValidForPost()) {
       invalidPutResponse = invalidPostResponse;
       return false;

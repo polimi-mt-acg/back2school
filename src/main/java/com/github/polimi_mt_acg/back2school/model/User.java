@@ -276,6 +276,15 @@ public class User implements DeserializeToPersistInterface, ValidableRequest {
   @Override
   @JsonIgnore
   public boolean isValidForPut(Integer id) {
+    Optional<User> userOpt = DatabaseHandler.fetchEntityBy(User.class, User_.id, id);
+    if (!userOpt.isPresent()) {
+      invalidPutResponse =
+          Response.status(Status.NOT_FOUND)
+              .entity(new StatusResponse(Status.NOT_FOUND, "Unknown user id"))
+              .build();
+      return false;
+    }
+
     if (getEmail() == null || getEmail().isEmpty()) {
       invalidPutResponse =
           Response.status(Status.BAD_REQUEST)
@@ -283,14 +292,16 @@ public class User implements DeserializeToPersistInterface, ValidableRequest {
               .build();
       return false;
     }
-    Optional<User> userOpt = DatabaseHandler.fetchEntityBy(User.class, User_.email, getEmail());
-    if (userOpt.isPresent() && userOpt.get().getId() != id) {
+
+    Optional<User> otherUserOpt = DatabaseHandler.fetchEntityBy(User.class, User_.email, getEmail());
+    if (otherUserOpt.isPresent() && otherUserOpt.get().getId() != id) {
       invalidPutResponse =
           Response.status(Status.CONFLICT)
               .entity(new StatusResponse(Status.CONFLICT, "A user with this email already exists"))
               .build();
       return false;
     }
+
     return true;
   }
 

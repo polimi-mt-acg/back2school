@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.github.polimi_mt_acg.back2school.api.v1.StatusResponse;
+import com.github.polimi_mt_acg.back2school.api.v1.ValidableRequest;
 import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,6 +22,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.ws.rs.core.Response;
 
 @Entity
 @Table(name = "notification")
@@ -34,7 +37,9 @@ import javax.persistence.Transient;
   @Type(value = NotificationPersonalParent.class, name = "personal_parent"),
   @Type(value = NotificationPersonalTeacher.class, name = "personal_teacher")
 })
-public class Notification implements DeserializeToPersistInterface {
+public class Notification implements DeserializeToPersistInterface, ValidableRequest {
+
+  @Transient @JsonIgnore private Response invalidPostResponse;
 
   @Transient private String seedCreatorEmail;
 
@@ -133,6 +138,7 @@ public class Notification implements DeserializeToPersistInterface {
 
   /**
    * Get the status (read or unread) with respect to a user.
+   *
    * @param user
    * @return
    */
@@ -140,13 +146,57 @@ public class Notification implements DeserializeToPersistInterface {
     Status status = Status.UNREAD;
     // if the current notification is found among those already read by the user,
     // then status is read
-    for (Notification notification: user.getNotificationsRead()) {
+    for (Notification notification : user.getNotificationsRead()) {
       if (getId() == notification.getId()) {
         status = Status.READ;
         break;
       }
     }
     return status;
+  }
+
+  @Override
+  @JsonIgnore
+  public boolean isValidForPost() {
+    if (getSubject() == null || getSubject().isEmpty()) {
+      invalidPostResponse =
+          Response.status(Response.Status.BAD_REQUEST)
+              .entity(
+                  new StatusResponse(
+                      Response.Status.BAD_REQUEST, "Missing required attribute: subject"))
+              .build();
+      return false;
+    }
+
+    if (getText() == null || getText().isEmpty()) {
+      invalidPostResponse =
+          Response.status(Response.Status.BAD_REQUEST)
+              .entity(
+                  new StatusResponse(
+                      Response.Status.BAD_REQUEST, "Missing required attribute: text"))
+              .build();
+      return false;
+    }
+
+    return true;
+  }
+
+  @Override
+  @JsonIgnore
+  public Response getInvalidPostResponse() {
+    return invalidPostResponse;
+  }
+
+  @Override
+  @JsonIgnore
+  public boolean isValidForPut(Integer id) {
+    return false;
+  }
+
+  @Override
+  @JsonIgnore
+  public Response getInvalidPutResponse() {
+    return null;
   }
 
   public enum Status {
