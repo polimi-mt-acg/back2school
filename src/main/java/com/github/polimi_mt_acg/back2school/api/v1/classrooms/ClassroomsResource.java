@@ -47,22 +47,10 @@ public class ClassroomsResource {
   @Produces(javax.ws.rs.core.MediaType.APPLICATION_JSON)
   @AdministratorSecured
   public Response postClassrooms(Classroom newClassroom, @Context UriInfo uriInfo) {
-    // Check if a classroom with same name already exists, if so, do nothing
-    DatabaseHandler dbi = DatabaseHandler.getInstance();
-    Session session = dbi.getNewSession();
+    if (!newClassroom.isValidForPost()) return newClassroom.getInvalidPostResponse();
+
+    Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
-    List<Classroom> result =
-        dbi.getListSelectFromWhereEqual(
-            Classroom.class, Classroom_.name, newClassroom.getName(), session);
-    if (!result.isEmpty()) {
-      session.getTransaction().commit();
-      session.close();
-      return Response.status(Response.Status.CONFLICT)
-          .entity(
-              new StatusResponse(
-                  Response.Status.CONFLICT, "Classroom with this name already exists"))
-          .build();
-    }
 
     // Otherwise we accept the request.
     session.persist(newClassroom);
@@ -102,28 +90,18 @@ public class ClassroomsResource {
   @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
   public Response putClassroomById(Classroom newClassroom, @PathParam("id") Integer classroomId) {
+    if (!newClassroom.isValidForPut(classroomId)) return newClassroom.getInvalidPutResponse();
+
     // Fetch Classroom
-    DatabaseHandler dbi = DatabaseHandler.getInstance();
-    Session session = dbi.getNewSession();
+    Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 
-    List<Classroom> res =
-        dbi.getListSelectFromWhereEqual(Classroom.class, Classroom_.id, classroomId, session);
-
-    if (res.isEmpty()) {
-      session.getTransaction().commit();
-      session.close();
-      return Response.status(Response.Status.NOT_FOUND)
-          .entity(new StatusResponse(Response.Status.NOT_FOUND, "Unknown classroom id"))
-          .build();
-    }
-
-    Classroom classroom = res.get(0);
-
+    Classroom classroom = session.get(Classroom.class, classroomId);
     classroom.setName(newClassroom.getName());
     classroom.setFloor(newClassroom.getFloor());
     classroom.setBuilding(newClassroom.getBuilding());
 
+    classroom.prepareToPersist();
     session.getTransaction().commit();
     session.close();
 
