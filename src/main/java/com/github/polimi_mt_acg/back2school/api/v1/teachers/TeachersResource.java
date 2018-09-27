@@ -56,26 +56,11 @@ public class TeachersResource {
   @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
   public Response postTeachers(User newUser, @Context UriInfo uriInfo) {
-    if (newUser.getEmail() == null || newUser.getEmail().isEmpty()) {
-      return Response.status(Status.BAD_REQUEST)
-          .entity(new StatusResponse(Status.BAD_REQUEST, "User must have an email address."))
-          .build();
-    }
+    if (!newUser.isValidForPost()) return newUser.getInvalidPostResponse();
 
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 
-    // Check if a user with same email already exists, if so, do nothing
-    Optional<User> userOpt =
-        DatabaseHandler.fetchEntityBy(User.class, User_.email, newUser.getEmail(), session);
-
-    if (userOpt.isPresent()) {
-      session.getTransaction().commit();
-      session.close();
-      return Response.status(Status.CONFLICT)
-          .entity(new StatusResponse(Status.CONFLICT, "A user with this email already exists"))
-          .build();
-    }
     // force to be a parent since this endpoint meaning
     newUser.setRole(Role.TEACHER);
 
@@ -114,18 +99,13 @@ public class TeachersResource {
   @TeacherAdministratorSecured
   @SameTeacherOfPathTeacherIdSecured
   public Response putTeacherById(User newTeacher, @PathParam("teacherId") Integer teacherId) {
+    if (!newTeacher.isValidForPut(teacherId)) return newTeacher.getInvalidPutResponse();
+
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 
     // Fetch User
     User teacher = session.get(User.class, teacherId);
-    if (teacher == null || !teacher.getRole().equals(Role.TEACHER)) {
-      session.getTransaction().commit();
-      session.close();
-      return Response.status(Status.NOT_FOUND)
-          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown teacher id"))
-          .build();
-    }
 
     // Update teacher fields
     teacher.setName(newTeacher.getName());
@@ -337,6 +317,7 @@ public class TeachersResource {
       TeacherAppointmentRequest request,
       @PathParam("teacherId") Integer teacherId,
       @Context UriInfo uriInfo) {
+    if (!request.isValidForPost()) return request.getInvalidPostResponse();
 
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
@@ -354,13 +335,6 @@ public class TeachersResource {
 
     // Fetch the parent
     User parent = session.get(User.class, request.getParentId());
-    if (parent == null || !parent.getRole().equals(Role.PARENT)) {
-      session.getTransaction().commit();
-      session.close();
-      return Response.status(Status.BAD_REQUEST)
-          .entity(new StatusResponse(Status.BAD_REQUEST, "Unknown parent id"))
-          .build();
-    }
 
     // To check! Do we need to do these checks?
     // Get appointments of the parent
@@ -479,6 +453,8 @@ public class TeachersResource {
       TeacherAppointmentRequest request,
       @PathParam("teacherId") Integer teacherId,
       @PathParam("appointmentId") Integer appointmentId) {
+    if (!request.isValidForPut(appointmentId)) return request.getInvalidPutResponse();
+
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
     session.beginTransaction();
@@ -495,23 +471,9 @@ public class TeachersResource {
 
     // Fetch the parent
     User parent = session.get(User.class, request.getParentId());
-    if (parent == null || !parent.getRole().equals(Role.PARENT)) {
-      session.getTransaction().commit();
-      session.close();
-      return Response.status(Status.BAD_REQUEST)
-          .entity(new StatusResponse(Status.BAD_REQUEST, "Unknown parent id"))
-          .build();
-    }
 
     // Fetch Appointment entity
     Appointment appointment = session.get(Appointment.class, appointmentId);
-    if (appointment == null) {
-      session.getTransaction().commit();
-      session.close();
-      return Response.status(Status.NOT_FOUND)
-          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown appointment id"))
-          .build();
-    }
 
     // Check if 'teacher' is valid
     if (teacher.getId() != appointment.getTeacher().getId()) {
@@ -691,6 +653,8 @@ public class TeachersResource {
       @PathParam("teacherId") Integer teacherId,
       @Context HttpHeaders httpHeaders,
       @Context UriInfo uriInfo) {
+    if (!npt.isValidForPost()) return npt.getInvalidPostResponse();
+
     // Here the admin can POST only a direct notification to this teacher
     User currentAdmin = AuthenticationSession.getCurrentUser(httpHeaders);
 
