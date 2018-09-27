@@ -59,26 +59,11 @@ public class StudentsResource {
   @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
   public Response postStudents(User newUser, @Context UriInfo uriInfo) {
-    if (newUser.getEmail() == null || newUser.getEmail().isEmpty()) {
-      return Response.status(Status.BAD_REQUEST)
-          .entity(new StatusResponse(Status.BAD_REQUEST, "User must have an email address"))
-          .build();
-    }
+    if (!newUser.isValidForPost()) return newUser.getInvalidPostResponse();
 
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 
-    // Check if a user with same email already exists, if so, do nothing
-    Optional<User> userOpt =
-        DatabaseHandler.fetchEntityBy(User.class, User_.email, newUser.getEmail(), session);
-
-    if (userOpt.isPresent()) {
-      session.getTransaction().commit();
-      session.close();
-      return Response.status(Status.CONFLICT)
-          .entity(new StatusResponse(Status.CONFLICT, "A user with this email already exists"))
-          .build();
-    }
     // force to be a student since this endpoint meaning
     newUser.setRole(Role.STUDENT);
     newUser.prepareToPersist();
@@ -87,7 +72,7 @@ public class StudentsResource {
     session.getTransaction().commit();
     session.close();
 
-    // Now the teacher has the ID field filled by the ORM
+    // Now the student has the ID field filled by the ORM
     UriBuilder builder = uriInfo.getAbsolutePathBuilder();
     URI uri = builder.path(str(newUser.getId())).build();
     return Response.created(uri).entity(new StatusResponse(Status.CREATED)).build();
@@ -117,6 +102,8 @@ public class StudentsResource {
   @ParentAdministratorSecured
   @ParentOfStudentSecured
   public Response putStudentById(User newUser, @PathParam("studentId") Integer studentId) {
+    if (!newUser.isValidForPut(studentId)) return newUser.getInvalidPutResponse();
+
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 
@@ -196,6 +183,8 @@ public class StudentsResource {
       @PathParam("studentId") Integer studentId,
       @Context HttpHeaders httpHeaders,
       @Context UriInfo uriInfo) {
+    if (!gradeRequest.isValidForPost()) return gradeRequest.getInvalidPostResponse();
+
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
     session.beginTransaction();
@@ -286,6 +275,8 @@ public class StudentsResource {
       @PathParam("studentId") Integer studentId,
       @PathParam("gradeId") Integer gradeId,
       @Context HttpHeaders httpHeaders) {
+    if (!gradeRequest.isValidForPut(gradeId)) return gradeRequest.getInvalidPutResponse();
+
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 
@@ -334,7 +325,9 @@ public class StudentsResource {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.FORBIDDEN)
-          .entity(new StatusResponse(Status.FORBIDDEN, "Only the teacher that created the grade can modify it"))
+          .entity(
+              new StatusResponse(
+                  Status.FORBIDDEN, "Only the teacher that created the grade can modify it"))
           .build();
     }
 
