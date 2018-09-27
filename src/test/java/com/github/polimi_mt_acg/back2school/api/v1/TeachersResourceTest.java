@@ -81,7 +81,7 @@ public class TeachersResourceTest {
         RestFactory.getAuthenticatedInvocationBuilder(teacher, "teachers").buildGet();
 
     Response response = getRequest.invoke();
-    assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+    assertEquals(Status.FORBIDDEN.getStatusCode(), response.getStatus());
   }
 
   @Test

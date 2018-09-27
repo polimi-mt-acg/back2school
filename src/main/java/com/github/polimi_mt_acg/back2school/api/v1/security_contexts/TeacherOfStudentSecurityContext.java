@@ -88,8 +88,8 @@ public class TeacherOfStudentSecurityContext implements ContainerRequestFilter {
     session.getTransaction().commit();
     session.close();
     requestContext.abortWith(
-        Response.status(Response.Status.UNAUTHORIZED)
-            .entity(new StatusResponse(Status.UNAUTHORIZED, "Access to the resource not allowed"))
+        Response.status(Status.FORBIDDEN)
+            .entity(new StatusResponse(Status.FORBIDDEN, "Access to the resource not allowed"))
             .build());
   }
 }

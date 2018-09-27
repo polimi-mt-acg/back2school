@@ -94,7 +94,7 @@ public class StudentsResourceTest {
         RestFactory.getAuthenticatedInvocationBuilder(teacher, "students").buildGet();
 
     Response response = getRequest.invoke();
-    assertEquals(Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+    assertEquals(Status.FORBIDDEN.getStatusCode(), response.getStatus());
   }
 
   @Test
@@ -107,7 +107,7 @@ public class StudentsResourceTest {
         RestFactory.getAuthenticatedInvocationBuilder(parent, "students").buildGet();
 
     Response response = getRequest.invoke();
-    assertEquals(Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+    assertEquals(Status.FORBIDDEN.getStatusCode(), response.getStatus());
   }
 
   @Test
@@ -200,7 +200,7 @@ public class StudentsResourceTest {
         RestFactory.getAuthenticatedInvocationBuilder(notBobsTeacher, "students", bobID).buildGet();
 
     Response response = request.invoke();
-    assertEquals(Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+    assertEquals(Status.FORBIDDEN.getStatusCode(), response.getStatus());
   }
 
   @Test

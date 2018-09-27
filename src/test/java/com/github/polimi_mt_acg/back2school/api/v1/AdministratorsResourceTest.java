@@ -88,7 +88,7 @@ public class AdministratorsResourceTest {
         RestFactory.getAuthenticatedInvocationBuilder(teacher, "administrators").buildGet();
 
     Response response = getRequest.invoke();
-    assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+    assertEquals(Response.Status.FORBIDDEN.getStatusCode(), response.getStatus());
   }
 
   @Test
@@ -101,7 +101,7 @@ public class AdministratorsResourceTest {
         RestFactory.getAuthenticatedInvocationBuilder(parent, "administrators").buildGet();
 
     Response response = getRequest.invoke();
-    assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+    assertEquals(Response.Status.FORBIDDEN.getStatusCode(), response.getStatus());
   }
 
   @Test

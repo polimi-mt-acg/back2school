@@ -29,7 +29,7 @@ import static com.github.polimi_mt_acg.back2school.api.v1.security_contexts.Admi
  */
 @SameTeacherOfPathTeacherIdSecured
 @Provider
-@Priority(SecurityContextPriority.SAME_PARENT_OF_PATH_PARENT_ID)
+@Priority(SecurityContextPriority.SAME_TEACHER_OF_PATH_TEACHER_ID)
 public class SameTeacherOfPathTeacherIdSecurityContext implements ContainerRequestFilter {
 
   @Override

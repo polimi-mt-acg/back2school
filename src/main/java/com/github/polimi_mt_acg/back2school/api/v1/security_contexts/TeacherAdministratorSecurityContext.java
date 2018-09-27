@@ -48,8 +48,8 @@ public class TeacherAdministratorSecurityContext implements ContainerRequestFilt
     if (!currentUser.getRole().equals(Role.TEACHER)
         && !currentUser.getRole().equals(Role.ADMINISTRATOR)) {
       requestContext.abortWith(
-          Response.status(Response.Status.UNAUTHORIZED)
-              .entity(new StatusResponse(Response.Status.UNAUTHORIZED, "User not allowed"))
+          Response.status(Response.Status.FORBIDDEN)
+              .entity(new StatusResponse(Response.Status.FORBIDDEN, "User not allowed"))
               .build());
       return;
     }

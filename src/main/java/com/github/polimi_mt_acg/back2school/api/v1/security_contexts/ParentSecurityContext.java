@@ -48,8 +48,8 @@ public class ParentSecurityContext implements ContainerRequestFilter {
     // if the user logged in has not the correct role
     if (!currentUser.getRole().equals(User.Role.PARENT)) {
       requestContext.abortWith(
-          Response.status(Response.Status.UNAUTHORIZED)
-              .entity(new StatusResponse(Response.Status.UNAUTHORIZED, "User not allowed"))
+          Response.status(Response.Status.FORBIDDEN)
+              .entity(new StatusResponse(Response.Status.FORBIDDEN, "User not allowed"))
               .build());
       return;
     }

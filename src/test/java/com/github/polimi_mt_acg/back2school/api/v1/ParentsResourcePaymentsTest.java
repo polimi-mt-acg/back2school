@@ -133,7 +133,7 @@ public class ParentsResourcePaymentsTest {
             .buildPost(Entity.json(parentPaymentRequest));
 
     Response response = request.invoke();
-    assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+    assertEquals(Response.Status.FORBIDDEN.getStatusCode(), response.getStatus());
     print("Payment Post Refused: ", response.toString());
   }
 
