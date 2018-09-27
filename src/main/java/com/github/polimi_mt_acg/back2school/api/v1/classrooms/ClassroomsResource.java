@@ -101,8 +101,7 @@ public class ClassroomsResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
-  public Response putClassroomById(
-      PutClassroomRequest newClassroom, @PathParam("id") Integer classroomId) {
+  public Response putClassroomById(Classroom newClassroom, @PathParam("id") Integer classroomId) {
     // Fetch Classroom
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
@@ -120,7 +119,11 @@ public class ClassroomsResource {
     }
 
     Classroom classroom = res.get(0);
-    updateClassroom(classroom, newClassroom);
+
+    classroom.setName(newClassroom.getName());
+    classroom.setFloor(newClassroom.getFloor());
+    classroom.setBuilding(newClassroom.getBuilding());
+
     session.getTransaction().commit();
     session.close();
 
@@ -128,11 +131,5 @@ public class ClassroomsResource {
     // HTTP status code 200 OK for a successful PUT of an update to an existing resource. No
     // response body needed.
     return Response.ok().entity(new StatusResponse(Response.Status.OK)).build();
-  }
-
-  private void updateClassroom(Classroom classroom, PutClassroomRequest newClassroom) {
-    classroom.setName(newClassroom.getName());
-    classroom.setFloor(newClassroom.getFloor());
-    classroom.setBuilding(newClassroom.getBuilding());
   }
 }
