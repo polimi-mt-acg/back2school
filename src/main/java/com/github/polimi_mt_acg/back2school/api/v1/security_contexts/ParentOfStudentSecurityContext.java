@@ -51,7 +51,7 @@ public class ParentOfStudentSecurityContext implements ContainerRequestFilter {
       session.close();
       requestContext.abortWith(
           Response.status(Response.Status.UNAUTHORIZED)
-              .entity(new StatusResponse(Response.Status.UNAUTHORIZED, "Not a valid session"))
+              .entity(new StatusResponse(Response.Status.UNAUTHORIZED, "Invalid session"))
               .build());
       return;
     }

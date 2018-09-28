@@ -40,7 +40,7 @@ public class ParentAdministratorSecurityContext implements ContainerRequestFilte
     if (currentUser == null) {
       requestContext.abortWith(
           Response.status(Response.Status.UNAUTHORIZED)
-              .entity(new StatusResponse(Response.Status.UNAUTHORIZED, "Not a valid session"))
+              .entity(new StatusResponse(Response.Status.UNAUTHORIZED, "Invalid session"))
               .build());
       return;
     }
