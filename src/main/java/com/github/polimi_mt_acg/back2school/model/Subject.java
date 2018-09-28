@@ -146,7 +146,7 @@ public class Subject implements DeserializeToPersistInterface, ValidableRequest 
         DatabaseHandler.fetchEntityBy(Subject.class, Subject_.name, getName());
 
     if (otherSubjectOpt.isPresent() && otherSubjectOpt.get().getId() != id) {
-      invalidPostResponse =
+      invalidPutResponse =
           Response.status(Response.Status.CONFLICT)
               .entity(
                   new StatusResponse(
