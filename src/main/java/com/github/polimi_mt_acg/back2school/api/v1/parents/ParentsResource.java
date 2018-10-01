@@ -6,6 +6,7 @@ import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.Administrat
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.ParentAdministratorSecured;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.ParentSecured;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.SameParentOfPathParentIdSecured;
+import com.github.polimi_mt_acg.back2school.api.v1.students.StudentsResource;
 import com.github.polimi_mt_acg.back2school.model.*;
 import com.github.polimi_mt_acg.back2school.model.Class;
 import com.github.polimi_mt_acg.back2school.model.User.Role;
@@ -21,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.print;
 import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.str;
 
 @Path("parents")
@@ -148,15 +148,21 @@ public class ParentsResource {
           .build();
     }
 
-    ParentChildrenResponse response = new ParentChildrenResponse();
-    // force loading of entities -> avoid them to be lazy loaded after when
-    // they're required for serialization (response) but session already closed
-    parent.getChildren().size();
-    response.setChildren(parent.getChildren());
-
+    List<URI> childrenURIs = new ArrayList<>();
+    for (User children : parent.getChildren()) {
+      childrenURIs.add(
+          uriInfo
+              .getBaseUriBuilder()
+              .path(StudentsResource.class)
+              .path(StudentsResource.class, "getStudentById")
+              .build(children.getId()));
+    }
     session.getTransaction().commit();
     session.close();
-    return Response.ok(response, MediaType.APPLICATION_JSON_TYPE).build();
+
+    ParentChildrenResponse parentChildrenResponse = new ParentChildrenResponse();
+    parentChildrenResponse.setChildren(childrenURIs);
+    return Response.ok(parentChildrenResponse, MediaType.APPLICATION_JSON_TYPE).build();
   }
 
   @Path("{parentId: [0-9]+}/children")
