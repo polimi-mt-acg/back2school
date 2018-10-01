@@ -34,6 +34,7 @@ public class ParentChildrenTest {
   @Category(TestCategory.Unit.class)
   public void testBobChildren() {
     Session session = DatabaseHandler.getInstance().getNewSession();
+    session.beginTransaction();
     Optional<User> bobOpt =
         DatabaseHandler.fetchEntityBy(User.class, User_.email, "bob@email.com", session);
 
@@ -41,6 +42,7 @@ public class ParentChildrenTest {
     User bob = bobOpt.get();
 
     assertEquals(2, bob.getChildren().size());
+    session.getTransaction().commit();
     session.close();
   }
 
@@ -48,6 +50,7 @@ public class ParentChildrenTest {
   @Category(TestCategory.Unit.class)
   public void testBob2Children() {
     Session session = DatabaseHandler.getInstance().getNewSession();
+    session.beginTransaction();
     Optional<User> bob2Opt =
         DatabaseHandler.fetchEntityBy(User.class, User_.email, "bob2@email.com", session);
 
@@ -55,6 +58,7 @@ public class ParentChildrenTest {
     User bob2 = bob2Opt.get();
 
     assertEquals(1, bob2.getChildren().size());
+    session.getTransaction().commit();
     session.close();
   }
 }

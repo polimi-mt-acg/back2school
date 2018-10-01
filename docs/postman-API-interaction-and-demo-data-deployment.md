@@ -1,12 +1,13 @@
 # Postman APIs interaction and demo data deployment
 
-We created a set of predefined API calls, as a [Postman collection], to ease the interaction with the REST APIs.
+We created a set of predefined API requests, as a [Postman collection], to ease the interaction with the REST APIs.
 
-The exported version of the Postman collection created is the `back2school.postman_collection.json` file at the repository root.
+- the `back2school.postman_collection.json` file at the repository root is the exported result
+- the same collection is also available in its [online version]
 
-### Import Postman collection
+### Import Postman collection file
 
-In order to exploit the already created HTTP requests, import the collection from: File -> Import...
+In order to exploit the already created HTTP requests, import the collection in Postman from the menu: File -> Import...
 
 ### Authentication 
 
@@ -69,3 +70,4 @@ The demo utils folder contains some useful API for demo purposes.
 
 
 [Postman collection]: https://www.getpostman.com/collection
+[online version]: https://documenter.getpostman.com/view/4476607/RWaPv6um

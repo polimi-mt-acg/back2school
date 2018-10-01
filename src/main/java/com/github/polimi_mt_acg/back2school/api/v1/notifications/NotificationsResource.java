@@ -66,6 +66,7 @@ public class NotificationsResource {
   @AdministratorSecured
   public Response sendNotificationToTeachers(
       NotificationGeneralTeachers notification, @Context HttpHeaders httpHeaders) {
+    if (!notification.isValidForPost()) return notification.getInvalidPostResponse();
 
     // Get the notification creator
     User creator = AuthenticationSession.getCurrentUser(httpHeaders);
@@ -89,6 +90,7 @@ public class NotificationsResource {
   @AdministratorSecured
   public Response sendNotificationToParents(
       NotificationGeneralParents notification, @Context HttpHeaders httpHeaders) {
+    if (!notification.isValidForPost()) return notification.getInvalidPostResponse();
 
     // Get the notification creator
     User creator = AuthenticationSession.getCurrentUser(httpHeaders);

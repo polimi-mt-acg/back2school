@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.as_int;
 import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.print;
 import static com.github.polimi_mt_acg.back2school.utils.PythonMockedUtilityFunctions.str;
 
@@ -60,6 +59,8 @@ public class ClassesResource {
   @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
   public Response postClasses(ClassRequest request, @Context UriInfo uriInfo) {
+    if (!request.isValidForPost()) return request.getInvalidPostResponse();
+
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 
@@ -70,16 +71,6 @@ public class ClassesResource {
     for (Integer studentId : request.getStudentsIds()) {
       // get student from db
       User student = session.get(User.class, studentId);
-      if (student == null) {
-        print("Student with id: ", studentId, " NOT known!");
-        session.getTransaction().commit();
-        session.close();
-        return Response.status(Status.BAD_REQUEST)
-            .entity(
-                new StatusResponse(
-                    Status.BAD_REQUEST, "Student with id: " + str(studentId) + " NOT known!"))
-            .build();
-      }
       aClass.addStudent(student);
     }
 
@@ -101,10 +92,9 @@ public class ClassesResource {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @TeacherAdministratorSecured
-  public Response getClassById(@PathParam("classId") String classId, @Context UriInfo uriInfo) {
+  public Response getClassById(@PathParam("classId") Integer classId, @Context UriInfo uriInfo) {
     // Fetch the class
-    Optional<Class> classOpt =
-        DatabaseHandler.fetchEntityBy(Class.class, Class_.id, Integer.parseInt(classId));
+    Optional<Class> classOpt = DatabaseHandler.fetchEntityBy(Class.class, Class_.id, classId);
 
     if (!classOpt.isPresent()) {
       return Response.status(Status.NOT_FOUND)
@@ -140,18 +130,12 @@ public class ClassesResource {
   @AdministratorSecured
   public Response putClassById(
       ClassRequest request, @PathParam("classId") Integer classId, @Context UriInfo uriInfo) {
+    if (!request.isValidForPut(classId)) return request.getInvalidPutResponse();
+
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
     // Fetch the class
     Class aClass = session.get(Class.class, classId);
-    if (aClass == null) {
-      session.getTransaction().commit();
-      session.close();
-      print("Unknown class id: ", classId);
-      return Response.status(Status.NOT_FOUND)
-          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown class id"))
-          .build();
-    }
 
     // Update class fields
     aClass.setName(request.getName());
@@ -162,14 +146,6 @@ public class ClassesResource {
     for (Integer studentId : request.getStudentsIds()) {
       // get student from db
       User student = session.get(User.class, studentId);
-      if (student == null) {
-        print("Unknown student id ", studentId);
-        session.getTransaction().commit();
-        session.close();
-        return Response.status(Status.BAD_REQUEST)
-            .entity(new StatusResponse(Status.BAD_REQUEST, "Unknown student id " + str(studentId)))
-            .build();
-      }
       aClass.addStudent(student);
     }
 
@@ -186,10 +162,9 @@ public class ClassesResource {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @TeacherAdministratorSecured
-  public Response getClassStudents(@PathParam("classId") String classId) {
+  public Response getClassStudents(@PathParam("classId") Integer classId) {
     // Fetch the class
-    Optional<Class> classOpt =
-        DatabaseHandler.fetchEntityBy(Class.class, Class_.id, as_int(classId));
+    Optional<Class> classOpt = DatabaseHandler.fetchEntityBy(Class.class, Class_.id, classId);
 
     if (!classOpt.isPresent()) {
       return Response.status(Status.NOT_FOUND)
@@ -222,6 +197,7 @@ public class ClassesResource {
   @AdministratorSecured
   public Response postClassStudents(
       ClassStudentsRequest request, @PathParam("classId") Integer classId) {
+    if (!request.isValidForPost()) return request.getInvalidPostResponse();
 
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
@@ -239,12 +215,12 @@ public class ClassesResource {
 
     // Fetch the student
     User newStudent = session.get(User.class, request.getStudentId());
-    if (newStudent == null) {
+    if (newStudent == null || !newStudent.getRole().equals(User.Role.STUDENT)) {
       print("Unknown student id: ", request.getStudentId());
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.BAD_REQUEST)
-          .entity(new StatusResponse(Status.BAD_REQUEST, "Unknown user id"))
+          .entity(new StatusResponse(Status.BAD_REQUEST, "Unknown student id"))
           .build();
     }
 
@@ -325,6 +301,7 @@ public class ClassesResource {
       Notification.NotificationRequest request,
       @PathParam("classId") Integer classId,
       @Context HttpHeaders httpHeaders) {
+    if (!request.isValidForPost()) return request.getInvalidPostResponse();
 
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
@@ -335,7 +312,7 @@ public class ClassesResource {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND)
-          .entity(new StatusResponse(Status.BAD_REQUEST, "Unknown class id"))
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown class id"))
           .build();
     }
 
@@ -372,6 +349,7 @@ public class ClassesResource {
       Notification.NotificationRequest request,
       @PathParam("classId") Integer classId,
       @Context HttpHeaders httpHeaders) {
+    if (!request.isValidForPost()) return request.getInvalidPostResponse();
 
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();

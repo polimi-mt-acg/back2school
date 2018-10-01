@@ -7,6 +7,7 @@ import com.github.polimi_mt_acg.back2school.api.v1.classrooms.ClassroomsResource
 import com.github.polimi_mt_acg.back2school.api.v1.notifications.NotificationsResponse;
 import com.github.polimi_mt_acg.back2school.api.v1.parents.ParentsResource;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.AdministratorSecured;
+import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.SameTeacherOfPathTeacherIdSecured;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.TeacherAdministratorSecured;
 import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.TeacherSecured;
 import com.github.polimi_mt_acg.back2school.api.v1.subjects.SubjectsResource;
@@ -37,7 +38,7 @@ public class TeachersResource {
         DatabaseHandler.getInstance()
             .getListSelectFromWhereEqual(User.class, User_.role, Role.TEACHER);
 
-    // For each user, build a URI to /parents/{id}
+    // For each user, build a URI to /parents/{teacherId}
     List<URI> uris = new ArrayList<>();
     for (User parent : parents) {
       UriBuilder builder = uriInfo.getAbsolutePathBuilder();
@@ -55,24 +56,11 @@ public class TeachersResource {
   @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
   public Response postTeachers(User newUser, @Context UriInfo uriInfo) {
-    if (newUser.getEmail() == null || newUser.getEmail().isEmpty()) {
-      return Response.status(Status.BAD_REQUEST).entity("User must have an email address.").build();
-    }
+    if (!newUser.isValidForPost()) return newUser.getInvalidPostResponse();
 
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 
-    // Check if a user with same email already exists, if so, do nothing
-    Optional<User> userOpt =
-        DatabaseHandler.fetchEntityBy(User.class, User_.email, newUser.getEmail(), session);
-
-    if (userOpt.isPresent()) {
-      session.getTransaction().commit();
-      session.close();
-      return Response.status(Status.CONFLICT)
-          .entity(new StatusResponse(Status.CONFLICT, "A user with this email already exists"))
-          .build();
-    }
     // force to be a parent since this endpoint meaning
     newUser.setRole(Role.TEACHER);
 
@@ -87,12 +75,12 @@ public class TeachersResource {
     return Response.created(uri).entity(new StatusResponse(Status.CREATED)).build();
   }
 
-  @Path("{id: [0-9]+}")
+  @Path("{teacherId: [0-9]+}")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @TeacherAdministratorSecured
-  @SameTeacherSecured
-  public Response getTeacherById(@PathParam("id") Integer teacherId) {
+  @SameTeacherOfPathTeacherIdSecured
+  public Response getTeacherById(@PathParam("teacherId") Integer teacherId) {
     // Fetch User
     Optional<User> parentOpt = DatabaseHandler.fetchEntityBy(User.class, User_.id, teacherId);
     if (!parentOpt.isPresent() || !parentOpt.get().getRole().equals(Role.TEACHER)) {
@@ -104,25 +92,20 @@ public class TeachersResource {
     return Response.ok(parentOpt.get(), MediaType.APPLICATION_JSON_TYPE).build();
   }
 
-  @Path("{id: [0-9]+}")
+  @Path("{teacherId: [0-9]+}")
   @PUT
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @TeacherAdministratorSecured
-  @SameTeacherSecured
-  public Response putTeacherById(User newTeacher, @PathParam("id") Integer teacherId) {
+  @SameTeacherOfPathTeacherIdSecured
+  public Response putTeacherById(User newTeacher, @PathParam("teacherId") Integer teacherId) {
+    if (!newTeacher.isValidForPut(teacherId)) return newTeacher.getInvalidPutResponse();
+
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 
     // Fetch User
     User teacher = session.get(User.class, teacherId);
-    if (teacher == null) {
-      session.getTransaction().commit();
-      session.close();
-      return Response.status(Status.NOT_FOUND)
-          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown teacher id"))
-          .build();
-    }
 
     // Update teacher fields
     teacher.setName(newTeacher.getName());
@@ -140,13 +123,13 @@ public class TeachersResource {
     return Response.ok().entity(new StatusResponse(Status.OK)).build();
   }
 
-  @Path("{id: [0-9]+}/classes")
+  @Path("{teacherId: [0-9]+}/classes")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @TeacherAdministratorSecured
-  @SameTeacherSecured
+  @SameTeacherOfPathTeacherIdSecured
   public Response getTeacherClasses(
-      @PathParam("id") Integer teacherId,
+      @PathParam("teacherId") Integer teacherId,
       @QueryParam("year") Integer year,
       @Context HttpHeaders httpHeaders,
       @Context UriInfo uriInfo) {
@@ -155,14 +138,14 @@ public class TeachersResource {
     session.beginTransaction();
 
     // Fetch request user
-    Optional<User> userOpt =
+    Optional<User> teacherOpt =
         DatabaseHandler.fetchEntityBy(User.class, User_.id, teacherId, session);
-    if (!userOpt.isPresent()) {
+    if (!teacherOpt.isPresent() || !teacherOpt.get().getRole().equals(Role.TEACHER)) {
       return Response.status(Status.NOT_FOUND)
           .entity(new StatusResponse(Status.NOT_FOUND, "Unknown teacher id"))
           .build();
     }
-    User teacher = userOpt.get();
+    User teacher = teacherOpt.get();
 
     // get all the classes in system
     List<Class> allClasses = dbi.getListSelectFrom(Class.class);
@@ -209,13 +192,13 @@ public class TeachersResource {
     return Response.ok(teacherClassesResponse, MediaType.APPLICATION_JSON_TYPE).build();
   }
 
-  @Path("{id: [0-9]+}/classes/{classId: [0-9]+}/timetable")
+  @Path("{teacherId: [0-9]+}/classes/{classId: [0-9]+}/timetable")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @TeacherAdministratorSecured
-  @SameTeacherSecured
+  @SameTeacherOfPathTeacherIdSecured
   public Response getTeacherTimetable(
-      @PathParam("id") Integer teacherId,
+      @PathParam("teacherId") Integer teacherId,
       @PathParam("classId") Integer classId,
       @QueryParam("year") Integer year,
       @Context HttpHeaders httpHeaders,
@@ -225,14 +208,14 @@ public class TeachersResource {
     session.beginTransaction();
 
     // Fetch request user
-    Optional<User> userOpt =
+    Optional<User> teacherOpt =
         DatabaseHandler.fetchEntityBy(User.class, User_.id, teacherId, session);
-    if (!userOpt.isPresent()) {
+    if (!teacherOpt.isPresent() || !teacherOpt.get().getRole().equals(Role.TEACHER)) {
       return Response.status(Status.NOT_FOUND)
           .entity(new StatusResponse(Status.NOT_FOUND, "Unknown teacher id"))
           .build();
     }
-    User teacher = userOpt.get();
+    User teacher = teacherOpt.get();
 
     // Fetch request class
     Optional<Class> classOpt =
@@ -282,19 +265,21 @@ public class TeachersResource {
     return Response.ok(timetableResponse, MediaType.APPLICATION_JSON_TYPE).build();
   }
 
-  @Path("{id: [0-9]+}/appointments")
+  @Path("{teacherId: [0-9]+}/appointments")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @TeacherAdministratorSecured
-  @SameTeacherSecured
+  @SameTeacherOfPathTeacherIdSecured
   public Response getTeacherAppointments(
-      @PathParam("id") Integer teacherId, @Context UriInfo uriInfo) {
+      @PathParam("teacherId") Integer teacherId, @Context UriInfo uriInfo) {
     // Fetch request user
-    Optional<User> userOpt = DatabaseHandler.fetchEntityBy(User.class, User_.id, teacherId);
-    if (!userOpt.isPresent()) {
-      return Response.status(Status.NOT_FOUND).entity("User not found").build();
+    Optional<User> teacherOpt = DatabaseHandler.fetchEntityBy(User.class, User_.id, teacherId);
+    if (!teacherOpt.isPresent() || !teacherOpt.get().getRole().equals(Role.TEACHER)) {
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "User not found"))
+          .build();
     }
-    User teacher = userOpt.get();
+    User teacher = teacherOpt.get();
 
     List<Appointment> appointments =
         DatabaseHandler.getInstance()
@@ -322,16 +307,17 @@ public class TeachersResource {
     return Response.ok(teacherAppointmentsResponse, MediaType.APPLICATION_JSON_TYPE).build();
   }
 
-  @Path("{id: [0-9]+}/appointments")
+  @Path("{teacherId: [0-9]+}/appointments")
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @TeacherSecured
-  @SameTeacherSecured
+  @SameTeacherOfPathTeacherIdSecured
   public Response postTeacherAppointments(
       TeacherAppointmentRequest request,
-      @PathParam("id") Integer teacherId,
+      @PathParam("teacherId") Integer teacherId,
       @Context UriInfo uriInfo) {
+    if (!request.isValidForPost()) return request.getInvalidPostResponse();
 
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
@@ -339,7 +325,7 @@ public class TeachersResource {
 
     // Get teacher who made the request
     User teacher = session.get(User.class, teacherId);
-    if (teacher == null) {
+    if (teacher == null || !teacher.getRole().equals(Role.TEACHER)) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND)
@@ -349,13 +335,6 @@ public class TeachersResource {
 
     // Fetch the parent
     User parent = session.get(User.class, request.getParentId());
-    if (parent == null) {
-      session.getTransaction().commit();
-      session.close();
-      return Response.status(Status.BAD_REQUEST)
-          .entity(new StatusResponse(Status.BAD_REQUEST, "Unknown parent id"))
-          .build();
-    }
 
     // To check! Do we need to do these checks?
     // Get appointments of the parent
@@ -424,17 +403,25 @@ public class TeachersResource {
     return Response.created(uri).entity(new StatusResponse(Status.CREATED)).build();
   }
 
-  @Path("{id: [0-9]+}/appointments/{appointmentId: [0-9]+}")
+  @Path("{teacherId: [0-9]+}/appointments/{appointmentId: [0-9]+}")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @TeacherAdministratorSecured
-  @SameTeacherSecured
+  @SameTeacherOfPathTeacherIdSecured
   public Response getTeacherAppointmentById(
-      @PathParam("id") Integer teacherId,
+      @PathParam("teacherId") Integer teacherId,
       @PathParam("appointmentId") Integer appointmentId,
       @Context HttpHeaders httpHeaders,
       @Context UriInfo uriInfo) {
     User currentUser = AuthenticationSession.getCurrentUser(httpHeaders);
+
+    // Fetch teacher
+    Optional<User> teacherOpt = DatabaseHandler.fetchEntityBy(User.class, User_.id, teacherId);
+    if (!teacherOpt.isPresent() || !teacherOpt.get().getRole().equals(Role.TEACHER)) {
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown teacher id"))
+          .build();
+    }
 
     // Fetch appointment
     Optional<Appointment> appointmentOpt =
@@ -456,23 +443,25 @@ public class TeachersResource {
     return Response.ok(appointmentOpt.get(), MediaType.APPLICATION_JSON_TYPE).build();
   }
 
-  @Path("{id: [0-9]+}/appointments/{appointmentId: [0-9]+}")
+  @Path("{teacherId: [0-9]+}/appointments/{appointmentId: [0-9]+}")
   @PUT
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @TeacherSecured
-  @SameTeacherSecured
+  @SameTeacherOfPathTeacherIdSecured
   public Response putTeacherAppointmentById(
       TeacherAppointmentRequest request,
-      @PathParam("id") Integer teacherId,
+      @PathParam("teacherId") Integer teacherId,
       @PathParam("appointmentId") Integer appointmentId) {
+    if (!request.isValidForPut(appointmentId)) return request.getInvalidPutResponse();
+
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
     session.beginTransaction();
 
     // Get teacher who made the request
     User teacher = session.get(User.class, teacherId);
-    if (teacher == null) {
+    if (teacher == null || !teacher.getRole().equals(Role.TEACHER)) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND)
@@ -482,23 +471,9 @@ public class TeachersResource {
 
     // Fetch the parent
     User parent = session.get(User.class, request.getParentId());
-    if (parent == null) {
-      session.getTransaction().commit();
-      session.close();
-      return Response.status(Status.BAD_REQUEST)
-          .entity(new StatusResponse(Status.BAD_REQUEST, "Unknown parent id"))
-          .build();
-    }
 
     // Fetch Appointment entity
     Appointment appointment = session.get(Appointment.class, appointmentId);
-    if (appointment == null) {
-      session.getTransaction().commit();
-      session.close();
-      return Response.status(Status.NOT_FOUND)
-          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown appointment id"))
-          .build();
-    }
 
     // Check if 'teacher' is valid
     if (teacher.getId() != appointment.getTeacher().getId()) {
@@ -589,20 +564,21 @@ public class TeachersResource {
     return Response.ok(Status.OK).entity(new StatusResponse(Status.OK)).build();
   }
 
-  @Path("{id: [0-9]+}/notifications")
+  @Path("{teacherId: [0-9]+}/notifications")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @TeacherAdministratorSecured
-  @SameTeacherSecured
+  @SameTeacherOfPathTeacherIdSecured
   public Response getTeacherNotifications(
-      @PathParam("id") Integer teacherId, @Context UriInfo uriInfo) {
+      @PathParam("teacherId") Integer teacherId, @Context UriInfo uriInfo) {
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
     session.beginTransaction();
 
     // Fetch teacher
     User teacher = session.get(User.class, teacherId);
-    if (teacher == null) {
+    if (teacher == null || !teacher.getRole().equals(Role.TEACHER)) {
+      session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND)
           .entity(new StatusResponse(Status.NOT_FOUND, "Unknown teacher id"))
@@ -667,16 +643,18 @@ public class TeachersResource {
     return Response.ok(response, MediaType.APPLICATION_JSON_TYPE).build();
   }
 
-  @Path("{id: [0-9]+}/notifications")
+  @Path("{teacherId: [0-9]+}/notifications")
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
   public Response postParentNotifications(
       NotificationPersonalTeacher npt,
-      @PathParam("id") Integer teacherId,
+      @PathParam("teacherId") Integer teacherId,
       @Context HttpHeaders httpHeaders,
       @Context UriInfo uriInfo) {
+    if (!npt.isValidForPost()) return npt.getInvalidPostResponse();
+
     // Here the admin can POST only a direct notification to this teacher
     User currentAdmin = AuthenticationSession.getCurrentUser(httpHeaders);
 
@@ -685,7 +663,7 @@ public class TeachersResource {
 
     // Get teacher target of the notification
     User teacher = session.get(User.class, teacherId);
-    if (teacher == null) {
+    if (teacher == null || !teacher.getRole().equals(Role.TEACHER)) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND)
@@ -706,13 +684,13 @@ public class TeachersResource {
     return Response.created(uri).entity(new StatusResponse(Status.CREATED)).build();
   }
 
-  @Path("{id: [0-9]+}/notifications/{notificationId: [0-9]+}")
+  @Path("{teacherId: [0-9]+}/notifications/{notificationId: [0-9]+}")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @TeacherAdministratorSecured
-  @SameTeacherSecured
+  @SameTeacherOfPathTeacherIdSecured
   public Response getTeacherNotificationById(
-      @PathParam("id") Integer teacherId,
+      @PathParam("teacherId") Integer teacherId,
       @PathParam("notificationId") Integer notificationId,
       @Context HttpHeaders httpHeaders,
       @Context UriInfo uriInfo) {
@@ -720,6 +698,16 @@ public class TeachersResource {
     Session session = dbi.getNewSession();
     session.beginTransaction();
     User currentUser = AuthenticationSession.getCurrentUser(httpHeaders, session);
+
+    // Get teacher target of the notification
+    User teacher = session.get(User.class, teacherId);
+    if (teacher == null || !teacher.getRole().equals(Role.TEACHER)) {
+      session.getTransaction().commit();
+      session.close();
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown teacher id"))
+          .build();
+    }
 
     // Notification can be of three types: GeneralTeachers, ClassTeacher, PersonalTeacher
     // if none of them will be found by the given id -> error not found
@@ -770,10 +758,7 @@ public class TeachersResource {
     session.getTransaction().commit();
     session.close();
     return Response.status(Status.NOT_FOUND)
-        .entity(
-            new StatusResponse(
-                Status.NOT_FOUND,
-                "No notification matching teacher id and notification id was found"))
+        .entity(new StatusResponse(Status.NOT_FOUND, "Unknown notification id"))
         .build();
   }
 }

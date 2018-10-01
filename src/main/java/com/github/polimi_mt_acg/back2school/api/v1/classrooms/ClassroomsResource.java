@@ -46,32 +46,20 @@ public class ClassroomsResource {
   @Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
   @Produces(javax.ws.rs.core.MediaType.APPLICATION_JSON)
   @AdministratorSecured
-  public Response postClassrooms(Classroom classroom, @Context UriInfo uriInfo) {
-    // Check if a classroom with same name already exists, if so, do nothing
-    DatabaseHandler dbi = DatabaseHandler.getInstance();
-    Session session = dbi.getNewSession();
+  public Response postClassrooms(Classroom newClassroom, @Context UriInfo uriInfo) {
+    if (!newClassroom.isValidForPost()) return newClassroom.getInvalidPostResponse();
+
+    Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
-    List<Classroom> result =
-        dbi.getListSelectFromWhereEqual(
-            Classroom.class, Classroom_.name, classroom.getName(), session);
-    if (!result.isEmpty()) {
-      session.getTransaction().commit();
-      session.close();
-      return Response.status(Response.Status.CONFLICT)
-          .entity(
-              new StatusResponse(
-                  Response.Status.CONFLICT, "Classroom with this name already exists"))
-          .build();
-    }
 
     // Otherwise we accept the request.
-    session.persist(classroom);
+    session.persist(newClassroom);
     session.getTransaction().commit(); // Makes classroom persisted.
     session.close();
 
     // Now classroom has the ID field filled by the ORM
     UriBuilder builder = uriInfo.getAbsolutePathBuilder();
-    URI uri = builder.path(String.valueOf(classroom.getId())).build();
+    URI uri = builder.path(String.valueOf(newClassroom.getId())).build();
     return Response.created(uri).entity(new StatusResponse(Response.Status.CREATED)).build();
   }
 
@@ -80,12 +68,11 @@ public class ClassroomsResource {
   @Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
   @Produces(javax.ws.rs.core.MediaType.APPLICATION_JSON)
   @TeacherAdministratorSecured
-  public Response getClassroomById(@PathParam("id") String classroomId) {
+  public Response getClassroomById(@PathParam("id") Integer classroomId) {
     // Fetch Classroom
     List<Classroom> res =
         DatabaseHandler.getInstance()
-            .getListSelectFromWhereEqual(
-                Classroom.class, Classroom_.id, Integer.parseInt(classroomId));
+            .getListSelectFromWhereEqual(Classroom.class, Classroom_.id, classroomId);
 
     if (res.isEmpty()) {
       return Response.status(Response.Status.NOT_FOUND)
@@ -102,27 +89,19 @@ public class ClassroomsResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
-  public Response putClassroomById(
-      PutClassroomRequest newClassroom, @PathParam("id") String classroomId) {
+  public Response putClassroomById(Classroom newClassroom, @PathParam("id") Integer classroomId) {
+    if (!newClassroom.isValidForPut(classroomId)) return newClassroom.getInvalidPutResponse();
+
     // Fetch Classroom
-    DatabaseHandler dbi = DatabaseHandler.getInstance();
-    Session session = dbi.getNewSession();
+    Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 
-    List<Classroom> res =
-        dbi.getListSelectFromWhereEqual(
-            Classroom.class, Classroom_.id, Integer.parseInt(classroomId), session);
+    Classroom classroom = session.get(Classroom.class, classroomId);
+    classroom.setName(newClassroom.getName());
+    classroom.setFloor(newClassroom.getFloor());
+    classroom.setBuilding(newClassroom.getBuilding());
 
-    if (res.isEmpty()) {
-      session.getTransaction().commit();
-      session.close();
-      return Response.status(Response.Status.NOT_FOUND)
-          .entity(new StatusResponse(Response.Status.NOT_FOUND, "Unknown classroom id"))
-          .build();
-    }
-
-    Classroom classroom = res.get(0);
-    updateClassroom(classroom, newClassroom);
+    classroom.prepareToPersist();
     session.getTransaction().commit();
     session.close();
 
@@ -130,11 +109,5 @@ public class ClassroomsResource {
     // HTTP status code 200 OK for a successful PUT of an update to an existing resource. No
     // response body needed.
     return Response.ok().entity(new StatusResponse(Response.Status.OK)).build();
-  }
-
-  private void updateClassroom(Classroom classroom, PutClassroomRequest newClassroom) {
-    classroom.setName(newClassroom.getName());
-    classroom.setFloor(newClassroom.getFloor());
-    classroom.setBuilding(newClassroom.getBuilding());
   }
 }

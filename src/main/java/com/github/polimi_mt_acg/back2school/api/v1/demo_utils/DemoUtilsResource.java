@@ -36,7 +36,7 @@ public class DemoUtilsResource {
             .path(this.getClass(), "getEmptyDatabase")
             .build());
 
-    demoUtilsResponse.setUrlEmptyDatabase(
+    demoUtilsResponse.setUrlWhoAmI(
         uriInfo
             .getBaseUriBuilder()
             .path(this.getClass())

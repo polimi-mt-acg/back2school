@@ -44,28 +44,14 @@ public class SubjectsResource {
   @Produces(javax.ws.rs.core.MediaType.APPLICATION_JSON)
   @AdministratorSecured
   public Response postSubjects(Subject newSubject, @Context UriInfo uriInfo) {
-    if (newSubject.getName() == null || newSubject.getName().isEmpty()) {
-      return Response.status(Status.BAD_REQUEST).entity("Subject must have a name.").build();
-    }
+    if (!newSubject.isValidForPost()) return newSubject.getInvalidPostResponse();
 
-    // Check if a subject with same name already exists, if so, do nothing
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 
-    Optional<Subject> subjectOpt =
-        DatabaseHandler.fetchEntityBy(Subject.class, Subject_.name, newSubject.getName(), session);
-
-    if (subjectOpt.isPresent()) {
-      session.getTransaction().commit();
-      session.close();
-      return Response.status(Status.CONFLICT)
-          .entity(new StatusResponse(Status.CONFLICT, "Subject with this name already exists."))
-          .build();
-    }
-
     newSubject.prepareToPersist();
     session.persist(newSubject);
-    session.getTransaction().commit(); // Makes subject persisted.
+    session.getTransaction().commit();
     session.close();
 
     // Now subject has the ID field filled by the ORM
@@ -99,25 +85,16 @@ public class SubjectsResource {
   @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
   public Response putSubjectById(Subject newSubject, @PathParam("id") Integer subjectId) {
-    // Fetch Subject
+    if (!newSubject.isValidForPut(subjectId)) return newSubject.getInvalidPutResponse();
+
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 
-    Optional<Subject> subjectOpt =
-        DatabaseHandler.fetchEntityBy(Subject.class, Subject_.id, subjectId, session);
-
-    if (!subjectOpt.isPresent()) {
-      session.getTransaction().commit();
-      session.close();
-      return Response.status(Status.NOT_FOUND)
-          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown subject id"))
-          .build();
-    }
-
-    Subject subject = subjectOpt.get();
+    Subject subject = session.get(Subject.class, subjectId);
     subject.setName(newSubject.getName());
     subject.setDescription(newSubject.getDescription());
 
+    subject.prepareToPersist();
     session.getTransaction().commit();
     session.close();
 

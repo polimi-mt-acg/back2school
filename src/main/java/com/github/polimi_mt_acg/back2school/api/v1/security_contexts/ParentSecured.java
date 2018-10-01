@@ -1,4 +1,4 @@
-package com.github.polimi_mt_acg.back2school.api.v1.parents;
+package com.github.polimi_mt_acg.back2school.api.v1.security_contexts;
 
 import javax.ws.rs.NameBinding;
 import java.lang.annotation.Retention;

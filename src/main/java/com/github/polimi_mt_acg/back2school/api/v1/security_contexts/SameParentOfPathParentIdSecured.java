@@ -1,4 +1,4 @@
-package com.github.polimi_mt_acg.back2school.api.v1.parents;
+package com.github.polimi_mt_acg.back2school.api.v1.security_contexts;
 
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;
@@ -11,4 +11,4 @@ import javax.ws.rs.NameBinding;
 @NameBinding
 @Retention(RUNTIME)
 @Target({TYPE, METHOD})
-public @interface SameParentSecured {}
+public @interface SameParentOfPathParentIdSecured {}

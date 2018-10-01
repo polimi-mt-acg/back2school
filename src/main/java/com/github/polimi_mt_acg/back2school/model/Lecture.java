@@ -5,21 +5,25 @@ import org.hibernate.Session;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 @Entity
-@Table(name = "lecture")
+@Table(
+    name = "lecture",
+    uniqueConstraints = {
+      @UniqueConstraint(
+          columnNames = {
+            "subject_id",
+            "teacher_id",
+            "classroom_id",
+            "class_id",
+            "datetime_start",
+            "datetime_end"
+          })
+    })
 public class Lecture implements DeserializeToPersistInterface {
 
   @Transient public String seedSubjectName;
@@ -150,6 +154,7 @@ public class Lecture implements DeserializeToPersistInterface {
   private void seedAssociateClass() {
     if (seedClassName != null && seedClassYear != null) {
       Session session = DatabaseHandler.getInstance().getNewSession();
+      session.beginTransaction();
 
       CriteriaBuilder builder = session.getCriteriaBuilder();
       CriteriaQuery<Class> criteria = builder.createQuery(Class.class);
@@ -163,6 +168,8 @@ public class Lecture implements DeserializeToPersistInterface {
               builder.equal(root.get(Class_.academicYear), seedClassYear)));
 
       List<Class> classes = session.createQuery(criteria).getResultList();
+
+      session.getTransaction().commit();
       session.close();
 
       if (classes != null) {

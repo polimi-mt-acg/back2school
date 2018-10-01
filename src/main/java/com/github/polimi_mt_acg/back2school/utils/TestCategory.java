@@ -21,6 +21,4 @@ public class TestCategory {
   /** Class for endpoint tests. */
   public interface Endpoint {}
 
-  /** Class for authenticated endpoint tests. */
-  public interface AuthEndpoint {}
 }

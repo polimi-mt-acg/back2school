@@ -1,10 +1,7 @@
 package com.github.polimi_mt_acg.back2school.api.v1.students;
 
 import com.github.polimi_mt_acg.back2school.api.v1.StatusResponse;
-import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.AdministratorSecured;
-import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.ParentAdministratorSecured;
-import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.ParentTeacherAdministratorSecured;
-import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.TeacherAdministratorSecured;
+import com.github.polimi_mt_acg.back2school.api.v1.security_contexts.*;
 import com.github.polimi_mt_acg.back2school.model.AuthenticationSession;
 import com.github.polimi_mt_acg.back2school.model.Grade;
 import com.github.polimi_mt_acg.back2school.model.Grade_;
@@ -62,24 +59,11 @@ public class StudentsResource {
   @Produces(MediaType.APPLICATION_JSON)
   @AdministratorSecured
   public Response postStudents(User newUser, @Context UriInfo uriInfo) {
-    if (newUser.getEmail() == null || newUser.getEmail().isEmpty()) {
-      return Response.status(Status.BAD_REQUEST).entity("User must have an email address").build();
-    }
+    if (!newUser.isValidForPost()) return newUser.getInvalidPostResponse();
 
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 
-    // Check if a user with same email already exists, if so, do nothing
-    Optional<User> userOpt =
-        DatabaseHandler.fetchEntityBy(User.class, User_.email, newUser.getEmail(), session);
-
-    if (userOpt.isPresent()) {
-      session.getTransaction().commit();
-      session.close();
-      return Response.status(Status.CONFLICT)
-          .entity(new StatusResponse(Status.CONFLICT, "A user with this email already exists"))
-          .build();
-    }
     // force to be a student since this endpoint meaning
     newUser.setRole(Role.STUDENT);
     newUser.prepareToPersist();
@@ -88,22 +72,21 @@ public class StudentsResource {
     session.getTransaction().commit();
     session.close();
 
-    // Now the teacher has the ID field filled by the ORM
+    // Now the student has the ID field filled by the ORM
     UriBuilder builder = uriInfo.getAbsolutePathBuilder();
     URI uri = builder.path(str(newUser.getId())).build();
     return Response.created(uri).entity(new StatusResponse(Status.CREATED)).build();
   }
 
-  @Path("{id: [0-9]+}")
+  @Path("{studentId: [0-9]+}")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @ParentTeacherAdministratorSecured
   @ParentOfStudentSecured
   @TeacherOfStudentSecured
-  public Response getStudentById(@PathParam("id") String studentId) {
+  public Response getStudentById(@PathParam("studentId") Integer studentId) {
     // Fetch User
-    Optional<User> studentOpt =
-        DatabaseHandler.fetchEntityBy(User.class, User_.id, Integer.parseInt(studentId));
+    Optional<User> studentOpt = DatabaseHandler.fetchEntityBy(User.class, User_.id, studentId);
     if (!studentOpt.isPresent() || !studentOpt.get().getRole().equals(Role.STUDENT)) {
       return Response.status(Status.NOT_FOUND)
           .entity(new StatusResponse(Status.NOT_FOUND, "Unknown student id"))
@@ -112,22 +95,26 @@ public class StudentsResource {
     return Response.ok(studentOpt.get(), MediaType.APPLICATION_JSON_TYPE).build();
   }
 
-  @Path("{id: [0-9]+}")
+  @Path("{studentId: [0-9]+}")
   @PUT
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @ParentAdministratorSecured
   @ParentOfStudentSecured
-  public Response putStudentById(User newUser, @PathParam("id") Integer studentId) {
+  public Response putStudentById(User newUser, @PathParam("studentId") Integer studentId) {
+    if (!newUser.isValidForPut(studentId)) return newUser.getInvalidPutResponse();
+
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 
     // Fetch User
     User student = session.get(User.class, studentId);
-    if (student == null) {
+    if (student == null || !student.getRole().equals(Role.STUDENT)) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND).entity("Unknown student id").build();
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown student id"))
+          .build();
     }
 
     // Update student fields
@@ -145,22 +132,26 @@ public class StudentsResource {
     return Response.ok().entity(new StatusResponse(Status.OK)).build();
   }
 
-  @Path("{id: [0-9]+}/grades")
+  @Path("{studentId: [0-9]+}/grades")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @ParentTeacherAdministratorSecured
   @ParentOfStudentSecured
   @TeacherOfStudentSecured
-  public Response getStudentGrades(@PathParam("id") String studentId, @Context UriInfo uriInfo) {
+  public Response getStudentGrades(
+      @PathParam("studentId") Integer studentId, @Context UriInfo uriInfo) {
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
     session.beginTransaction();
 
     // Fetch User
-    User student = session.get(User.class, Integer.parseInt(studentId));
-    if (student == null) {
+    User student = session.get(User.class, studentId);
+    if (student == null || !student.getRole().equals(Role.STUDENT)) {
+      session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND).entity("Unknown student id").build();
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown student id"))
+          .build();
     }
 
     // Fetch grades of student
@@ -181,7 +172,7 @@ public class StudentsResource {
     return Response.ok(response, MediaType.APPLICATION_JSON_TYPE).build();
   }
 
-  @Path("{id: [0-9]+}/grades")
+  @Path("{studentId: [0-9]+}/grades")
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
@@ -189,9 +180,11 @@ public class StudentsResource {
   @TeacherOfStudentSecured
   public Response postStudentGrades(
       StudentGradeRequest gradeRequest,
-      @PathParam("id") Integer studentId,
+      @PathParam("studentId") Integer studentId,
       @Context HttpHeaders httpHeaders,
       @Context UriInfo uriInfo) {
+    if (!gradeRequest.isValidForPost()) return gradeRequest.getInvalidPostResponse();
+
     DatabaseHandler dbi = DatabaseHandler.getInstance();
     Session session = dbi.getNewSession();
     session.beginTransaction();
@@ -208,7 +201,7 @@ public class StudentsResource {
 
     // Fetch student
     User student = session.get(User.class, studentId);
-    if (student == null) {
+    if (student == null || !student.getRole().equals(Role.STUDENT)) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND)
@@ -221,8 +214,8 @@ public class StudentsResource {
     if (subject == null) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND)
-          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown subject id"))
+      return Response.status(Status.BAD_REQUEST)
+          .entity(new StatusResponse(Status.BAD_REQUEST, "Unknown subject id"))
           .build();
     }
 
@@ -244,14 +237,22 @@ public class StudentsResource {
     return Response.created(uri).entity(new StatusResponse(Status.CREATED)).build();
   }
 
-  @Path("{id: [0-9]+}/grades/{grade_id: [0-9]+}")
+  @Path("{studentId: [0-9]+}/grades/{grade_id: [0-9]+}")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @ParentTeacherAdministratorSecured
   @ParentOfStudentSecured
   @TeacherOfStudentSecured
-  public Response getStudentGradeById(@PathParam("grade_id") Integer gradeId) {
+  public Response getStudentGradeById(
+      @PathParam("studentId") Integer studentId, @PathParam("grade_id") Integer gradeId) {
+    // Fetch student
+    Optional<User> studentOpt = DatabaseHandler.fetchEntityBy(User.class, User_.id, studentId);
 
+    if (!studentOpt.isPresent() || !studentOpt.get().getRole().equals(Role.STUDENT)) {
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown student id"))
+          .build();
+    }
     // Fetch grade
     Optional<Grade> gradeOpt = DatabaseHandler.fetchEntityBy(Grade.class, Grade_.id, gradeId);
     if (!gradeOpt.isPresent()) {
@@ -263,7 +264,7 @@ public class StudentsResource {
     return Response.ok(gradeOpt.get(), MediaType.APPLICATION_JSON_TYPE).build();
   }
 
-  @Path("{id: [0-9]+}/grades/{grade_id: [0-9]+}")
+  @Path("{studentId: [0-9]+}/grades/{gradeId: [0-9]+}")
   @PUT
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
@@ -271,15 +272,17 @@ public class StudentsResource {
   @TeacherOfStudentSecured
   public Response putStudentGradeById(
       StudentGradeRequest gradeRequest,
-      @PathParam("id") Integer studentId,
-      @PathParam("grade_id") Integer gradeId,
+      @PathParam("studentId") Integer studentId,
+      @PathParam("gradeId") Integer gradeId,
       @Context HttpHeaders httpHeaders) {
+    if (!gradeRequest.isValidForPut(gradeId)) return gradeRequest.getInvalidPutResponse();
+
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
 
     // Get teacher/admin who made the request
     User teacher = AuthenticationSession.getCurrentUser(httpHeaders, session);
-    if (teacher == null) {
+    if (teacher == null) { // not check if teacher because also admin can access
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.UNAUTHORIZED)
@@ -289,7 +292,7 @@ public class StudentsResource {
 
     // Fetch student
     User student = session.get(User.class, studentId);
-    if (student == null) {
+    if (student == null || !student.getRole().equals(Role.STUDENT)) {
       session.getTransaction().commit();
       session.close();
       return Response.status(Status.NOT_FOUND)
@@ -302,27 +305,22 @@ public class StudentsResource {
     if (subject == null) {
       session.getTransaction().commit();
       session.close();
-      return Response.status(Status.NOT_FOUND)
-          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown subject id"))
+      return Response.status(Status.BAD_REQUEST)
+          .entity(new StatusResponse(Status.BAD_REQUEST, "Unknown subject id"))
           .build();
     }
 
     // Fetch previous grade entity
     Grade grade = session.get(Grade.class, gradeId);
-    if (grade == null) {
-      session.getTransaction().commit();
-      session.close();
-      return Response.status(Status.NOT_FOUND)
-          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown grade id"))
-          .build();
-    }
 
     // Check if user that created this grade is the same
-    if (teacher.getId() != grade.getTeacher().getId()) {
+    if (teacher.getRole().equals(Role.TEACHER) && teacher.getId() != grade.getTeacher().getId()) {
       session.getTransaction().commit();
       session.close();
-      return Response.notModified()
-          .entity(new StatusResponse(Status.NOT_MODIFIED, "You cannot modify this grade"))
+      return Response.status(Status.FORBIDDEN)
+          .entity(
+              new StatusResponse(
+                  Status.FORBIDDEN, "Only the teacher that created the grade can modify it"))
           .build();
     }
 
@@ -341,14 +339,29 @@ public class StudentsResource {
     return Response.ok().entity(new StatusResponse(Status.OK)).build();
   }
 
-  @Path("{id: [0-9]+}/grades/{grade_id: [0-9]+}")
+  @Path("{studentId: [0-9]+}/grades/{gradeId: [0-9]+}")
   @DELETE
   @Produces(MediaType.APPLICATION_JSON)
   @TeacherAdministratorSecured
   @TeacherOfStudentSecured
-  public Response deleteStudentGradeById(@PathParam("grade_id") Integer gradeId) {
+  public Response deleteStudentGradeById(
+      @PathParam("studentId") Integer studentId,
+      @PathParam("gradeId") Integer gradeId,
+      @Context HttpHeaders httpHeaders) {
     Session session = DatabaseHandler.getInstance().getNewSession();
     session.beginTransaction();
+
+    User currentUser = AuthenticationSession.getCurrentUser(httpHeaders);
+
+    // Fetch student
+    User student = session.get(User.class, studentId);
+    if (student == null || !student.getRole().equals(Role.STUDENT)) {
+      session.getTransaction().commit();
+      session.close();
+      return Response.status(Status.NOT_FOUND)
+          .entity(new StatusResponse(Status.NOT_FOUND, "Unknown student id"))
+          .build();
+    }
 
     // Fetch Grade entity
     Grade grade = session.get(Grade.class, gradeId);
@@ -357,6 +370,16 @@ public class StudentsResource {
       session.close();
       return Response.status(Status.NOT_FOUND)
           .entity(new StatusResponse(Status.NOT_FOUND, "Unknown grade id"))
+          .build();
+    }
+
+    // if it's a teacher deleting, check it is the same created the grade
+    if (currentUser.getRole().equals(Role.TEACHER)
+        && grade.getTeacher().getId() != currentUser.getId()) {
+      session.getTransaction().commit();
+      session.close();
+      return Response.status(Status.FORBIDDEN)
+          .entity(new StatusResponse(Status.FORBIDDEN, "Action not allowed"))
           .build();
     }
 

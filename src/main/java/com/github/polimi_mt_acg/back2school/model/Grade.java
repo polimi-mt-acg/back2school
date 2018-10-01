@@ -5,18 +5,14 @@ import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.logging.Logger;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 @Entity
-@Table(name = "grade")
+@Table(
+    name = "grade",
+    uniqueConstraints = {
+      @UniqueConstraint(columnNames = {"subject_id", "teacher_id", "student_id", "date"})
+    })
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Grade implements DeserializeToPersistInterface {
 

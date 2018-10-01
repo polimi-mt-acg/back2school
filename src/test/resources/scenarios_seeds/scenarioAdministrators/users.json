@@ -1,25 +1,25 @@
 {
   "users": [
     {
-      "role": "ADMINISTRATOR",
-      "name": "Principal",
-      "surname": "Alice",
-      "email": "alice@email.com",
-      "new_password": "alice_password"
-    },
-    {
-      "role": "ADMINISTRATOR",
-      "name": "IT Office",
-      "surname": "Bob",
+      "role": "PARENT",
+      "name": "Bob1",
+      "surname": "Bob1 Surname",
       "email": "bob@email.com",
-      "new_password": "bob_password"
+      "new_password": "password"
+    },
+    {
+      "role": "TEACHER",
+      "name": "Carl1",
+      "surname": "Carl1 Surname",
+      "email": "carl1@email.com",
+      "new_password": "password"
     },
     {
       "role": "ADMINISTRATOR",
-      "name": "Back2School",
-      "surname": "Backdoor",
-      "email": "back2school@email.com",
-      "new_password": "back2school_password"
+      "name": "David1",
+      "surname": "David1 Surname",
+      "email": "david1@email.com",
+      "new_password": "password"
     }
   ]
 }

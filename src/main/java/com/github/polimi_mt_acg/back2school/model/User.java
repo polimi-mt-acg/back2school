@@ -3,6 +3,9 @@ package com.github.polimi_mt_acg.back2school.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.polimi_mt_acg.back2school.api.v1.StatusResponse;
+import com.github.polimi_mt_acg.back2school.api.v1.ValidableRequest;
+import com.github.polimi_mt_acg.back2school.utils.DatabaseHandler;
 import com.github.polimi_mt_acg.back2school.utils.RandomStringGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -10,18 +13,26 @@ import java.security.spec.KeySpec;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.persistence.*;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
-@Table(name = "user")
+@Table(
+    name = "user",
+    uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})
 @XmlRootElement
 // skip null fields when serializing (e.g. newPassword field)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class User implements DeserializeToPersistInterface {
+public class User implements DeserializeToPersistInterface, ValidableRequest {
+
+  @JsonIgnore @Transient private Response invalidPostResponse;
+  @JsonIgnore @Transient private Response invalidPutResponse;
 
   private static final Logger LOGGER = Logger.getLogger(User.class.getName());
 
@@ -194,7 +205,7 @@ public class User implements DeserializeToPersistInterface {
   }
 
   public void addNotificationsRead(Notification notification) {
-    for (Notification n: getNotificationsRead()) {
+    for (Notification n : getNotificationsRead()) {
       if (n.getId() == notification.getId()) {
         return;
       }
@@ -232,6 +243,72 @@ public class User implements DeserializeToPersistInterface {
   @Override
   public int hashCode() {
     return id;
+  }
+
+  @Override
+  @JsonIgnore
+  public boolean isValidForPost() {
+    if (getEmail() == null || getEmail().isEmpty()) {
+      invalidPostResponse =
+          Response.status(Status.BAD_REQUEST)
+              .entity(new StatusResponse(Status.BAD_REQUEST, "Missing required attribute: email"))
+              .build();
+      return false;
+    }
+
+    Optional<User> userOpt = DatabaseHandler.fetchEntityBy(User.class, User_.email, getEmail());
+    if (userOpt.isPresent()) {
+      invalidPostResponse =
+          Response.status(Status.CONFLICT)
+              .entity(new StatusResponse(Status.CONFLICT, "A user with this email already exists"))
+              .build();
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  @JsonIgnore
+  public Response getInvalidPostResponse() {
+    return invalidPostResponse;
+  }
+
+  @Override
+  @JsonIgnore
+  public boolean isValidForPut(Integer id) {
+    Optional<User> userOpt = DatabaseHandler.fetchEntityBy(User.class, User_.id, id);
+    if (!userOpt.isPresent()) {
+      invalidPutResponse =
+          Response.status(Status.NOT_FOUND)
+              .entity(new StatusResponse(Status.NOT_FOUND, "Unknown user id"))
+              .build();
+      return false;
+    }
+
+    if (getEmail() == null || getEmail().isEmpty()) {
+      invalidPutResponse =
+          Response.status(Status.BAD_REQUEST)
+              .entity(new StatusResponse(Status.BAD_REQUEST, "Missing required attribute: email"))
+              .build();
+      return false;
+    }
+
+    Optional<User> otherUserOpt = DatabaseHandler.fetchEntityBy(User.class, User_.email, getEmail());
+    if (otherUserOpt.isPresent() && otherUserOpt.get().getId() != id) {
+      invalidPutResponse =
+          Response.status(Status.CONFLICT)
+              .entity(new StatusResponse(Status.CONFLICT, "A user with this email already exists"))
+              .build();
+      return false;
+    }
+
+    return true;
+  }
+
+  @Override
+  @JsonIgnore
+  public Response getInvalidPutResponse() {
+    return invalidPutResponse;
   }
 
   public enum Role {
