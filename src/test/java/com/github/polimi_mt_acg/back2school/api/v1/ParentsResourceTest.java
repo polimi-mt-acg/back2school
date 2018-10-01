@@ -72,7 +72,6 @@ public class ParentsResourceTest {
     Response response = getRequest.invoke();
     assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
-
     List<URI> parentsURIs = response.readEntity(ParentsResponse.class).getParents();
     for (URI uri : parentsURIs) {
       assertNotNull(uri);
@@ -123,7 +122,8 @@ public class ParentsResourceTest {
   @Test
   @Category(TestCategory.Endpoint.class)
   public void getParentByIdFromNotSameParent() {
-    User seedParent = DatabaseSeeder.getSeedUserByRole("scenarioParentsToPost", User.Role.PARENT, 0);
+    User seedParent =
+        DatabaseSeeder.getSeedUserByRole("scenarioParentsToPost", User.Role.PARENT, 0);
     assertNotNull(seedParent);
 
     URI parentURI = RestFactory.doPostRequest(adminForAuth, seedParent, "parents");
@@ -144,7 +144,8 @@ public class ParentsResourceTest {
   @Test
   @Category(TestCategory.Endpoint.class)
   public void getParentByIdFromSameParent() {
-    User seedParent = DatabaseSeeder.getSeedUserByRole("scenarioParentsToPost", User.Role.PARENT, 1);
+    User seedParent =
+        DatabaseSeeder.getSeedUserByRole("scenarioParentsToPost", User.Role.PARENT, 1);
     assertNotNull(seedParent);
 
     URI postParent = RestFactory.doPostRequest(adminForAuth, seedParent, "parents");
@@ -315,6 +316,13 @@ public class ParentsResourceTest {
     print("GET /parents/", parentId, "/children");
     print("Response: ");
     print(marcosChildren);
+
+    print("GET ", marcosChildren.getChildren().get(0));
+    print("Response: ");
+    User student =
+        RestFactory.doGetRequest(adminForAuth, marcosChildren.getChildren().get(0))
+            .readEntity(User.class);
+    print(student);
   }
 
   @Test

@@ -69,7 +69,7 @@
 					},
 					"response": [
 						{
-							"id": "9988a2ba-24ef-4aec-8c7b-9c8e55761620",
+							"id": "69702b77-2e04-42ee-b3ca-04f7965cb710",
 							"name": "200 AT1 /auth/login - ADMIN admin@email.com",
 							"originalRequest": {
 								"method": "POST",
@@ -145,7 +145,7 @@
 							"body": "{\n  \"status\" : \"AUTHENTICATED\",\n  \"token\" : \"e4691d68ae4d4366bd4a75eee5ac7c03\",\n  \"authorization_header\" : \"Bearer e4691d68ae4d4366bd4a75eee5ac7c03\"\n}"
 						},
 						{
-							"id": "8556ab59-c020-479d-995b-5fb1f530a9a6",
+							"id": "9b69129b-1657-403c-9452-c845eb09141b",
 							"name": "400 AT1 /auth/login - ADMIN admin@email.com",
 							"originalRequest": {
 								"method": "POST",
@@ -281,7 +281,7 @@
 					},
 					"response": [
 						{
-							"id": "11e748ec-b52c-442d-bf67-4c658574ca0f",
+							"id": "95c115fe-892f-471d-be61-a112cc7a8928",
 							"name": "200 AT1 /auth/login - TEACHER carl@email.com",
 							"originalRequest": {
 								"method": "POST",
@@ -357,7 +357,7 @@
 							"body": "{\n  \"status\" : \"AUTHENTICATED\",\n  \"token\" : \"7a25c47ea21c4ea2a81620209448691b\",\n  \"authorization_header\" : \"Bearer 7a25c47ea21c4ea2a81620209448691b\"\n}"
 						},
 						{
-							"id": "9a0157f8-43c3-4e16-ab4d-8710dab12dba",
+							"id": "e5a2d10a-54b2-47eb-885b-19f0d0697be4",
 							"name": "400 AT1 /auth/login - TEACHER carl@email.com",
 							"originalRequest": {
 								"method": "POST",
@@ -493,7 +493,7 @@
 					},
 					"response": [
 						{
-							"id": "80b53d3a-43b3-475c-88ae-68f40ebacceb",
+							"id": "269ef459-3c1f-485f-8292-b9b682fcb890",
 							"name": "400 AT1 /auth/login - PARENT bob@email.com",
 							"originalRequest": {
 								"method": "POST",
@@ -569,7 +569,7 @@
 							"body": "{\n  \"description\" : \"Invalid credentials.\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "d6000a9b-d203-4340-80bd-dadb373b4b2e",
+							"id": "2bd7e6a9-7a3d-45bd-8f72-ae139082009f",
 							"name": "200 AT1 /auth/login - PARENT bob@email.com",
 							"originalRequest": {
 								"method": "POST",
@@ -710,7 +710,7 @@
 					},
 					"response": [
 						{
-							"id": "59e42811-7eee-4490-bf2c-a54e8e3540a4",
+							"id": "7b6cb4a9-ca99-4b0c-bc23-de1853f73f0f",
 							"name": "400 AT2 /auth/logout",
 							"originalRequest": {
 								"method": "GET",
@@ -783,7 +783,7 @@
 							"body": "{\n  \"description\" : \"Invalid authenticated session.\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "aa112dab-9f0f-4451-afad-4d57a75486c9",
+							"id": "cab15052-75a4-4418-89df-8b28d782e127",
 							"name": "200 AT2 /auth/logout",
 							"originalRequest": {
 								"method": "GET",
@@ -886,7 +886,7 @@
 					},
 					"response": [
 						{
-							"id": "b497cd12-625f-486b-a3ed-7ccbc8b0bfae",
+							"id": "0482be16-9087-4792-8d16-b755e0be36d3",
 							"name": "401 /demo-utils",
 							"originalRequest": {
 								"method": "GET",
@@ -952,7 +952,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "772dfd67-86ef-44a1-a78e-9969d2a63ca0",
+							"id": "5081653e-4fb6-45fb-ac9e-2a0b61de5072",
 							"name": "403 /demo-utils",
 							"originalRequest": {
 								"method": "GET",
@@ -1018,7 +1018,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "53927ab8-b6c5-4073-b665-a6fbf63bdea5",
+							"id": "2044629f-17e6-4434-a347-2e971c8ab634",
 							"name": "200 /demo-utils",
 							"originalRequest": {
 								"method": "GET",
@@ -1109,7 +1109,7 @@
 					},
 					"response": [
 						{
-							"id": "617102cf-ac58-42a0-bbaa-b3dab2dde6c1",
+							"id": "4763beb8-6f53-4f02-9401-33bd18efc9a7",
 							"name": "401 /demo-utils/deploy-demo-data",
 							"originalRequest": {
 								"method": "GET",
@@ -1176,7 +1176,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "0a6e9545-7efc-426e-afc7-5f49d0dbee97",
+							"id": "7a33566f-4234-413f-9a55-5d5a2b406235",
 							"name": "200 /demo-utils/deploy-demo-data",
 							"originalRequest": {
 								"method": "GET",
@@ -1243,7 +1243,7 @@
 							"body": "{\n  \"status\" : \"SUCCESS\",\n  \"duration\" : \"PT7.703S\",\n  \"info\" : \"All previously active sessions has been terminated. Please, login again.\",\n  \"performed_actions\" : [ \"TRUNCATE_DATABASE\", \"ENSURE_ADMIN_PRESENT\", \"DEPLOY_DATABASE_SCENARIO(demo_data_scenario)\" ]\n}"
 						},
 						{
-							"id": "08e3d753-2339-45e7-864e-20ce9c82f327",
+							"id": "aa084998-af2b-4dc9-a309-0a66a6fc9ce8",
 							"name": "403 /demo-utils/deploy-demo-data",
 							"originalRequest": {
 								"method": "GET",
@@ -1335,7 +1335,7 @@
 					},
 					"response": [
 						{
-							"id": "ed707f0a-ba3a-4e7c-a87e-2f5eb1d05c7e",
+							"id": "1b6bf2d2-7a50-41ed-bf08-82cc4f3361e6",
 							"name": "403 /demo-utils/empty-database",
 							"originalRequest": {
 								"method": "GET",
@@ -1402,7 +1402,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "d366ba30-8c74-4e5f-bec6-432fb76464ff",
+							"id": "e4e486f1-9d7d-44da-997a-c00513fb5f8e",
 							"name": "200 /demo-utils/empty-database",
 							"originalRequest": {
 								"method": "GET",
@@ -1469,7 +1469,7 @@
 							"body": "{\n  \"status\" : \"SUCCESS\",\n  \"duration\" : \"PT0.525S\",\n  \"info\" : \"All previously active sessions has been terminated. Please, login again.\",\n  \"performed_actions\" : [ \"TRUNCATE_DATABASE\", \"ENSURE_ADMIN_PRESENT\" ]\n}"
 						},
 						{
-							"id": "7c1b5133-ab3b-4546-893f-7060ab8c231c",
+							"id": "a066ced9-30ad-4108-8579-9096f8e4d858",
 							"name": "401 /demo-utils/empty-database",
 							"originalRequest": {
 								"method": "GET",
@@ -1561,7 +1561,7 @@
 					},
 					"response": [
 						{
-							"id": "dd51215a-9ae8-400e-9c56-864138b1b9c7",
+							"id": "06a5fc48-42cb-4d69-b17c-0c512e94e538",
 							"name": "401 /demo-utils/who-am-i",
 							"originalRequest": {
 								"method": "GET",
@@ -1628,7 +1628,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "03f74be8-1ce6-441f-9071-d98429450ab2",
+							"id": "0fb39a24-cb73-4700-9bc3-8bf4e5a2e8b3",
 							"name": "200 /demo-utils/who-am-i",
 							"originalRequest": {
 								"method": "GET",
@@ -1762,7 +1762,7 @@
 					},
 					"response": [
 						{
-							"id": "37044d83-c7d4-4e28-a842-85ffb56a7314",
+							"id": "01552d10-9399-48a4-b23c-5720ae0fdb4b",
 							"name": "401 ST1 /students",
 							"originalRequest": {
 								"method": "GET",
@@ -1834,7 +1834,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "a73d2caa-03c6-4547-9846-142371ec501d",
+							"id": "e59ae7ef-d5e8-45c0-b6ee-4814bb22308c",
 							"name": "200 ST1 /students",
 							"originalRequest": {
 								"method": "GET",
@@ -1906,7 +1906,7 @@
 							"body": "{\n  \"students\" : [ \"http://localhost:8080/back2school-0.1/api/v1/students/9\", \"http://localhost:8080/back2school-0.1/api/v1/students/10\", \"http://localhost:8080/back2school-0.1/api/v1/students/11\", \"http://localhost:8080/back2school-0.1/api/v1/students/12\", \"http://localhost:8080/back2school-0.1/api/v1/students/13\", \"http://localhost:8080/back2school-0.1/api/v1/students/14\" ]\n}"
 						},
 						{
-							"id": "74d6190b-433b-4e5e-b51b-0e463288cb32",
+							"id": "cd86a283-fb20-4b28-8090-5f5a1a3387a3",
 							"name": "403 ST1 /students",
 							"originalRequest": {
 								"method": "GET",
@@ -2010,7 +2010,7 @@
 					},
 					"response": [
 						{
-							"id": "89c998ca-56e7-4dfe-baa9-5ac27a9c5e69",
+							"id": "c6ab02c9-e1f2-41ad-81ae-68c181b1f6ce",
 							"name": "401 ST1 /students",
 							"originalRequest": {
 								"method": "POST",
@@ -2085,7 +2085,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "39871e02-28c3-4837-8062-89c07a55bfbf",
+							"id": "d09fff91-35f2-4c40-b3c1-058b6f43ed24",
 							"name": "403 ST1 /students",
 							"originalRequest": {
 								"method": "POST",
@@ -2160,7 +2160,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "2731b29a-a38b-46fb-9b9c-c0a1e8f7e153",
+							"id": "200cc309-b259-49d8-9023-ca9adcdaace9",
 							"name": "400-email ST1 /students",
 							"originalRequest": {
 								"method": "POST",
@@ -2235,7 +2235,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: email\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "b71221e3-ff0d-4548-a619-e2a8510f1f09",
+							"id": "73a659db-f2be-4c8c-8fd0-2b9bae5a49e9",
 							"name": "409 ST1 /students",
 							"originalRequest": {
 								"method": "POST",
@@ -2310,7 +2310,7 @@
 							"body": "{\n  \"description\" : \"A user with this email already exists\",\n  \"status_code\" : 409,\n  \"status_reason\" : \"Conflict\"\n}"
 						},
 						{
-							"id": "d4419813-d8aa-40af-aff0-7fa677768bd7",
+							"id": "9312044e-564e-4e33-9d48-3fabdd1fcd66",
 							"name": "200 ST1 /students",
 							"originalRequest": {
 								"method": "POST",
@@ -2416,7 +2416,7 @@
 					},
 					"response": [
 						{
-							"id": "830bcdb9-b635-4eee-9ab8-e27edba1e97a",
+							"id": "10425b86-c02f-4a8f-913a-d80c1be31aed",
 							"name": "403 ST2 /students/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -2483,7 +2483,7 @@
 							"body": "{\n  \"description\" : \"Access to the resource not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "f37a00d7-474d-4c35-b9b8-cc2be78c67b0",
+							"id": "50c48cb1-5bff-4238-addf-64656339596e",
 							"name": "401 ST2 /students/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -2550,7 +2550,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "c68e1868-71bf-47fa-aa84-adf920f31678",
+							"id": "a593d7a0-5843-4b89-a078-114c7b1c6b59",
 							"name": "200 ST2 /students/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -2617,7 +2617,7 @@
 							"body": "{\n  \"role\" : \"STUDENT\",\n  \"name\" : \"Alice3\",\n  \"surname\" : \"SurnameAlice3\",\n  \"email\" : \"alice3@email.com\"\n}"
 						},
 						{
-							"id": "3a8315b6-a0c2-411b-b062-1f3d98e0c399",
+							"id": "3fe085ef-eb9a-4a5a-8b8a-1217e9845340",
 							"name": "404 ST2 /students/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -2717,7 +2717,7 @@
 					},
 					"response": [
 						{
-							"id": "01955bcc-a08b-477b-ab6a-fa2a739a31f1",
+							"id": "7c20f9e4-7903-40ee-805c-c07556cfdf86",
 							"name": "403 ST2 /students/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -2793,7 +2793,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "37bdc6cc-46b8-4067-a9a3-24b04eac659b",
+							"id": "6b401048-7ac8-4259-a1c9-0bb6b0ad614d",
 							"name": "200 ST2 /students/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -2869,7 +2869,7 @@
 							"body": "{\n  \"status_code\" : 200,\n  \"status_reason\" : \"OK\"\n}"
 						},
 						{
-							"id": "b185df48-d6e7-4dfb-a800-2b8aa668b5d1",
+							"id": "380390cf-12d5-4cde-9447-8322062cc4b6",
 							"name": "404 ST2 /students/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -2945,7 +2945,7 @@
 							"body": "{\n  \"description\" : \"Unknown student id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "9c011aea-7752-4050-b37f-bca8469be329",
+							"id": "0ee36146-e7e3-4da7-926d-b5231e6696b1",
 							"name": "409 ST2 /students/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -3021,7 +3021,7 @@
 							"body": "{\n  \"description\" : \"A user with this email already exists\",\n  \"status_code\" : 409,\n  \"status_reason\" : \"Conflict\"\n}"
 						},
 						{
-							"id": "7d1396e7-ba5b-4f1e-81b1-daa72155cfc3",
+							"id": "7e0f6076-b539-46be-9ac3-09a8697a8417",
 							"name": "401 ST2 /students/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -3097,7 +3097,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "20e77da0-bd32-4b90-8e57-5f8f2a24c08a",
+							"id": "5723cfed-2afa-4e19-8821-33fa6421da2f",
 							"name": "400-email ST2 /students/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -3199,7 +3199,7 @@
 					},
 					"response": [
 						{
-							"id": "42bfabcc-e64b-44df-9e01-b6bd6240a6ec",
+							"id": "10696151-ebbc-4897-bc5c-709cd8f5ea75",
 							"name": "403 ST3 /students/{id: [0-9]+}/grades",
 							"originalRequest": {
 								"method": "GET",
@@ -3267,7 +3267,7 @@
 							"body": "{\n  \"description\" : \"Access to the resource not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "99dc0a54-1d85-4eff-a184-b5a45d589a05",
+							"id": "a2c8f08a-8a46-42b2-b871-aa8824060634",
 							"name": "200 ST3 /students/{id: [0-9]+}/grades",
 							"originalRequest": {
 								"method": "GET",
@@ -3335,7 +3335,7 @@
 							"body": "{\n  \"grades\" : [ \"http://localhost:8080/back2school-0.1/api/v1/students/9/grades/35\", \"http://localhost:8080/back2school-0.1/api/v1/students/9/grades/36\" ]\n}"
 						},
 						{
-							"id": "fd4032fe-3f40-4261-b98a-7a459105aadf",
+							"id": "83e631bf-6f5c-4744-a7b5-6bb2bfaead6e",
 							"name": "404 ST3 /students/{id: [0-9]+}/grades",
 							"originalRequest": {
 								"method": "GET",
@@ -3403,7 +3403,7 @@
 							"body": "{\n  \"description\" : \"Unknown student id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "06d4d883-7672-458c-a364-6327fdddf170",
+							"id": "81cafa41-8e3d-4783-9d16-c1ceff8f0ebf",
 							"name": "401 ST3 /students/{id: [0-9]+}/grades",
 							"originalRequest": {
 								"method": "GET",
@@ -3505,7 +3505,7 @@
 					},
 					"response": [
 						{
-							"id": "cebed5f5-5a5c-48e4-84cb-ab8ecfa20ccf",
+							"id": "a199d4f3-3bf2-4bc3-8a35-cf88e7e5d34a",
 							"name": "404 ST3 /students/{id: [0-9]+}/grades",
 							"originalRequest": {
 								"method": "POST",
@@ -3582,7 +3582,7 @@
 							"body": "{\n  \"description\" : \"Unknown student id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "fa9ced69-32b7-4d14-bb2e-bcfbbc42cbe0",
+							"id": "2db7d9d5-250a-4337-a026-2d7c52d635a4",
 							"name": "400-title ST3 /students/{id: [0-9]+}/grades",
 							"originalRequest": {
 								"method": "POST",
@@ -3659,7 +3659,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: title\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "8bfa538b-1fd2-48fa-9366-da2c96a926f8",
+							"id": "32c87863-063d-4bed-8503-b2db88fef9e5",
 							"name": "400-grade ST3 /students/{id: [0-9]+}/grades",
 							"originalRequest": {
 								"method": "POST",
@@ -3736,7 +3736,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: grade\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "5cb31e83-2b32-4c46-8582-c3cce6b401e0",
+							"id": "8ec57e2d-8197-40e7-a8ba-69d42846018f",
 							"name": "400-date ST3 /students/{id: [0-9]+}/grades",
 							"originalRequest": {
 								"method": "POST",
@@ -3813,7 +3813,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: date\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "ed70cb82-825e-4ef2-b70e-4eb15d3ebd08",
+							"id": "1dd1596a-85db-475d-b31f-4163621dbd95",
 							"name": "401 ST3 /students/{id: [0-9]+}/grades",
 							"originalRequest": {
 								"method": "POST",
@@ -3890,7 +3890,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "9b56e2b5-129f-4c55-92a7-da46f9f7cacd",
+							"id": "4e2f796d-d254-42f4-a1a5-7fbd18a89782",
 							"name": "400-subject-missing ST3 /students/{id: [0-9]+}/grades",
 							"originalRequest": {
 								"method": "POST",
@@ -3967,7 +3967,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: subject_id\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "87ce3831-3e8d-4a2b-ab11-8faac45d8b45",
+							"id": "18689948-9b87-4b7a-9310-e01844054b01",
 							"name": "403 ST3 /students/{id: [0-9]+}/grades",
 							"originalRequest": {
 								"method": "POST",
@@ -4044,7 +4044,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "8406786b-2b51-433b-8bd7-3f70c5ac38ee",
+							"id": "b35c7c51-ee6d-4aa2-a10f-599b7fb42f80",
 							"name": "400-subject-unknown ST3 /students/{id: [0-9]+}/grades",
 							"originalRequest": {
 								"method": "POST",
@@ -4121,7 +4121,7 @@
 							"body": "{\n  \"description\" : \"Unknown required subject id\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "9dc2c7d1-30d1-4dc7-ae20-a4c90ff66fe4",
+							"id": "067c9a04-c9ac-49ee-b9c5-a08d258645e9",
 							"name": "200 ST3 /students/{id: [0-9]+}/grades",
 							"originalRequest": {
 								"method": "POST",
@@ -4231,7 +4231,7 @@
 					},
 					"response": [
 						{
-							"id": "360a16d6-e01b-4882-ba5e-ace26ec34ae4",
+							"id": "25c0327f-544e-4ac2-b867-842901089f34",
 							"name": "401 ST4 /students/{id: [0-9]+}/grades/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -4300,7 +4300,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "6069b907-17c4-468b-b651-d67e818531ec",
+							"id": "b5734174-b9e1-416b-a1a8-9ab07bbf7183",
 							"name": "404-grade ST4 /students/{id: [0-9]+}/grades/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -4369,7 +4369,7 @@
 							"body": "{\n  \"description\" : \"Unknown grade id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "b0bd30ac-0af2-426c-a8c1-8f151bbbeaf2",
+							"id": "8954a098-99ec-4328-ad53-d6c864bd885c",
 							"name": "200 ST4 /students/{id: [0-9]+}/grades/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -4438,7 +4438,7 @@
 							"body": "{\n  \"id\" : 35,\n  \"subject\" : {\n    \"name\" : \"English\",\n    \"description\" : \"English teach students the grammar\"\n  },\n  \"teacher\" : {\n    \"role\" : \"TEACHER\",\n    \"name\" : \"Carl\",\n    \"surname\" : \"SurnameCarl\",\n    \"email\" : \"carl@email.com\"\n  },\n  \"student\" : {\n    \"role\" : \"STUDENT\",\n    \"name\" : \"Alice\",\n    \"surname\" : \"SurnameAlice\",\n    \"email\" : \"alice@email.com\"\n  },\n  \"date\" : [ 2018, 4, 10 ],\n  \"title\" : \"1st grammar test\",\n  \"grade\" : 4.5\n}"
 						},
 						{
-							"id": "0a7e9393-651f-450f-83ee-bf0d3465ce65",
+							"id": "06c21dd3-7a8c-4e89-a5d7-df5f53907640",
 							"name": "404-student ST4 /students/{id: [0-9]+}/grades/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -4542,7 +4542,7 @@
 					},
 					"response": [
 						{
-							"id": "1e677147-2b8f-4022-8a5f-b9c163b8cbf9",
+							"id": "bd9fb24c-898c-44d9-8842-2e46cc6164a3",
 							"name": "400-subject-unknown ST4 /students/{id: [0-9]+}/grades/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -4620,7 +4620,7 @@
 							"body": "{\n  \"description\" : \"Unknown required subject id\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "0cecc832-5352-4ddf-987e-0a759176fab0",
+							"id": "f6a90b84-317a-4679-a4f5-ea2712251600",
 							"name": "404-student ST4 /students/{id: [0-9]+}/grades/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -4698,7 +4698,7 @@
 							"body": "{\n  \"description\" : \"Unknown student id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "d5138d67-0aa2-4e0d-a6e7-5ed50e865eec",
+							"id": "b88b6608-8c39-44e5-92d8-afae4b3ab701",
 							"name": "400-subject-missing ST4 /students/{id: [0-9]+}/grades/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -4776,7 +4776,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: subject_id\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "4702def1-a716-4488-ae9a-c0b81b8460ab",
+							"id": "3c6c5a56-6b5c-4f7d-a50b-278fcb1b2a75",
 							"name": "401 ST4 /students/{id: [0-9]+}/grades/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -4854,7 +4854,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "d38ab704-506f-4f0c-b541-bf329e4d9571",
+							"id": "345ae0c5-547f-44e1-b6f7-9e8325ef58a1",
 							"name": "403 ST4 /students/{id: [0-9]+}/grades/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -4932,7 +4932,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "53099974-a019-42e8-88bd-32402db905b4",
+							"id": "b8129082-d181-4bb4-a6b9-336c471432e7",
 							"name": "400-date ST4 /students/{id: [0-9]+}/grades/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -5010,7 +5010,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: date\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "21be00e9-4756-4aa6-8bf6-199c44e432e9",
+							"id": "a2763c14-ca12-4da9-bd01-4fd2effcdd3c",
 							"name": "404-grade ST4 /students/{id: [0-9]+}/grades/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -5088,7 +5088,7 @@
 							"body": "{\n  \"description\" : \"Unknown grade id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "3f0a278c-7f25-4b59-9632-fcc62b84583c",
+							"id": "bcf3e4cd-8aa5-480f-a916-4c72432d8f0e",
 							"name": "400-title ST4 /students/{id: [0-9]+}/grades/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -5166,7 +5166,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: title\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "b31dcc68-6003-4409-a382-ad3cce01b062",
+							"id": "0281236f-6164-481f-b236-aea73cc46afe",
 							"name": "200 ST4 /students/{id: [0-9]+}/grades/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -5244,7 +5244,7 @@
 							"body": "{\n  \"status_code\" : 200,\n  \"status_reason\" : \"OK\"\n}"
 						},
 						{
-							"id": "a6089839-b37e-462c-b74c-f36b6329e461",
+							"id": "4ff5b6f9-e53d-4449-9ec9-fe915ba7ff97",
 							"name": "400-title ST4 /students/{id: [0-9]+}/grades/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -5357,7 +5357,7 @@
 					},
 					"response": [
 						{
-							"id": "32f4d1f3-3d1e-472d-93de-0bf2d0e4b99c",
+							"id": "82c15104-0d4b-4c13-8526-dacfa0563698",
 							"name": "403 ST4 /students/{id: [0-9]+}/grades/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "DELETE",
@@ -5435,7 +5435,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "e17b51bd-a7ec-4f5b-8ff9-2278f907cb10",
+							"id": "5d352f60-5f4b-4b96-bc02-c164f164d539",
 							"name": "404-grade ST4 /students/{id: [0-9]+}/grades/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "DELETE",
@@ -5513,7 +5513,7 @@
 							"body": "{\n  \"description\" : \"Unknown grade id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "e6ddcad7-60c8-4018-a8d0-3fb2dc00de5f",
+							"id": "3bf5338a-2a9f-45d1-8eef-980356eec7c2",
 							"name": "200 ST4 /students/{id: [0-9]+}/grades/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "DELETE",
@@ -5591,7 +5591,7 @@
 							"body": "{\n  \"status_code\" : 200,\n  \"status_reason\" : \"OK\"\n}"
 						},
 						{
-							"id": "dfcfb195-a65d-4ba8-8b5d-2e8a33f2cdd5",
+							"id": "dd43cf8b-384e-4dca-9bd7-1585e55dc85a",
 							"name": "401 ST4 /students/{id: [0-9]+}/grades/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "DELETE",
@@ -5668,7 +5668,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "9ebdc0e9-521d-4950-9b82-c0dd16b901e4",
+							"id": "7ceba686-8479-4a20-a44c-9a4e4c53f3e9",
 							"name": "404-student ST4 /students/{id: [0-9]+}/grades/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "DELETE",
@@ -5813,7 +5813,7 @@
 					},
 					"response": [
 						{
-							"id": "23ced510-8d1c-45ea-bc96-d4563f6d85cf",
+							"id": "ce5e3840-2ff4-4bb6-895b-c2d295773c52",
 							"name": "200 PR1 /parents",
 							"originalRequest": {
 								"method": "GET",
@@ -5885,7 +5885,7 @@
 							"body": "{\n  \"parents\" : [ \"http://localhost:8080/back2school-0.1/api/v1/parents/15\", \"http://localhost:8080/back2school-0.1/api/v1/parents/16\", \"http://localhost:8080/back2school-0.1/api/v1/parents/17\", \"http://localhost:8080/back2school-0.1/api/v1/parents/18\" ]\n}"
 						},
 						{
-							"id": "2e109171-d741-4abb-8056-42a303fafcac",
+							"id": "aa64c289-880b-4fd8-adf8-782b5cd947fb",
 							"name": "403 PR1 /parents",
 							"originalRequest": {
 								"method": "GET",
@@ -5957,7 +5957,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "98516192-32f2-48f9-9669-c2c3ac80e3dc",
+							"id": "a2b87fea-7333-47fc-847f-7bf807a10ede",
 							"name": "401 PR1 /parents",
 							"originalRequest": {
 								"method": "GET",
@@ -6061,7 +6061,7 @@
 					},
 					"response": [
 						{
-							"id": "31364503-9f4a-4f04-a5b3-e476cfe65b10",
+							"id": "03511922-427c-482b-94f3-04f65a2d880f",
 							"name": "201 PR1 /parents",
 							"originalRequest": {
 								"method": "POST",
@@ -6142,7 +6142,7 @@
 							"body": "{\n  \"status_code\" : 201,\n  \"status_reason\" : \"Created\"\n}"
 						},
 						{
-							"id": "614f92d8-d932-4660-a0ea-69d703b99370",
+							"id": "13da662c-9076-439f-ae79-37da0de78829",
 							"name": "401 PR1 /parents",
 							"originalRequest": {
 								"method": "POST",
@@ -6217,7 +6217,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "2d893ed7-1658-4fa7-bb98-3c79892a4113",
+							"id": "618979da-84d7-4595-819a-350871566320",
 							"name": "409 PR1 /parents",
 							"originalRequest": {
 								"method": "POST",
@@ -6292,7 +6292,7 @@
 							"body": "{\n  \"description\" : \"A user with this email already exists\",\n  \"status_code\" : 409,\n  \"status_reason\" : \"Conflict\"\n}"
 						},
 						{
-							"id": "2a1f1183-dee9-418a-834b-c0653c57ed96",
+							"id": "d6ad2863-6b62-448e-bbb3-2b7a8cd8693c",
 							"name": "400-email PR1 /parents",
 							"originalRequest": {
 								"method": "POST",
@@ -6367,7 +6367,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: email\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "349456c9-e722-4c61-b54e-cf25b33b6c6b",
+							"id": "a4c9b494-5310-4316-a6ce-91e662127ffd",
 							"name": "403 PR1 /parents",
 							"originalRequest": {
 								"method": "POST",
@@ -6467,7 +6467,7 @@
 					},
 					"response": [
 						{
-							"id": "18346b8b-f025-48be-9edd-15a23b7a27a2",
+							"id": "0757900c-d477-45bb-8872-39d94b977358",
 							"name": "200 PR2 /parents/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -6534,7 +6534,7 @@
 							"body": "{\n  \"role\" : \"PARENT\",\n  \"name\" : \"Bob\",\n  \"surname\" : \"SurnameBob\",\n  \"email\" : \"bob@email.com\"\n}"
 						},
 						{
-							"id": "f963fe69-b9f2-4b3d-aa40-6ef563373a54",
+							"id": "5c49bcfc-f342-4b96-a2f4-f5553d208778",
 							"name": "404 PR2 /parents/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -6601,7 +6601,7 @@
 							"body": "{\n  \"description\" : \"Unknown parent id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "f0f26158-4a1c-4a93-8023-89a5b3ced40f",
+							"id": "57d61b87-653e-49e1-b08b-9dc82cc8f693",
 							"name": "401 PR2 /parents/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -6668,7 +6668,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "d113c11c-1c11-4a8c-b22e-0f38d07f0241",
+							"id": "bd879b7e-ae89-4190-b32e-8d5a804f185c",
 							"name": "403 PR2 /parents/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -6768,7 +6768,7 @@
 					},
 					"response": [
 						{
-							"id": "af2f30f2-5d38-4a5c-b22b-c6e3bb2b4166",
+							"id": "1a72a4c5-b610-49bd-86e6-c35713bc7c22",
 							"name": "400-email PR2 /parents/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -6844,7 +6844,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: email\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "d804c53f-9a2e-40a6-82e0-aae3c1e8a72d",
+							"id": "a8ba5bc8-4d8f-4b02-916c-81821f79c0e6",
 							"name": "404 PR2 /parents/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -6920,7 +6920,7 @@
 							"body": "{\n  \"description\" : \"Unknown parent id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "c3fdc58f-3b6b-44e5-a10c-2cdeca74f0ca",
+							"id": "cd15dda3-7cda-4773-a567-17cf63fb6610",
 							"name": "401 PR2 /parents/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -6996,7 +6996,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "1aa3365c-d803-4e0d-a4f7-53faa17643a9",
+							"id": "c874f3cf-1cc8-4186-ab26-81bee18e1bd8",
 							"name": "409 PR2 /parents/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -7072,7 +7072,7 @@
 							"body": "{\n  \"description\" : \"A user with this email already exists\",\n  \"status_code\" : 409,\n  \"status_reason\" : \"Conflict\"\n}"
 						},
 						{
-							"id": "944f0415-713e-400d-bf14-69a86e03edf5",
+							"id": "f1593870-9f9a-4781-b1e8-59e46305214b",
 							"name": "403 PR2 /parents/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -7148,7 +7148,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "9c929f43-8641-4cb5-9e64-2fbdb0e10c01",
+							"id": "3c6815f9-7ec9-42ae-a403-f4b88ddc97e4",
 							"name": "200 PR2 /parents/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -7232,7 +7232,7 @@
 						"header": [],
 						"body": {},
 						"url": {
-							"raw": "http://localhost:8080/back2school-0.1/api/v1/parents/15/children",
+							"raw": "http://localhost:8080/back2school-0.1/api/v1/parents/16/children",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -7243,21 +7243,21 @@
 								"api",
 								"v1",
 								"parents",
-								"15",
+								"16",
 								"children"
 							]
 						}
 					},
 					"response": [
 						{
-							"id": "156e3122-0921-4be8-98e2-dfa9f8a642fa",
+							"id": "d77740ee-f201-4c01-a938-b57564983dcb",
 							"name": "200 PR3 /parents/{id: [0-9]+}/children",
 							"originalRequest": {
 								"method": "GET",
 								"header": [],
 								"body": {},
 								"url": {
-									"raw": "http://localhost:8080/back2school-0.1/api/v1/parents/15/children",
+									"raw": "http://localhost:8080/back2school-0.1/api/v1/parents/16/children",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -7268,7 +7268,7 @@
 										"api",
 										"v1",
 										"parents",
-										"15",
+										"16",
 										"children"
 									]
 								}
@@ -7285,7 +7285,7 @@
 								},
 								{
 									"key": "Content-Length",
-									"value": "138",
+									"value": "141",
 									"name": "Content-Length",
 									"description": "The length of the response body in octets (8-bit bytes)"
 								},
@@ -7297,7 +7297,7 @@
 								},
 								{
 									"key": "Date",
-									"value": "Tue, 25 Sep 2018 18:35:21 GMT",
+									"value": "Mon, 01 Oct 2018 08:49:56 GMT",
 									"name": "Date",
 									"description": "The date and time that the message was sent"
 								},
@@ -7315,10 +7315,10 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n  \"children\" : [ {\n    \"role\" : \"STUDENT\",\n    \"name\" : \"Alice\",\n    \"surname\" : \"SurnameAlice\",\n    \"email\" : \"alice@email.com\"\n  } ]\n}"
+							"body": "{\n  \"children\" : [ \"http://localhost:8080/back2school-0.1/api/v1/students/12\", \"http://localhost:8080/back2school-0.1/api/v1/students/13\" ]\n}"
 						},
 						{
-							"id": "b67b9001-3c17-4ad4-ad6c-401651299742",
+							"id": "a4c59694-a404-485c-b089-26aa0b3cc3ba",
 							"name": "404 PR3 /parents/{id: [0-9]+}/children",
 							"originalRequest": {
 								"method": "GET",
@@ -7386,7 +7386,7 @@
 							"body": "{\n  \"description\" : \"Unknown parent id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "23e45639-71ea-4dfe-9d6c-5a61eb0edc50",
+							"id": "92216127-8581-4d48-9087-a6ba3efcacf0",
 							"name": "403 PR3 /parents/{id: [0-9]+}/children",
 							"originalRequest": {
 								"method": "GET",
@@ -7454,7 +7454,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "ac111d82-3e18-466d-ab5b-15205c4ed8ef",
+							"id": "01b7dc04-920f-4491-bfd1-51b6a3669cbc",
 							"name": "401 PR3 /parents/{id: [0-9]+}/children",
 							"originalRequest": {
 								"method": "GET",
@@ -7556,7 +7556,7 @@
 					},
 					"response": [
 						{
-							"id": "384fe1e7-8173-4fab-8723-7f626403dfc8",
+							"id": "1e64aa07-67b3-42d3-a219-e68bcd79e69c",
 							"name": "401 PR3 /parents/{id: [0-9]+}/children",
 							"originalRequest": {
 								"method": "POST",
@@ -7633,7 +7633,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "c976bf1b-9eee-43ba-a580-1f32824cddf0",
+							"id": "23240aec-be58-4990-a1dd-1ffbcac17cfb",
 							"name": "200 PR3 /parents/{id: [0-9]+}/children",
 							"originalRequest": {
 								"method": "POST",
@@ -7710,7 +7710,7 @@
 							"body": "{\n  \"status_code\" : 200,\n  \"status_reason\" : \"OK\"\n}"
 						},
 						{
-							"id": "9d2cdecb-e72c-4c9c-a3f7-e892269ca0e2",
+							"id": "fea75efa-dc75-425e-aca3-5d3cab073732",
 							"name": "409 PR3 /parents/{id: [0-9]+}/children",
 							"originalRequest": {
 								"method": "POST",
@@ -7787,7 +7787,7 @@
 							"body": "{\n  \"description\" : \"Student already assigned to this parent\",\n  \"status_code\" : 409,\n  \"status_reason\" : \"Conflict\"\n}"
 						},
 						{
-							"id": "900b13f1-33f1-4872-90d8-1539bab6a1fd",
+							"id": "b7ff6009-c9c7-4969-85bd-a680f4a87170",
 							"name": "403 PR3 /parents/{id: [0-9]+}/children",
 							"originalRequest": {
 								"method": "POST",
@@ -7864,7 +7864,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "6318147c-d2bc-4c94-b5d1-6deb02383153",
+							"id": "e8a42c5b-0a42-477c-974d-34ecdcfefd14",
 							"name": "400-child_id-missing PR3 /parents/{id: [0-9]+}/children",
 							"originalRequest": {
 								"method": "POST",
@@ -7941,7 +7941,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: child_id\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "2c0f075b-97ea-4c0a-a28c-3aac14f56474",
+							"id": "379c98ad-bfd4-4140-bc73-5b5affafc38a",
 							"name": "400-child_id-unknown PR3 /parents/{id: [0-9]+}/children",
 							"originalRequest": {
 								"method": "POST",
@@ -8018,7 +8018,7 @@
 							"body": "{\n  \"description\" : \"Unknown child id\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "38825446-7eee-4db0-bf34-d5bad466c627",
+							"id": "17a3f1d4-0d7e-4b90-a0fa-dfd82fc7f687",
 							"name": "404 PR3 /parents/{id: [0-9]+}/children",
 							"originalRequest": {
 								"method": "POST",
@@ -8121,7 +8121,7 @@
 					},
 					"response": [
 						{
-							"id": "3410552b-9622-4840-ba2e-437ea26e9a5c",
+							"id": "72d2173f-023d-4c8b-a326-017a44948acc",
 							"name": "401 PR4 /parents/{id: [0-9]+}/appointments",
 							"originalRequest": {
 								"method": "GET",
@@ -8189,7 +8189,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "18ba7991-78c2-40af-b9af-e1b682bcc9f6",
+							"id": "85060d12-8427-424c-84a1-69d2d0e55fdc",
 							"name": "200 PR4 /parents/{id: [0-9]+}/appointments",
 							"originalRequest": {
 								"method": "GET",
@@ -8257,7 +8257,7 @@
 							"body": "{\n  \"appointments\" : [ \"http://localhost:8080/back2school-0.1/api/v1/parents/15/appointments/47\", \"http://localhost:8080/back2school-0.1/api/v1/parents/15/appointments/48\" ]\n}"
 						},
 						{
-							"id": "c2ee6aa6-2ed2-4009-bb03-699e787fd1df",
+							"id": "3a1f7814-400d-4489-9b24-baeff906e649",
 							"name": "403 PR4 /parents/{id: [0-9]+}/appointments",
 							"originalRequest": {
 								"method": "GET",
@@ -8325,7 +8325,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "fa620f75-b3a2-43e7-803a-d8d376bfad61",
+							"id": "089f4735-687f-4416-9f71-35ce4d818599",
 							"name": "404 PR4 /parents/{id: [0-9]+}/appointments",
 							"originalRequest": {
 								"method": "GET",
@@ -8427,7 +8427,7 @@
 					},
 					"response": [
 						{
-							"id": "7dbd2188-ee37-4e7d-a161-b57bcf5fae18",
+							"id": "de60fde3-0446-4178-9c27-578a76d28750",
 							"name": "404 PR4 /parents/{id: [0-9]+}/appointments",
 							"originalRequest": {
 								"method": "POST",
@@ -8504,7 +8504,7 @@
 							"body": "{\n  \"description\" : \"Unknown parent id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "23b939c9-1a35-4339-a825-a42d607d4b65",
+							"id": "5ae90bad-1dfe-485f-8a32-d59112e3700f",
 							"name": "400-datetime_end PR4 /parents/{id: [0-9]+}/appointments",
 							"originalRequest": {
 								"method": "POST",
@@ -8581,7 +8581,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: datetime_end\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "f0cd5ee4-5085-4852-a51e-e4544211f339",
+							"id": "5868c7a3-ce5c-4fd2-be5e-e6129248c880",
 							"name": "400-teacher_id-missing PR4 /parents/{id: [0-9]+}/appointments",
 							"originalRequest": {
 								"method": "POST",
@@ -8658,7 +8658,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: teacher_id\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "b6fbaf34-0965-4b8c-8362-d2d7bde2e7b3",
+							"id": "ec2ffc01-d447-4aaa-8e13-0e455fcaacf4",
 							"name": "403 PR4 /parents/{id: [0-9]+}/appointments",
 							"originalRequest": {
 								"method": "POST",
@@ -8735,7 +8735,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "62684ac2-db45-401a-b54d-c0d27151fa49",
+							"id": "bdbb0108-e79e-41c9-bf10-2c188d1deb64",
 							"name": "400-datetime_start PR4 /parents/{id: [0-9]+}/appointments",
 							"originalRequest": {
 								"method": "POST",
@@ -8812,7 +8812,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: datetime_start\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "38de6d62-b3f2-4f9d-95cc-631348aca79f",
+							"id": "798f5846-c542-4df5-a457-5c7edb587b04",
 							"name": "201 PR4 /parents/{id: [0-9]+}/appointments",
 							"originalRequest": {
 								"method": "POST",
@@ -8895,7 +8895,7 @@
 							"body": "{\n  \"status_code\" : 201,\n  \"status_reason\" : \"Created\"\n}"
 						},
 						{
-							"id": "f9fae908-8e26-4dc4-bd4a-17db1265f9e4",
+							"id": "ae319cdf-f2c4-4148-9f7c-911eae81e003",
 							"name": "400-teacher_id-unknown PR4 /parents/{id: [0-9]+}/appointments",
 							"originalRequest": {
 								"method": "POST",
@@ -8972,7 +8972,7 @@
 							"body": "{\n  \"description\" : \"Unknown teacher id\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "297a4d76-1e2a-4cff-82aa-9631ef894982",
+							"id": "96bc8bf8-26c8-4394-9c88-f93d979c1d51",
 							"name": "401 PR4 /parents/{id: [0-9]+}/appointments",
 							"originalRequest": {
 								"method": "POST",
@@ -9049,7 +9049,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "5ab56b0f-9070-469f-b044-4434cc04b2b0",
+							"id": "e323d4ec-5787-4341-b82f-79e00a008008",
 							"name": "409 PR4 /parents/{id: [0-9]+}/appointments",
 							"originalRequest": {
 								"method": "POST",
@@ -9153,7 +9153,7 @@
 					},
 					"response": [
 						{
-							"id": "5f7cfab9-cc51-4efe-8d64-685f772ea452",
+							"id": "ae5f3be1-aafd-41ef-aaa8-2822177065b5",
 							"name": "403 PR5 /parents/{id: [0-9]+}/appointments/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -9222,7 +9222,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "04659cc0-ae36-48f6-a243-7f35ccab58c4",
+							"id": "80dcb234-adfc-49a6-8e49-1a2847fd8add",
 							"name": "404-appointment PR5 /parents/{id: [0-9]+}/appointments/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -9291,7 +9291,7 @@
 							"body": "{\n  \"description\" : \"Unknown appointment id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "8b74c325-d887-4050-a87c-f92b3b2e3460",
+							"id": "980a63a5-7699-47ab-a45f-aa317cfd1d6a",
 							"name": "200 PR5 /parents/{id: [0-9]+}/appointments/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -9360,7 +9360,7 @@
 							"body": "{\n  \"teacher\" : {\n    \"role\" : \"TEACHER\",\n    \"name\" : \"Carl3\",\n    \"surname\" : \"SurnameCarl3\",\n    \"email\" : \"carl3@email.com\"\n  },\n  \"parent\" : {\n    \"role\" : \"PARENT\",\n    \"name\" : \"PostmanParentPut\",\n    \"surname\" : \"Surname Put Postman\",\n    \"email\" : \"parent@postman.com\"\n  },\n  \"datetimeStart\" : [ 2018, 5, 20, 12, 15 ],\n  \"datetimeEnd\" : [ 2018, 5, 20, 14, 15 ],\n  \"status\" : \"AGREED\"\n}"
 						},
 						{
-							"id": "e4185945-142a-45bd-967b-8cf014f13dfe",
+							"id": "1f58b137-97cf-4343-8d47-34f970ab61ca",
 							"name": "404-parent PR5 /parents/{id: [0-9]+}/appointments/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -9429,7 +9429,7 @@
 							"body": "{\n  \"description\" : \"Unknown parent id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "3ab515d0-c506-4fb1-9fd7-a361c1a71b88",
+							"id": "6dddb830-fb15-4c2b-aa08-7418eec527ad",
 							"name": "401 PR5 /parents/{id: [0-9]+}/appointments/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -9533,7 +9533,7 @@
 					},
 					"response": [
 						{
-							"id": "d952e6b0-c700-4e1d-bf16-98ca64e95371",
+							"id": "05fd44ab-9ad3-4596-8e9e-a5ca2518bc0c",
 							"name": "400-datetime_end PR5 /parents/{id: [0-9]+}/appointments/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -9611,7 +9611,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: datetime_end\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "91a44736-f4f5-4def-a964-50a86d953d49",
+							"id": "700e0cfe-7f5b-4b5a-aef8-7197fb929dca",
 							"name": "404 PR5 /parents/{id: [0-9]+}/appointments/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -9688,7 +9688,7 @@
 							"body": "{\n  \"description\" : \"Unknown appointment id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "d000661c-13d6-4bf0-b09a-46682508d60e",
+							"id": "a4fd7790-43e4-4ac1-8119-02b64cf67d2e",
 							"name": "200 PR5 /parents/{id: [0-9]+}/appointments/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -9766,7 +9766,7 @@
 							"body": "{\n  \"status_code\" : 200,\n  \"status_reason\" : \"OK\"\n}"
 						},
 						{
-							"id": "66254ea4-021c-4dd5-9933-7d51755f0d5c",
+							"id": "6f450799-3680-45af-b68d-e66dda4204ed",
 							"name": "401 PR5 /parents/{id: [0-9]+}/appointments/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -9844,7 +9844,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "d441dd5a-672b-44f3-a807-de7f5e0ba3fc",
+							"id": "9d2a1139-be83-42e7-973f-5f121b14c594",
 							"name": "400-datetime_start PR5 /parents/{id: [0-9]+}/appointments/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -9922,7 +9922,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: datetime_start\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "2d5d20e4-aff7-4818-b013-bc517a130010",
+							"id": "28929339-0628-4d62-b223-0ecb306bfbde",
 							"name": "400-teacher_id-missing PR5 /parents/{id: [0-9]+}/appointments/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -10000,7 +10000,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: teacher_id\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "634d1114-0779-403e-8992-5ec9ce75b159",
+							"id": "10a6437f-70d4-4cb5-8028-5f08bb2299a2",
 							"name": "400-teacher_id-unknown PR5 /parents/{id: [0-9]+}/appointments/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -10104,7 +10104,7 @@
 					},
 					"response": [
 						{
-							"id": "1993f10f-b20a-4bbe-a43d-dbddcde24650",
+							"id": "ea7ac6ac-9fe4-4f83-90d4-d70522996b10",
 							"name": "403 PR6 /parents/{id: [0-9]+}/payments",
 							"originalRequest": {
 								"method": "GET",
@@ -10172,7 +10172,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "af8065dd-f54c-4f43-b5ec-a227c6759a6f",
+							"id": "17e36949-23f6-43bd-9f52-d72a3277c05a",
 							"name": "200 PR6 /parents/{id: [0-9]+}/payments",
 							"originalRequest": {
 								"method": "GET",
@@ -10240,7 +10240,7 @@
 							"body": "{\n  \"payments\" : [ \"http://localhost:8080/back2school-0.1/api/v1/parents/15/payments/31\", \"http://localhost:8080/back2school-0.1/api/v1/parents/15/payments/32\" ]\n}"
 						},
 						{
-							"id": "c3ad6a93-15f4-4948-8f0c-6bdb9017bc01",
+							"id": "68866392-1887-4222-af1d-43a9c47cba69",
 							"name": "401 PR6 /parents/{id: [0-9]+}/payments",
 							"originalRequest": {
 								"method": "GET",
@@ -10342,7 +10342,7 @@
 					},
 					"response": [
 						{
-							"id": "0bee3121-d496-40bd-b1af-fdf57aa40795",
+							"id": "3e6d0369-cb6b-4ed1-9882-2f9011ca3d63",
 							"name": "200 PR6 /parents/{id: [0-9]+}/payments",
 							"originalRequest": {
 								"method": "POST",
@@ -10425,7 +10425,7 @@
 							"body": "{\n  \"status_code\" : 201,\n  \"status_reason\" : \"Created\"\n}"
 						},
 						{
-							"id": "4f0561dc-aac1-46ef-96d7-997859e460d7",
+							"id": "597f33e3-b870-44c2-ae82-c278ab16c93c",
 							"name": "400-subject PR6 /parents/{id: [0-9]+}/payments",
 							"originalRequest": {
 								"method": "POST",
@@ -10502,7 +10502,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: subject\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "5023bf27-56ea-4cb3-bcf5-300cbbce66ea",
+							"id": "f372c4c8-c20f-441d-8b5e-16f98a2dd0e5",
 							"name": "400-type PR6 /parents/{id: [0-9]+}/payments",
 							"originalRequest": {
 								"method": "POST",
@@ -10579,7 +10579,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: type\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "c19395b6-21d3-47c3-a031-c9961c834a23",
+							"id": "f5df1ae0-8aaa-4dad-a60d-fb08415108f6",
 							"name": "403 PR6 /parents/{id: [0-9]+}/payments",
 							"originalRequest": {
 								"method": "POST",
@@ -10656,7 +10656,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "de2a84a2-20e2-4d6b-a2cb-fc347069dbc9",
+							"id": "e4ed7b6f-3357-4779-8a4d-abe154f8cba5",
 							"name": "404 PR6 /parents/{id: [0-9]+}/payments",
 							"originalRequest": {
 								"method": "POST",
@@ -10733,7 +10733,7 @@
 							"body": "{\n  \"description\" : \"Unknown parent id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "260d8c91-b457-4916-acd0-9d01fa5c6b9f",
+							"id": "1b49b8e3-46bb-4ad8-bf8d-d08479d24f8a",
 							"name": "400-datetime_deadline PR6 /parents/{id: [0-9]+}/payments",
 							"originalRequest": {
 								"method": "POST",
@@ -10810,7 +10810,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: datetime_deadline\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "33dc6990-7b6c-4085-bef0-49485722d1df",
+							"id": "c8f04ac4-7e88-4aa3-88d8-a3d72d548fe6",
 							"name": "401 PR6 /parents/{id: [0-9]+}/payments",
 							"originalRequest": {
 								"method": "POST",
@@ -10914,7 +10914,7 @@
 					},
 					"response": [
 						{
-							"id": "5d4c915f-acb5-43d0-bffe-fadfd03a0b36",
+							"id": "07604b8a-36ca-4882-a34a-3ef58fe5d8b8",
 							"name": "401 PR7 /parents/{id: [0-9]+}/payments/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -10983,7 +10983,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "a6baf767-3997-4fb7-8d49-d84662030397",
+							"id": "90116241-dda2-4b03-8f4d-ab45cab5c5a2",
 							"name": "200 PR7 /parents/{id: [0-9]+}/payments/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -11052,7 +11052,7 @@
 							"body": "{\n  \"id\" : 32,\n  \"placedBy\" : {\n    \"role\" : \"ADMINISTRATOR\",\n    \"name\" : \"David\",\n    \"surname\" : \"SurnameDavid\",\n    \"email\" : \"david@email.com\"\n  },\n  \"assignedTo\" : {\n    \"role\" : \"PARENT\",\n    \"name\" : \"Bob\",\n    \"surname\" : \"SurnameBob\",\n    \"email\" : \"bob@email.com\"\n  },\n  \"type\" : \"MATERIAL\",\n  \"datetimeRequested\" : [ 2018, 4, 5, 20, 24, 10 ],\n  \"datetimeDeadline\" : [ 2018, 6, 5, 20, 24, 10 ],\n  \"done\" : false,\n  \"subject\" : \"School material\",\n  \"description\" : \"The school material used in one month\",\n  \"amount\" : 2.6\n}"
 						},
 						{
-							"id": "236f56ba-b301-48f3-9bc4-6902ff21688b",
+							"id": "0c8aad75-2304-4825-9da0-82ff909c4fe3",
 							"name": "404-parent PR7 /parents/{id: [0-9]+}/payments/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -11121,7 +11121,7 @@
 							"body": "{\n  \"description\" : \"Unknown parent id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "57b2af77-20e0-4048-bc21-85ddf6287e2a",
+							"id": "ba8e5716-63ec-410d-944f-82bacf779069",
 							"name": "404-payment PR7 /parents/{id: [0-9]+}/payments/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -11190,7 +11190,7 @@
 							"body": "{\n  \"description\" : \"Unknown payment id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "de0acf38-0488-4282-bf67-826bf955b92f",
+							"id": "343e5c09-6467-4a69-9c16-2c2e0e408f71",
 							"name": "403 PR7 /parents/{id: [0-9]+}/payments/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -11295,7 +11295,7 @@
 					},
 					"response": [
 						{
-							"id": "9fbe4e67-904a-436b-aad1-5c4854cc3aa0",
+							"id": "6cd013e7-77f1-4502-94ab-04bf9f88e8d2",
 							"name": "200 PR8 /parents/{id: [0-9]+}/payments/{id: [0-9]+}/pay",
 							"originalRequest": {
 								"method": "POST",
@@ -11374,7 +11374,7 @@
 							"body": "{\n  \"status_code\" : 200,\n  \"status_reason\" : \"OK\"\n}"
 						},
 						{
-							"id": "0133f655-95fc-45ae-a266-64b3afdd86f5",
+							"id": "e7c649f8-d4c5-4f92-abcb-bc3c68c59a7a",
 							"name": "403 PR8 /parents/{id: [0-9]+}/payments/{id: [0-9]+}/pay",
 							"originalRequest": {
 								"method": "POST",
@@ -11453,7 +11453,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "8bd6e98c-0ef6-4a6a-b18f-2662ba21dd0f",
+							"id": "50e26f5b-31e8-417c-ac0e-42ac1add1016",
 							"name": "404 PR8 /parents/{id: [0-9]+}/payments/{id: [0-9]+}/pay",
 							"originalRequest": {
 								"method": "POST",
@@ -11532,7 +11532,7 @@
 							"body": "{\n  \"description\" : \"Unknown payment id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "fd5afeb4-32aa-490d-8633-d5747ea135e7",
+							"id": "e58ea5fc-af50-4c07-9905-c90690450d14",
 							"name": "401 PR8 /parents/{id: [0-9]+}/payments/{id: [0-9]+}/pay",
 							"originalRequest": {
 								"method": "POST",
@@ -11611,7 +11611,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "79839318-9780-4bba-9fda-6cb379084bd9",
+							"id": "3f2901c4-3dc1-453b-8973-1fbb47609fa6",
 							"name": "304 PR8 /parents/{id: [0-9]+}/payments/{id: [0-9]+}/pay",
 							"originalRequest": {
 								"method": "POST",
@@ -11678,7 +11678,7 @@
 							"body": ""
 						},
 						{
-							"id": "9f71fed7-48e2-4bbd-939c-34148c1933a5",
+							"id": "4718e5a6-aed7-4b4c-a684-84a3d1972fc5",
 							"name": "401 PR8 /parents/{id: [0-9]+}/payments/{id: [0-9]+}/pay",
 							"originalRequest": {
 								"method": "POST",
@@ -11783,7 +11783,7 @@
 					},
 					"response": [
 						{
-							"id": "d2785bce-2df5-4b5f-b042-77b05079a0d8",
+							"id": "913974b1-d755-4b20-9c42-a028a1ed88ed",
 							"name": "200 PR9 /parents/{id: [0-9]+}/notifications",
 							"originalRequest": {
 								"method": "GET",
@@ -11851,7 +11851,7 @@
 							"body": "{\n  \"notifications\" : [ \"http://localhost:8080/back2school-0.1/api/v1/parents/15/notifications/54\", \"http://localhost:8080/back2school-0.1/api/v1/parents/15/notifications/56\" ]\n}"
 						},
 						{
-							"id": "5795fb39-a896-4ca6-86dd-9377b78a725a",
+							"id": "dbca6246-a53f-420a-a682-d45061896361",
 							"name": "404 PR9 /parents/{id: [0-9]+}/notifications",
 							"originalRequest": {
 								"method": "GET",
@@ -11919,7 +11919,7 @@
 							"body": "{\n  \"description\" : \"Unknown parent id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "44267468-0aeb-4042-9c3c-02a1a41ea441",
+							"id": "fd3d48b5-d5e0-43ff-8f84-d555845ad849",
 							"name": "403 PR9 /parents/{id: [0-9]+}/notifications",
 							"originalRequest": {
 								"method": "GET",
@@ -11987,7 +11987,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "9a201727-4b95-4ec0-b1be-0c7f830f8723",
+							"id": "8717f341-e2eb-4e7b-9f6d-fd0a3235f28e",
 							"name": "401 PR9 /parents/{id: [0-9]+}/notifications",
 							"originalRequest": {
 								"method": "GET",
@@ -12089,7 +12089,7 @@
 					},
 					"response": [
 						{
-							"id": "f4065b92-c09f-4a4a-8ce7-de3b327cd297",
+							"id": "2384814e-cfa7-41a8-8d33-ffce784d8367",
 							"name": "403 PR9 /parents/{id: [0-9]+}/notifications",
 							"originalRequest": {
 								"method": "POST",
@@ -12166,7 +12166,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "eaa8cc52-4ce0-42ca-90d0-c01812f5267a",
+							"id": "3c92a88c-d82a-41a4-b42c-aae730e54230",
 							"name": "400-subject PR9 /parents/{id: [0-9]+}/notifications",
 							"originalRequest": {
 								"method": "POST",
@@ -12243,7 +12243,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: subject\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "65aa0a82-5617-4036-8491-3a14c7e0c5fc",
+							"id": "1fbb4836-ed58-4d61-a203-3f09dc6bc80d",
 							"name": "400-text PR9 /parents/{id: [0-9]+}/notifications",
 							"originalRequest": {
 								"method": "POST",
@@ -12320,7 +12320,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: text\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "1bb00285-533e-4bee-9cb0-851588151c39",
+							"id": "587a29d3-edda-42a8-996c-a84dfff1154c",
 							"name": "401 PR9 /parents/{id: [0-9]+}/notifications",
 							"originalRequest": {
 								"method": "POST",
@@ -12397,7 +12397,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "a2f4ac9e-c8fa-409a-b7a9-8dc5c263b316",
+							"id": "3b8b813b-12c1-47c3-8165-57182b95edf2",
 							"name": "200 PR9 /parents/{id: [0-9]+}/notifications",
 							"originalRequest": {
 								"method": "POST",
@@ -12480,7 +12480,7 @@
 							"body": "{\n  \"status_code\" : 201,\n  \"status_reason\" : \"Created\"\n}"
 						},
 						{
-							"id": "737b6c9a-0148-47a4-8d76-d724ae0f8f3c",
+							"id": "9d05fb2c-cd94-4d1c-859c-4eb55f964ff5",
 							"name": "404 PR9 /parents/{id: [0-9]+}/notifications",
 							"originalRequest": {
 								"method": "POST",
@@ -12584,7 +12584,7 @@
 					},
 					"response": [
 						{
-							"id": "bb70f99e-9841-48e2-af03-1dff425cffca",
+							"id": "45c8d71f-76ea-4759-80dc-b5a58843a3cc",
 							"name": "401 PR10 /parents/{id: [0-9]+}/notifications/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -12653,7 +12653,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "7d4f92f1-6860-43cd-bc96-c18b4110a4dd",
+							"id": "5899f972-b797-4629-a8f1-a9d51f5c3615",
 							"name": "404-parent PR10 /parents/{id: [0-9]+}/notifications/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -12722,7 +12722,7 @@
 							"body": "{\n  \"description\" : \"Unknown parent id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "bca51dd0-d4df-47ca-b966-10d16c640fdd",
+							"id": "6131d648-1091-40b3-87ba-a98eec19d40d",
 							"name": "404-notification PR10 /parents/{id: [0-9]+}/notifications/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -12791,7 +12791,7 @@
 							"body": "{\n  \"description\" : \"Unknown notification id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "f9ddeddd-8e64-42bf-a48a-6f71e32f795f",
+							"id": "b135ca4c-31cb-4332-9639-90dec7c6baf7",
 							"name": "200 PR10 /parents/{id: [0-9]+}/notifications/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -12860,7 +12860,7 @@
 							"body": "{\n  \"type\" : \"general_parents\",\n  \"creator\" : {\n    \"role\" : \"ADMINISTRATOR\",\n    \"name\" : \"David\",\n    \"surname\" : \"SurnameDavid\",\n    \"email\" : \"david@email.com\"\n  },\n  \"datetime\" : [ 2018, 4, 12, 15, 22, 34 ],\n  \"subject\" : \"Holidays period announcement\",\n  \"text\" : \"Hello everybody,\\nI would to announce you that during the whole month of june 2018 lectures will be suspended.\\n\\nHave good vacations\\n\\nRegards,\\nThe headmaster.\"\n}"
 						},
 						{
-							"id": "57bb4ac8-31be-47db-a8ee-8200a0d1b93b",
+							"id": "704283af-d46f-4bb7-b195-a15ef4f88ec2",
 							"name": "403 PR10 /parents/{id: [0-9]+}/notifications/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -12996,7 +12996,7 @@
 					},
 					"response": [
 						{
-							"id": "3f7d4794-8420-4462-b4a2-9297854f6d00",
+							"id": "f971760a-ed47-4fa0-a19b-907587326686",
 							"name": "403 TC1 /teachers",
 							"originalRequest": {
 								"method": "GET",
@@ -13068,7 +13068,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "4b5931a9-3d2c-47e6-ab55-b1384f8c4451",
+							"id": "fb3d3483-3a05-4ed6-8dd7-68dc45a1c770",
 							"name": "200 TC1 /teachers",
 							"originalRequest": {
 								"method": "GET",
@@ -13140,7 +13140,7 @@
 							"body": "{\n  \"teachers\" : [ \"http://localhost:8080/back2school-0.1/api/v1/teachers/19\", \"http://localhost:8080/back2school-0.1/api/v1/teachers/20\", \"http://localhost:8080/back2school-0.1/api/v1/teachers/21\", \"http://localhost:8080/back2school-0.1/api/v1/teachers/22\" ]\n}"
 						},
 						{
-							"id": "9cbb6357-e84f-40f0-874f-1cd21ede4574",
+							"id": "dbb731b7-0021-4246-b3c9-ebd0c428c008",
 							"name": "401 TC1 /teachers",
 							"originalRequest": {
 								"method": "GET",
@@ -13248,7 +13248,7 @@
 					},
 					"response": [
 						{
-							"id": "dd5a1363-1f1d-49eb-af8c-0e4062ba7209",
+							"id": "73a54934-f830-4bb2-9e3c-65796fcb509b",
 							"name": "400-email TC1 /teachers",
 							"originalRequest": {
 								"method": "POST",
@@ -13328,7 +13328,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: email\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "78ce7cb4-2e63-49ea-8f1a-18592eea9ba6",
+							"id": "157a496a-f355-4bb8-aedb-b9c38e3b7108",
 							"name": "201 TC1 /teachers",
 							"originalRequest": {
 								"method": "POST",
@@ -13414,7 +13414,7 @@
 							"body": "{\n  \"status_code\" : 201,\n  \"status_reason\" : \"Created\"\n}"
 						},
 						{
-							"id": "30afc8c0-0114-45bf-b53c-64903512d6a1",
+							"id": "2bfc9eae-7bc8-40c9-9472-ec7852b05923",
 							"name": "403 TC1 /teachers",
 							"originalRequest": {
 								"method": "POST",
@@ -13494,7 +13494,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "d7004a5d-ef9c-431d-bdfd-8a093cf2e68c",
+							"id": "8dc4e471-f40d-4fc7-957f-3e7bf2b5f487",
 							"name": "401 TC1 /teachers",
 							"originalRequest": {
 								"method": "POST",
@@ -13574,7 +13574,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "26c1c6eb-2db7-41f3-ad05-00d3c15da438",
+							"id": "24a97ca6-d860-4d28-83aa-f08c66cccd3e",
 							"name": "409 TC1 /teachers",
 							"originalRequest": {
 								"method": "POST",
@@ -13684,7 +13684,7 @@
 					},
 					"response": [
 						{
-							"id": "0abd5877-356d-4290-a4d0-f91331996e12",
+							"id": "b4c0c8a5-4009-4fb1-8403-8b0048b17a68",
 							"name": "404 TC2 /teachers/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -13757,7 +13757,7 @@
 							"body": "{\n  \"description\" : \"Unknown parent id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "fde0a6f5-e857-4420-a443-12d1e217b08b",
+							"id": "e0ef5394-d061-4526-b281-8f78525fe076",
 							"name": "401 TC2 /teachers/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -13830,7 +13830,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "9fe63f2e-570d-4c9d-9fae-74ec2a0c6e20",
+							"id": "6f8b7771-63f3-4c3f-baa8-b2f41107f37a",
 							"name": "403 TC2 /teachers/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -13903,7 +13903,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "6760a1b3-0b2e-431a-b2b9-6b7e82eb74b3",
+							"id": "39fbf36f-179f-4157-8d84-efdeadfd3721",
 							"name": "200 TC2 /teachers/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -14013,7 +14013,7 @@
 					},
 					"response": [
 						{
-							"id": "5e8e6422-e5da-41cd-8d25-50351d758644",
+							"id": "81da21e8-6ec0-46f0-9bd0-ebefb266bc2a",
 							"name": "200 TC2 /teachers/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -14094,7 +14094,7 @@
 							"body": "{\n  \"status_code\" : 200,\n  \"status_reason\" : \"OK\"\n}"
 						},
 						{
-							"id": "ad4db79a-ac00-4f5f-9572-0e4769f6134c",
+							"id": "b2bc89d2-9d78-43dd-ae6b-6a1e32a750a4",
 							"name": "409 TC2 /teachers/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -14175,7 +14175,7 @@
 							"body": "{\n  \"description\" : \"A user with this email already exists\",\n  \"status_code\" : 409,\n  \"status_reason\" : \"Conflict\"\n}"
 						},
 						{
-							"id": "82b7d1f3-1b47-439e-8012-38bbb1a42f11",
+							"id": "626a51fa-20a7-4dd7-a913-e9aa45363bd6",
 							"name": "400-email TC2 /teachers/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -14256,7 +14256,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: email\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "04954b30-a924-4da5-83be-f316f0163832",
+							"id": "3a2b2298-2211-4ebf-a05f-92202b1b3387",
 							"name": "401 TC2 /teachers/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -14337,7 +14337,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "e9244d20-9fbb-44de-a405-4b03c2911bf7",
+							"id": "6626334f-d44c-4944-8e59-33d201173daa",
 							"name": "403 TC2 /teachers/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -14418,7 +14418,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "4e4a37d6-5ea7-4257-9edf-5a5a4880b267",
+							"id": "97f26063-3b0e-4a77-a145-bb45a119b584",
 							"name": "404 TC2 /teachers/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -14530,7 +14530,7 @@
 					},
 					"response": [
 						{
-							"id": "2e478287-90fd-418d-9628-4d1c75bf0276",
+							"id": "33401510-7229-4c7b-ae7a-9648a3c9b4f8",
 							"name": "401 TC3 /teachers/{id: [0-9]+}/classes",
 							"originalRequest": {
 								"method": "GET",
@@ -14604,7 +14604,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "16df532d-69af-4483-a6e9-f6849cb63453",
+							"id": "89677ecd-d617-46cb-8723-078004c0b411",
 							"name": "403 TC3 /teachers/{id: [0-9]+}/classes",
 							"originalRequest": {
 								"method": "GET",
@@ -14678,7 +14678,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "4b4f2e9d-53a5-47c1-8ee2-d19450f6e832",
+							"id": "0fa0b77a-2dfc-4b76-930e-ee96d6dfad99",
 							"name": "404 TC3 /teachers/{id: [0-9]+}/classes",
 							"originalRequest": {
 								"method": "GET",
@@ -14752,7 +14752,7 @@
 							"body": "{\n  \"description\" : \"Unknown teacher id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "5306fca8-4a34-4b1f-a3cf-6d9712576412",
+							"id": "22f3e00b-4be9-4dae-b63d-5264e820f0b4",
 							"name": "200 TC3 /teachers/{id: [0-9]+}/classes",
 							"originalRequest": {
 								"method": "GET",
@@ -14863,7 +14863,7 @@
 					},
 					"response": [
 						{
-							"id": "d50e9f2e-2504-4a2c-8fc6-21a6aa36d299",
+							"id": "82a6f125-a169-428e-85cf-a9920e161a83",
 							"name": "401 TC3 /teachers/{id: [0-9]+}/classes?year=[0-9]+",
 							"originalRequest": {
 								"method": "GET",
@@ -14943,7 +14943,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "00a1f216-aad0-4234-9d1b-95a8595a353c",
+							"id": "848b216b-f9e6-46a3-960b-e5f61ed82219",
 							"name": "403 TC3 /teachers/{id: [0-9]+}/classes?year=[0-9]+",
 							"originalRequest": {
 								"method": "GET",
@@ -15023,7 +15023,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "ba006faf-453e-4fdc-9454-9209604b2270",
+							"id": "c4a203fb-61d4-4ffb-a3e2-e6885d32898e",
 							"name": "404 TC3 /teachers/{id: [0-9]+}/classes?year=[0-9]+",
 							"originalRequest": {
 								"method": "GET",
@@ -15103,7 +15103,7 @@
 							"body": "{\n  \"description\" : \"Unknown teacher id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "9220dc13-4321-48d3-a3bb-fd60208f0553",
+							"id": "04448b28-8ff3-4022-b87b-225433a56592",
 							"name": "200-?year=2017 TC3 /teachers/{id: [0-9]+}/classes?year=[0-9]+",
 							"originalRequest": {
 								"method": "GET",
@@ -15183,7 +15183,7 @@
 							"body": "{\n  \"classes\" : [ {\n    \"name\" : \"2B\",\n    \"academic_year\" : 2017,\n    \"url_class\" : \"http://localhost:8080/back2school-0.1/api/v1/classes/41\"\n  } ]\n}"
 						},
 						{
-							"id": "99c4952f-85c7-4368-a907-e435dbb9c616",
+							"id": "c75cc944-8615-4d0f-b791-63456185c042",
 							"name": "200-?year=2018 TC3 /teachers/{id: [0-9]+}/classes?year=[0-9]+",
 							"originalRequest": {
 								"method": "GET",
@@ -15296,7 +15296,7 @@
 					},
 					"response": [
 						{
-							"id": "ad83a76a-235a-457d-b3a0-90d1c1fb5391",
+							"id": "bd7be18c-6eae-45d7-b357-45a90cfe2cd2",
 							"name": "401 TC4 /teachers/{id: [0-9]+}/classes/{id: [0-9]+}/timetable",
 							"originalRequest": {
 								"method": "GET",
@@ -15372,7 +15372,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "55194fd3-6f97-4942-ada9-26798774e240",
+							"id": "339f31b5-83c6-4d1c-ab83-82a3fb77494f",
 							"name": "404-teacher TC4 /teachers/{id: [0-9]+}/classes/{id: [0-9]+}/timetable",
 							"originalRequest": {
 								"method": "GET",
@@ -15448,7 +15448,7 @@
 							"body": "{\n  \"description\" : \"Unknown teacher id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "cea97e7d-7d49-4c09-9288-c932ce1134b3",
+							"id": "26d52e43-92bc-4d13-b5ef-56da34d5ee23",
 							"name": "200 TC4 /teachers/{id: [0-9]+}/classes/{id: [0-9]+}/timetable",
 							"originalRequest": {
 								"method": "GET",
@@ -15524,7 +15524,7 @@
 							"body": "{\n  \"lectures\" : [ {\n    \"datetime_start\" : \"2018-05-20T12:15\",\n    \"datetime_end\" : \"2018-05-20T14:15\",\n    \"url_classroom\" : \"http://localhost:8080/back2school-0.1/api/v1/classrooms/2\",\n    \"url_subject\" : \"http://localhost:8080/back2school-0.1/api/v1/subjects/6\"\n  } ]\n}"
 						},
 						{
-							"id": "cf82d41e-c475-4388-a40b-9d9addf7bae5",
+							"id": "2e879043-2bac-4ba9-bbdd-587a6d006db0",
 							"name": "404-class TC4 /teachers/{id: [0-9]+}/classes/{id: [0-9]+}/timetable",
 							"originalRequest": {
 								"method": "GET",
@@ -15600,7 +15600,7 @@
 							"body": "{\n  \"description\" : \"Unknown class id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "b5f48fc0-8686-448c-90b9-78a5e97409ef",
+							"id": "bdbe7e5d-a5af-46b0-9833-bfaeb75ac05d",
 							"name": "403 TC4 /teachers/{id: [0-9]+}/classes/{id: [0-9]+}/timetable",
 							"originalRequest": {
 								"method": "GET",
@@ -15715,7 +15715,7 @@
 					},
 					"response": [
 						{
-							"id": "8729409d-18ae-43e6-9be8-ed0919c940d9",
+							"id": "51f02946-9272-4da3-a636-c8241e924d7c",
 							"name": "200 TC4 /teachers/{id: [0-9]+}/classes/{id: [0-9]+}/timetable?year=[0-9]+",
 							"originalRequest": {
 								"method": "GET",
@@ -15797,7 +15797,7 @@
 							"body": "{\n  \"lectures\" : [ {\n    \"datetime_start\" : \"2018-05-20T12:15\",\n    \"datetime_end\" : \"2018-05-20T14:15\",\n    \"url_classroom\" : \"http://localhost:8080/back2school-0.1/api/v1/classrooms/2\",\n    \"url_subject\" : \"http://localhost:8080/back2school-0.1/api/v1/subjects/6\"\n  } ]\n}"
 						},
 						{
-							"id": "b3fa540b-85bb-4d87-9b81-bd11dba5406e",
+							"id": "31b567d2-2727-4823-a79e-a3cd52b09d38",
 							"name": "403 TC4 /teachers/{id: [0-9]+}/classes/{id: [0-9]+}/timetable?year=[0-9]+",
 							"originalRequest": {
 								"method": "GET",
@@ -15879,7 +15879,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "edaffe72-bc17-482c-9a32-aabcbe30d00a",
+							"id": "fef24777-d18e-4dee-8d64-2aa87e7e6404",
 							"name": "404-teacher TC4 /teachers/{id: [0-9]+}/classes/{id: [0-9]+}/timetable?year=[0-9]+",
 							"originalRequest": {
 								"method": "GET",
@@ -15961,7 +15961,7 @@
 							"body": "{\n  \"description\" : \"Unknown teacher id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "84154d97-de60-4b31-ab11-a0fd12cddfe7",
+							"id": "20bf18b5-b23e-4288-96fc-20338dc68d66",
 							"name": "401 TC4 /teachers/{id: [0-9]+}/classes/{id: [0-9]+}/timetable?year=[0-9]+",
 							"originalRequest": {
 								"method": "GET",
@@ -16043,7 +16043,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "11d32ef0-b9cc-4a39-8e31-f99e84bb6b87",
+							"id": "cb52246e-b83f-41f8-945f-0edcb43f6607",
 							"name": "404-class TC4 /teachers/{id: [0-9]+}/classes/{id: [0-9]+}/timetable?year=[0-9]+",
 							"originalRequest": {
 								"method": "GET",
@@ -16156,7 +16156,7 @@
 					},
 					"response": [
 						{
-							"id": "20bec444-3160-45f1-86e3-3760c24a07dc",
+							"id": "33057fff-3c51-4fe7-9427-48889d4392e8",
 							"name": "404 TC5 /teachers/{id: [0-9]+}/appointments",
 							"originalRequest": {
 								"method": "GET",
@@ -16230,7 +16230,7 @@
 							"body": "{\n  \"description\" : \"User not found\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "fd62b919-17d1-487b-96d3-53926aaac89e",
+							"id": "268886ea-d80e-4ca6-9cd8-ee5bc63195ac",
 							"name": "403 TC5 /teachers/{id: [0-9]+}/appointments",
 							"originalRequest": {
 								"method": "GET",
@@ -16304,7 +16304,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "f97f1035-9fa7-4999-8d25-3a150b25ea56",
+							"id": "e44a0e16-a95e-490b-88ef-3160cb9df7b7",
 							"name": "401 TC5 /teachers/{id: [0-9]+}/appointments",
 							"originalRequest": {
 								"method": "GET",
@@ -16378,7 +16378,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "d078261f-73c9-4c19-bfb0-78151293b928",
+							"id": "f6f8d554-a465-494d-af29-200bbbf847a7",
 							"name": "200 TC5 /teachers/{id: [0-9]+}/appointments",
 							"originalRequest": {
 								"method": "GET",
@@ -16491,7 +16491,7 @@
 					},
 					"response": [
 						{
-							"id": "cfcdd52d-61a7-4b6f-a89e-5e2f34cb3dd7",
+							"id": "693bd4a0-fd53-47e3-873d-fec4533719e8",
 							"name": "201 TC5 /teachers/{id: [0-9]+}/appointments",
 							"originalRequest": {
 								"method": "POST",
@@ -16579,7 +16579,7 @@
 							"body": "{\n  \"status_code\" : 201,\n  \"status_reason\" : \"Created\"\n}"
 						},
 						{
-							"id": "90b2861e-cc8c-4e13-9f7e-91cebb396f5b",
+							"id": "4bd5f666-9c57-475e-b459-d2f2b297e437",
 							"name": "400-parent_id-missing TC5 /teachers/{id: [0-9]+}/appointments",
 							"originalRequest": {
 								"method": "POST",
@@ -16661,7 +16661,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: parent_id\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "61e9af10-9432-4612-b291-d1a1f1c61a7e",
+							"id": "fc55763b-faaf-4147-9b41-dd35277dfd60",
 							"name": "403 TC5 /teachers/{id: [0-9]+}/appointments",
 							"originalRequest": {
 								"method": "POST",
@@ -16743,7 +16743,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "ad5e9bb7-5186-4c1f-8fbd-a5a7a7db790c",
+							"id": "ffef8481-0559-435a-ad39-16a647ca089a",
 							"name": "400-parent_id-unknown TC5 /teachers/{id: [0-9]+}/appointments",
 							"originalRequest": {
 								"method": "POST",
@@ -16825,7 +16825,7 @@
 							"body": "{\n  \"description\" : \"Unknown parent id\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "77eb3ce5-1b7b-45f8-9d71-8e6a55271439",
+							"id": "d8c5fbcd-e700-4db6-ba15-3439c7773e1e",
 							"name": "401 TC5 /teachers/{id: [0-9]+}/appointments",
 							"originalRequest": {
 								"method": "POST",
@@ -16907,7 +16907,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "4b5b6675-b082-4340-85e6-926795f4d7fb",
+							"id": "e9409f88-27f2-4c26-b6b0-d303e02cfdc1",
 							"name": "409 TC5 /teachers/{id: [0-9]+}/appointments",
 							"originalRequest": {
 								"method": "POST",
@@ -16989,7 +16989,7 @@
 							"body": "{\n  \"description\" : \"Teacher has already an appointment in selected time slot.\",\n  \"status_code\" : 409,\n  \"status_reason\" : \"Conflict\"\n}"
 						},
 						{
-							"id": "32fb1f07-4e5a-4d49-882f-b921980ea4fc",
+							"id": "5f729ac5-880e-4255-87b1-0e1ca90d14ea",
 							"name": "400-datetime_start TC5 /teachers/{id: [0-9]+}/appointments",
 							"originalRequest": {
 								"method": "POST",
@@ -17071,7 +17071,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: datetime_start\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "0e68aacc-05f5-4f6e-a3ef-6d0d345db099",
+							"id": "3a37f6d1-3da8-4729-9eba-41b9bb006b8d",
 							"name": "400-datetime_end TC5 /teachers/{id: [0-9]+}/appointments",
 							"originalRequest": {
 								"method": "POST",
@@ -17185,7 +17185,7 @@
 					},
 					"response": [
 						{
-							"id": "0871590c-35dc-4fff-8700-edb40e7a8bc5",
+							"id": "9936191c-c34a-4098-8424-3b75635d3dd6",
 							"name": "401 TC6 /teachers/{id: [0-9]+}/appointments/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -17260,7 +17260,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "8c0118b6-9394-4e7d-8b17-e5f00e573e3d",
+							"id": "d7e90056-a577-46a7-bf47-fe14786320c0",
 							"name": "403 TC6 /teachers/{id: [0-9]+}/appointments/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -17335,7 +17335,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "368ed939-5e43-4975-9c56-9e7c2163e520",
+							"id": "29c25036-fdad-4c1f-b7a0-08cfc5f8f5b5",
 							"name": "200 TC6 /teachers/{id: [0-9]+}/appointments/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -17410,7 +17410,7 @@
 							"body": "{\n  \"teacher\" : {\n    \"role\" : \"TEACHER\",\n    \"name\" : \"Carl\",\n    \"surname\" : \"SurnameCarl\",\n    \"email\" : \"carl@email.com\"\n  },\n  \"parent\" : {\n    \"role\" : \"PARENT\",\n    \"name\" : \"Bob3\",\n    \"surname\" : \"SurnameBob3\",\n    \"email\" : \"bob3@email.com\"\n  },\n  \"datetimeStart\" : [ 2018, 5, 20, 12, 15 ],\n  \"datetimeEnd\" : [ 2018, 5, 20, 14, 15 ],\n  \"status\" : \"AGREED\"\n}"
 						},
 						{
-							"id": "36a8772d-4434-4d3e-b0ed-8f20591522ab",
+							"id": "1be05b8e-8157-4f23-98eb-42352e087e12",
 							"name": "404-teacher TC6 /teachers/{id: [0-9]+}/appointments/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -17485,7 +17485,7 @@
 							"body": "{\n  \"description\" : \"Unknown teacher id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "7c6f839b-0401-407c-9083-15c9bd25766d",
+							"id": "b78c0be3-7032-42cc-b60b-e40fdf42d37d",
 							"name": "404-appointment TC6 /teachers/{id: [0-9]+}/appointments/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -17599,7 +17599,7 @@
 					},
 					"response": [
 						{
-							"id": "682ca34c-5187-4e6b-b4fe-3640cf1601ca",
+							"id": "3c1976f7-c14b-410f-984e-e1393f8e6e00",
 							"name": "400-parent_id-missing TC6 /teachers/{id: [0-9]+}/appointments/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -17682,7 +17682,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: parent_id\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "a8ab0332-29fc-4f6f-9a43-918935cce29d",
+							"id": "25bf47a6-45bc-4612-8c84-986c44264123",
 							"name": "404-appointment TC6 /teachers/{id: [0-9]+}/appointments/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -17765,7 +17765,7 @@
 							"body": "{\n  \"description\" : \"Unknown appointment id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "f123deee-a9c6-4c02-b454-ec262a36c9d7",
+							"id": "5c00d773-4e09-4d0b-9d75-da45d10da62d",
 							"name": "400-parent_id-unknown TC6 /teachers/{id: [0-9]+}/appointments/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -17848,7 +17848,7 @@
 							"body": "{\n  \"description\" : \"Unknown parent id\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "5a8198f5-598b-49ce-a672-23139e2b081a",
+							"id": "5e9bc4e0-494c-40d1-ad2d-0721fc607d00",
 							"name": "401 TC6 /teachers/{id: [0-9]+}/appointments/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -17931,7 +17931,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "fdd22c0e-c970-4b3c-bfd8-78bfed6c7f99",
+							"id": "caf45292-3d19-47d0-ad6c-28e4b7965344",
 							"name": "403 TC6 /teachers/{id: [0-9]+}/appointments/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -18014,7 +18014,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "73188dfe-fc6a-4105-8b35-5be6f2f66634",
+							"id": "e2efaff7-3a76-4759-82f7-136253a23072",
 							"name": "400-datetime_start TC6 /teachers/{id: [0-9]+}/appointments/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -18097,7 +18097,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: datetime_start\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "1a2ec259-668b-406a-9614-7b4667a9e303",
+							"id": "58e8a74a-7186-4fc1-9549-eb3a0b899dd0",
 							"name": "200 TC6 /teachers/{id: [0-9]+}/appointments/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -18180,7 +18180,7 @@
 							"body": "{\n  \"status_code\" : 200,\n  \"status_reason\" : \"OK\"\n}"
 						},
 						{
-							"id": "e6f52d58-5278-470d-8977-09496203a9d1",
+							"id": "3f5fb39c-2502-4d53-857e-0dbd4517963f",
 							"name": "400-datetime_end TC6 /teachers/{id: [0-9]+}/appointments/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -18301,7 +18301,7 @@
 					},
 					"response": [
 						{
-							"id": "c0b50423-cc50-4c43-9223-b86a307a7c92",
+							"id": "77b7b517-6f38-404a-bd44-813f207f6671",
 							"name": "200 TC7 /teachers/{id: [0-9]+}/notifications",
 							"originalRequest": {
 								"method": "GET",
@@ -18383,7 +18383,7 @@
 							"body": "{\n  \"notifications\" : [ \"http://localhost:8080/back2school-0.1/api/v1/teachers/19/notifications/55\", \"http://localhost:8080/back2school-0.1/api/v1/teachers/19/notifications/57\" ]\n}"
 						},
 						{
-							"id": "5b175486-f375-4efb-bd7d-bdb9fb764f11",
+							"id": "01d0d44b-6ef9-4453-811b-3de6337e4d95",
 							"name": "404 TC7 /teachers/{id: [0-9]+}/notifications",
 							"originalRequest": {
 								"method": "GET",
@@ -18465,7 +18465,7 @@
 							"body": "{\n  \"description\" : \"Unknown teacher id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "fa34d335-9447-4d96-8c56-b9a84fd3920c",
+							"id": "8fe9b615-80c9-4883-8200-9270fc27c382",
 							"name": "401 TC7 /teachers/{id: [0-9]+}/notifications",
 							"originalRequest": {
 								"method": "GET",
@@ -18547,7 +18547,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "b8610534-6058-4c95-907c-83db53cc2221",
+							"id": "9247cc6a-9674-458c-a68f-5594e4f68410",
 							"name": "403 TC7 /teachers/{id: [0-9]+}/notifications",
 							"originalRequest": {
 								"method": "GET",
@@ -18667,7 +18667,7 @@
 					},
 					"response": [
 						{
-							"id": "80b1058b-382f-4fe0-81a1-f0241e1af01f",
+							"id": "3bb6d596-0f3a-4f1f-b5ae-ca14eb2be559",
 							"name": "403 TC7 /teachers/{id: [0-9]+}/notifications",
 							"originalRequest": {
 								"method": "POST",
@@ -18749,7 +18749,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "5cd6b222-6f6b-4eda-9c85-b90116e0786a",
+							"id": "bfe7b02d-d1bc-4655-ab81-1c475918f6ec",
 							"name": "400-subject TC7 /teachers/{id: [0-9]+}/notifications",
 							"originalRequest": {
 								"method": "POST",
@@ -18831,7 +18831,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: subject\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "2dcbdcd1-bf1f-489e-a62a-9e489e6ca0f3",
+							"id": "2b3ad573-6511-44ff-b372-7b6f30873bcc",
 							"name": "400-text TC7 /teachers/{id: [0-9]+}/notifications",
 							"originalRequest": {
 								"method": "POST",
@@ -18913,7 +18913,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: text\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "b438ba95-1e83-49d7-8836-eb7e06c73572",
+							"id": "2bbff4e6-4fcd-4f98-9a41-f68e3e8c8de6",
 							"name": "401 TC7 /teachers/{id: [0-9]+}/notifications",
 							"originalRequest": {
 								"method": "POST",
@@ -18993,7 +18993,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "bb19f82d-25c4-4631-9135-25937668bffc",
+							"id": "29f12099-d299-43d9-9633-8481176a0382",
 							"name": "201 TC7 /teachers/{id: [0-9]+}/notifications",
 							"originalRequest": {
 								"method": "POST",
@@ -19120,7 +19120,7 @@
 					},
 					"response": [
 						{
-							"id": "d79ef2e4-4bee-4f7e-ba25-6eb4c8fe0e4c",
+							"id": "cf8def9e-b060-486e-b904-df6a9d21cfbe",
 							"name": "404-teacher TC8 /teachers/{id: [0-9]+}/notifications/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -19203,7 +19203,7 @@
 							"body": "{\n  \"description\" : \"Unknown teacher id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "fd06f0e6-5e25-48b1-be7c-d07f31854d07",
+							"id": "6344bd3e-f4f8-4998-8b09-ae4a9a2954a9",
 							"name": "403 TC8 /teachers/{id: [0-9]+}/notifications/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -19286,7 +19286,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "26b19ad5-a32e-4373-ba82-0042459871a5",
+							"id": "ccb18756-31cb-4946-8873-6562a43fb210",
 							"name": "404-notification TC8 /teachers/{id: [0-9]+}/notifications/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -19369,7 +19369,7 @@
 							"body": "{\n  \"description\" : \"Unknown notification id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "c46f5a67-89a9-4cb7-a99c-80cf5ae45742",
+							"id": "71eaccb5-e5ff-4c2e-bd3c-985c04672b8d",
 							"name": "401 TC8 /teachers/{id: [0-9]+}/notifications/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -19452,7 +19452,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "e5ac148a-fdb1-4904-abec-f8366a0757cb",
+							"id": "9ad371d4-ebe9-434a-8497-ef8e1b1d1f27",
 							"name": "200 TC8 /teachers/{id: [0-9]+}/notifications/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -19602,7 +19602,7 @@
 					},
 					"response": [
 						{
-							"id": "2579229f-b202-40ac-b288-f909b683268a",
+							"id": "53d9e552-d45e-40dd-b534-3da12dbccda9",
 							"name": "401 AD1 /administrators",
 							"originalRequest": {
 								"method": "GET",
@@ -19674,7 +19674,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "09908292-09b3-47e2-abc4-a26266d83fa8",
+							"id": "cf4d13a7-5c7e-4c65-8a53-f6bdafae8b2f",
 							"name": "403 AD1 /administrators",
 							"originalRequest": {
 								"method": "GET",
@@ -19746,7 +19746,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "7e90c788-2854-4a6d-a2a8-30b406ab53ba",
+							"id": "6f6beb12-7420-4a95-befa-1b811f21ce9d",
 							"name": "200 AD1 /administrators",
 							"originalRequest": {
 								"method": "GET",
@@ -19854,7 +19854,7 @@
 					},
 					"response": [
 						{
-							"id": "5be50d71-644e-4e3a-b6bb-59c5198810f9",
+							"id": "0e05ba15-138a-4d06-abd2-564337b1e56d",
 							"name": "409 AD1 /administrators",
 							"originalRequest": {
 								"method": "POST",
@@ -19934,7 +19934,7 @@
 							"body": "{\n  \"description\" : \"A user with this email already exists\",\n  \"status_code\" : 409,\n  \"status_reason\" : \"Conflict\"\n}"
 						},
 						{
-							"id": "e2e5d8e0-3a0b-410b-84ba-b6396d5bf9f3",
+							"id": "cd193a4a-77ae-4c9c-aa31-dc4ff5fc9fe5",
 							"name": "201 AD1 /administrators",
 							"originalRequest": {
 								"method": "POST",
@@ -20020,7 +20020,7 @@
 							"body": "{\n  \"status_code\" : 201,\n  \"status_reason\" : \"Created\"\n}"
 						},
 						{
-							"id": "af22dba8-f0c5-44f0-a3f7-c1d91f03cf54",
+							"id": "2bf99ee0-cdb4-4d6e-ab15-5bb35b2fffa0",
 							"name": "403 AD1 /administrators",
 							"originalRequest": {
 								"method": "POST",
@@ -20100,7 +20100,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "a3316dd9-de38-4861-9cd3-741dd6aa118e",
+							"id": "5e663e05-9365-43ee-9f06-157351795084",
 							"name": "400-email AD1 /administrators",
 							"originalRequest": {
 								"method": "POST",
@@ -20180,7 +20180,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: email\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "5eb6a739-4057-4303-bb88-a999df1afe61",
+							"id": "38244375-6c52-487e-b25f-1da8cc91bc40",
 							"name": "401 AD1 /administrators",
 							"originalRequest": {
 								"method": "POST",
@@ -20288,7 +20288,7 @@
 					},
 					"response": [
 						{
-							"id": "36d7b374-86c0-4f86-bb57-15c3d5d7c31c",
+							"id": "8297ea63-0201-4d92-9725-cc670c3b017e",
 							"name": "403 AD2 /administrators/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -20361,7 +20361,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "1e5d8102-2009-41fc-be56-dc75e5ae8159",
+							"id": "e14716b6-a31a-4adc-96e8-b3c51172d17b",
 							"name": "401 AD2 /administrators/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -20434,7 +20434,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "61a68f86-eccd-4354-8b70-ab42053927b3",
+							"id": "980ec591-6774-44dd-b846-1a8ad90baabc",
 							"name": "200 AD2 /administrators/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -20507,7 +20507,7 @@
 							"body": "{\n  \"role\" : \"ADMINISTRATOR\",\n  \"name\" : \"Admin\",\n  \"surname\" : \"Admin surname\",\n  \"email\" : \"admin@email.com\"\n}"
 						},
 						{
-							"id": "1c005055-73ea-4ca3-be1a-d9ea02a24e3b",
+							"id": "db6a9dc8-bbc9-46a5-a870-922c25fbcb95",
 							"name": "404 AD2 /administrators/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -20617,7 +20617,7 @@
 					},
 					"response": [
 						{
-							"id": "63ac2637-1723-4117-9820-5309bd23c6cf",
+							"id": "afd0d3a4-09b3-44db-a3c2-b9aff1eccb3f",
 							"name": "401 AD2 /administrators/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -20698,7 +20698,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "bb2f85fb-db9f-40af-94c7-3c801dfae7bb",
+							"id": "89117c84-4b0d-47f3-bb94-f81dda2e4d0f",
 							"name": "403 AD2 /administrators/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -20779,7 +20779,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "43096003-ac5a-4f22-93b8-4c09d0e0c4ad",
+							"id": "dfa14a2f-7ca0-4349-95e1-808560994d3c",
 							"name": "400-email AD2 /administrators/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -20860,7 +20860,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: email\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "a3f3866a-18aa-40a0-b575-8b8687bcc1e3",
+							"id": "fe9c6a77-98a0-49a0-b3dd-22d5cc305f0b",
 							"name": "404 AD2 /administrators/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -20941,7 +20941,7 @@
 							"body": "{\n  \"description\" : \"Unknown administrator id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "8ec76fab-9e0b-485b-9251-c1b86677013e",
+							"id": "bfa4710b-83c5-4262-bc99-f01633411508",
 							"name": "409 AD2 /administrators/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -21022,7 +21022,7 @@
 							"body": "{\n  \"description\" : \"A user with this email already exists\",\n  \"status_code\" : 409,\n  \"status_reason\" : \"Conflict\"\n}"
 						},
 						{
-							"id": "193d8293-7199-40ca-b93b-2aba373e6169",
+							"id": "252d2ee4-d6a9-4dbd-96e5-9a5d3049d843",
 							"name": "200 AD2 /administrators/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -21165,7 +21165,7 @@
 					},
 					"response": [
 						{
-							"id": "cc5254b3-07d6-4b75-b017-ccfb2f958cb3",
+							"id": "4d581e6b-1f85-44c7-b129-56d1912cf46f",
 							"name": "200 CL1 /classes",
 							"originalRequest": {
 								"method": "GET",
@@ -21237,7 +21237,7 @@
 							"body": "{\n  \"classes\" : [ {\n    \"name\" : \"1A\",\n    \"academic_year\" : 2017,\n    \"url_class\" : \"http://localhost:8080/back2school-0.1/api/v1/classes/38\"\n  }, {\n    \"name\" : \"2A\",\n    \"academic_year\" : 2017,\n    \"url_class\" : \"http://localhost:8080/back2school-0.1/api/v1/classes/39\"\n  }, {\n    \"name\" : \"1B\",\n    \"academic_year\" : 2018,\n    \"url_class\" : \"http://localhost:8080/back2school-0.1/api/v1/classes/40\"\n  }, {\n    \"name\" : \"2B\",\n    \"academic_year\" : 2017,\n    \"url_class\" : \"http://localhost:8080/back2school-0.1/api/v1/classes/41\"\n  }, {\n    \"name\" : \"3B\",\n    \"academic_year\" : 2018,\n    \"url_class\" : \"http://localhost:8080/back2school-0.1/api/v1/classes/42\"\n  } ]\n}"
 						},
 						{
-							"id": "703e3234-e8f6-4a84-b7ca-a57669ce81c8",
+							"id": "affffad6-23a0-497a-a032-e47fe73d7830",
 							"name": "401 CL1 /classes",
 							"originalRequest": {
 								"method": "GET",
@@ -21309,7 +21309,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "5e11a7f0-2e27-4f7a-a78f-3635c6be034c",
+							"id": "f7f6dc49-d084-47df-abbd-f042895a7751",
 							"name": "403 CL1 /classes",
 							"originalRequest": {
 								"method": "GET",
@@ -21413,7 +21413,7 @@
 					},
 					"response": [
 						{
-							"id": "c99b12e7-8290-4e8f-a7e4-48ede939122a",
+							"id": "9fb2d6ca-bcda-4396-b875-1f6281d129bf",
 							"name": "409 CL1 /classes",
 							"originalRequest": {
 								"method": "POST",
@@ -21488,7 +21488,7 @@
 							"body": "{\n  \"description\" : \"A class with this name and academic year already exist\",\n  \"status_code\" : 409,\n  \"status_reason\" : \"Conflict\"\n}"
 						},
 						{
-							"id": "f9b40fa5-e6a8-46f8-9e1e-f59defd9548e",
+							"id": "a4df1104-d46f-4c01-a6fd-ce09b34dd844",
 							"name": "400-student_id-unknown CL1 /classes",
 							"originalRequest": {
 								"method": "POST",
@@ -21563,7 +21563,7 @@
 							"body": "{\n  \"description\" : \"Unknown student with id: 1\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "cce126e5-309d-4029-8868-4fad92eaa000",
+							"id": "40652738-80aa-442c-8141-255becb3fb34",
 							"name": "400-name CL1 /classes",
 							"originalRequest": {
 								"method": "POST",
@@ -21638,7 +21638,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: name\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "bd5c65d6-0a1e-4acb-8fba-b408a80d3f28",
+							"id": "10d6acab-728e-4e4d-84b3-3df72c0f886a",
 							"name": "401 CL1 /classes",
 							"originalRequest": {
 								"method": "POST",
@@ -21713,7 +21713,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "c4725bb8-931d-49b5-af88-3f43066b66d8",
+							"id": "54583b6b-ab4c-403b-b2aa-78ca601563e4",
 							"name": "400-academic_year CL1 /classes",
 							"originalRequest": {
 								"method": "POST",
@@ -21788,7 +21788,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: academic_year\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "b18381a2-0382-4cff-a54c-b46bfa813b60",
+							"id": "5466a863-ae6b-4a87-b92d-077315118218",
 							"name": "201 CL1 /classes",
 							"originalRequest": {
 								"method": "POST",
@@ -21869,7 +21869,7 @@
 							"body": "{\n  \"status_code\" : 201,\n  \"status_reason\" : \"Created\"\n}"
 						},
 						{
-							"id": "81716d9d-22b2-414d-8227-f657232c76e6",
+							"id": "a7ef11d3-b490-4e17-bca7-0e8a43e40daf",
 							"name": "403 CL1 /classes",
 							"originalRequest": {
 								"method": "POST",
@@ -21969,7 +21969,7 @@
 					},
 					"response": [
 						{
-							"id": "13d31734-64fb-4856-8f94-0d297872351e",
+							"id": "cba57091-f17d-4de6-8091-909482194f17",
 							"name": "404 CL2 /classes/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -22036,7 +22036,7 @@
 							"body": "{\n  \"description\" : \"Unknown class id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "d0d6f5ef-9a84-4ca4-8a4f-940d2a3a07f4",
+							"id": "8b46702d-2561-440c-953e-376a3ad4588c",
 							"name": "200 CL2 /classes/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -22103,7 +22103,7 @@
 							"body": "{\n  \"name\" : \"1A\",\n  \"students\" : [ {\n    \"name\" : \"Alice1\",\n    \"surname\" : \"SurnameAlice1\",\n    \"email\" : \"alice1@email.com\",\n    \"url\" : \"http://localhost:8080/back2school-0.1/api/v1/students/10\"\n  }, {\n    \"name\" : \"Alice4\",\n    \"surname\" : \"SurnameAlice4\",\n    \"email\" : \"alice4@email.com\",\n    \"url\" : \"http://localhost:8080/back2school-0.1/api/v1/students/13\"\n  } ],\n  \"academic_year\" : 2017\n}"
 						},
 						{
-							"id": "5664d9be-b223-4228-8f41-782f2bb6be3e",
+							"id": "c50ad076-dec3-4224-9bc1-95e2b1814bb5",
 							"name": "403 CL2 /classes/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -22170,7 +22170,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "54703327-2c2e-417b-a43e-6558167f7bad",
+							"id": "7407edb9-3241-4aef-80e2-d735e0b54339",
 							"name": "401 CL2 /classes/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -22270,7 +22270,7 @@
 					},
 					"response": [
 						{
-							"id": "4a7271a5-d0ab-41de-bba0-a72815384b39",
+							"id": "db9eb81d-3463-4a77-aeba-20c84fe0683b",
 							"name": "400-academic_year CL2 /classes/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -22346,7 +22346,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: academic_year\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "0a08825b-6d8f-4816-9b54-96e198d8f437",
+							"id": "24e41c72-c123-47e7-a277-d8126dac6c16",
 							"name": "401 CL2 /classes/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -22422,7 +22422,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "7fd68885-676e-4e35-b85e-d1e834b431a9",
+							"id": "225448db-e417-4fed-9b8a-3192398612cd",
 							"name": "400-name CL2 /classes/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -22498,7 +22498,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: name\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "6cb46963-910c-4ba5-898e-faee460e772b",
+							"id": "981cf9a6-ae5c-4a93-8d2c-ac53a0b06919",
 							"name": "403 CL2 /classes/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -22574,7 +22574,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "140f5d81-a502-4192-9a09-fd68ba2de15d",
+							"id": "7f19913b-827e-4b32-9668-44eb8f0ed1f7",
 							"name": "409 CL2 /classes/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -22650,7 +22650,7 @@
 							"body": "{\n  \"description\" : \"A class with this name and academic year already exist\",\n  \"status_code\" : 409,\n  \"status_reason\" : \"Conflict\"\n}"
 						},
 						{
-							"id": "7036a64a-b5e0-499f-b60d-ebf8c3105033",
+							"id": "7e98909b-98fe-46c1-bc66-00c126b5d566",
 							"name": "404 CL2 /classes/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -22726,7 +22726,7 @@
 							"body": "{\n  \"description\" : \"Unknown class id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "488e6f3d-1266-4987-92a3-e3fba6972be4",
+							"id": "797f85cd-53dd-4a90-86fe-54d84b8e91ed",
 							"name": "400-student_id-unknown CL2 /classes/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -22802,7 +22802,7 @@
 							"body": "{\n  \"description\" : \"Unknown student with id: 1\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "b18509a9-ec41-434d-bc3a-d284bfd56417",
+							"id": "1777cd27-2c45-45a4-89e4-baef653929cc",
 							"name": "200 CL2 /classes/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -22904,7 +22904,7 @@
 					},
 					"response": [
 						{
-							"id": "71aee010-bef3-45f8-80ee-509aa419963a",
+							"id": "53218ca1-5108-42b2-81d5-bf98d918236a",
 							"name": "404 CL3 /classes/{id: [0-9]+}/students",
 							"originalRequest": {
 								"method": "GET",
@@ -22972,7 +22972,7 @@
 							"body": "{\n  \"description\" : \"Unknown class id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "57cc24f9-af6f-44f7-9add-c4ec5182c12a",
+							"id": "337e850c-ad32-4820-a07b-895d922a417b",
 							"name": "401 CL3 /classes/{id: [0-9]+}/students",
 							"originalRequest": {
 								"method": "GET",
@@ -23040,7 +23040,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "a6dc1bea-0f00-4a76-af10-bc1baea3c747",
+							"id": "e8a31fce-1678-4aed-b90c-8c604f20632c",
 							"name": "403 CL3 /classes/{id: [0-9]+}/students",
 							"originalRequest": {
 								"method": "GET",
@@ -23108,7 +23108,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "47d076f6-e318-47cc-a5d7-2d84fe095e0c",
+							"id": "aba6ca30-3fc1-4d77-9dab-5f4f06bafc24",
 							"name": "200 CL3 /classes/{id: [0-9]+}/students",
 							"originalRequest": {
 								"method": "GET",
@@ -23210,7 +23210,7 @@
 					},
 					"response": [
 						{
-							"id": "632124f1-1811-48aa-ba6c-b96ac3a4fa2a",
+							"id": "17a816ce-aeca-41ca-b69e-b090f206475a",
 							"name": "201 CL3 /classes/{id: [0-9]+}/students",
 							"originalRequest": {
 								"method": "POST",
@@ -23287,7 +23287,7 @@
 							"body": "{\n  \"status_code\" : 201,\n  \"status_reason\" : \"Created\"\n}"
 						},
 						{
-							"id": "853587f4-777e-447c-ab12-0af989c71747",
+							"id": "005eb9bf-e499-414c-b4c7-1952352d31e6",
 							"name": "400-student_id-unknown CL3 /classes/{id: [0-9]+}/students",
 							"originalRequest": {
 								"method": "POST",
@@ -23364,7 +23364,7 @@
 							"body": "{\n  \"description\" : \"Unknown student id\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "f9edc679-c6f2-497c-9adf-b56515a5ea2f",
+							"id": "37f88f15-624f-495b-9a03-23fe81447bdd",
 							"name": "404 CL3 /classes/{id: [0-9]+}/students",
 							"originalRequest": {
 								"method": "POST",
@@ -23441,7 +23441,7 @@
 							"body": "{\n  \"description\" : \"Unknown class id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "4ab06803-9d55-4261-aa23-e5a3d2773e3f",
+							"id": "5ded665b-6770-4c4c-b0ee-be8977178a91",
 							"name": "401 CL3 /classes/{id: [0-9]+}/students",
 							"originalRequest": {
 								"method": "POST",
@@ -23518,7 +23518,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "546bc66c-a494-4406-9a7a-7cd9ef66b73a",
+							"id": "0b29ed26-d4f5-4696-bbf9-a141bc792375",
 							"name": "403 CL3 /classes/{id: [0-9]+}/students",
 							"originalRequest": {
 								"method": "POST",
@@ -23595,7 +23595,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "4aab711e-6971-4fbb-89a4-6abb2423a505",
+							"id": "338dea2b-8d8b-4b94-9eab-e47a20b13e94",
 							"name": "400-student_id-missing CL3 /classes/{id: [0-9]+}/students",
 							"originalRequest": {
 								"method": "POST",
@@ -23699,7 +23699,7 @@
 					},
 					"response": [
 						{
-							"id": "bfceadfa-cd91-4eb3-b0a6-4b3b9e08111a",
+							"id": "ce3a1758-5d04-4d64-9c74-30131a69ce1e",
 							"name": "401 CL4 /classes/{id: [0-9]+}/students/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "DELETE",
@@ -23768,7 +23768,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "e5c92abf-1636-43f6-845a-f23c15e0e964",
+							"id": "59a6570c-251c-400f-85d0-debdd4846bde",
 							"name": "403 CL4 /classes/{id: [0-9]+}/students/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "DELETE",
@@ -23837,7 +23837,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "7c8f0655-decf-4e50-b229-d7b9686c4269",
+							"id": "dfb105d6-6cb6-4748-b89a-b3769f7c2258",
 							"name": "200 CL4 /classes/{id: [0-9]+}/students/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "DELETE",
@@ -23906,7 +23906,7 @@
 							"body": "{\n  \"status_code\" : 200,\n  \"status_reason\" : \"OK\"\n}"
 						},
 						{
-							"id": "d38c5904-995d-423f-9a8b-8e494641cbae",
+							"id": "817f80ff-1eb7-433d-9f73-26e0371b0de1",
 							"name": "400 CL4 /classes/{id: [0-9]+}/students/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "DELETE",
@@ -23975,7 +23975,7 @@
 							"body": "{\n  \"description\" : \"Student not belonging to class\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "aa4b0c2e-14e4-46fd-b868-f6c5a26f5ab3",
+							"id": "c793416b-ab34-4c17-8959-04226de39f12",
 							"name": "404-class CL4 /classes/{id: [0-9]+}/students/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "DELETE",
@@ -24079,7 +24079,7 @@
 					},
 					"response": [
 						{
-							"id": "3fecc8d2-85b3-4f52-ad27-f48795719635",
+							"id": "0eb05598-7a92-4e72-b2f6-a9ea5f5ffcb8",
 							"name": "403 CL5 /classes/{id: [0-9]+}/notifications/send-to-teachers",
 							"originalRequest": {
 								"method": "POST",
@@ -24157,7 +24157,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "d3ba01bf-05f1-472a-afb2-cd63f1cca187",
+							"id": "1d753b1d-2c2f-4275-8396-66308e921520",
 							"name": "404 CL5 /classes/{id: [0-9]+}/notifications/send-to-teachers",
 							"originalRequest": {
 								"method": "POST",
@@ -24235,7 +24235,7 @@
 							"body": "{\n  \"description\" : \"Unknown class id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "1e2edd31-5ea8-44a7-835e-fbfd2d66a16e",
+							"id": "84d0133f-1371-471f-b318-6c064a0a095b",
 							"name": "400-subject CL5 /classes/{id: [0-9]+}/notifications/send-to-teachers",
 							"originalRequest": {
 								"method": "POST",
@@ -24313,7 +24313,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: subject\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "3e4e0ff9-0cf2-4d7c-a95f-97647610a777",
+							"id": "6691f076-c1b2-4f8a-98de-9a0ef93f94e1",
 							"name": "401 CL5 /classes/{id: [0-9]+}/notifications/send-to-teachers",
 							"originalRequest": {
 								"method": "POST",
@@ -24391,7 +24391,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "88e15b92-e007-4dde-9701-ddca7f76c6ab",
+							"id": "80de8bf3-71e4-4a6a-bd04-ec65ef8a3691",
 							"name": "400-text CL5 /classes/{id: [0-9]+}/notifications/send-to-teachers",
 							"originalRequest": {
 								"method": "POST",
@@ -24469,7 +24469,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: text\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "da8b0750-5f10-436c-be8f-c5a9906bae8a",
+							"id": "c62664b0-7b90-4603-a020-0a5a24c77b1b",
 							"name": "201 CL5 /classes/{id: [0-9]+}/notifications/send-to-teachers",
 							"originalRequest": {
 								"method": "POST",
@@ -24588,7 +24588,7 @@
 					},
 					"response": [
 						{
-							"id": "02de24b8-164b-4952-9ee7-bc107590514c",
+							"id": "3eef812e-130c-4f94-ba07-8f663d1efd7a",
 							"name": "201 CL6 /classes/{id: [0-9]+}/notifications/send-to-parents",
 							"originalRequest": {
 								"method": "POST",
@@ -24672,7 +24672,7 @@
 							"body": "{\n  \"status_code\" : 201,\n  \"status_reason\" : \"Created\"\n}"
 						},
 						{
-							"id": "f52b372d-4c3b-49bb-8940-f3d5c9bfbb2d",
+							"id": "6bc8af38-e17a-412b-8828-2ac939b784d4",
 							"name": "400-subjet CL6 /classes/{id: [0-9]+}/notifications/send-to-parents",
 							"originalRequest": {
 								"method": "POST",
@@ -24750,7 +24750,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: subject\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "ac76a26d-53a8-44ab-b3dd-1d18ef7a66db",
+							"id": "691d764f-efc0-45e9-9d3a-8a1490fcfd0c",
 							"name": "401 CL6 /classes/{id: [0-9]+}/notifications/send-to-parents",
 							"originalRequest": {
 								"method": "POST",
@@ -24828,7 +24828,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "63e56f4d-d93c-46c5-9d9c-9beb2e21cb7d",
+							"id": "48fb1319-9109-46d2-be2b-43ba6edf39e4",
 							"name": "400-text CL6 /classes/{id: [0-9]+}/notifications/send-to-parents",
 							"originalRequest": {
 								"method": "POST",
@@ -24906,7 +24906,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: text\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "43d44ddd-add7-4568-8dc6-f56a746f9f6c",
+							"id": "475e3167-144f-4cb7-90ab-9a2b1470b803",
 							"name": "403 CL6 /classes/{id: [0-9]+}/notifications/send-to-parents",
 							"originalRequest": {
 								"method": "POST",
@@ -24984,7 +24984,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "6e9eea6d-bc77-49bc-ab6f-913aa81896f4",
+							"id": "b1b7a5fa-2c63-4371-b932-20584d654f9f",
 							"name": "404 CL6 /classes/{id: [0-9]+}/notifications/send-to-parents",
 							"originalRequest": {
 								"method": "POST",
@@ -25129,7 +25129,7 @@
 					},
 					"response": [
 						{
-							"id": "779444ff-adfa-4f6e-aee6-2b18201d6445",
+							"id": "03cf9dcf-c71f-4a94-a39e-ed6f9abc2c82",
 							"name": "403 CR1 /classroms",
 							"originalRequest": {
 								"method": "GET",
@@ -25201,7 +25201,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "9129c6c5-6bc4-4b25-8ea6-ff285da2a026",
+							"id": "92406901-2cda-46e2-ae05-83c31a900b1c",
 							"name": "401 CR1 /classroms",
 							"originalRequest": {
 								"method": "GET",
@@ -25273,7 +25273,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "94844c04-e4fb-4068-aa95-d426a3cb686e",
+							"id": "3a0042d4-32ae-4ba9-91a3-9c7b46469b63",
 							"name": "200 CR1 /classroms",
 							"originalRequest": {
 								"method": "GET",
@@ -25381,7 +25381,7 @@
 					},
 					"response": [
 						{
-							"id": "2ae8531b-0457-4575-b094-314980b266b8",
+							"id": "5027ef67-acd8-41ac-a286-9e45f8a80e9d",
 							"name": "400-building CR1 /classroms",
 							"originalRequest": {
 								"method": "POST",
@@ -25461,7 +25461,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: building\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "2a415b6c-0576-4049-a621-d8c8377dc949",
+							"id": "eba3e0c7-ab12-4d81-a0de-aa015bbee559",
 							"name": "409 CR1 /classroms",
 							"originalRequest": {
 								"method": "POST",
@@ -25541,7 +25541,7 @@
 							"body": "{\n  \"description\" : \"A classroom with this name, floor and building year already exist\",\n  \"status_code\" : 409,\n  \"status_reason\" : \"Conflict\"\n}"
 						},
 						{
-							"id": "2f25a9e8-6cc3-4832-ab1a-60de247e4c6e",
+							"id": "926aa6bc-8dd6-40e2-8ad5-33198de84bd8",
 							"name": "403 CR1 /classroms",
 							"originalRequest": {
 								"method": "POST",
@@ -25621,7 +25621,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "fd2a99fb-2ec6-4869-b21b-daf5bb34b1ee",
+							"id": "bea7890c-1ab4-432e-9e59-5c8080d39eb4",
 							"name": "201 CR1 /classroms",
 							"originalRequest": {
 								"method": "POST",
@@ -25707,7 +25707,7 @@
 							"body": "{\n  \"status_code\" : 201,\n  \"status_reason\" : \"Created\"\n}"
 						},
 						{
-							"id": "ce8dd23c-1a19-4b88-9720-24ed77023bd8",
+							"id": "a8e50a2d-b227-4457-8163-af55379ea00c",
 							"name": "401 CR1 /classroms",
 							"originalRequest": {
 								"method": "POST",
@@ -25787,7 +25787,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "45ea6013-bc0e-4c9e-ae13-97c75a1028ff",
+							"id": "8728b68e-840d-4783-aabf-3fa6098a8244",
 							"name": "400-name CR1 /classroms",
 							"originalRequest": {
 								"method": "POST",
@@ -25897,7 +25897,7 @@
 					},
 					"response": [
 						{
-							"id": "0e9bd166-dde8-4685-80b1-68443e9d6933",
+							"id": "9f06dc26-b84b-4eb7-adc0-6ec1941d3dda",
 							"name": "404 CR2 /classroms/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -25970,7 +25970,7 @@
 							"body": "{\n  \"description\" : \"Unknown classroom id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "60c08435-a502-4fd7-80de-44515358de10",
+							"id": "cdadc477-25b7-43b2-9686-29d00b2821c6",
 							"name": "200 CR2 /classroms/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -26043,7 +26043,7 @@
 							"body": "{\n  \"name\" : \"0.4\",\n  \"floor\" : 0,\n  \"building\" : \"Laboratory building\"\n}"
 						},
 						{
-							"id": "a4db4118-b45e-4721-bfb8-f6c88150ed5f",
+							"id": "4772717b-fcce-49e0-be2a-94417a7a70d4",
 							"name": "403 CR2 /classroms/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -26116,7 +26116,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "9926a183-9ebc-432c-8694-9b78332c6417",
+							"id": "e3497424-9c57-481f-8548-58078d02b47b",
 							"name": "401 CR2 /classroms/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -26222,7 +26222,7 @@
 					},
 					"response": [
 						{
-							"id": "17924539-f9c9-4899-9b21-893ec6853bee",
+							"id": "d040fa3d-aece-4c9b-8979-f40dff4cd2fa",
 							"name": "401 CR2 /classroms/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -26298,7 +26298,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "11d63dfb-8163-4c56-8c8a-03e57880cb98",
+							"id": "89e0b8ed-5d74-4d86-a934-3925eb6ec709",
 							"name": "403 CR2 /classroms/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -26374,7 +26374,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "62e24efa-5a42-435f-a1ad-01f843795c70",
+							"id": "c8efdbd5-a65d-471d-a825-57b4851b9cc0",
 							"name": "200 CR2 /classroms/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -26450,7 +26450,7 @@
 							"body": "{\n  \"status_code\" : 200,\n  \"status_reason\" : \"OK\"\n}"
 						},
 						{
-							"id": "20084a67-6525-446e-8fe0-859cdd5e651c",
+							"id": "942fc1ce-5913-489b-811a-fd273992b45d",
 							"name": "400-name CR2 /classroms/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -26526,7 +26526,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: name\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "907031a6-2215-498a-be3f-7aeca9ada8bc",
+							"id": "607af67b-78de-413d-9cba-c7074c07f76e",
 							"name": "404 CR2 /classroms/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -26602,7 +26602,7 @@
 							"body": "{\n  \"description\" : \"Unknown classroom id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "8716e074-7b87-4fd0-90b3-aa99753e46d9",
+							"id": "f6e31708-28b0-4704-b28b-5cadd7b9dd45",
 							"name": "400-building CR2 /classroms/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -26745,7 +26745,7 @@
 					},
 					"response": [
 						{
-							"id": "b3e1ee81-6724-4f33-8467-091489e6b9d2",
+							"id": "56b41e3d-2094-44c0-85b0-d31e33745aea",
 							"name": "200 SB1 /subjects",
 							"originalRequest": {
 								"method": "GET",
@@ -26817,7 +26817,7 @@
 							"body": "{\n  \"subjects\" : [ \"http://localhost:8080/back2school-0.1/api/v1/subjects/6\", \"http://localhost:8080/back2school-0.1/api/v1/subjects/7\", \"http://localhost:8080/back2school-0.1/api/v1/subjects/8\" ]\n}"
 						},
 						{
-							"id": "6a1c8a40-3268-477b-aa38-4adb232bd99a",
+							"id": "4d8a24ca-2b28-4089-aee8-0ab0810e9c9b",
 							"name": "401 SB1 /subjects",
 							"originalRequest": {
 								"method": "GET",
@@ -26889,7 +26889,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "208d698c-06ef-4e23-8d24-832b9057d827",
+							"id": "14140279-1877-45de-bf47-39d964c28614",
 							"name": "403 SB1 /subjects",
 							"originalRequest": {
 								"method": "GET",
@@ -26997,7 +26997,7 @@
 					},
 					"response": [
 						{
-							"id": "f291a712-ce7e-4c5a-baa1-ed23d2f6a666",
+							"id": "a2421f94-e9f2-4491-a37d-a6cbecff37b3",
 							"name": "201 SB1 /subjects",
 							"originalRequest": {
 								"method": "POST",
@@ -27083,7 +27083,7 @@
 							"body": "{\n  \"status_code\" : 201,\n  \"status_reason\" : \"Created\"\n}"
 						},
 						{
-							"id": "fd32c803-f50a-4c82-8084-3ea57f33129b",
+							"id": "faee2cbc-6e7a-468b-9c9c-328ca6f2ae90",
 							"name": "403 SB1 /subjects",
 							"originalRequest": {
 								"method": "POST",
@@ -27163,7 +27163,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "498ff643-0c43-4f2c-a987-01a239c02707",
+							"id": "bb5aa415-a6ad-4b6d-9b29-4995a8bda1e7",
 							"name": "409 SB1 /subjects",
 							"originalRequest": {
 								"method": "POST",
@@ -27243,7 +27243,7 @@
 							"body": "{\n  \"description\" : \"Subject with this name already exists.\",\n  \"status_code\" : 409,\n  \"status_reason\" : \"Conflict\"\n}"
 						},
 						{
-							"id": "44f63035-e617-4f42-930b-a4f71263e878",
+							"id": "5e7bae65-cdc9-4063-86eb-77ccbe0f2ae2",
 							"name": "400-name SB1 /subjects",
 							"originalRequest": {
 								"method": "POST",
@@ -27323,7 +27323,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: name\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "01a6d067-edb1-481e-abe2-0dba3edf2e17",
+							"id": "fa58f352-51b0-457b-a649-ba5708732673",
 							"name": "401 SB1 /subjects",
 							"originalRequest": {
 								"method": "POST",
@@ -27433,7 +27433,7 @@
 					},
 					"response": [
 						{
-							"id": "97dfeafd-672b-4bc6-b2ff-6497aa43aa41",
+							"id": "4f5e8285-ede3-41e1-bbe4-896cd2cafcf8",
 							"name": "404 SB2 /subjects/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -27506,7 +27506,7 @@
 							"body": "{\n  \"description\" : \"Unknown subject id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "d20df13b-64c1-48e8-8a0a-6b745907cc44",
+							"id": "ddd68eb8-cc53-4a76-8e79-7f85175ef6f2",
 							"name": "401 SB2 /subjects/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -27579,7 +27579,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "30d373f6-585b-43f7-a386-872a8baa2526",
+							"id": "7ca4c4e1-521f-46fc-bcb7-83b68d8526f5",
 							"name": "200 SB2 /subjects/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -27652,7 +27652,7 @@
 							"body": "{\n  \"name\" : \"History\",\n  \"description\" : \"The history teach students what happened in the past\"\n}"
 						},
 						{
-							"id": "2e8dd5c1-dc6e-46a5-944a-44197a41ce2a",
+							"id": "3e8545f7-f2dc-4b03-9972-8e2f296b7009",
 							"name": "403 SB2 /subjects/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -27762,7 +27762,7 @@
 					},
 					"response": [
 						{
-							"id": "c9f6bd74-2dc2-418a-8221-ade42cd10995",
+							"id": "b7bd0510-40d2-4b0a-980c-cb3c8a7d8be3",
 							"name": "409 SB2 /subjects/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -27843,7 +27843,7 @@
 							"body": "{\n  \"description\" : \"A subject with this name already exist\",\n  \"status_code\" : 409,\n  \"status_reason\" : \"Conflict\"\n}"
 						},
 						{
-							"id": "5b9a6b94-e4f9-4769-b924-0b78c04ff744",
+							"id": "2f8121fe-bfdf-4748-a249-a0ad4c933bdb",
 							"name": "403 SB2 /subjects/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -27924,7 +27924,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "b55d5f04-e9d8-453e-9ad5-f9dfb7325576",
+							"id": "1ff4b9af-1140-4376-b4ac-5b23d26f3f23",
 							"name": "400-name SB2 /subjects/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -28005,7 +28005,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: name\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "f4f5360e-4106-41fc-a00c-0f39ff1a96e9",
+							"id": "4f4dd446-ad2d-4374-bf43-540bd46b7dff",
 							"name": "200 SB2 /subjects/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -28086,7 +28086,7 @@
 							"body": "{\n  \"status_code\" : 200,\n  \"status_reason\" : \"OK\"\n}"
 						},
 						{
-							"id": "58326963-8131-426a-8c25-03e2d14ec9dd",
+							"id": "d0b6249a-b58a-40ec-b05b-52d4a56cfbd4",
 							"name": "404 SB2 /subjects/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -28167,7 +28167,7 @@
 							"body": "{\n  \"description\" : \"Unknown subject id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "ef5a2d64-a9bc-43fd-960c-d3b18c1d29dd",
+							"id": "006afd9b-a8bc-4ae4-821c-6f5302518636",
 							"name": "401 SB2 /subjects/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "PUT",
@@ -28315,7 +28315,7 @@
 					},
 					"response": [
 						{
-							"id": "38eed0cb-387f-44cc-bb10-feef42b56d5a",
+							"id": "bed54119-1be2-4c36-a1c7-664f73b4c93f",
 							"name": "401 NT1 /notifications",
 							"originalRequest": {
 								"method": "GET",
@@ -28387,7 +28387,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "85a2e39e-ff59-45e2-95ca-f3ae16b225ee",
+							"id": "75ad0214-a23f-426a-b955-56c3dcf6471e",
 							"name": "200 NT1 /notifications",
 							"originalRequest": {
 								"method": "GET",
@@ -28459,7 +28459,7 @@
 							"body": "{\n  \"notifications\" : [ \"http://localhost:8080/back2school-0.1/api/v1/notifications/52\", \"http://localhost:8080/back2school-0.1/api/v1/notifications/53\", \"http://localhost:8080/back2school-0.1/api/v1/notifications/54\", \"http://localhost:8080/back2school-0.1/api/v1/notifications/55\", \"http://localhost:8080/back2school-0.1/api/v1/notifications/56\", \"http://localhost:8080/back2school-0.1/api/v1/notifications/57\" ]\n}"
 						},
 						{
-							"id": "ad114f9e-17b0-4a8a-9127-43609bb6fab1",
+							"id": "2c6d5600-4125-499b-be8c-0bf3bb74e1dc",
 							"name": "403 NT1 /notifications",
 							"originalRequest": {
 								"method": "GET",
@@ -28561,7 +28561,7 @@
 					},
 					"response": [
 						{
-							"id": "46c67573-42d0-4cc1-8f5a-10abe10e44a6",
+							"id": "d799eee0-e78c-49d2-8457-1d324e37d6fc",
 							"name": "404 NT2 /notifications/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -28634,7 +28634,7 @@
 							"body": "{\n  \"description\" : \"Unknown notification id\",\n  \"status_code\" : 404,\n  \"status_reason\" : \"Not Found\"\n}"
 						},
 						{
-							"id": "f3661a53-ff22-4fdf-9f18-ce5a3d83fff4",
+							"id": "3975aa6b-e40a-4c74-a1f6-a56b8a19ded0",
 							"name": "200 NT2 /notifications/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -28707,7 +28707,7 @@
 							"body": "{\n  \"type\" : \"class_parent\",\n  \"creator\" : {\n    \"role\" : \"ADMINISTRATOR\",\n    \"name\" : \"David\",\n    \"surname\" : \"SurnameDavid\",\n    \"email\" : \"david@email.com\"\n  },\n  \"datetime\" : [ 2018, 4, 12, 16, 15, 11 ],\n  \"subject\" : \"Congratulations to the best class ever!\",\n  \"text\" : \"Hi 1A's parents,\\nI want to congratulate with you and your sons because they're are the best class we've ever seen at the back2school institute!!\\n\\nRegards,\\nThe headmaster.\",\n  \"targetClass\" : {\n    \"seedStudentsEmail\" : [ ],\n    \"id\" : 38,\n    \"academicYear\" : 2017,\n    \"name\" : \"1A\",\n    \"classStudents\" : [ {\n      \"role\" : \"STUDENT\",\n      \"name\" : \"Alice1\",\n      \"surname\" : \"SurnameAlice1\",\n      \"email\" : \"alice1@email.com\"\n    }, {\n      \"role\" : \"STUDENT\",\n      \"name\" : \"Alice4\",\n      \"surname\" : \"SurnameAlice4\",\n      \"email\" : \"alice4@email.com\"\n    } ]\n  }\n}"
 						},
 						{
-							"id": "9bc399cf-5296-4c94-872b-3ed1709fc69e",
+							"id": "73eb51ac-9789-4294-94bb-4b300ad4d1ea",
 							"name": "403 NT2 /notifications/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -28780,7 +28780,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "34aff6ae-cd24-41f8-aa7b-b687bbc61ace",
+							"id": "1248fc54-0c11-4fd9-a7c9-c9aa74491d78",
 							"name": "401 NT2 /notifications/{id: [0-9]+}",
 							"originalRequest": {
 								"method": "GET",
@@ -28890,7 +28890,7 @@
 					},
 					"response": [
 						{
-							"id": "e7a7bdbd-3f65-4211-875f-71fcc9bffd9c",
+							"id": "981b1e0e-700d-4b72-b590-290272877f7c",
 							"name": "403 NT3 /notifications/send-to-teachers",
 							"originalRequest": {
 								"method": "POST",
@@ -28971,7 +28971,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "fb01087a-38f6-45e1-9eb6-5640e8f3eb69",
+							"id": "c096c8ec-9f1c-42b8-919b-badc383a5878",
 							"name": "401 NT3 /notifications/send-to-teachers",
 							"originalRequest": {
 								"method": "POST",
@@ -29052,7 +29052,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "e602a0f4-5137-42dc-85a5-57d10232a487",
+							"id": "3ca9c926-38a6-49c8-b84a-97f87c8b1049",
 							"name": "201 NT3 /notifications/send-to-teachers",
 							"originalRequest": {
 								"method": "POST",
@@ -29139,7 +29139,7 @@
 							"body": "{\n  \"status_code\" : 201,\n  \"status_reason\" : \"Created\"\n}"
 						},
 						{
-							"id": "20358928-2156-4eb3-a4cb-b1217b93db49",
+							"id": "14866ac6-e7b7-456f-8e00-3ef3cc2f3b9f",
 							"name": "400-text NT3 /notifications/send-to-teachers",
 							"originalRequest": {
 								"method": "POST",
@@ -29220,7 +29220,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: text\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "0cc1503e-82e5-4666-9409-23f26a2d1f34",
+							"id": "4609d6e5-471c-4cc9-917b-b9f49a02f693",
 							"name": "400-subject NT3 /notifications/send-to-teachers",
 							"originalRequest": {
 								"method": "POST",
@@ -29338,7 +29338,7 @@
 					},
 					"response": [
 						{
-							"id": "85e67941-0903-4b48-a5dc-d63b4130c5a8",
+							"id": "99ffa781-e47e-486d-b4b4-cd75056848c9",
 							"name": "401 NT4 /notifications/send-to-parents",
 							"originalRequest": {
 								"method": "POST",
@@ -29419,7 +29419,7 @@
 							"body": "{\n  \"description\" : \"Invalid session\",\n  \"status_code\" : 401,\n  \"status_reason\" : \"Unauthorized\"\n}"
 						},
 						{
-							"id": "7b435df4-8e9f-4e5c-8f43-5fd7a9d33779",
+							"id": "bc407ee7-285f-44b8-99ce-c749e6859d4c",
 							"name": "400-subject NT4 /notifications/send-to-parents",
 							"originalRequest": {
 								"method": "POST",
@@ -29500,7 +29500,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: subject\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "fab4650a-268a-42b7-ab28-466c7fb7d4f3",
+							"id": "c2ca06b5-84a1-4593-88ce-554841620e48",
 							"name": "400-text NT4 /notifications/send-to-parents",
 							"originalRequest": {
 								"method": "POST",
@@ -29581,7 +29581,7 @@
 							"body": "{\n  \"description\" : \"Missing required attribute: text\",\n  \"status_code\" : 400,\n  \"status_reason\" : \"Bad Request\"\n}"
 						},
 						{
-							"id": "e1aa13f9-dba7-4eb8-8ac2-0bc1ad511eaa",
+							"id": "93cf5f91-82cf-4d32-ab65-4d8b73674858",
 							"name": "403 NT4 /notifications/send-to-parents",
 							"originalRequest": {
 								"method": "POST",
@@ -29662,7 +29662,7 @@
 							"body": "{\n  \"description\" : \"User not allowed\",\n  \"status_code\" : 403,\n  \"status_reason\" : \"Forbidden\"\n}"
 						},
 						{
-							"id": "f7222c8f-5973-4164-b00a-956eecb58a49",
+							"id": "1835d528-f20e-4f53-bc45-c8752589048b",
 							"name": "201 NT4 /notifications/send-to-parents",
 							"originalRequest": {
 								"method": "POST",
